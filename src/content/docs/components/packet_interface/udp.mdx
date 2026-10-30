@@ -1,0 +1,55 @@
+---
+description: "Instructions for setting up a UDP packet interface on ESPHome"
+title: "UDP Packet Interface"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `udp` [Packet Interface](/components/packet_interface/) platform sends and receives packets over the network using
+the [UDP](/components/udp/) component. Each packet is sent as one UDP datagram to every address configured in the
+`udp` component, and every datagram received on the listen port is passed on as one packet.
+
+The interface enables both sending and receiving on the `udp` component it uses.
+
+When the `udp` component sends to one IPv4 address that is not a broadcast or multicast address, the interface
+accepts packets only from that address. It then joins exactly two devices, so no
+[addressing layer](/components/packet_interface/#addressing) is needed, and one cannot be configured. An address
+ending in `.255` is taken as a broadcast address; set `point_to_point` when that guess is wrong for your subnet. A
+point-to-point link logs a warning, at most once a minute, when it drops a packet from another sender.
+
+When the `udp` component sends to a broadcast or multicast address, or to several addresses, every packet received
+is accepted, and an addressing layer can tell the devices apart. The
+[reliability](/components/packet_interface/#reliability) and [session](/components/packet_interface/#session)
+layers, and the rolling code, work between two devices only, so on that kind of link they need an addressing layer
+with a `destination`.
+
+## Example Configuration
+
+```yaml
+# Example configuration entry
+udp:
+  addresses: 192.168.1.255
+
+packet_interface:
+  - platform: udp
+    id: network_link
+```
+
+## Configuration variables
+
+- **udp_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the [UDP](/components/udp/) component to
+  use. Required only if more than one `udp` component is configured.
+- **max_packet_size** (*Optional*, int): The largest packet, in bytes, that a user of this interface may send. Range
+  is 16 to 508, the largest packet the `udp` component can receive. Defaults to `508`.
+- **point_to_point** (*Optional*, boolean): Whether the one IPv4 address of the `udp` component is a single device.
+  Set it to `false` for a broadcast address on a subnet smaller than /24, such as `192.168.1.127` on a /25, and to
+  `true` for a device whose address ends in `.255`, which is possible on a subnet larger than /24. By default, an
+  address ending in `.255` is taken as a broadcast address.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+
+## See Also
+
+- [Packet Interface Component](/components/packet_interface/)
+- [UDP Component](/components/udp/)
+- [Packet Transport Component](/components/packet_transport/)
+- <APIRef text="udp_packet_interface.h" path="udp/packet_interface/udp_packet_interface.h" />

@@ -1,0 +1,55 @@
+---
+description: "Instructions for using a packet interface as the channel for the packet transport component on ESPHome"
+title: "Packet Interface Packet Transport Platform"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `packet_interface` platform of the [Packet Transport](/components/packet_transport/) component sends and receives
+sensor data through any [Packet Interface](/components/packet_interface/). This lets packet transport run over every
+channel that has a packet interface platform, without a separate packet transport platform for each one.
+
+The largest packet that packet transport will send is taken from the `max_packet_size` of the packet interface.
+
+## Example Configuration
+
+```yaml
+# Example configuration entry
+uart:
+  tx_pin: GPIOXX
+  rx_pin: GPIOXX
+  baud_rate: 115200
+
+packet_interface:
+  - platform: uart
+    id: serial_link
+
+packet_transport:
+  - platform: packet_interface
+    packet_interface: serial_link
+    sensors:
+      - dht_temp
+
+sensor:
+  - platform: dht
+    pin: GPIOXX
+    temperature:
+      name: "Temperature"
+      id: dht_temp
+```
+
+## Configuration variables
+
+- **packet_interface** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the
+  [Packet Interface](/components/packet_interface/) to use. Required only if more than one packet interface is
+  configured.
+
+All other options are the same as for the [Packet Transport](/components/packet_transport/) component.
+
+## See Also
+
+- [Packet Transport Component](/components/packet_transport/)
+- [Packet Interface Component](/components/packet_interface/)
+- [Packet Transport Binary Sensor](/components/binary_sensor/packet_transport/)
+- [Packet Transport Sensor](/components/sensor/packet_transport/)
+- <APIRef text="packet_interface_transport.h" path="packet_interface/packet_transport/packet_interface_transport.h" />

@@ -1,0 +1,74 @@
+---
+description: "Instructions for setting up a TCP packet interface on ESPHome"
+title: "TCP Packet Interface"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `tcp` [Packet Interface](/components/packet_interface/) platform sends and receives packets over a TCP connection
+between two devices. One device is the *client*, which connects to the other; the other is the *server*, which
+accepts one client at a time.
+
+TCP delivers what is sent in order and sends again what is lost, and a connection joins exactly two devices. So a TCP
+interface does the job of the [reliability](/components/packet_interface/#reliability),
+[addressing](/components/packet_interface/#addressing) and [session](/components/packet_interface/#session) layers
+itself, and those layers cannot be added to it. Components such as [entity transport](/components/entity_transport/)
+are told when the connection comes up or goes down, as they would be by a session layer. The
+[encryption](/components/packet_interface/#encryption) and [fragmentation](/components/packet_interface/#fragmentation)
+layers can be added, but not the encryption layer's rolling code, which needs the keep-alives of a session layer.
+
+Each packet is sent with its length in front. When nothing else has been sent for `keep_alive`, an empty packet is
+sent, and if nothing at all has been received for `timeout`, the connection is closed and made again.
+This finds a device that has lost power or its network, which TCP alone can take many minutes to notice.
+
+## Example Configuration
+
+```yaml
+# The device that connects
+packet_interface:
+  - platform: tcp
+    id: tcp_link
+    host: 192.168.1.50
+    port: 6070
+    encryption: !secret tcp_link_key
+
+# The device it connects to
+packet_interface:
+  - platform: tcp
+    id: tcp_link
+    role: server
+    port: 6070
+    encryption: !secret tcp_link_key
+```
+
+## Configuration variables
+
+- **role** (*Optional*, string): `client` to connect to another device, or `server` to accept a connection from one.
+  Defaults to `client`.
+- **host** (**Required** for a client, string): The IPv4 address or host name of the server.
+- **port** (**Required**, int): The TCP port the server listens on.
+- **allowed_ips** (*Optional*, list, server only): The networks, such as `192.168.1.0/24`, from which a client may
+  connect. By default any client may connect.
+- **reconnect_interval** (*Optional*, [Time](/guides/configuration-types#time)): How long to wait before connecting,
+  or listening, again after a failure. Defaults to `5s`.
+- **keep_alive** (*Optional*, [Time](/guides/configuration-types#time)): How often to send an empty packet when
+  nothing else is sent. From `1s` to `1h`. Defaults to `10s`.
+- **timeout** (*Optional*, [Time](/guides/configuration-types#time)): How long the link waits without receiving
+  anything before it closes the connection. It must be longer than the other device's `keep_alive`, as that sets how
+  often packets arrive on an idle link; set it when the two devices have different `keep_alive` values. At most `3h`.
+  Defaults to three times `keep_alive`.
+- **connected** (*Optional*): A [binary sensor](/components/binary_sensor/) that is ON while the connection is up,
+  and OFF from boot until it first comes up.
+  All options from [Binary Sensor](/components/binary_sensor/#config-binary_sensor).
+- **max_packet_size** (*Optional*, int): The largest packet, in bytes, that can be sent or received. Range is 16 to
+  1022. Defaults to `1022`. Use a [fragmentation layer](/components/packet_interface/#fragmentation) for larger packets.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+
+A server accepts only one client at a time. If the client restarts, the server closes the old connection when it
+finds the client gone, and then accepts the new one.
+
+## See Also
+
+- [Packet Interface Component](/components/packet_interface/)
+- [Entity Transport Component](/components/entity_transport/)
+- <APIRef text="tcp_packet_interface.h" path="tcp/packet_interface/tcp_packet_interface.h" />

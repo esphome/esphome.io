@@ -1,0 +1,51 @@
+---
+description: "Instructions for setting up a UART packet interface on ESPHome"
+title: "UART Packet Interface"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `uart` [Packet Interface](/components/packet_interface/) platform sends and receives packets over a serial port
+configured with the [UART](/components/uart/) component.
+
+A serial port carries a stream of bytes with no packet boundaries, so each packet is framed:
+
+- The byte `0x7E` marks the start and the end of each packet.
+- If the byte `0x7E` or `0x7D` appears inside a packet, it is sent as `0x7D` followed by the original byte XORed with
+  `0x20`. For example, `0x7E` is sent as `0x7D 0x5E`.
+
+This is the same framing used by the [UART Packet Transport](/components/packet_transport/uart/) platform, so a device
+using one can talk to a device using the other.
+
+Received bytes outside a frame are ignored. A received packet larger than `max_packet_size` is discarded, and this
+is logged only at the `DEBUG` level. A packet larger than `max_packet_size` is not sent: the send fails, and a warning
+is logged. Use the same `max_packet_size` on both devices, so that neither sends packets the other discards.
+
+## Example Configuration
+
+```yaml
+# Example configuration entry
+uart:
+  tx_pin: GPIOXX
+  rx_pin: GPIOXX
+  baud_rate: 115200
+
+packet_interface:
+  - platform: uart
+    id: serial_link
+```
+
+## Configuration variables
+
+- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the [UART bus](/components/uart/) to use.
+  Required only if more than one UART bus is configured.
+- **max_packet_size** (*Optional*, int): The largest packet, in bytes, that can be sent or received. Range is 16 to
+  4096. Defaults to `508`. Devices that talk to each other should use the same value.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+
+## See Also
+
+- [Packet Interface Component](/components/packet_interface/)
+- [UART Bus](/components/uart/)
+- [Packet Transport Component](/components/packet_transport/)
+- <APIRef text="uart_packet_interface.h" path="uart/packet_interface/uart_packet_interface.h" />
