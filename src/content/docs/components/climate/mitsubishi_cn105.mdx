@@ -231,6 +231,18 @@ The trigger passes a `VaneState` value named `x` to lambdas. The current vertica
 - `VERTICAL_VANE_MODE_SWING`
 - `VERTICAL_VANE_MODE_UNKNOWN`
 
+The current horizontal (wide) vane direction is available as `x.horizontal.direction` and can have one of these
+values:
+
+- `HORIZONTAL_VANE_MODE_POSITION_1` (far left)
+- `HORIZONTAL_VANE_MODE_POSITION_2` (left)
+- `HORIZONTAL_VANE_MODE_POSITION_3` (center)
+- `HORIZONTAL_VANE_MODE_POSITION_4` (right)
+- `HORIZONTAL_VANE_MODE_POSITION_5` (far right)
+- `HORIZONTAL_VANE_MODE_SPLIT` (left and right)
+- `HORIZONTAL_VANE_MODE_SWING`
+- `HORIZONTAL_VANE_MODE_UNKNOWN`
+
 ```yaml
 mitsubishi_cn105:
   id: hp
@@ -252,15 +264,17 @@ mitsubishi_cn105:
               ESP_LOGI("vane", "Vertical vane is in a fixed position");
               break;
           }
+          if (x.horizontal.direction == HORIZONTAL_VANE_MODE_SWING) {
+            ESP_LOGI("vane", "Horizontal vane is swinging");
+          }
 ```
 
 ## `mitsubishi_cn105.vane.control` Action
 
 The `mitsubishi_cn105.vane.control` action changes the vane direction. Its `id` must reference the top-level
-Mitsubishi CN105 hub. The currently supported setting is `vertical.direction`, which accepts `AUTO`, `1`, `2`, `3`,
-`4`, `5`, or `SWING`. It can also be a lambda returning one of the corresponding
-`VERTICAL_VANE_MODE_*` values. A lambda returning `VERTICAL_VANE_MODE_UNKNOWN` is ignored and does not change the
-vane direction.
+Mitsubishi CN105 hub. It takes `vertical.direction` and `horizontal.direction`; at least one of `vertical` or
+`horizontal` must be set. Each can also be a lambda returning one of the corresponding `VERTICAL_VANE_MODE_*` or
+`HORIZONTAL_VANE_MODE_*` values. A lambda returning an `UNKNOWN` value is ignored and does not change that vane.
 
 ```yaml
 on_...:
@@ -268,13 +282,18 @@ on_...:
       id: hp
       vertical:
         direction: SWING
+      horizontal:
+        direction: SPLIT
 ```
 
 Configuration variables:
 
 - **id** (**Required**, ID): The ID of the top-level `mitsubishi_cn105` hub.
 - **vertical** (*Optional*): Vertical vane settings.
-  - **direction** (*Optional*, string, templatable): One of `AUTO`, `1`, `2`, `3`, `4`, `5`, or `SWING`.
+  - **direction** (**Required**, string, templatable): One of `AUTO`, `1`, `2`, `3`, `4`, `5`, or `SWING`.
+- **horizontal** (*Optional*): Horizontal (wide) vane settings.
+  - **direction** (**Required**, string, templatable): One of `1` (far left), `2` (left), `3` (center),
+    `4` (right), `5` (far right), `SPLIT` (left and right), or `SWING`.
 
 ### Custom Vertical Vane Select
 
