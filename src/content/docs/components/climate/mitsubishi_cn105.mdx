@@ -91,9 +91,19 @@ climate:
 > per `telemetry_request_min_interval`. A mode or power change also triggers one extra read of the operating status
 > alone, at most once per interval; further changes wait for the next regular read. It is not reported when
 > telemetry is set to `never`. In heat/cool mode, heating or cooling is inferred from the room and target
-> temperatures when the unit starts running, and kept while it runs. After three missed operating status requests in
-> a row the component stops asking and keeps the last operating status it received. A unit that never answers
-> reports idle while it is on, even while it is heating or cooling; off and fan only are still reported.
+> temperatures when the unit starts running, and kept while it runs.
+>
+> After a power-off, or a mode change that ends the current run (for example heat to cool), the unit keeps running
+> for a while to wind down. During that time it is not reported as heating, cooling or drying: the action shows idle,
+> or off while the unit is off and fan in fan only mode, until the unit reports that it stopped. The operating status
+> is then read every 10 seconds instead of the single extra read, and after nine reads the reported state is trusted
+> again, which is about 90 seconds with the default `update_interval`. Reads only happen on update cycles, so a
+> longer `update_interval` makes both the reads and the hold slower. Switching between heat/cool and heat or cool in
+> the same direction keeps the run. A change made while the action is held does not shorten or restart it.
+>
+> After three missed operating status requests in a row the component stops asking and keeps the last operating
+> status it received. A unit that never answers reports idle while it is on, even while it is heating or cooling; off
+> and fan only are still reported.
 
 > [!NOTE]
 > Fan modes map to the following Mitsubishi fan speeds:
@@ -124,8 +134,7 @@ climate:
   Telemetry is still requested during regular polling cycles, so the effective update frequency is bounded by
   `update_interval`.
 
-  Set to `never` to disable telemetry polling.
-
+  Set to `never` to disable telemetry polling. The current temperature and the current action are then not reported.
 - **use_fahrenheit** (*Optional*, boolean): Configure the climate entity to report and accept temperatures in Fahrenheit
   using Mitsubishi-specific mapping. Defaults to `false`. When enabled, write the climate's `visual` temperatures and
   the fixed temperatures of `climate.control` in Fahrenheit too; a value written with another unit, such as `20°C`, is
