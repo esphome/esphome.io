@@ -889,3 +889,136 @@ If they are unavailable, the controller checks again once per second without kee
 Until it completes, `has_fresh_snapshot()` is false and further writes are rejected. `has_recent_snapshot()` still reports
 whether the last complete snapshot is within its 660-second expiry, so displays can retain confirmed values while waiting.
 An incompatible firmware broadcast discards both fresh and retained context immediately. No refresh retries a write.
+
+
+## CS Plus Numeric Setting Controls
+
+The `vbus` number platform exposes confirmed numeric settings from a DeltaSol CS Plus 1.11 controller profile.
+It uses that profile's existing reads and write validation; adding a number does not create another polling cycle.
+
+For several controls on one controller, use setting names as keys under a single platform entry:
+
+```yaml
+number:
+  - platform: vbus
+    min_pump_speed_1:
+      name: Minimum Pump Speed
+    max_pump_speed_1: {}
+```
+
+Each setting accepts the usual Number options. An optional `controller_id` at the platform level binds all controls
+in that entry. The existing single-parameter form below remains supported; use one form per platform entry.
+
+```yaml
+vbus:
+  controller:
+    model: deltasol_cs_plus
+    writes: direct
+
+number:
+  - platform: vbus
+    parameter: min_pump_speed_1
+  - platform: vbus
+    parameter: delta_temperature_1_on
+    name: Circuit 1 Switch-On Temperature Difference
+```
+
+- **controller_id** (*Optional*, [ID](/guides/configuration-types/#id)): A qualified CS Plus profile with `writes`
+  enabled. Inferred when exactly one controller is configured; required when there are multiple controllers.
+- **parameter** (**Required**, string): One of the numeric parameter keys below.
+- All other options from [Number](/components/number/). The default entity category is `config`.
+
+If both `name` and `id` are omitted, a display name is derived from `parameter`, for example `Minimum pump speed 1`.
+An explicit name, ID, unit, entity category or display mode always takes precedence. An explicit ID without a name
+keeps ESPHome's existing internal-entity behavior. Units default to the profile's engineering units: `%` for pump
+speeds, `°C` for temperatures, `K` for temperature differences, `L/min` for flow and `s`, `min` or `h` for durations.
+Clock values remain minutes after midnight; their default names include this explanation. Changing a unit label does
+not convert protocol values or change limits.
+
+`require_write_arm: false` permits direct explicit changes through the number entity. With the default `true`,
+arm the controller before a change using `vbus.arm_writes`. Neither mode writes values on startup or restores
+stored number states to the controller. A requested value is published only after acknowledgement, readback,
+bus release and resumed telemetry confirm it. Unchanged confirmed values are not published again.
+
+The current scheme, enabled functions and related settings determine whether a number is available and its allowed
+range. For example, a pump minimum remains below its configured maximum. Ranges and steps use the setting's scale;
+they cannot be overridden with arbitrary bounds. Commands are checked again against fresh dependency reads.
+An invalid or busy request is rejected and logged while retaining the confirmed state.
+
+During ordinary scans or failed refreshes, confirmed values remain available until the cache expiry described above.
+Numbers also retain their confirmed values while the controller refreshes context after a setting change or uncertain
+write; this retained display does not prove that an uncertain write had no effect. Further writes wait for fresh context.
+Actual expiry or inapplicability invalidates the value, while retaining the last advertised range. Recovery publishes
+one confirmed value. Entity updates are processed one per loop to bound work on smaller devices.
+
+Clock settings use minutes after midnight. `system_time` updates from valid, changed P1 broadcasts without P2 reads;
+an invalid clock field retains the last valid clock. A clock update does not trigger `on_snapshot` as a new complete scan.
+
+The native API's entity listing exposes updated bounds. Clients that cache metadata need to refresh that listing when
+bounds change. `id(solar_controller).metadata_revision()` advances once after a batch of actual range changes, rather
+than on every settings scan. Availability or value changes alone do not increment it.
+
+### Numeric Parameter Keys
+
+Keys identify the setting; units and display names have defaults and can be overridden as in the example above.
+Some settings only apply
+to particular hydraulic schemes or optional functions. Enumerated settings such as the display language are not numbers.
+
+- `system_time`
+- `loading_break_time`
+- `loading_run_time`
+- `min_pump_speed_1`
+- `min_pump_speed_2`
+- `max_pump_speed_1`
+- `max_pump_speed_2`
+- `system_cooling_delta_on`
+- `system_cooling_delta_off`
+- `holiday_temperature`
+- `parallel_loading_delta`
+- `max_flow`
+- `antifreeze_concentration`
+- `circuit_3_minimum_limit`
+- `circuit_3_minimum_recovery`
+- `circuit_3_maximum_limit`
+- `circuit_3_maximum_recovery`
+- `delta_temperature_1_on`
+- `delta_temperature_2_on`
+- `delta_temperature_3_on`
+- `delta_temperature_1_off`
+- `delta_temperature_2_off`
+- `delta_temperature_3_off`
+- `delta_temperature_1_nominal`
+- `delta_temperature_2_nominal`
+- `delta_temperature_3_nominal`
+- `delta_temperature_1_rise`
+- `delta_temperature_2_rise`
+- `delta_temperature_3_rise`
+- `max_storage_temperature_2`
+- `max_storage_temperature_1`
+- `collector_emergency_temperature_1`
+- `collector_emergency_temperature_2`
+- `max_collector_temperature_1`
+- `max_collector_temperature_2`
+- `min_collector_temperature_1`
+- `min_collector_temperature_2`
+- `collector_frost_temperature_1`
+- `collector_frost_temperature_2`
+- `disinfection_period`
+- `disinfection_temperature`
+- `disinfection_duration`
+- `disinfection_start_time`
+- `drainback_activation_time`
+- `drainback_fill_time`
+- `drainback_stabilisation_time`
+- `thermostat_on_temperature`
+- `thermostat_start_time_1`
+- `thermostat_off_temperature`
+- `thermostat_end_time_1`
+- `thermostat_start_time_2`
+- `thermostat_end_time_2`
+- `thermostat_start_time_3`
+- `thermostat_end_time_3`
+- `tube_collector_start_time`
+- `tube_collector_end_time`
+- `tube_collector_run_time`
+- `tube_collector_interval`
