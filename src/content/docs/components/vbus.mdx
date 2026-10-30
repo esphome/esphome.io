@@ -134,6 +134,7 @@ vbus:
   Its protocol addresses are supplied automatically. This is equivalent to `transmit.transactions.controller`;
   configure the profile in one location only.
 - **on_datagram** (*Optional*, [Automation](/automations/)): An automation to run when a valid VBus P2 datagram is received.
+- **rx_diagnostics** (*Optional*, boolean): Enable the [receive error counter](#receive-diagnostics). Defaults to `false`.
 
 > [!NOTE]
 > Functionality of the sensors depends on the type of the device and the scheme arrangement of the hydraulic
@@ -169,6 +170,35 @@ The lambda receives five arguments:
 Interpretation, scaling, and valid identifiers depend on the command and controller model. When a documented value
 is signed, use `static_cast<int32_t>(value)` before applying its scale. Arguments are passed by value and remain
 available after a `delay` action. Multiple `on_datagram` automations can be configured.
+
+## Receive Diagnostics
+
+Set `rx_diagnostics: true` to count rejected P1 headers, P1 data frames and P2 datagrams:
+
+```yaml
+vbus:
+  id: solar_bus
+  uart_id: resol
+  rx_diagnostics: true
+
+sensor:
+  - platform: template
+    name: VBus Receive Errors
+    entity_category: diagnostic
+    accuracy_decimals: 0
+    state_class: total_increasing
+    lambda: return id(solar_bus).get_packet_error_count();
+    filters:
+      - delta: 0.5
+```
+
+The counter starts at zero after each restart. It includes checksum failures and P2 datagrams whose reserved septet
+bit is set. A datagram failing both checks counts once. The VBus checksum is an additive checksum, not a CRC.
+Noise, unsupported protocols and incomplete-message timeouts are not included. The counter does not change parsing,
+start transmissions or add polling. It only reports errors detected by this receiver.
+
+When enabled on any hub, this adds a 32-bit counter to each VBus hub in the build. Leaving it disabled everywhere
+adds no counter storage, and `get_packet_error_count()` is not available in lambdas.
 
 ## Sensor
 
@@ -831,6 +861,48 @@ another firmware invalidates the snapshot immediately; returning firmware 1.11 r
 In a lambda, `id(solar_controller).get_value(value_id, raw_value)` returns `true` only for an available setting in a
 fresh, complete snapshot. Values are raw integers; scaling and applicability depend on the setting. The raw getter
 is intended for custom automations, rather than bypassing setting validation for writes.
+
+### Scan Diagnostics
+
+`id(solar_controller).scan_status()` reports the latest accepted settings scan as a `vbus::CSPlusScanStatus`:
+
+| Value | Meaning |
+| ----- | ------- |
+| `CS_PLUS_SCAN_STATUS_IDLE` | No settings scan has started. |
+| `CS_PLUS_SCAN_STATUS_RUNNING` | A settings scan is in progress. |
+| `CS_PLUS_SCAN_STATUS_COMPLETE` | The latest scan completed, released the bus and observed resumed telemetry. |
+| `CS_PLUS_SCAN_STATUS_INCOMPLETE` | The latest scan stopped before completion. |
+
+The status describes a scan attempt, not current connectivity or freshness. A failed attempt can coexist with a retained
+snapshot. Use `telemetry_online()` and `has_fresh_snapshot()` to check those separately. `is_scanning()` reports any
+active controller operation, including a setting write; `scan_status()` does not change during a write.
+
+A due settings scan raises a warning when recent compatible controller telemetry is missing. Repeated attempts do not
+repeat that warning; supported telemetry clears it. Intentional suspension, active operations and rate limiting do not
+raise this warning. Unsupported firmware still reports its version and keeps the controller in a warning state.
+
+Present, applicable settings that conflict with the active policy log a warning once per snapshot. They remain
+unavailable rather than exposing an invalid writable value. Normal missing or inapplicable settings do not warn.
+
+Enable `DEBUG` logging to identify rejected setting replies (protocol ID, raw value and transaction status),
+short CS Plus payloads or leases that end without a release.
+Incomplete RX packet timeouts are logged at `VERBOSE`; they do not increment the packet-error counter.
+These diagnostics do not weaken payload validation or send a release onto a busy or expired bus lease.
+
+The following getters describe the current or most recent settings scan. Starting a new scan resets them. A setting
+write, including its preflight reads and verification, leaves them unchanged:
+
+| Getter | Meaning |
+| ------ | ------- |
+| `request_count()` | P2 read requests transmitted, including reads before an incomplete attempt stopped. |
+| `received_count()` | Valid setting replies accepted by this scan. |
+| `group_count()` | Usable bus grants received while a read group is active. |
+| `release_count()` | Bus release frames transmitted during the scan. |
+| `elapsed_ms()` | Attempt duration in milliseconds, finalized on completion or interruption; zero while running. |
+| `maximum_lease_ms()` | Longest observed released lease duration during the scan. |
+
+`completed_scans()` counts complete snapshots since startup. `telemetry_count()` counts qualified CS Plus broadcasts;
+`snapshot_age_seconds()` reports the age of the last complete snapshot. Setting-write counters and results are separate.
 
 ### Manual Refresh And OTA
 
