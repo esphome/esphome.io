@@ -130,7 +130,7 @@ api:
 
 - **on_client_synced** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform when a client
   that subscribed to entity states has received all of them. See
-  [`on_client_synced` Trigger](#api-on_client_synced_trigger).
+  [`on_client_synced` Trigger](#on_client_synced-trigger).
 
 - **outgoing_connection** (*Optional*): Have the device open the API connection itself when no dial-back client is
   connected. Requires `encryption`. See
@@ -291,7 +291,7 @@ on_...:
 > (versions before 2026.7.0 dropped them silently). The same applies to `homeassistant.event`. If you need to
 > perform an action as soon as a connection is made, add a short `delay` before it so Home Assistant has time to
 > start listening. To act as soon as Home Assistant is ready, use the
-> [`on_client_synced` Trigger](#api-on_client_synced_trigger) instead.
+> [`on_client_synced` Trigger](#on_client_synced-trigger) instead.
 
 Data structures are not possible, but you can create a script in Home Assistant and call with all
 the parameters in plain format.
@@ -430,7 +430,7 @@ actions called from within this trigger:
 
 The trigger fires before the client has subscribed to entity states or Home Assistant actions, so
 `api.connected` with `state_subscription_only: true` does not count this client yet. Use the
-[`on_client_synced` Trigger](#api-on_client_synced_trigger) to act once the client is ready.
+[`on_client_synced` Trigger](#on_client_synced-trigger) to act once the client is ready.
 
 ```yaml
 api:
@@ -458,13 +458,13 @@ api:
     - logger.log: "API client disconnected!"
 ```
 
-<span id="api-on_client_synced_trigger"></span>
-
 ### `on_client_synced` Trigger
 
-This trigger is activated each time a client that subscribed to entity states, such as Home Assistant, has received
-the current state of every entity. At that point the client also listens for Home Assistant actions and events, so
-they can be sent right away. The same two string variables as in `on_client_connected` are available:
+This trigger is activated each time a client that subscribed to entity states has received the current state of every
+entity. When the client is Home Assistant, it also listens for Home Assistant actions and events at that point, so
+they can be sent right away. Other clients that subscribe to states, such as `esphome logs` and the
+[ESPHome Device Builder](/install/) log viewer, fire this trigger too; check `client_info` to act only for Home
+Assistant. The same two string variables as in `on_client_connected` are available:
 
 - `client_address`  : the IP address of the client
 - `client_info`  : the name of the client
@@ -476,8 +476,12 @@ api:
     - logger.log:
         format: "Client %s is ready"
         args: ["client_info.c_str()"]
-    - homeassistant.event:
-        event: esphome.device_ready
+    - if:
+        condition:
+          lambda: 'return client_info.starts_with("Home Assistant");'
+        then:
+          - homeassistant.event:
+              event: esphome.device_ready
 ```
 
 > [!NOTE]
