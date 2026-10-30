@@ -73,11 +73,12 @@ web_server:
 - Potentially interfere with device operation
 
 > [!NOTE]
-> The web server has no cross-site (CSRF) protection by design: it does not check the request `Origin` and uses a
-> permissive CORS policy. A web page you visit while on the same network can therefore send commands to the device
-> through your browser, even though the page's author is never on your network. Enabling `auth:` and keeping devices on
-> a trusted, segmented network are the defenses. This is intentional; see the project
-> [threat model](https://github.com/esphome/esphome/blob/dev/THREAT_MODEL.md).
+> The web server is an open HTTP API by design: without `auth:`, any client that can reach it can use every endpoint.
+> As defense in depth it rejects browser requests from other origins, including firmware uploads to the web OTA
+> `/update` endpoint, unless the origin is listed in
+> [`allowed_origins`](/components/web_server#cross-origin-requests). This only constrains browsers; scripts and other
+> clients that send no `Origin` header are not affected. Enabling `auth:` and keeping devices on a trusted, segmented
+> network are the defenses. See the project [threat model](https://github.com/esphome/esphome/blob/dev/THREAT_MODEL.md).
 
 ### 3. OTA Encryption
 

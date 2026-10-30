@@ -92,8 +92,10 @@ web_server:
 
 - **allowed_origins** (*Optional*, list of strings): A list of origins that browsers are allowed to make
   cross-origin requests from. See [Cross-Origin Requests](#cross-origin-requests) for details. Each entry
-  must exactly match the requesting page's `Origin` header (e.g. `https://app.esphome.io`). A single `"*"`
-  entry (quoted, since an unquoted `*` is invalid YAML) allows any origin, but this is not recommended.
+  must exactly match the requesting page's `Origin` header (e.g. `https://app.esphome.io`) and be at most 127
+  characters long. A single `"*"` entry (quoted, since an unquoted `*` is invalid YAML) allows any origin, but
+  this is not recommended. On ESP32, a device reached through a host name longer than about 119 characters can only be
+  used from a browser with the `"*"` entry, because its own origin does not fit the 127 character limit.
 
 - **enable_private_network_access** (*Optional*, boolean): Enables support for
   [Private Network Access](https://wicg.github.io/private-network-access) and the
@@ -182,7 +184,9 @@ Recommendations:
 
 ### Cross-Origin Requests
 
-By default the web server rejects cross-origin browser requests to its entity control and state endpoints.
+By default the web server rejects cross-origin browser requests to every endpoint it serves, including the web
+OTA `/update` endpoint and the [Prometheus](/components/prometheus) `/metrics` endpoint. The captive portal
+pages are open by design and not checked.
 When a request carries an `Origin` header, it is allowed only if it is *same-origin* — that is, the `Origin`
 matches the address the device is served on (its IP address, mDNS `<node_name>.local` name, or DNS name) — or
 if the origin is listed in `allowed_origins`. This is defense-in-depth against the browser "confused deputy"
@@ -190,7 +194,7 @@ if the origin is listed in `allowed_origins`. This is defense-in-depth against t
 
 Requests that do not carry an `Origin` header — `curl`, scripts, the native API, and other non-browser
 clients — are always allowed. The `Origin` check only constrains browsers; it is **not** an authentication
-boundary, and it does not cover the web OTA `/update` endpoint. To restrict access itself, use `auth:` and keep
+boundary. To restrict access itself, use `auth:` and keep
 devices on a trusted, segmented network. See the project
 [threat model](https://github.com/esphome/esphome/blob/dev/THREAT_MODEL.md) for the full scope.
 
