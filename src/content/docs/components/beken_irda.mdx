@@ -1,0 +1,158 @@
+---
+description: "Instructions for setting up a Beken BK72xx infrared receiver for NEC and other remote_base decoders."
+title: "Beken IR Receiver"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `beken_irda` component receives infrared remote control signals on Beken BK72xx (LibreTiny) chips.
+It has two frontends, both of which feed the standard
+[remote receiver](/components/remote_receiver) decoders and triggers:
+
+- **`timer`** (default): a hardware-timer sampler that records raw timings on any internal input pin.
+- **`hardware`**: the Beken legacy NEC decoder block, which captures complete NEC frames in hardware. This
+  mode supports **P26 only**, because the block has no pin matrix.
+
+## Usage
+
+A 3.3 V 38 kHz demodulating receiver works. Its output idles high and goes low during a mark.
+The 38 kHz carrier is removed by the receiver, so the MCU only sees the envelope.
+
+```yaml
+# Example configuration entry
+beken_irda:
+  id: irda_rx
+  pin: P26
+  mode: timer
+  on_nec:
+    then:
+      - logger.log:
+          format: "NEC address=0x%04X command=0x%04X"
+          args: [x.address, x.command]
+```
+
+On BK7231T/N and BK7251/7252, P26 is also PWM5. Do not use PWM on P26 while IR reception is active. A pin
+that idles high may need a pull-up:
+
+```yaml
+beken_irda:
+  id: irda_rx
+  pin:
+    number: P26
+    mode: INPUT_PULLUP
+```
+
+## Configuration variables
+
+- **pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The input pin to receive the IR signal on.
+  Defaults to `P26`. Hardware mode requires P26; timer mode accepts any internal input pin. The pin must
+  not be inverted; both frontends read the receiver output active-low.
+- **mode** (*Optional*, enum): The receiver frontend. One of `timer` or `hardware`. Defaults to `timer`.
+  The timer-only options below are rejected in hardware mode.
+- **sample_period** (*Optional*, [Time](/guides/configuration-types#time)): How often the pin is sampled, in
+  range `50us` to `1000us`. Defaults to `100us`. Timer mode only.
+- **tolerance** (*Optional*, int, [Time](/guides/configuration-types#time) or mapping): The percentage or
+  time that the decoded signal lengths can deviate. Defaults to `30%`, which covers the `100us` timing
+  quantization for NEC.
+
+  - **type** (**Required**, enum): Set the type of the tolerance. Can be `percentage` or `time`.
+  - **value** (**Required**, int or [Time](/guides/configuration-types#time)): The percentage or time
+    value, in range `0` to `100%` or `0` to `4294967295us`.
+
+- **filter** (*Optional*, [Time](/guides/configuration-types#time)): Pulses shorter than this are dropped
+  and folded into the surrounding signal, so the decoded timings keep alternating between marks and
+  spaces. Defaults to 1.5 x `sample_period` (`150us` at the default `100us`), which is longer than one
+  sampling period and so removes single-sample glitches. Maximum `1s`. Timer mode only.
+- **idle** (*Optional*, [Time](/guides/configuration-types#time)): A gap of at least this length ends a
+  frame. Defaults to `10ms`, maximum `1s`. Timer mode only.
+- **buffer_size** (*Optional*, int): The number of signed durations the timer capture buffer can hold,
+  in range `64` to `8192`. Defaults to `512`; a NEC frame is about 67 durations. Timer mode only.
+- **dump** (*Optional*, list): Decode and dump these remote codes in the logs (at log.level=DEBUG). Set
+  to `all` to dump all available codecs. See
+  [remote receiver](/components/remote_receiver#configuration-variables) for the list of decoders.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code
+  generation.
+
+## Automations
+
+This component provides the same triggers as [remote receiver](/components/remote_receiver#automations),
+for example:
+
+- **on_nec** (*Optional*, [Automation](/automations)): An automation to perform when a NEC remote code has
+  been decoded. A variable `x` is provided.
+- **on_raw** (*Optional*, [Automation](/automations)): An automation to perform when a raw remote code has
+  been decoded. A variable `x` is provided.
+
+## Repeat frames
+
+`remote_base`'s NEC decoder ignores standalone NEC repeat frames, which are a `9ms` mark, a `2.25ms`
+space, and a `560us` mark. `beken_irda` dispatches repeat frames as raw timings so `on_raw` can see them,
+but it does not trigger `on_nec` for a repeat.
+
+If you need to capture repeats (such as for a hold-to-dim feature), you can keep the last complete
+command in a global and match the repeat shape in `on_raw`. This example also ignores the first
+repeat after each full frame, because some remotes emit one during a short tap:
+
+```yaml
+globals:
+  - id: last_ir_command
+    type: uint8_t
+    initial_value: "0xFF"
+  - id: ignore_repeats_remaining
+    type: uint8_t
+    initial_value: "0"
+
+beken_irda:
+  id: irda_rx
+  pin: P26
+  mode: hardware
+  on_nec:
+    - lambda: |-
+        id(last_ir_command) =
+            x.address == 0xEF00 ? (x.command & 0xFF) : 0xFF;
+        id(ignore_repeats_remaining) = 1;
+  on_raw:
+    - if:
+        condition:
+          lambda: |-
+            if (x.size() < 3)
+              return false;
+            if (x[0] < 8000 || x[0] > 10000)
+              return false;
+            if (x[1] > -2000 || x[1] < -2500)
+              return false;
+            if (x[2] < 400 || x[2] > 700)
+              return false;
+            if (id(ignore_repeats_remaining) > 0) {
+              id(ignore_repeats_remaining)--;
+              return false;
+            }
+            return id(last_ir_command) == 0x00 || id(last_ir_command) == 0x01;
+        then:
+          - light.dim_relative:
+              id: my_light
+              relative_brightness: !lambda "return id(last_ir_command) == 0x00 ? 0.1f : -0.1f;"
+              transition_length: 100ms
+```
+
+## Limitations
+
+- Hardware mode is NEC-only and requires P26. Timer mode accepts any internal input pin but is a sampled
+  capture, not a precision edge peripheral.
+- In timer mode the sampling interrupt parks after a complete frame until the main loop reads it (up to one
+  loop period, about 16 ms), so a frame that starts in that window is dropped.
+- Only BK7231T has been runtime-validated. BK7231N, BK7251/7252 and BK7238 are compile-tested only.
+- On BK7238 the `remote_transmitter` envelope and timer mode both use `BKTIMER1`, so the two cannot be
+  combined; such a configuration is rejected.
+- The BK7238 has no IRDA block at all, and the BK7252N/BK7253 have a different IRDA block, so hardware
+  mode is rejected on those parts; use timer mode instead.
+- The BK7231T/N bit-banged IR transmitter holds an interrupt lock for a whole frame, so simultaneous IR
+  transmit and receive is not possible.
+
+## See Also
+
+- [Remote Receiver](/components/remote_receiver)
+- [Remote Transmitter](/components/remote_transmitter)
+- [IR/RF Proxy](/components/ir_rf_proxy)
+- [Setting up IR Devices](/guides/setting_up_rmt_devices#remote-setting-up-infrared)
+- <APIRef text="remote_base.h" path="remote_base/remote_base.h" />
