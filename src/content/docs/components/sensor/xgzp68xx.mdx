@@ -11,17 +11,17 @@ CFSensor makes multiple generations of sensors with identical model numbers such
 6897D, but unfortunately with completely different I²C interfaces. This component supports both,
 and you select the right one with the `variant` option:
 
-| Variant              | Part number          | I²C address | Datasheet       | Pressure scaling                  |
-| -------------------- | -------------------- | ----------- | --------------- | --------------------------------- |
-| `xgzp68xx` (default) | XGZP68**xx**Dxxxxxxx | `0x6d`      | v3.0 or earlier | `k_value`                         |
-| `xgzp6899dc`         | XGZP6899D**C**xxxxxx | `0x58`      | v3.1 or later   | `pressure_min` and `pressure_max` |
+| Variant              | Part number             | I²C address | Datasheet       | Pressure scaling                  |
+| -------------------- | ----------------------- | ----------- | --------------- | --------------------------------- |
+| `xgzp68xx` (default) | XGZP68xxD, no C after D | `0x6d`      | v3.0 or earlier | `k_value`                         |
+| `xgzp6899dc`         | XGZP6899D**C**xxxxxx    | `0x58`      | after v3.0      | `pressure_min` and `pressure_max` |
 
 You can identify which part you have from the part number (the **C** after the **D** marks the
 newer part), or from the I²C address that the [I²C bus](/components/i2c/) scan shows in the logs at boot.
 
 Unfortunately CFSensor have removed from their website the datasheets for the non-C series of
 sensors. You will need to specifically find the older datasheet from another source.
-**The v3.1 or later datasheets from CFSensor describe the C series which is a completely
+**The datasheets after v3.0 from CFSensor describe the C series which is a completely
 different device even though it has an identical model number to the ≤ v3.0 device**.
 
 The `xgzp6899dc` variant has been tested with the XGZP6899DC. Other C series models such as the
