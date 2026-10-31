@@ -212,8 +212,7 @@ device class.
 
 [Sensors](/components/sensor#config-sensor) are implemented by default as analog input clusters with description,
 engineering_units, and present_value attributes. On `ESP32` additionally the application type and resolution
-attributes are set if applicable. `cluster: device_class` is supported for `temperature`, `humidity`,
-`atmospheric_pressure`, `pressure`, `volume_flow_rate`, `illuminance`, `pm25`, and `carbon_dioxide` device classes.
+attributes are set if applicable.
 
 #### Additional configuration variables
 
@@ -221,6 +220,12 @@ attributes are set if applicable. `cluster: device_class` is supported for `temp
   the unit of the component is used and if the component does not set a unit, values are unitless.
   Only a limited set of units is supported. Unsupported units will revert to unitless.
   This is exposed as the Zigbee engineering units attribute.
+- **cluster** (*Optional*, enum): One of `generic`, `device_class`, and `power_config`. `device_class`
+  is supported for `temperature`, `humidity`, `atmospheric_pressure`, `pressure`, `volume_flow_rate`,
+  `illuminance`, `pm25`, and `carbon_dioxide` device classes and uses the corresponding measurement
+  clusters. `power_config` is supported for `battery` and `voltage` device classes and should only be
+  used for the devices own battery. This cluster should be used only on the first endpoint. Note: Battery
+  voltage is currently not detected by Z2M and ZHA adds it as an extra attribute to the battery entity.
 
 ### Switch
 
