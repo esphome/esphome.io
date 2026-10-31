@@ -1,0 +1,54 @@
+---
+description: "TFLite Micro model loading, CRC32 verification and ModelHandler facade"
+title: "TFLite Model Loader"
+---
+
+The `tflite_model_loader` component is a **library-only component**: it has no user-facing configuration options and is
+loaded automatically as a dependency of the `tflite_micro_runtime`
+component and of the third-party components that consume it.
+
+- `ModelLoader` builds a `MicroMutableOpResolver` from the model's own operator list (through
+  `tflite_op_processor`), loads the model into a `MicroInterpreter` and allocates the tensor arena through
+  `tflite_memory_handler`.
+- `crc32.h/cpp` provide the CRC32 helpers used to verify model data integrity at load time.
+- `ModelHandler` (namespace `esphome::tflite_model_loader`) is the facade over the loader, memory handler and
+  output processor that consumer-facing classes such as `TFLiteMicroHelper` drive.
+
+The component is loaded automatically by `tflite_micro_runtime`.
+
+## Example configuration entry
+
+The component has no options of its own: the model, its input geometry and the tensor arena are taken
+from the `tflite_micro_runtime` instance that loads it:
+
+```yaml
+tflite_micro_runtime:
+  - id: digit_reader
+    model_type: image
+    model: "models/digit_recognizer.tflite"
+    # Geometry and arena for the interpreter created by the loader
+    tensor_arena_size: 200KB
+    input_type: uint8
+    input_width: 32
+    input_height: 20
+    input_channels: 1
+```
+
+## Configuration Variables
+
+This component has no configuration variables of its own: it is loaded automatically by `tflite_micro_runtime`,
+which owns the user-facing options. The model, its input geometry and the tensor arena are configured on the consuming `tflite_micro_runtime` instance.
+
+The empty schema also allows loading it explicitly, which is mainly useful when another component declares it
+in its `DEPENDENCIES` (the ESPHome component tests do this):
+
+```yaml
+tflite_model_loader:
+```
+
+## See Also
+
+- `tflite_micro_runtime` - the user-facing component that loads this library
+  automatically
+- [esphome_ai_component Demo](https://github.com/nliaudat/esphome_ai_component) - working demo with pre-trained
+  models and camera integration
