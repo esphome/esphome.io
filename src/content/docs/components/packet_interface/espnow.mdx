@@ -1,0 +1,61 @@
+---
+description: "Instructions for setting up an ESP-NOW packet interface on ESPHome"
+title: "ESP-NOW Packet Interface"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `espnow` [Packet Interface](/components/packet_interface/) platform sends and receives packets with
+[ESP-NOW](/components/espnow/), between ESP32 and ESP8266 devices on the same Wi-Fi channel. Each packet is sent as
+one ESP-NOW packet.
+
+With a `peer_address`, packets are sent to that device only, and only packets that device sends to this one are
+accepted, so no [addressing layer](/components/packet_interface/#addressing) is needed, and one cannot be configured.
+The device is added to the peers of the `espnow` component.
+
+Without a `peer_address`, packets are broadcast to every device on the channel, and every broadcast packet received
+is accepted, including from devices that are not in the `espnow` component's peers. An addressing layer can then tell
+the devices apart. The [reliability](/components/packet_interface/#reliability) and
+[session](/components/packet_interface/#session) layers, and the rolling code, work between two devices only, so on
+such a link they need an addressing layer with a `destination`.
+
+One `espnow` component can carry links to several peers and a broadcast link at the same time. On ESP8266, which does
+not report where a packet was sent, a broadcast link also receives the packets sent to this device by its peers, so
+there an addressing layer is needed on the broadcast link to drop them. In the same way, a peer link on ESP8266 also
+receives the broadcasts sent by its peer.
+
+ESP-NOW does not resend lost packets on its own, so add a [reliability layer](/components/packet_interface/#reliability)
+if every packet must arrive. Received packets carry the sender's MAC address and, on ESP32, the RSSI.
+
+## Example Configuration
+
+```yaml
+# Example configuration entry
+espnow:
+
+packet_interface:
+  - platform: espnow
+    id: espnow_link
+    peer_address: 11:22:33:44:55:66
+    encryption: !secret espnow_link_key
+    reliability:
+    session:
+```
+
+## Configuration variables
+
+- **peer_address** (*Optional*, MAC address): The MAC address of the device to exchange packets with. Defaults to
+  `FF:FF:FF:FF:FF:FF`, which broadcasts to every device.
+- **espnow_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the [ESP-NOW](/components/espnow/)
+  component to use.
+- **max_packet_size** (*Optional*, int): The largest packet, in bytes, that can be sent or received. It cannot be
+  larger than the `max_payload_size` of the `espnow` component. Defaults to `250`. Use a
+  [fragmentation layer](/components/packet_interface/#fragmentation) for larger packets.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+
+## See Also
+
+- [Packet Interface Component](/components/packet_interface/)
+- [ESP-NOW Component](/components/espnow/)
+- [Entity Transport Component](/components/entity_transport/)
+- <APIRef text="espnow_packet_interface.h" path="espnow/packet_interface/espnow_packet_interface.h" />

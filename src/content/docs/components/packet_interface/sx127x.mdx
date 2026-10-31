@@ -1,0 +1,78 @@
+---
+description: "Instructions for setting up an SX127x LoRa packet interface on ESPHome"
+title: "SX127x Packet Interface"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `sx127x` [Packet Interface](/components/packet_interface/) platform sends and receives packets with an SX127x
+radio configured with the [SX127x](/components/sx127x/) component. Each packet is sent as one radio packet, so the
+radio itself marks where a packet starts and ends, and checks it with its CRC if `crc_enable` is set.
+
+The radio must send packets of varying length, so its `payload_length` must be `0`, the default.
+The radio must listen again after sending (`rx_start: true`, the default) when the link has a reliability or
+session layer or the rolling code, as these need packets back from the peer.
+Without LoRa modulation, the radio must be in packet mode (`packet_mode: true`), and it sends at most 64 bytes in a
+packet, so `max_packet_size` must be 64 or less. It must also have a `sync_value` set, as this is how the interface
+tells that a packet is arriving, so that it does not send over it.
+
+Received packets carry the radio's RSSI and SNR, which the layers above pass on.
+
+A radio channel is shared by every device in range, so an [addressing layer](/components/packet_interface/#addressing)
+is usually needed: it drops packets meant for other devices, and lets the
+[reliability](/components/packet_interface/#reliability) and [session](/components/packet_interface/#session) layers
+work with one device among several.
+
+Sending waits until the radio has transmitted the packet, which takes from a few milliseconds to several seconds,
+depending on the packet size, spreading factor and bandwidth: a 255-byte LoRa packet at 125 kHz takes about 0.4 s at
+spreading factor 7, 2.3 s at 10 and 9 s at 12. While it sends, the radio cannot receive, so a packet is not sent
+while the radio is receiving one: the send fails, and the component sending it is told, but nothing is logged. A
+[reliability layer](/components/packet_interface/#reliability) sends it again shortly, and `entity_transport` tries
+again after a second. Other components, such as `packet_transport`, do not, so use a reliability layer with them, or
+the packet is lost. Packets are refused for at most as long as the largest packet takes to send, and at least 2
+seconds, so a receive that never ends cannot stop sending; after that, the packet is sent anyway, and a warning is
+logged.
+
+With a [reliability layer](/components/packet_interface/#reliability), the `timeout` must allow for a packet and
+its acknowledgement to be sent, which at high spreading factors means several seconds. `ack_delay` should be about
+the time one packet takes to send, so that the acknowledgement does not collide with a second packet from the other
+device. With spreading factor 7 and a bandwidth
+of 125 kHz, `timeout: 500ms` and `ack_delay: 100ms` work well. Two devices that send at the same regular interval can
+still collide now and then; the reliability layer sends again after a slightly random delay.
+
+## Example Configuration
+
+```yaml
+# Example configuration entry
+sx127x:
+  # ... radio pins and settings, with modulation: LORA
+  frequency: 917MHz
+  modulation: LORA
+  crc_enable: true
+
+packet_interface:
+  - platform: sx127x
+    id: lora_link
+    addressing:
+      address: 0x0001
+      destination: 0x0002
+    reliability:
+      timeout: 500ms
+      ack_delay: 100ms
+    session:
+```
+
+## Configuration variables
+
+- **sx127x_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the [SX127x](/components/sx127x/) radio
+  to use. Required only if more than one is configured.
+- **max_packet_size** (*Optional*, int): The largest packet, in bytes, that can be sent or received. Range is 16 to
+  255. Defaults to `255`.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+
+## See Also
+
+- [Packet Interface Component](/components/packet_interface/)
+- [SX127x Component](/components/sx127x/)
+- [Entity Transport Component](/components/entity_transport/)
+- <APIRef text="sx127x_packet_interface.h" path="sx127x/packet_interface/sx127x_packet_interface.h" />
