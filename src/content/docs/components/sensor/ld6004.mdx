@@ -352,6 +352,13 @@ the `apply_area` button, so all three belong to the same hub. See the
   **Apply Area** to send them. A minimum above its matching maximum is rejected with a warning
   instead of being written.
 
+> [!NOTE]
+> A number shows a new value only once its command is queued for the module. `hold_delay`,
+> `low_power_sleep_time`, `dwell_lifetime` and `output_interval` take whole numbers only: a fractional
+> value is not sent, and the number keeps its previous value. `z_min` and `z_max` are sent together:
+> setting one while the other has no value yet keeps it until both are set, and a pair with `z_min`
+> above `z_max` is not sent.
+
 The optional coordinates under `area_config` are:
 
 - **x_min** (*Optional*, number): Minimum X coordinate in meters.
@@ -426,7 +433,8 @@ select:
 > modes are reflected once you set them.
 
 The `work_mode` select configures the operating mode. The `work_mode` text sensor reports the same
-five states back from the module.
+five states back from the module. A select shows a new option only once its command is queued for the
+module.
 
 > [!NOTE]
 > If no area ID is selected, **Apply Area** is ignored to prevent writing to the wrong region.
@@ -453,8 +461,10 @@ switch:
   reads. All options from
   [Switch](/components/switch/#config-switch).
 - **target_display** (*Optional*, switch): Enable or disable target reporting (`0x0A04`). If disabled, target
-  sensors will show `unknown` and target presence binary sensors turn off until re-enabled. All
-  options from [Switch](/components/switch/#config-switch).
+  sensors show `unknown` and the per-target `target_1` to `target_3` binary sensors turn off until
+  re-enabled. The overall `target` binary sensor also follows detection-area presence, which keeps
+  updating from area reports, so it can stay on. All options from
+  [Switch](/components/switch/#config-switch).
 
 > [!NOTE]
 > Each switch applies its own [`restore_mode`](/components/switch/#config-switch) on boot. `point_cloud`
