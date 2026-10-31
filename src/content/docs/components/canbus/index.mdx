@@ -187,9 +187,11 @@ on_...:
 
 **Configuration variables:**
 
-- **data** (**Required**, binary data, [templatable](/automations/templates)): Data to transmit, up to 8 bytes for
-  classic CAN or 64 bytes for CAN FD. CAN FD payload lengths above 8 must be 12, 16, 20, 24, 32, 48, or 64 bytes,
-  unless `pad_data` is enabled.
+- **data** (**Required**, binary data, [templatable](/automations/templates)): Data to transmit. Classic CAN sends
+  at most 8 bytes. Longer fixed payloads are rejected when the frame format is known during configuration validation.
+  Otherwise, longer payloads are truncated to the first 8 bytes at runtime and a warning is logged. CAN FD supports
+  up to 64 bytes. CAN FD payload lengths above 8 must be 12, 16, 20, 24, 32, 48, or 64 bytes, unless `pad_data` is
+  enabled. Non-templated data is limited to 64 bytes during configuration validation.
 
 - **canbus_id** (*Optional*): Sets the CAN bus ID to use for transmitting the frame. Required if you are have multiple
   CAN bus platforms defined in your configuration.
@@ -214,8 +216,9 @@ on_...:
 - **pad_data** (*Optional*, boolean, [templatable](/automations/templates)): Pad a CAN FD payload with zero bytes
   to the next supported length. Defaults to `default_pad_data` on the CAN bus.
 
-Invalid frames are rejected and not sent. This includes payloads that exceed the frame format's maximum length,
-unsupported CAN FD frames, and CAN FD payload lengths that require padding when padding is disabled.
+Invalid frames are rejected and not sent. This includes CAN FD payloads exceeding 64 bytes, unsupported CAN FD frames,
+and CAN FD payload lengths that require padding when padding is disabled. Invalid fixed values can also be rejected
+during configuration validation, including when `fd` or `pad_data` uses the CAN bus default.
 
 ## CAN FD and Bit Rate Switching
 
