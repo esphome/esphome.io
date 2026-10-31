@@ -141,6 +141,10 @@ The [CircuitSetup 6-Channel Energy Meter](https://circuitsetup.us/product/expand
   The voltage thresholds must satisfy `sag < nominal < peak` and the frequency thresholds `low < high`. The voltage
   thresholds are converted to register values with `gain_voltage` and `current_peak` with `gain_ct`, so every
   configured phase needs a nonzero gain and the result must fit the chip's 16-bit threshold registers.
+  A lower `gain_voltage` lowers the highest over-voltage limit that fits: with `gain_voltage: 4470` it is about `126V`.
+  A configured limit that does not fit is rejected with the highest value that fits. If the default does not fit,
+  config validation warns that the over-voltage alarm cannot trigger; set `voltage_peak_v` or `voltage_peak_pct`
+  to a value that fits.
 
 ## Thresholds
 
