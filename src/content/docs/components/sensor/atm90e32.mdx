@@ -131,8 +131,11 @@ The [CircuitSetup 6-Channel Energy Meter](https://circuitsetup.us/product/expand
     `122%`; a value above `100%` needs the percent sign. Cannot be combined with `voltage_peak_v`. Defaults to `122%`.
   - **voltage_peak_v** (*Optional*, voltage): Over-voltage threshold as an absolute RMS voltage. Cannot be combined with
     `voltage_peak_pct`.
-  - **current_peak** (*Optional*, current): Over-current threshold in RMS amperes. Defaults to `65.53A`; the chip's
-    current register limits it to `65.535A`.
+  - **current_peak** (*Optional*, current): Over-current threshold in RMS amperes, at most `65.535A`. When not set,
+    the chip keeps its fixed over-current register value and only the RMS current is checked, against `65.53A`. When
+    set, the threshold is also written to the chip. The chip's flag compares the peak of each sample, so a current
+    with tall peaks can report over current below the RMS limit; setting `65.53A` is therefore not the same as
+    leaving it out.
   - **frequency_low_hz** (*Optional*, frequency): Low frequency threshold. Defaults to `line_frequency - 3Hz`.
   - **frequency_high_hz** (*Optional*, frequency): High frequency threshold. Defaults to `line_frequency + 3Hz`.
   - **allow_unsafe_thresholds** (*Optional*, boolean): Accept a sag threshold outside `50%` to `99%` or an
@@ -202,7 +205,9 @@ Configuration variables:
 
     Will Report:
 
-    - **Over Current**: The RMS current is above `current_peak` in `thresholds` (`65.53A` by default).
+    - **Over Current**: The RMS current read from the chip, before any sensor filters, is above `current_peak` in
+      `thresholds` (`65.53A` when not set). When `current_peak` is set and the phases share one `gain_ct`, the chip's
+      over-current flag also reports it, and that flag can trip below the RMS limit on a current with tall peaks.
     - **Over Voltage** / **Voltage Sag**: The RMS voltage is above the over-voltage threshold or below the sag
       threshold in `thresholds` (`122%` and `78%` of the nominal voltage by default).
     - **Phase Loss**: Indicates if the phase has dropped out.
