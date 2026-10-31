@@ -13,6 +13,14 @@ HTTP leaves the other listeners running. Samples are forwarded without resamplin
 > A microphone stream can expose private audio. Use this component only on a trusted network. Without web server
 > authentication or transport protection, anyone who can reach the device can listen to the microphone.
 
+> [!IMPORTANT]
+> Over Wi-Fi, this component needs [PSRAM](/components/psram/). Wi-Fi often pauses for one to several seconds, and
+> only the 128 KiB buffer that PSRAM allows holds enough audio to cover those pauses. Without PSRAM, the buffer is
+> 16 KiB (half a second of 16 kHz audio), and streams over Wi-Fi are expected to end with a full buffer after a few
+> seconds. On a device without PSRAM, use Ethernet. The component also turns on
+> [high-performance networking](/components/network/), because the default TCP send buffer is too small for an audio
+> stream over Wi-Fi.
+
 ```yaml
 # Example configuration entry
 microphone_http_stream:
@@ -23,15 +31,17 @@ microphone_http_stream:
 
 ## Configuration Variables
 
-- **stream_id** (**Required**, string): Stable ID used in the stream URL. Use 1–32 lowercase ASCII letters, digits,
-  underscores or hyphens; the first character must be a letter.
+- **stream_id** (*Optional*, string): Stable ID used in the stream URL. Use 1–32 lowercase ASCII letters, digits,
+  underscores or hyphens; the first character must be a letter. Defaults to the microphone's ID, lowercased, with
+  other characters replaced by `_`, an `m` added in front when it does not start with a letter, and cut to 32
+  characters.
 - **source** (**Required**, [Microphone Source](/components/microphone/#microphone-source-configuration)): The source
   must output mono, 16-bit PCM. Select a microphone that exposes the desired capture stage.
 - **max_clients** (*Optional*, integer): Maximum simultaneous listeners, from `1` to `3`. Defaults to `1`. Each
-  configured slot reserves a buffer at startup, even when no client is connected. With one slot, the buffer is 16 KiB;
-  PSRAM is preferred, with a fallback to internal RAM. Two or three slots require an enabled [PSRAM](/components/psram/)
-  component. Each buffer is then 128 KiB in PSRAM, for a total of 256 or 384 KiB, respectively. If the buffers cannot
-  be allocated at startup, both audio endpoints return HTTP `503`.
+  configured slot reserves a buffer at startup, even when no client is connected. With one slot, the buffer is 128 KiB
+  in PSRAM when the device has PSRAM, and 16 KiB in internal RAM when it does not. Two or three slots require an
+  enabled [PSRAM](/components/psram/) component. Each buffer is then 128 KiB in PSRAM, for a total of 256 or 384 KiB,
+  respectively. If the buffers cannot be allocated at startup, both audio endpoints return HTTP `503`.
 
 ## HTTP Endpoints
 
