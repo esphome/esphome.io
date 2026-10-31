@@ -17,9 +17,9 @@ HTTP leaves the other listeners running. Samples are forwarded without resamplin
 > Over Wi-Fi, this component needs [PSRAM](/components/psram/). Wi-Fi often pauses for one to several seconds, and
 > only the 128 KiB buffer that PSRAM allows holds enough audio to cover those pauses. Without PSRAM, the buffer is
 > 16 KiB (half a second of 16 kHz audio), and streams over Wi-Fi are expected to end with a full buffer after a few
-> seconds. On a device without PSRAM, use Ethernet. The component also turns on
+> seconds. On a device without PSRAM, use Ethernet. When Wi-Fi is configured, the component also turns on
 > [high-performance networking](/components/network/), because the default TCP send buffer is too small for an audio
-> stream over Wi-Fi.
+> stream over Wi-Fi. Ethernet-only devices keep the default buffers.
 
 ```yaml
 # Example configuration entry
