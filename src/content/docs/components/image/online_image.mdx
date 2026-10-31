@@ -16,7 +16,8 @@ downloaded, decoded and drawn at runtime.
 >   - 8-bit / indexed
 >   - 24-bit / RGB
 >
-> - JPEG images, currently only baseline images (no progressive support)
+> - JPEG images: baseline, progressive (see [Progressive JPEG Images](#progressive-jpeg-images)) and 8-bit extended
+>   sequential
 >
 > - PNG images
 >
@@ -89,6 +90,24 @@ Advanced options:
   `buffer_size`, and the buffer grows to hold the whole image, which is downloaded completely before it is decoded.
   Without the size, a JPEG image is always downloaded completely before it is decoded, and `buffer_size` must be
   large enough to hold the whole image.
+
+## Progressive JPEG Images
+
+A progressive JPEG holds the image in several scans, each of which adds detail to the whole image, so nothing can be
+drawn until the last scan has arrived. The scans are decoded into a buffer for the coefficients of the whole image as
+they download, in the same way as the rows of a baseline image, so `buffer_size` still only has to hold the JPEG
+headers. The image is drawn once the last scan has been decoded, and the buffer is then freed.
+
+This buffer comes on top of the memory for the decoded image. Its size depends on the size of the image on the server
+and on its chroma subsampling: about 3 bytes per pixel for 4:2:0 colour (the usual for photos), 4 for 4:2:2, 6 for
+4:4:4 and 2 for grayscale. A 1920x1080 photo in 4:2:0 needs about 6 MB. When the image on the server is at least 4
+times as large as the `resize` dimensions in both directions, it is decoded at 1/4 or 1/8 of its size, and the buffer
+shrinks to 1/7 or 1/64 of that. To keep the buffer small, use images that are no larger than needed, or use baseline
+JPEG images, which need no such buffer.
+
+On ESP32 the buffer is allocated in PSRAM when there is PSRAM with room for it, and otherwise in internal RAM only if
+that leaves 48 KB free. If the buffer does not fit, only the average colour of each 8x8 block is kept, and the image
+is drawn with each block in a single colour. If even that does not fit, the image fails to decode.
 
 ## Automations
 
