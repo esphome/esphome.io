@@ -176,6 +176,11 @@ on_...:
 > This is a "smart" asynchronous delay - other code will still run in the background while
 > the delay is happening. When using a lambda call, you should return the delay value in milliseconds.
 
+> [!WARNING]
+> `delay` makes the automation wait, which costs RAM and can allocate memory each time it runs.
+> When a trigger can start the second half of the work instead, use that trigger. See
+> [Actions That Wait](#actions-that-wait).
+
 ### `if` Action
 
 This action first evaluates the `condition:` and then either
@@ -287,6 +292,11 @@ on_...:
 
 - **condition** (**Required**, [Condition](#all-conditions)): The condition to wait to become true.
 - **timeout** (*Optional*, [Time](/guides/configuration-types#time), [templatable](/automations/templates)): Time to wait before timing out. Defaults to never timing out.
+
+> [!WARNING]
+> `wait_until` allocates memory every time it starts waiting and checks its condition on every pass of the main loop
+> until it is true. Prefer the trigger that fires when the condition becomes true, such as `on_press` or
+> `on_client_connected`. See [Actions That Wait](#actions-that-wait).
 
 ### `while` Action
 
@@ -500,6 +510,63 @@ of the following components:
 
 Beware, however, that disabling the reboot timeout(s) effectively disables the reboot watchdog, so you will need to
 power-cycle the device if it proves to be/remain unreachable on the network.
+
+<span id="actions-that-wait"></span>
+
+### Actions That Wait
+
+Most actions finish right away. A few make the automation stop and continue later, and while it waits the
+automation has to keep its place and a copy of the trigger values (such as `x`) in memory. These actions wait:
+
+- `delay`
+- `wait_until`
+- `script.wait`
+- `if`, `while` and `repeat` blocks that contain one of the actions above
+- some actions that wait for an answer from the network, such as the `http_request` actions and `ble_client.ble_write`
+
+Waiting costs memory:
+
+- `wait_until` and `script.wait` allocate memory on the heap each time they start waiting, and they check
+  their condition on every pass of the main loop until it is true.
+- `delay` stores a copy of the trigger values, which can also allocate memory when the trigger has values.
+- Every run that is waiting at the same time keeps its own copy. A trigger that fires again during a `delay`, or a
+  script in `parallel` or `queued` mode, multiplies the cost. A `queued` script allocates memory for each run it
+  queues.
+
+Allocating and freeing heap memory again and again breaks the free memory into small pieces. A device that runs for
+months can then fail to allocate a larger block even when enough memory is free in total. So when a trigger can
+start the work at the right time, use it instead of waiting:
+
+| Instead of | Use |
+| --- | --- |
+| `wait_until: api.connected` | the `on_client_connected` trigger of the [API](/components/api/) |
+| `wait_until: wifi.connected` | the `on_connect` trigger of [Wi-Fi](/components/wifi/) |
+| `wait_until` a binary sensor | that binary sensor's `on_press`, `on_release` or `on_state` trigger |
+| `delay` after `on_press` to ignore short presses | the `delayed_on` [filter](/components/binary_sensor/#delayed_on), or `on_click` with `min_length` |
+| `delay` between light brightness steps | `transition_length` on `light.turn_on` |
+| `while` with a `delay` that polls a value | an [`interval`](/components/interval/) or the component's `update_interval` |
+| `script.wait` followed by more actions | the same actions at the end of the script |
+
+For example, this waits for the API on every boot:
+
+```yaml
+esphome:
+  on_boot:
+    then:
+      - wait_until: api.connected
+      - logger.log: "API connected"
+```
+
+This runs the same action from a trigger and never waits:
+
+```yaml
+api:
+  on_client_connected:
+    - logger.log: "API connected"
+```
+
+Waiting is still the right tool when the work needs it, such as a timer (see below). Keep the waiting part
+short, and limit `max_runs` on `parallel` scripts.
 
 <span id="timers-timeouts"></span>
 
