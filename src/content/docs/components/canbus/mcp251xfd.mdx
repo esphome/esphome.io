@@ -1,0 +1,118 @@
+---
+description: "Instructions for setting up the MCP251XFD CAN bus platform in ESPHome"
+title: "MCP251XFD"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The MCP251XFD CAN bus platform supports MCP2517FD, MCP2518FD, and MCP251863 controllers for CAN 2.0 and CAN FD. The
+MCP251863 combines an MCP2518FD controller with an integrated 5 Mbps CAN FD transceiver. The controller
+communicates with ESPHome over the [SPI bus](/components/spi/). Configure an SPI bus with both `mosi_pin` and
+`miso_pin` defined.
+
+The MCP2517FD and MCP2518FD controllers need a separate CAN transceiver connected to the CAN bus. Use a CAN FD-capable
+transceiver when using CAN FD, and terminate the bus according to your network's requirements.
+
+```yaml
+# Example configuration entry
+canbus:
+  - platform: mcp251xfd
+    cs_pin: GPIOXX
+    can_id: 4
+```
+
+## Configuration Variables
+
+- **cs_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The SPI chip select pin.
+
+- **clock** (*Optional*, enum): Frequency of the controller's oscillator. One of `4MHZ`, `20MHZ`, or `40MHZ`.
+  Defaults to `40MHZ`. A 4 MHz oscillator uses the controller's PLL to generate a 40 MHz system clock.
+
+- **bit_rate** (*Optional*, enum): Nominal CAN bit rate, used for arbitration and classic CAN frames. See the
+  [CAN bus bit rates](/components/canbus/#config-canbus) for the available values. The maximum is `1000KBPS`.
+  Defaults to `500KBPS`.
+
+- **data_bit_rate** (*Optional*, enum): CAN FD data-phase bit rate when bit rate switching is enabled. Accepts the
+  nominal `bit_rate` values and `2000KBPS`, `3000KBPS`, `4000KBPS`, `5000KBPS`, `6000KBPS`, `7000KBPS`, and
+  `8000KBPS`. It must be at least `bit_rate`. Defaults to `2000KBPS`.
+
+- **mode** (*Optional*, enum): Operating mode. One of:
+
+  - `NORMAL`: Send and receive classic CAN and CAN FD frames. *(default)*
+  - `CLASSIC`: Send and receive classic CAN frames only.
+  - `LOOPBACK`: Test the controller using internal loopback.
+  - `LISTENONLY`: Receive frames without transmitting or acknowledging them.
+
+- **interrupt_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): Internal GPIO input connected
+  to the controller's active-low INT output. If omitted, the controller is polled for received frames. The pin cannot
+  be inverted or shared with another component.
+
+- **data_rate** (*Optional*, frequency): SPI clock rate. Defaults to `8MHz`. The maximum is `8.5MHz` with a 20 MHz
+  oscillator, or `17MHz` with a 4 MHz or 40 MHz oscillator.
+
+- **spi_mode** (*Optional*, enum): SPI mode, either `MODE0` or `MODE3`. Defaults to `MODE0`.
+
+- **default_fd** (*Optional*, boolean): Send CAN FD frames by default with `canbus.send`. Defaults to `true` in
+  `NORMAL` mode and `false` in other modes. Must be `false` in `CLASSIC` mode.
+
+- **default_bit_rate_switch** (*Optional*, boolean): Enable bit rate switching by default for CAN FD frames sent with
+  `canbus.send`. Defaults to `false` and must be `false` in `CLASSIC` mode.
+
+- All other options from [CAN Bus](/components/canbus/#config-canbus).
+
+The controller buffers up to 20 received frames and 8 frames waiting to be transmitted. Received frames can be
+dropped if the receive buffer fills before ESPHome processes them.
+
+## Bit Timing
+
+The nominal `bit_rate` applies during arbitration and to classic CAN frames. With bit rate switching enabled, a CAN FD
+frame uses `data_bit_rate` for its data phase. The data bit rate must be greater than or equal to the nominal rate.
+
+The MCP2518FD datasheet specifies the following tested bit rates:
+
+| Phase | Tested minimum | Typical | Maximum |
+| --- | --- | --- | --- |
+| Nominal | 125 kbps | 500 kbps | 1 Mbps |
+| Data | 500 kbps | 2 Mbps | 8 Mbps |
+
+The maximum rates are limits. Lower rates than the tested minimum can be configured if the controller's timing
+constraints allow them.
+
+The configured `clock`, `bit_rate`, and `data_bit_rate` must allow both CAN bit timings to use a common prescaler
+with at most 0.5% error. Unsupported combinations are rejected during configuration validation, including in
+`CLASSIC` mode. For example, `8000KBPS` data rate requires a 4 MHz or 40 MHz oscillator.
+
+The CAN transceiver also limits the usable bit rates and timing. Choose rates supported by the transceiver and the
+rest of the bus. The MCP251863's integrated transceiver supports up to 5 Mbps, even though the controller can be
+configured for a data rate of up to 8 Mbps. ESPHome does not validate the selected rate against the transceiver.
+
+At higher bit rates, bus wiring, length, and termination become more important. If you encounter data corruption or
+CAN errors, check the physical bus and try a slower bit rate configured consistently across the nodes.
+
+## CAN FD Example
+
+In `NORMAL` mode, `canbus.send` uses CAN FD by default. Enable bit rate switching to use the configured data-phase
+rate. Set `fd: false` on an action to send a classic CAN frame instead. See
+[CAN Bus](/components/canbus/#canbussend-action) for payload lengths and padding options.
+
+```yaml
+canbus:
+  - platform: mcp251xfd
+    cs_pin: GPIOXX
+    interrupt_pin: GPIOXX
+    can_id: 0x123
+    bit_rate: 500KBPS
+    data_bit_rate: 2000KBPS
+
+interval:
+  - interval: 1s
+    then:
+      - canbus.send:
+          bit_rate_switch: true
+          data: [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b]
+```
+
+## See Also
+
+- [CAN Bus Component](/components/canbus/)
+- <APIRef text="mcp251xfd.h" path="mcp251xfd/mcp251xfd.h" />
