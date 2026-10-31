@@ -139,6 +139,10 @@ most of the configuration will be set by default, but can be overridden if neede
 - **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The RESET pin, if required.
 - **enable_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): An optional pin to enable the display, if required. A list of pins can be provided for displays that require multiple enable pins. A full pin configuration may be provided
   to set the pin mode and inverted property. By default the pin will be driven high to enable the display.
+  If `enable_pin` is not set, the model's default enable pins are used, if it has any. A default enable pin
+  that is also used elsewhere in the configuration, for example by a GPIO switch, is left out, so you can
+  control that pin yourself. If every other use of the pin sets `allow_other_uses: true`, the pin is shared
+  with the display instead. Setting `enable_pin` replaces all of the model's default enable pins.
 
 - **color_order** (*Optional*): Should be one of `bgr` (default) or `rgb`. This specifies the order of the color channels in the display panel. The default is `bgr` for most displays, but some displays may require `rgb`. It does not affect the color order of the display buffer, which is always RGB.
 - **dimensions** (*Optional*): Dimensions of the screen, specified either as *width* **x** *height* (e.g `320x240`  ) or with separate config keys. If not provided the dimensions will be determined by the model selected. This is required for the `CUSTOM` model, and is optional for other models. The dimensions are specified in pixels, and the width and height must be greater than 0. The following keys are available:

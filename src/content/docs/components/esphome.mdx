@@ -74,6 +74,15 @@ Advanced options:
 
   - **name** (**Required**, string): Name of the project
   - **version** (**Required**, string): Version of the project
+  - **sbom** (*Optional*): Details about the maker of the project for its software bill of materials.
+    Only available on ESP32. See [Software bill of materials (SBOM)](#software-bill-of-materials-sbom).
+
+    - **supplier** (**Required**, string): Name of the organization that makes and supplies the firmware.
+    - **contact** (*Optional*, string): Email address for security reports.
+    - **url** (*Optional*, string): Web address for security reports, such as a security policy page.
+
+    At least one of `contact` or `url` is required.
+
   - **on_update** (*Optional*, [Automation](/automations)): An automation to perform when the device firmware is updated.
     This compares the above `version` field with the `version` that was in the previous firmware
     as long as the `name` matches.
@@ -387,6 +396,43 @@ esphome:
     version: "1.0.0"
 ```
 
+## Software bill of materials (SBOM)
+
+A software bill of materials (SBOM) lists the software that makes up a firmware, with the version of each part.
+Security standards for connected products, such as EN 18031 and the EU Cyber Resilience Act, ask device makers to
+provide one.
+
+When building for ESP32, ESPHome describes the parts it adds to the build: the project,
+ESPHome itself, any [external components](/components/external_components/) and any libraries. Git-sourced external
+components include the exact commit used. ESP-IDF and its components already describe themselves. Espressif's
+[esp-idf-sbom](https://github.com/espressif/esp-idf-sbom) tool combines all of this into an SBOM file after the
+firmware has been compiled:
+
+```bash
+esphome compile my-device.yaml
+esp-idf-sbom create -o my-device.spdx .esphome/build/my-device/build/project_description.json
+```
+
+Replace `my-device` in the path with the device's `name`, which sets the build directory.
+
+The tool can also write [CycloneDX](https://cyclonedx.org) files and check the SBOM for known vulnerabilities; see
+its documentation for details.
+
+Set `sbom` under [`project`](#project-information) so the SBOM names the maker of the firmware and where to
+send security reports:
+
+```yaml
+# Example configuration
+esphome:
+  ...
+  project:
+    name: "acme.thermostat"
+    version: "1.2.0"
+    sbom:
+      supplier: "Acme Corp"
+      contact: "security@acme.example"
+```
+
 <span id="esphome-min_version"></span>
 
 ## Minimum ESPHome version
@@ -481,6 +527,21 @@ into logical devices that appear separately in Home Assistant. This is particula
 - **id** (**Required**, string): Unique identifier for the device.
 - **name** (**Required**, string): Display name for the device.
 - **area_id** (*Optional*, string): Reference to an area ID defined in `areas`.
+- **relation** (**Required**, string): How the sub-device relates to this ESP device. One of `via` or `child`.
+
+### Device Relation
+
+Each sub-device tells Home Assistant how it relates to the ESP device that exposes it:
+
+- `via`: The sub-device is a separate physical device that Home Assistant reaches through this ESP device.
+  Use this when the ESP is a hub or bridge for other hardware, for example RF sensors, Modbus devices, or
+  devices connected over UART, ESP-NOW or UDP. The RF bridge example below uses `via`.
+- `child`: The sub-device is a logical part of this ESP device, not separate hardware. Use this when one
+  ESP controls several zones, channels or outputs that make up a single physical product. Targeting the ESP
+  device in Home Assistant also targets its child devices.
+  The multi-zone controller example below uses `child`.
+
+Requires a Home Assistant version that supports device relations. Older versions treat every sub-device as `via`.
 
 ### Example: RF Bridge Gateway
 
@@ -494,12 +555,15 @@ esphome:
     - id: front_door_device
       name: "Front Door Sensor"
       area_id: entrance_area
+      relation: via  # A separate physical sensor reached over RF
     - id: kitchen_motion_device
       name: "Kitchen Motion"
       area_id: kitchen_area
+      relation: via
     - id: garage_door_device
       name: "Garage Door"
       area_id: garage_area
+      relation: via
 
   areas:
     - id: entrance_area
@@ -534,9 +598,11 @@ esphome:
     - id: living_room_device
       name: "Living Room Controller"
       area_id: living_area
+      relation: child  # One zone of this controller, not separate hardware
     - id: kitchen_device
       name: "Kitchen Controller"
       area_id: kitchen_area
+      relation: child
 
   areas:
     - id: living_area
