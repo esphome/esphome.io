@@ -59,6 +59,7 @@ image:
   and preserve the aspect ratio.
 
 - **placeholder** (*Optional*, [ID](/guides/configuration-types#id)): ID of another [image](/components/image/) to display while the downloaded image is not yet ready.
+  This includes the time a new image of a different size is loading, unless `double_buffer` is set.
   This placeholder image will **not** be resized; regardless of the `resize` option value for the `online_image`.
 
 - **type** (**Required**): Specifies how to encode image internally.
@@ -91,13 +92,22 @@ Advanced options:
   Without the size, a JPEG image is always downloaded completely before it is decoded, and `buffer_size` must be
   large enough to hold the whole image.
 
+- **double_buffer** (*Optional*, boolean): Decode a new image into a second buffer, and keep showing the current
+  image until the new one is complete. If the download fails, the current image stays. This uses twice the memory for
+  the image. Defaults to `false`. Without it, a new image of the same size is drawn over the current one as it loads,
+  and the placeholder is shown while one of a different size loads.
+
 ## Progressive JPEG Images
 
-A progressive JPEG image is drawn only after it is fully decoded. Decoding progressive images requires additional memory for internal tables. That memory is freed once the image is drawn, and `buffer_size` does not need to account for it.
+A progressive JPEG image is drawn only after it is fully decoded.
+Decoding progressive images requires additional memory for internal tables.
+That memory is freed once the image is drawn, and `buffer_size` does not need to account for it.
 
-The extra memory is about 3 bytes per pixel of the original image, so a 1920x1080 photo needs about 6 MB extra.
+The extra memory is about 3 bytes per pixel of the original image,
+so a 1920x1080 photo needs about 6 MB extra.
 
-If that memory isn't available, the image is drawn as blocks of 8x8 pixels, each in a single colour, if possible, otherwise it will fail to load.
+If that memory isn't available, the image is drawn as blocks of 8x8 pixels,
+each in a single colour, if possible, otherwise it will fail to load.
 
 ## Automations
 
@@ -156,6 +166,7 @@ image:
 ```
 
 A good example for that is to update the display component after the download succeeded.
+LVGL image widgets showing the image are redrawn when it changes, so they need no `lvgl.image.update` here.
 
 - **on_error** (*Optional*, [Automation](/automations)): An automation to perform when an error happened during download or decode.
 
