@@ -1,0 +1,124 @@
+---
+title: "Microphone HTTP Stream"
+description: "Stream microphone samples from an ESP32 device over the ESPHome web server."
+---
+
+The `microphone_http_stream` component serves one configured [microphone source](/components/microphone/) over HTTP.
+It requires the [web server](/components/web_server/) and an ESP32 device. The stream requests microphone capture
+when a client connects and releases that request after the last client disconnects. Microphone implementations that
+track listeners can share capture with other components: stopping one of them leaves HTTP streaming, and disconnecting
+HTTP leaves the other listeners running. Samples are forwarded without resampling.
+
+> [!WARNING]
+> A microphone stream can expose private audio. Use this component only on a trusted network. Without web server
+> authentication or transport protection, anyone who can reach the device can listen to the microphone.
+
+> [!IMPORTANT]
+> Over Wi-Fi, [PSRAM](/components/psram/) is strongly recommended. Wi-Fi can pause for one to several seconds, and the
+> 128 KiB buffer that PSRAM allows holds about four seconds of 16 kHz audio, enough to cover those pauses. Without
+> PSRAM, the buffer is 16 KiB (half a second of 16 kHz audio), so a stream over Wi-Fi can still end with a full buffer
+> during a long pause; Ethernet works well without PSRAM. When Wi-Fi is configured, the component also turns on
+> [high-performance networking](/components/network/), because the default TCP send buffer is too small for an audio
+> stream over Wi-Fi. Ethernet-only devices keep the default buffers.
+
+```yaml
+# Example configuration entry
+microphone_http_stream:
+  stream_id: room_mic
+  source:
+    microphone: mic_id
+```
+
+## Configuration Variables
+
+- **stream_id** (*Optional*, string): Stable ID used in the stream URL. Use 1–32 lowercase ASCII letters, digits,
+  underscores or hyphens; the first character must be a letter. Defaults to the microphone's ID, lowercased, with
+  other characters replaced by `_`, an `m` added in front when it does not start with a letter, and cut to 32
+  characters.
+- **source** (**Required**, [Microphone Source](/components/microphone/#microphone-source-configuration)): The source
+  must output mono, 16-bit PCM. Select a microphone that exposes the desired capture stage.
+- **max_clients** (*Optional*, integer): Maximum simultaneous listeners, from `1` to `3`. Defaults to `1`. Each
+  configured slot reserves a buffer at startup, even when no client is connected. With one slot, the buffer is 128 KiB
+  in PSRAM when the device has PSRAM, and 16 KiB in internal RAM when it does not. Two or three slots require an
+  enabled [PSRAM](/components/psram/) component. Each buffer is then 128 KiB in PSRAM, for a total of 256 or 384 KiB,
+  respectively. If the buffers cannot be allocated at startup, both audio endpoints return HTTP `503`.
+
+## HTTP Endpoints
+
+- `GET /audio/microphones` returns metadata without starting capture. The response includes the stream ID, sample rate,
+  number of channels, format, URL and client limit.
+- `GET /audio/microphones/{stream_id}` streams the selected microphone. If every configured client slot is in use,
+  another request receives HTTP `409`.
+
+Both endpoints apply the web server's `allowed_origins` policy to requests with an `Origin` header. Requests without
+an `Origin` header, such as those from native HTTP clients, remain allowed. Origin checks do not replace authentication.
+
+If the microphone stops delivering samples for five seconds, the HTTP connection closes. Sharing behavior depends on
+whether the microphone implementation tracks its listeners.
+
+The response body contains raw **S16LE mono** samples at the source microphone's configured sample rate. Its content
+type is `application/octet-stream`; the `X-Audio-Format`, `X-Audio-Sample-Rate` and `X-Audio-Channels` headers specify
+the format. `audio/L16` describes big-endian samples and does not apply here. Every sample occupies two bytes.
+
+For a microphone configured at 16 kHz, this command plays the stream with FFmpeg's `ffplay`:
+
+```bash
+curl --no-buffer http://DEVICE_IP/audio/microphones/room_mic | ffplay -f s16le -ar 16000 -ac 1 -
+```
+
+Replace `16000` with the `sample_rate_hz` returned by `GET /audio/microphones` if the source uses another rate. The
+component uses the source's rate at device startup and does not change it during an active connection. It does not
+provide acoustic echo cancellation, noise suppression or wake word detection. To stream audio after processing, that
+processing stage must expose its own microphone source and be selected in `source`.
+
+## Logging
+
+The component uses the ESPHome [logger](/components/logger/) with the `microphone_http_stream` tag. Client connections
+and normal disconnections are logged at `INFO`. Failed stream requests, full buffers, incomplete audio frames,
+overlapping audio callbacks and stream timeouts are logged at `WARN`. ESPHome reports permanent setup failures at
+`ERROR` through its core component logging.
+Buffer peak and longest HTTP send time are logged at `DEBUG` when a client disconnects. The component collects these
+diagnostics for every active stream when the firmware is compiled with `logger.level: DEBUG` or more detailed.
+Setting this component's runtime log level to `INFO` suppresses the diagnostic message but does not stop collection.
+With `logger.level: INFO`, the diagnostic fields and calculations are omitted from the firmware.
+
+For routine operation without diagnostic overhead, compile the firmware with:
+
+```yaml
+logger:
+  level: INFO
+```
+
+To investigate stream performance, compile with `logger.level: DEBUG`. You can then set
+`logger.logs.microphone_http_stream: INFO` to hide diagnostic messages while collection continues, and change the
+tag to `DEBUG` to show them. Changing the runtime level cannot enable diagnostics in a firmware compiled at `INFO`.
+
+## Using a DLNA Server
+
+The component provides an HTTP audio source, but does not make the ESP32 a DLNA/UPnP MediaServer. Implementing the
+additional discovery, content directory and media format services on the device would add substantial code and
+resource use. A separate DLNA server can publish the microphone stream to DLNA clients instead.
+
+For example, [Gerbera](https://docs.gerbera.io/en/stable/) can expose the HTTP stream and use FFmpeg to convert its raw
+PCM to MP3. This configuration was tested with Gerbera 3.3.0 and an HTTP source matching this component's format.
+Install Gerbera and FFmpeg on a host that can reach the ESP32 and is reachable by DLNA clients. Create a
+`microphone.m3u` playlist, replacing `DEVICE_IP` with the device's address and `room_mic` with the configured
+`stream_id`:
+
+```text
+#EXTM3U
+#EXTINF:-1,ESPHome microphone,application/octet-stream
+http://DEVICE_IP/audio/microphones/room_mic
+```
+
+Open the [Gerbera transcoding example](/files/microphone_http_stream/gerbera-transcoding.xml) and merge its mapping
+and profile into the existing `<transcoding>` section of Gerbera's `config.xml`. Enable that section, retaining any
+other mappings and profiles; do not create a second `<transcoding>` section. The example converts the raw S16LE stream
+to MP3. Set the input `-ar 16000` to the `sample_rate_hz` returned by `GET /audio/microphones`; use `-ar 48000` for a
+48 kHz source.
+
+Add the playlist to Gerbera's library, for example with `gerbera --add-file /absolute/path/microphone.m3u` when starting
+Gerbera, then select the microphone in a DLNA client. The server opens the ESPHome HTTP stream when playback starts,
+which uses one of the component's `max_clients` slots. Do not label the raw S16LE URL as `audio/mpeg` without the
+conversion shown above. See Gerbera's [playlist format](https://docs.gerbera.io/en/stable/supported-types.html) and
+[transcoding](https://docs.gerbera.io/en/stable/transcoding.html) documentation for other configurations.
