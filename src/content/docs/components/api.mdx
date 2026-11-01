@@ -128,6 +128,10 @@ api:
 - **on_client_disconnected** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform when a client
   disconnects from the API. See [`on_client_disconnected` Trigger](#api-on_client_disconnected_trigger).
 
+- **on_client_synced** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform when a client
+  that subscribed to entity states has received all of them. See
+  [`on_client_synced` Trigger](#on_client_synced-trigger).
+
 - **outgoing_connection** (*Optional*): Have the device open the API connection itself when no dial-back client is
   connected. Requires `encryption`. See
   [Outgoing Connections](#outgoing-connections).
@@ -286,7 +290,8 @@ on_...:
 > Home Assistant is ready for them. Such actions are not delivered and ESPHome logs a warning
 > (versions before 2026.7.0 dropped them silently). The same applies to `homeassistant.event`. If you need to
 > perform an action as soon as a connection is made, add a short `delay` before it so Home Assistant has time to
-> start listening.
+> start listening. To act as soon as Home Assistant is ready, use the
+> [`on_client_synced` Trigger](#on_client_synced-trigger) instead.
 
 Data structures are not possible, but you can create a script in Home Assistant and call with all
 the parameters in plain format.
@@ -417,11 +422,15 @@ on_...:
 
 ### `on_client_connected` Trigger
 
-This trigger is activated each time a client connects to the API. Two variables of
-type `std::string` are available for use by actions called from within this trigger:
+This trigger is activated each time a client connects to the API. Two string variables are available for use by
+actions called from within this trigger:
 
 - `client_address`  : the IP address of the client that connected
 - `client_info`  : the name of the client that connected
+
+The trigger fires before the client has subscribed to entity states or Home Assistant actions, so
+`api.connected` with `state_subscription_only: true` does not count this client yet. Use the
+[`on_client_synced` Trigger](#on_client_synced-trigger) to act once the client is ready.
 
 ```yaml
 api:
@@ -436,8 +445,8 @@ api:
 
 ### `on_client_disconnected` Trigger
 
-This trigger is activated each time the API disconnects from the API. Two variables of
-type `std::string` are available for use by actions called from within this trigger:
+This trigger is activated each time a client disconnects from the API. Two string variables are available for use
+by actions called from within this trigger:
 
 - `client_address`  : the IP address of the client that disconnected
 - `client_info`  : the name of the client that disconnected
@@ -448,6 +457,38 @@ api:
   on_client_disconnected:
     - logger.log: "API client disconnected!"
 ```
+
+### `on_client_synced` Trigger
+
+This trigger is activated each time a client that subscribed to entity states has been sent the current state of every
+entity. Anything the automation sends arrives after those states. When the client is Home Assistant, it also listens for
+Home Assistant actions and events at that point, so they can be sent right away. Other clients that subscribe to states,
+such as `esphome logs` and the [ESPHome Device Builder](/install/) log viewer, fire this trigger too; check
+`client_info` to act only for Home Assistant. The same two string variables as in `on_client_connected` are available:
+
+- `client_address`  : the IP address of the client
+- `client_info`  : the name of the client
+
+```yaml
+api:
+  # ...
+  on_client_synced:
+    - logger.log:
+        format: "Client %s is ready"
+        args: ["client_info.c_str()"]
+    - if:
+        condition:
+          lambda: 'return client_info.starts_with("Home Assistant");'
+        then:
+          - homeassistant.event:
+              event: esphome.device_ready
+```
+
+> [!NOTE]
+> In all three client triggers, `client_address` and `client_info` are string views that are only valid while the
+> automation runs. When the automation contains an action that waits, such as `delay`, `wait_until` or
+> `script.wait`, they are passed as `std::string` copies instead. They support `c_str()`, `find()`, `starts_with()`,
+> `==` and conversion to `std::string`.
 
 ## Conditions
 
