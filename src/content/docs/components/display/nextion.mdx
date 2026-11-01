@@ -107,7 +107,10 @@ display:
 
 - **max_queue_age** (*Optional*, [Time](/guides/configuration-types#time)): Maximum age in milliseconds for queued commands before they are automatically
   removed. This helps prevent stale commands from being executed after delays. Set to ``0`` to disable age-based
-  removal (commands are only limited by queue size). **Note:** Very low values (e.g., \<50ms) may cause commands
+  removal (commands are only limited by queue size). With a `command_spacing` above `0ms`, a command still unanswered
+  1 s after it was queued is removed once 16 commands are unanswered and the display has answered nothing for 1 s,
+  at most one command per second.
+  **Note:** Very low values (e.g., \<50ms) may cause commands
   to be dropped before transmission due to ESPHome's loop timing (~16ms). Recommended minimum is 100ms when enabled.
   Range: 0-65535. Defaults to ``8000`` (8 seconds).
 
