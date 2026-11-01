@@ -75,17 +75,19 @@ sensor:
   new measurement is ready. Without it the pin stays unused.
 
   - **function** (*Optional*, string): What triggers the alert. Defaults to `none`.
-    - `none`: no limit; use this to get only the conversion ready signal.
+    - `none`: no limit; set `conversion_ready: true` to get only the conversion ready signal.
     - `shunt_over`, `shunt_under`: the shunt voltage goes above or below `limit`.
     - `bus_over`, `bus_under`: the bus voltage goes above or below `limit`, from `0V` to `36V`.
     - `power_over`: the power goes above `limit`.
   - **limit** (**Required** for every function except `none`, voltage or power): The threshold. Use a
-    voltage such as `75mV` for the shunt and bus functions, and a power such as `50W` for `power_over`.
+    voltage such as `75mV` for the shunt and bus functions, and a power such as `10W` for `power_over`.
     A plain number is read as volts or watts. For a current threshold, multiply it by `shunt_resistance`:
     0.75A through a 0.1 Ω shunt is `75mV`. A value the chip cannot store with the configured
     `shunt_resistance` and `max_current` is rejected when the configuration is validated.
-  - **conversion_ready** (*Optional*, boolean): Also pulse the pin each time a new measurement is ready.
-    Defaults to `false`.
+  - **conversion_ready** (*Optional*, boolean): Also assert the pin when a new measurement is ready.
+    Clear this signal with the [`ina226.clear_alert`](#ina226-clear_alert-action) action to allow the
+    next measurement to assert it again, even when `latch` is `false`. Reading the sensor values does not
+    clear it. Defaults to `false`.
   - **active_high** (*Optional*, boolean): Drive the pin high when the alert is active, instead of low.
     Defaults to `false`.
   - **latch** (*Optional*, boolean): Keep the pin asserted until the alert is cleared with the
@@ -116,9 +118,14 @@ sensor:
       name: "Power"
     alert:
       function: power_over
-      limit: 50W
+      limit: 10W
       latch: true
 ```
+
+Choose the power limit for your actual shunt resistance and bus voltage. With the `0.1 ohm` shunt above,
+the INA226's approximately 81.92mV shunt input range limits measurable current to about 0.819A, or 29.5W
+at the maximum 36V bus voltage. Increasing `max_current` changes the measurement scaling, not this input
+range. Use a lower power limit at lower bus voltages.
 
 ## Sensors
 
@@ -133,7 +140,8 @@ All other options from [Sensor](/components/sensor).
 
 ## `ina226.clear_alert` Action
 
-Releases a latched alert on the ALERT pin by reading the chip's Mask/Enable register.
+Reads the chip's Mask/Enable register to release a latched alert and clear the conversion ready signal.
+Use this action to acknowledge conversion ready alerts even when `latch` is `false`.
 
 ```yaml
 on_...:
