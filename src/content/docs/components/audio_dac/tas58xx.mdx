@@ -84,8 +84,9 @@ power state changes start with the I²C address of the amplifier.
 
 ### Operation
 
-The amplifier enters play mode after setup. It stays in Hi-Z (outputs off) until an I²S clock is present, and the
-mixer settings from `mixer_mode` are written each time the device enters play mode.
+The amplifier enters play mode after setup. It stays in Hi-Z (outputs off) until an I²S clock is present. The mixer
+setting (`mixer_mode`, or the mode chosen with the [mixer mode select](#select)) is written when audio first starts,
+and the amplifier keeps it while the clock stops and starts again.
 
 The fault registers are read every `update_interval`, and a log message is written each time a fault appears or
 clears. Faults that only report a past event are cleared automatically, so the fault state follows the current
@@ -201,6 +202,28 @@ The switch shows whether the amplifier is active, and changes only after the amp
 it came from the switch or from the `tas58xx.activate` and `tas58xx.deactivate` actions. At every boot the amplifier
 starts in play mode, which is activated, so the switch is always ON after a boot. The restore options have no effect,
 so `restore_mode`, `restore_state` and `initial_state` are not supported and fail validation.
+
+## Select
+
+The `tas58xx` select platform changes the mixer mode while the device is running.
+
+```yaml
+select:
+  - platform: tas58xx
+    mixer_mode:
+      name: "Amplifier Mixer Mode"
+```
+
+### Select Configuration Variables
+
+- **tas58xx_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `tas58xx` platform. Required
+  when more than one amplifier is configured.
+- **mixer_mode** (*Optional*): A select for the input mixer, with the options `Stereo`, `Stereo inverse`, `Mono`,
+  `Left` and `Right`, as described for `mixer_mode` above. With `dac_mode: pbtl` only `Mono`, `Left` and `Right` are
+  available. All options from [Select](/components/select/). Defaults to the `config` entity category.
+
+At every restart the select starts with the `mixer_mode` of the `audio_dac`, so a selected mode lasts until the next
+restart. A new mode is written immediately if audio is playing, otherwise when audio next starts.
 
 ## Configuration Examples
 
