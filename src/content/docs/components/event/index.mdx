@@ -93,6 +93,8 @@ MQTT options:
 
 This automation will be triggered when an event of the specified types is triggered.
 In [Lambdas](/automations/templates#config-lambda) you can get the event type from the trigger with `event_type`.
+If the event has [variables](/components/event/template#variables), each one is available under its name.
+A variable the event did not set is `false` for `bool`, `0` for `int`, `NAN` for `float` and an empty text for `string`.
 
 ```yaml
 event:
@@ -102,6 +104,19 @@ event:
       then:
         - lambda: |-
             ESP_LOGD("main", "Event %s triggered.", event_type.c_str());
+```
+
+With the dimmer from the [variables](/components/event/template#variables) example:
+
+```yaml
+event:
+  - platform: template
+    id: dimmer
+    # ...
+    on_event:
+      then:
+        - lambda: |-
+            ESP_LOGD("main", "%s by %d steps", event_type.c_str(), (int) steps);
 ```
 
 Configuration variables: see [Automation](/automations).
@@ -120,12 +135,36 @@ Configuration variables:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the event.
 - **event_type** (**Required**, string, [templatable](/automations/templates)): The type of event to trigger.
+- **data** (*Optional*, mapping): The values of the event by [variable](/components/event/template#variables)
+  name, each one [templatable](/automations/templates). A variable without a value is missing from the event.
+  With an **event_type** from a lambda, a value of a variable that this event type does not carry is left out, and
+  an error is logged. The build fails for:
+
+  - a name the event does not declare
+  - a constant of the wrong type or longer than its `max_length`
+  - with a constant **event_type**, a variable this type does not carry
+
+With the dimmer from the [variables](/components/event/template#variables) example:
+
+```yaml
+- event.trigger:
+    id: dimmer
+    event_type: rotate_left
+    data:
+      steps: 3
+```
 
 ### lambda Calls
 
 From [lambdas](/automations/templates#config-lambda), you can interact with an event.
 
 - `trigger(std::string event_type)`: Trigger an event with the specified type.
+- `trigger(std::string event_type, {{index, value}, ...})`: Trigger an event with values. Only for an event with
+  variables. `index` is the place of the variable under `variables`, starting at `0`. For the dimmer above,
+  `{{1, 3}}` sets `steps` to `3`. A value that does not fit its variable is left out, and the log says why.
+- `get_last_event_data()`: Returns the values of the last event. Only for an event with variables. `has(index)`
+  tells whether the event set a variable; `get_bool(index)`, `get_int(index)`, `get_float(index)` and
+  `get_string(index)` read it. The text of `get_string()` changes with the next event.
 - `has_event()`: Returns `true` if an event has been triggered, `false` otherwise.
 - `get_last_event_type()`: Returns the last triggered event type as `StringRef`, or an empty StringRef if no event has been triggered yet.
 
