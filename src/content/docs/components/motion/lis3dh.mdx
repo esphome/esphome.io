@@ -14,7 +14,8 @@ The LIS3DH is a low-power 3-axis accelerometer with selectable ±2/4/8/16 g
 full-scale ranges and an on-chip temperature sensor. It also has a programmable
 motion interrupt that can be wired to a GPIO and used as a `wakeup_pin` for the
 [Deep Sleep](/components/deep_sleep/) component to wake an ESP32 from deep sleep
-when the device is moved.
+when the device is moved, and an on-chip tap detector that can report single and
+double taps.
 
 ```yaml
 # Example configuration entry
@@ -74,6 +75,32 @@ sensor:
     gravity component is removed from the threshold comparison, letting you use a small threshold (the change
     in acceleration). The reported acceleration values are not affected. Defaults to `false`.
 
+- **tap** (*Optional*): Configure the on-chip tap (click) detector. See [Tap Detection](#tap-detection) below.
+  At least one of `on_tap` and `on_double_tap` is required.
+  - **threshold** (*Optional*, acceleration): How hard a tap must be to register. Defaults to `0.6g`. It has
+    the same limits per `accelerometer_range` as the interrupt `threshold`, and can be changed at run time
+    with the [`lis3dh.set_tap_threshold`](#lis3dh-set_tap_threshold-action) action.
+  - **time_limit** (*Optional*, [Time](/guides/configuration-types/#time)): The longest the acceleration may
+    stay over the threshold and still count as a tap. Defaults to `25ms`. At most 127 samples (for example
+    `317ms` at `400HZ`).
+  - **latency** (*Optional*, [Time](/guides/configuration-types/#time)): Double taps only. How long after the
+    first tap the detector ignores further movement. Defaults to `50ms`. At most 255 samples (for example
+    `637ms` at `400HZ`).
+  - **window** (*Optional*, [Time](/guides/configuration-types/#time)): Double taps only. How long after
+    `latency` the second tap may start. Defaults to `250ms`. At most 255 samples.
+  - **axes** (*Optional*, list): Which axes may detect a tap, any of `x`, `y`, `z`. Defaults to all three.
+  - **high_pass_filter** (*Optional*, boolean): Remove gravity from the tap detector's input. Without it the
+    axis facing down stays over a small threshold at rest and is reported for every tap. The reported
+    acceleration values are not affected. Defaults to `true`.
+  - **interrupt_pin** (*Optional*, [Pin](/guides/configuration-types/#pin)): A GPIO wired to the chip's tap
+    interrupt pad. When set, the detector is read only while this pin is active, instead of being polled every
+    10 ms. Uses the polarity set by `interrupt` `active_high`. It cannot be used with both `on_tap` and
+    `on_double_tap`, because the chip then raises its interrupt only for double taps.
+  - **pin** (*Optional*, string): Which physical interrupt pad the tap detector drives, `INT1` or `INT2`.
+    Only used with `interrupt_pin`, and it must differ from the motion interrupt's `pin`. Defaults to `INT1`.
+  - **on_tap** (*Optional*, [Automation](/automations/)): Actions to run when a single tap is detected.
+  - **on_double_tap** (*Optional*, [Automation](/automations/)): Actions to run when a double tap is detected.
+
 - All other options from [Motion](/components/motion/).
 
 As an accelerometer without a gyroscope, the LIS3DH supports the `acceleration_x`, `acceleration_y`,
@@ -104,6 +131,66 @@ deep_sleep:
   run_duration: 30s
   wakeup_pin: GPIOXX           # active-high by default; matches active_high: true
 ```
+
+## Tap Detection
+
+The LIS3DH has a tap (click) detector that runs on the chip. A tap is a short spike in acceleration: it
+must exceed `threshold` and fall back within `time_limit`. A double tap is a second tap that starts within
+`window` once `latency` has passed after the first.
+
+Taps last a few milliseconds, so use `accelerometer_odr: 400HZ` or faster; at lower data rates many taps
+fall between samples, and a warning is logged. How hard a tap reads depends a lot on the enclosure and what
+it rests on, so expect to adjust `threshold`.
+
+```yaml
+motion:
+  - platform: lis3dh
+    id: accel
+    accelerometer_odr: 400HZ
+    tap:
+      threshold: 0.6g
+      on_tap:
+        - logger.log:
+            format: "Tap on axis %u, %s side"
+            args: ["axis", 'negative ? "negative" : "positive"']
+      on_double_tap:
+        - logger.log: "Double tap"
+```
+
+Both triggers get two variables:
+
+- **axis** (`uint8_t`): The axis the tap was on: `0` for x, `1` for y, `2` for z. This is after
+  `axis_map`, so it matches the acceleration sensors.
+- **negative** (`bool`): `true` if the tap was towards the negative end of that axis.
+
+When only `on_tap` or only `on_double_tap` is configured, the chip detects only that kind of tap and the
+trigger fires as soon as it is read. When both are configured, `on_tap` is held back for `latency` +
+`window` (about 300 ms with the defaults), in case a second tap follows. If one does, only `on_double_tap`
+fires.
+
+### `lis3dh.set_tap_threshold` Action
+
+Changes the tap threshold at run time, for example from a [Number](/components/number/). Values outside what
+the `accelerometer_range` can represent are clamped.
+
+```yaml
+number:
+  - platform: template
+    name: "Tap Threshold"
+    min_value: 0.1
+    max_value: 2.0
+    step: 0.05
+    unit_of_measurement: g
+    optimistic: true
+    initial_value: 0.6
+    set_action:
+      - lis3dh.set_tap_threshold:
+          id: accel
+          threshold: !lambda "return x;"
+```
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the `lis3dh` motion platform.
+- **threshold** (**Required**, acceleration, [templatable](/automations/templates/)): The new threshold in g.
 
 ## See Also
 
