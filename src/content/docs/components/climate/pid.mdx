@@ -99,10 +99,12 @@ climate:
 - **deadband_parameters** (*Optional*): Enables a deadband to stabilise and minimise changes in the
   output when the temperature is close to the target temperature. See [Deadband Setup](#deadband-setup).
 
-  - **threshold_high/threshold_low** (**Required**, float): Specifies a high/low
-    threshold defining the deadband around the target temperature. For instance with
-    `default_target_temperature` of `21°C` and thresholds of `+/-0.5°C`, the deadband will be
-    between `20.5°C - 21.5°C`. The PID controller will limit output changes within the deadband.
+  - **threshold_high** (**Required**, float): The high threshold of the deadband around the
+    target temperature. See `threshold_low`.
+  - **threshold_low** (**Required**, float): The low threshold of the deadband around the target
+    temperature. For instance with `default_target_temperature` of `21°C` and thresholds of
+    `+/-0.5°C`, the deadband will be between `20.5°C - 21.5°C`. The PID controller will limit
+    output changes within the deadband.
 
   - **kp_multiplier** (*Optional*, float): Set the `kp` gain when inside the deadband. Defaults to `0`.
   - **ki_multiplier** (*Optional*, float): Set the `ki` gain when inside the deadband. Defaults to `0`.

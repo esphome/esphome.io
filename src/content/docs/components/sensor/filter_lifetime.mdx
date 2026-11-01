@@ -1,0 +1,104 @@
+---
+description: "Instructions for setting up the Filter Lifetime sensor that tracks how much of a replaceable filter's life remains."
+title: "Filter Lifetime Sensor"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `filter_lifetime` sensor platform reports how much of a replaceable filter's life remains, as a percentage, from
+how long the device has been running and at what speed. Use it for air purifiers, HVAC filters, water filters or any
+consumable that is replaced after a set number of running hours. The accumulated runtime is stored in flash and
+survives reboots.
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: filter_lifetime
+    name: "HEPA Filter Remaining"
+    max_lifetime: 180d
+```
+
+## Configuration Variables
+
+- **max_lifetime** (**Required**, [Time](/guides/configuration-types/#time)): How long the filter lasts when the
+  device runs at full speed, for example `180d`. At least one minute.
+- **is_on** (*Optional*, [lambda](/automations/templates/#config-lambda)): Returns a `bool` that is `true` while
+  the device is running. Runtime only accumulates while it is. Defaults to always running.
+- **is_on_sensor** (*Optional*, [ID](/guides/configuration-types/#id)): A binary sensor that is on while the device
+  is running. Cannot be combined with `is_on`.
+- **current_speed** (*Optional*, [lambda](/automations/templates/#config-lambda)): Returns the current speed as a
+  `float` percentage from 0 to 100. Runtime accumulates in proportion, so an hour at 50% counts as 30 minutes.
+  Values outside that range are clamped and `NaN` counts as 0. Defaults to 100.
+- **current_speed_sensor** (*Optional*, [ID](/guides/configuration-types/#id)): A sensor that reports the speed
+  percentage. Cannot be combined with `current_speed`.
+- **runtime_hours** (*Optional*): The accumulated speed-weighted runtime in hours. All options from
+  [Sensor](/components/sensor/).
+- **remaining_days** (*Optional*): The days of full-speed running left before the filter is used up. All options
+  from [Sensor](/components/sensor/).
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often the runtime is sampled and
+  the sensors published. Defaults to `60s`.
+- All other options from [Sensor](/components/sensor/).
+
+The runtime is written to flash once per hour of speed-weighted runtime, on a clean restart or update, and when
+the filter is reset. A power cut loses whatever accumulated since the last write, up to an hour of counted runtime. A
+device that is powered together with the appliance and never counts an hour between power cuts never reaches a
+write, so its runtime falls back to the last stored value at every power cut; give such a device its own power or
+keep it powered across sessions.
+
+> [!NOTE]
+> The sensor tracks running time only. It does not measure how dirty the filter actually is.
+
+## Inputs From Sensors
+
+The running state and speed can come from existing entities instead of lambdas:
+
+```yaml
+sensor:
+  - platform: filter_lifetime
+    id: hepa_filter
+    name: "HEPA Filter Remaining"
+    max_lifetime: 180d
+    is_on_sensor: purifier_running
+    current_speed_sensor: fan_speed_percent
+    runtime_hours:
+      name: "HEPA Filter Runtime"
+    remaining_days:
+      name: "HEPA Filter Days Remaining"
+```
+
+## Speed From a Select
+
+A fan with named speeds can map them to a percentage in the `current_speed` lambda:
+
+```yaml
+sensor:
+  - platform: filter_lifetime
+    name: "Filter Remaining"
+    max_lifetime: 90d
+    is_on: !lambda 'return id(fan_mode).current_option() != "Off";'
+    current_speed: !lambda |-
+      auto mode = id(fan_mode).current_option();
+      if (mode == "Low")
+        return 33.0f;
+      if (mode == "Medium")
+        return 66.0f;
+      return 100.0f;
+```
+
+## `filter_lifetime.reset_filter` Action
+
+Sets the accumulated runtime back to zero after the filter has been replaced.
+
+```yaml
+on_...:
+  - filter_lifetime.reset_filter:
+      id: hepa_filter
+```
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the `filter_lifetime` sensor.
+
+## See Also
+
+- [Sensor Component](/components/sensor/)
+- [Automations](/automations/)
+- <APIRef text="filter_lifetime.h" path="filter_lifetime/filter_lifetime.h" />

@@ -11,6 +11,7 @@ via [Speaker](/components/speaker/) or [Media Player](/components/media_player/)
 Supported models:
 
 - `tas5805m`: TAS5805M
+- `tas5825m`: TAS5825M
 
 The [I²C bus](/components/i2c/) is required in your configuration as this is used to configure the amplifier and
 read its fault status. Audio data is delivered via I²S, for example with the
@@ -42,6 +43,10 @@ audio_dac:
   - `btl`: Bridge tied load, two speakers (stereo).
   - `pbtl`: Parallel bridge tied load, one speaker driven by both output channels. Requires `mixer_mode` to be
     `mono`, `left` or `right`.
+- **fault_output** (*Optional*, enum): The amplifier pin that reports faults. The pin goes low while a fault is present
+  (the `FAULTZ` signal of the datasheet). With `none` the pin is not configured and keeps its power on state.
+  - `tas5805m`: `adr` or `none`. Defaults to `adr`.
+  - `tas5825m`: `gpio0`, `gpio1`, `gpio2` or `none`. Defaults to `gpio1`.
 - **mixer_mode** (*Optional*, enum): How the left and right input channels are routed to the outputs.
   Defaults to `stereo`.
   - `stereo`: Left input to the left output, right input to the right output.
@@ -49,12 +54,17 @@ audio_dac:
   - `mono`: Left and right mixed (each at -6 dB) to both outputs.
   - `left`: Left input to both outputs.
   - `right`: Right input to both outputs.
+- **modulation** (*Optional*, enum): The modulation scheme of the output stage. Defaults to `bd_mode`.
+  - `bd_mode`: BD modulation, lower distortion, lower efficiency.
+  - `1spw_mode`: 1SPW modulation, higher efficiency and less heat at the cost of slightly higher distortion. Use it
+    at higher supply voltages, where the amplifier cannot sustain full power without cooling (a heatsink, a fan or
+    both).
 - **volume_min_db** (*Optional*, dB): The digital volume that maps to the minimum volume (0%). Must be less than
   `volume_max_db`. Range: `-103dB` to `24dB`. Defaults to `-103dB`.
 - **volume_max_db** (*Optional*, dB): The digital volume that maps to the maximum volume (100%). Must be greater than
   `volume_min_db`. Range: `-103dB` to `24dB`. Defaults to `24dB`.
 - **address** (*Optional*, int): The I²C address of the amplifier. The address is selected with a resistor on the
-  `ADR` pin (see the datasheet). Defaults to `0x2D`.
+  `ADR` pin (see the datasheet). Defaults to `0x2D` for `tas5805m` and `0x4C` for `tas5825m`.
 - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often the fault and power state
   registers are read. Defaults to `1s`.
 - **i2c_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the [I²C bus](/components/i2c/) the
@@ -74,13 +84,15 @@ power state changes start with the I²C address of the amplifier.
 
 ### Operation
 
-The amplifier enters play mode after setup. It stays in Hi-Z (outputs off) until an I²S clock is present, and the
-mixer settings from `mixer_mode` are written each time the device enters play mode.
+The amplifier enters play mode after setup. It stays in Hi-Z (outputs off) until an I²S clock is present. The mixer
+setting (`mixer_mode`, or the mode chosen with the [mixer mode select](#select)) is written when audio first starts,
+and the amplifier keeps it while the clock stops and starts again.
 
 The fault registers are read every `update_interval`, and a log message is written each time a fault appears or
 clears. Faults that only report a past event are cleared automatically, so the fault state follows the current
-condition. The ADR pin is configured as a fault output after startup, since the I²C address is only latched at
-power up.
+condition. The `fault_output` pin is configured after startup. On the TAS5805M, the default fault output pin is the
+ADR pin. It also selects the I²C address, but the address is latched at power up, so the pin is free to use for
+reporting faults afterwards.
 
 > [!IMPORTANT]
 > DC and over current faults are not cleared automatically. After one of these faults the output stays off until
@@ -134,23 +146,84 @@ binary_sensor:
 
 - **tas58xx_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `tas58xx` platform. Required
   when more than one amplifier is configured.
-- **have_fault** (*Optional*): `ON` when any of the faults below is present, except `clock_fault` and
-  `over_temp_warning`.
+- **have_fault** (*Optional*): `ON` when any of the faults below is present, except `clock_fault` and the warnings
+  (`over_temp_warning`, `over_temp_146c_warning`, `left_channel_cbc_over_current_warning` and
+  `right_channel_cbc_over_current_warning`).
 - **left_channel_dc_fault** (*Optional*): DC offset detected on the left output.
 - **right_channel_dc_fault** (*Optional*): DC offset detected on the right output.
 - **left_channel_over_current** (*Optional*): Over current on the left output.
 - **right_channel_over_current** (*Optional*): Over current on the right output.
+- **left_channel_cbc_over_current** (*Optional*): Cycle-by-cycle over current on the left output.
+  Only available on TAS5825M.
+- **right_channel_cbc_over_current** (*Optional*): Cycle-by-cycle over current on the right output.
+  Only available on TAS5825M.
 - **pvdd_over_voltage** (*Optional*): PVDD supply voltage too high.
 - **pvdd_under_voltage** (*Optional*): PVDD supply voltage too low.
 - **over_temp_shutdown** (*Optional*): The device shut down because it is too hot.
+- **left_channel_cbc_over_current_warning** (*Optional*): Cycle-by-cycle current on the left output is close to the
+  fault threshold. Logged as a warning. Only available on TAS5825M.
+- **right_channel_cbc_over_current_warning** (*Optional*): Cycle-by-cycle current on the right output is close to the
+  fault threshold. Logged as a warning. Only available on TAS5825M.
+- **over_temp_146c_warning** (*Optional*): The device temperature has reached 146°C. Logged as a warning.
+  Only available on TAS5825M.
 - **over_temp_warning** (*Optional*): The device temperature is close to the shutdown threshold. Logged as a warning.
 - **otp_crc_check** (*Optional*): The CRC check of the internal OTP memory failed.
 - **bq_write_failed** (*Optional*): Writing the biquad filter coefficients failed.
+- **load_eeprom_error** (*Optional*): Loading from EEPROM at boot failed. Only available on TAS5825M.
 - **clock_fault** (*Optional*): The I²S clock is missing or invalid. This is normal whenever no audio is playing,
   so it is not logged and not included in `have_fault`.
 
+A sensor marked as only available on TAS5825M fails validation when the amplifier is `model: tas5805m`.
+
 All sensors accept the options from [Binary Sensor](/components/binary_sensor/). They default to the `problem` device
 class and the `diagnostic` entity category.
+
+## Switch
+
+The `activate` switch activates the amplifier or puts it into deep sleep. Turning the switch ON does the
+`tas58xx.activate` action, and turning it OFF does `tas58xx.deactivate`.
+
+```yaml
+switch:
+  - platform: tas58xx
+    activate:
+      name: "Amplifier"
+```
+
+### Switch Configuration Variables
+
+- **tas58xx_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `tas58xx` platform. Required
+  when more than one amplifier is configured.
+- **activate** (*Optional*): ON activates the amplifier, OFF puts it into deep sleep. All options from
+  [Switch](/components/switch/), except `restore_mode`, `restore_state` and `initial_state`. Defaults to the `config`
+  entity category.
+
+The switch shows whether the amplifier is active, and changes only after the amplifier accepted the command, whether
+it came from the switch or from the `tas58xx.activate` and `tas58xx.deactivate` actions. At every boot the amplifier
+starts in play mode, which is activated, so the switch is always ON after a boot. The restore options have no effect,
+so `restore_mode`, `restore_state` and `initial_state` are not supported and fail validation.
+
+## Select
+
+The `tas58xx` select platform changes the mixer mode while the device is running.
+
+```yaml
+select:
+  - platform: tas58xx
+    mixer_mode:
+      name: "Amplifier Mixer Mode"
+```
+
+### Select Configuration Variables
+
+- **tas58xx_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `tas58xx` platform. Required
+  when more than one amplifier is configured.
+- **mixer_mode** (*Optional*): A select for the input mixer, with the options `Stereo`, `Stereo inverse`, `Mono`,
+  `Left` and `Right`, as described for `mixer_mode` above. With `dac_mode: pbtl` only `Mono`, `Left` and `Right` are
+  available. All options from [Select](/components/select/). Defaults to the `config` entity category.
+
+At every restart the select starts with the `mixer_mode` of the `audio_dac`, so a selected mode lasts until the next
+restart. A new mode is written immediately if audio is playing, otherwise when audio next starts.
 
 ## Configuration Examples
 
@@ -212,3 +285,4 @@ media_player:
 - <APIRef text="tas58xx.h" path="tas58xx/tas58xx.h" />
 - <APIRef text="audio_dac.h" path="audio_dac/audio_dac.h" />
 - [TAS5805M datasheet (Texas Instruments)](https://www.ti.com/product/TAS5805M)
+- [TAS5825M datasheet (Texas Instruments)](https://www.ti.com/product/TAS5825M)

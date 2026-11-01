@@ -201,10 +201,29 @@ if (!urls) {
           <button type="button" data-arch="x64" aria-pressed="false"> Intel </button>
         </div>
       </div>
-      <p class="install-selector__warning" data-mac-intel-warning role="status" hidden>
-        Support for Intel Macs will be removed soon. The Python ecosystem is dropping Intel macOS; the&nbsp;
-        <code>cryptography</code> package no longer publishes Intel builds as of version 49.
-      </p>
+      <div class="install-selector__warning" data-mac-intel-warning role="status" hidden>
+        <p>
+          Support for Intel Macs will end in ESPHome 2027.6.0 or earlier. The Python packages ESPHome depends on have
+          stopped publishing Intel macOS builds, so future releases of this app and of the pip install will not install
+          on Intel Macs.
+        </p>
+        <ul>
+          <li>
+            <strong>Home Assistant OS:</strong> the Home Assistant app runs ESPHome on your Home Assistant server, not the
+            Mac.
+          </li>
+          <li>
+            <strong>Home Assistant Container:</strong> run ESPHome alongside it in <a href="/install/docker/">Docker</a
+            >, which runs Linux and is not affected.
+          </li>
+          <li>
+            <strong>Build server:</strong> Docker on an Intel Mac can take builds from another dashboard; <a
+              href="https://github.com/esphome/device-builder#send-builds-to-another-dashboard">pair it</a
+            > by hostname.
+          </li>
+          <li><strong>Apple Silicon Mac:</strong> pick Apple Silicon above.</li>
+        </ul>
+      </div>
       <LinkButton data-download="mac" href={urls["mac-arm64"]}> Download disk image (.dmg) </LinkButton>
       <ol class="install-selector__steps">
         <li>Open the downloaded <code>.dmg</code> file.</li>
@@ -392,6 +411,14 @@ if (!urls) {
     border-radius: 0 4px 4px 0;
     padding: 0.6rem 0.8rem;
     margin-block: 0 1.25rem;
+  }
+
+  .install-selector__warning > * {
+    margin-block: 0;
+  }
+
+  .install-selector__warning ul {
+    margin-block-start: 0.4rem;
   }
 
   .install-selector__my {

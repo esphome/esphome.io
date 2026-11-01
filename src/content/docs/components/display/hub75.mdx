@@ -244,6 +244,21 @@ For creating larger displays by chaining multiple panels:
 
 All standard [graphical display configuration](/components/display#display-configuration) options are also available, including **lambda**, **pages**, **rotation**, and **auto_clear_enabled**.
 
+### Changing the Rotation at Runtime
+
+The HUB75 driver rotates the panel itself, so calling `set_rotation()` on the display reaches the driver and
+`get_rotation()` returns the panel's current rotation. Use them from a lambda, for example to turn the panel
+when an accelerometer reports that the device was flipped:
+
+```yaml
+on_...:
+  - lambda: |-
+      id(matrix_display).set_rotation(display::DISPLAY_ROTATION_180_DEGREES);
+```
+
+Rotating by 90 or 270 degrees swaps the panel's width and height. LVGL is not told about that change, so an
+LVGL layout keeps the size it was created with.
+
 ## Multi-Panel Layouts
 
 You can chain multiple panels together to create larger displays. The component supports both simple horizontal chains and complex 2D grid arrangements.

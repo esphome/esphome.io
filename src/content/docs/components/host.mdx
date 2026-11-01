@@ -32,6 +32,29 @@ host:
 ## Build and run
 
 The `esphome run yourfile.yaml` command will compile and automatically run the build file on the `host` platform.
+The compiled program is written to `.esphome/build/<name>/.pioenvs/<name>/program`.
+
+### Build requirements
+
+The `host` platform does not use PlatformIO. ESPHome generates a [ninja](https://ninja-build.org/) build and compiles
+the generated sources with the compilers installed on the machine. The following must be available:
+
+- A C++ compiler and a C compiler. ESPHome searches `PATH` for `g++`, `clang++` and `c++` (in that order) for C++, and
+  for `gcc`, `clang` and `cc` for C. Set the `CXX` and `CC` environment variables to use a specific compiler instead.
+  The `AR`, `OBJDUMP` and `READELF` environment variables override the corresponding tools in the same way.
+- `ninja`, either on `PATH` or from the `ninja` Python package bundled with ESPHome.
+
+If [ccache](https://ccache.dev/) is on `PATH` it is used automatically; set `ESPHOME_CCACHE_ENABLE=0` to disable it.
+Its cache is stored under `~/.cache/esphome/host/ccache` (the `ESPHOME_HOST_PREFIX` environment variable changes the
+root directory) and is removed by `esphome clean-all`.
+
+Libraries declared by components, `esphome.libraries` or `platformio_options.lib_deps` are fetched from the PlatformIO
+registry or git into `.esphome/pio_components/host/` and built into archives. A bare git checkout without a
+`library.json` or `library.properties` file is built using PlatformIO's default layout (`src/` and `include/`).
+
+Only the `build_unflags`, `lib_deps` and `lib_ignore` keys of `esphome.platformio_options` apply on `host`; other keys
+are ignored with a warning. `platformio_options.build_flags` still works but is deprecated in favour of
+`esphome.build_flags`.
 
 ## Preferences
 

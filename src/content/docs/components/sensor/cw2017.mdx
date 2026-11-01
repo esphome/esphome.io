@@ -1,0 +1,50 @@
+---
+description: "Instructions for setting up CellWise CW2017 battery fuel gauges in ESPHome."
+title: "CellWise CW2017 battery fuel gauge"
+---
+
+The `cw2017` platform allows you to monitor the remaining capacity and voltage of a lithium-ion battery with a
+CellWise CW2017 fuel gauge in ESPHome. It uses the [I²C Bus](/components/i2c/) for communication.
+
+The CW2017 has no built-in battery model and reports 0% until it is given an 80-byte profile that describes the cell,
+so `battery_profile` must be set. The profile is made for each type of cell; get it from the battery or board maker,
+or copy it from the device's original firmware. At boot, the profile is written to the gauge only when the gauge does
+not already hold it; a wake from [deep sleep](/components/deep_sleep/) skips that check, since the profile can only
+change with new firmware.
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: cw2017
+    battery_profile: [
+      0x50, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xAA, 0xBF, 0xB5, 0xB4, 0xA4, 0x9C, 0xEB, 0xE2,
+      0xDF, 0xE5, 0xCA, 0xA0, 0x8A, 0x62, 0x53, 0x48, 0x40, 0x3A, 0x32, 0xB1, 0xAE, 0xDA, 0xB5, 0xFF,
+      0xFF, 0xFF, 0xE8, 0xDB, 0xD9, 0xD6, 0xD4, 0xD2, 0xD0, 0xCB, 0xC3, 0xBC, 0x9E, 0x87, 0x7B, 0x71,
+      0x72, 0x7C, 0x8C, 0xA3, 0xB7, 0xC8, 0xA5, 0x4F, 0x00, 0x00, 0xAB, 0x02, 0x00, 0x00, 0x00, 0x00,
+      0x00, 0x00, 0x64, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x23,
+    ]
+    battery_level:
+      name: Battery Level
+    battery_voltage:
+      name: Battery Voltage
+```
+
+> [!WARNING]
+> The bytes above are the profile of one particular cell. Replace them with the profile for your own battery; a
+> profile for the wrong cell gives no error, only a wrong battery level.
+
+## Configuration Variables
+
+- **battery_profile** (**Required**, list of bytes): The 80-byte battery profile for the cell.
+- **battery_level** (*Optional*): The state of charge in percent.
+  All options from [Sensor](/components/sensor/).
+- **battery_voltage** (*Optional*): The cell voltage in volts.
+  All options from [Sensor](/components/sensor/).
+- **address** (*Optional*, int): The I²C address of the device. Defaults to `0x63`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often to read the gauge.
+  Defaults to `60s`.
+
+## See Also
+
+- [I²C Bus](/components/i2c/)
+- [MAX17048 battery fuel gauge](/components/sensor/max17048/)

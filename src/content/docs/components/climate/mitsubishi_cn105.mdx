@@ -80,10 +80,30 @@ climate:
 
 - Target temperature range: `16 °C` to `31 °C`, or `61 °F` to `88 °F` with `use_fahrenheit` enabled
 - Current temperature reporting
+- Current action reporting: heating, cooling, drying, fan or idle (needs telemetry)
 - Modes: `OFF`, `HEAT`, `COOL`, `DRY`, `FAN_ONLY`, `HEAT_COOL` (called `AUTO` by Mitsubishi)
 - Fan modes: `AUTO`, `QUIET`, `LOW`, `MEDIUM`, `MIDDLE`, `HIGH`
 - Swing modes: `OFF`, `VERTICAL`, `HORIZONTAL`, `BOTH` (configurable via `supported_swing_modes`)
-- Vertical vane direction select
+- Vane direction selects
+
+> [!NOTE]
+> The current action comes from the unit's operating status, which is read together with the room temperature once
+> per `telemetry_request_min_interval`. A mode or power change also triggers one extra read of the operating status
+> alone, at most once per interval; further changes wait for the next regular read. It is not reported when
+> telemetry is set to `never`. In heat/cool mode, heating or cooling is inferred from the room and target
+> temperatures when the unit starts running, and kept while it runs.
+>
+> After a power-off, or a mode change that ends the current run (for example heat to cool), the unit keeps running
+> for a while to wind down. During that time it is not reported as heating, cooling or drying: the action shows idle,
+> or off after a power-off, or fan in fan only mode, until the unit reports that it stopped. The operating status
+> is then read every 10 seconds instead of the single extra read, and after nine reads the reported state is trusted
+> again, which is about 90 seconds with the default `update_interval`. Reads only happen on update cycles, so a
+> longer `update_interval` makes both the reads and the hold slower. Switching between heat/cool and heat or cool in
+> the same direction keeps the run. A change made while the action is held does not shorten or restart it.
+>
+> After three missed operating status requests in a row the component stops asking and keeps the last operating
+> status it received. A unit that never answers reports idle while it is on, even while it is heating or cooling; off
+> and fan only are still reported.
 
 > [!NOTE]
 > Fan modes map to the following Mitsubishi fan speeds:
@@ -114,10 +134,11 @@ climate:
   Telemetry is still requested during regular polling cycles, so the effective update frequency is bounded by
   `update_interval`.
 
-  Set to `never` to disable telemetry polling.
-
+  Set to `never` to disable telemetry polling. The current temperature and the current action are then not reported.
 - **use_fahrenheit** (*Optional*, boolean): Configure the climate entity to report and accept temperatures in Fahrenheit
-  using Mitsubishi-specific mapping. Defaults to `false`.
+  using Mitsubishi-specific mapping. Defaults to `false`. When enabled, write the climate's `visual` temperatures and
+  the fixed temperatures of `climate.control` in Fahrenheit too; a value written with another unit, such as `20°C`, is
+  converted.
 
   > [!NOTE]
   > Some indoor units use a temperature encoding that cannot accurately represent Fahrenheit setpoints. If the
@@ -133,10 +154,10 @@ climate:
 
 - **supported_swing_modes** (*Optional*, enum): Selects which swing modes are exposed by the climate entity. Defaults to `'OFF'`.
 
-  - `'OFF'` — no swing support  
-  - `VERTICAL` — exposes `'OFF'`, `VERTICAL`  
-  - `HORIZONTAL` — exposes `'OFF'`, `HORIZONTAL`  
-  - `BOTH` — exposes `'OFF'`, `VERTICAL`, `HORIZONTAL`, `BOTH`
+  - `OFF`: no swing support. Write it as `'OFF'` in YAML, since a bare `OFF` is read as a boolean.
+  - `VERTICAL`: exposes `'OFF'`, `VERTICAL`
+  - `HORIZONTAL`: exposes `'OFF'`, `HORIZONTAL`
+  - `BOTH`: exposes `'OFF'`, `VERTICAL`, `HORIZONTAL`, `BOTH`
 
 - All other options from [Climate](/components/climate#config-climate).
 
@@ -159,6 +180,26 @@ defines the hub options on the `climate:` entry.
 
   All options from [Select](/components/select#config-select) are supported.
 
+- **horizontal_vane_direction** (*Optional*, [Select](/components/select/)): Exposes the horizontal (wide) vane
+  direction as a select entity. Only useful on indoor units that have a horizontal vane.
+
+  Available options are: `1`, `2`, `3`, `4`, `5`, `Split`, `Swing`.
+
+  | Option  | Airflow direction |
+  | ------- | ----------------- |
+  | `1`     | Far left          |
+  | `2`     | Left              |
+  | `3`     | Center            |
+  | `4`     | Right             |
+  | `5`     | Far right         |
+  | `Split` | Left and right    |
+  | `Swing` | Swing             |
+
+  These are the select option labels exposed to Home Assistant. If referenced from automations or templates, use them
+  exactly as shown, including casing.
+
+  All options from [Select](/components/select/#config-select) are supported.
+
   Example:
 
   ```yaml
@@ -171,6 +212,8 @@ defines the hub options on the `climate:` entry.
       mitsubishi_cn105_id: hp
       vertical_vane_direction:
         name: "Vertical Vane"
+      horizontal_vane_direction:
+        name: "Horizontal Vane"
   ```
 
 ## `vane.on_state` Trigger
@@ -190,6 +233,18 @@ The trigger passes a `VaneState` value named `x` to lambdas. The current vertica
 - `VERTICAL_VANE_MODE_POSITION_5`
 - `VERTICAL_VANE_MODE_SWING`
 - `VERTICAL_VANE_MODE_UNKNOWN`
+
+The current horizontal (wide) vane direction is available as `x.horizontal.direction` and can have one of these
+values:
+
+- `HORIZONTAL_VANE_MODE_POSITION_1` (far left)
+- `HORIZONTAL_VANE_MODE_POSITION_2` (left)
+- `HORIZONTAL_VANE_MODE_POSITION_3` (center)
+- `HORIZONTAL_VANE_MODE_POSITION_4` (right)
+- `HORIZONTAL_VANE_MODE_POSITION_5` (far right)
+- `HORIZONTAL_VANE_MODE_SPLIT` (left and right)
+- `HORIZONTAL_VANE_MODE_SWING`
+- `HORIZONTAL_VANE_MODE_UNKNOWN`
 
 ```yaml
 mitsubishi_cn105:
@@ -212,15 +267,17 @@ mitsubishi_cn105:
               ESP_LOGI("vane", "Vertical vane is in a fixed position");
               break;
           }
+          if (x.horizontal.direction == HORIZONTAL_VANE_MODE_SWING) {
+            ESP_LOGI("vane", "Horizontal vane is swinging");
+          }
 ```
 
 ## `mitsubishi_cn105.vane.control` Action
 
 The `mitsubishi_cn105.vane.control` action changes the vane direction. Its `id` must reference the top-level
-Mitsubishi CN105 hub. The currently supported setting is `vertical.direction`, which accepts `AUTO`, `1`, `2`, `3`,
-`4`, `5`, or `SWING`. It can also be a lambda returning one of the corresponding
-`VERTICAL_VANE_MODE_*` values. A lambda returning `VERTICAL_VANE_MODE_UNKNOWN` is ignored and does not change the
-vane direction.
+Mitsubishi CN105 hub. It takes `vertical.direction` and `horizontal.direction`; at least one of `vertical` or
+`horizontal` must be set. Each can also be a lambda returning one of the corresponding `VERTICAL_VANE_MODE_*` or
+`HORIZONTAL_VANE_MODE_*` values. A lambda returning an `UNKNOWN` value is ignored and does not change that vane.
 
 ```yaml
 on_...:
@@ -228,13 +285,18 @@ on_...:
       id: hp
       vertical:
         direction: SWING
+      horizontal:
+        direction: SPLIT
 ```
 
 Configuration variables:
 
 - **id** (**Required**, ID): The ID of the top-level `mitsubishi_cn105` hub.
 - **vertical** (*Optional*): Vertical vane settings.
-  - **direction** (*Optional*, string, templatable): One of `AUTO`, `1`, `2`, `3`, `4`, `5`, or `SWING`.
+  - **direction** (**Required**, string, templatable): One of `AUTO`, `1`, `2`, `3`, `4`, `5`, or `SWING`.
+- **horizontal** (*Optional*): Horizontal (wide) vane settings.
+  - **direction** (**Required**, string, templatable): One of `1` (far left), `2` (left), `3` (center),
+    `4` (right), `5` (far right), `SPLIT` (left and right), or `SWING`.
 
 ### Custom Vertical Vane Select
 

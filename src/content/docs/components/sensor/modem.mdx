@@ -1,0 +1,36 @@
+---
+description: "Instructions for setting up sensors that report the signal quality of a cellular modem."
+title: "Modem Sensor"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `modem` sensor platform reports the signal quality of the [Modem](/components/modem/), as read with the
+`AT+CSQ` command.
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: modem
+    rssi:
+      name: Modem RSSI
+```
+
+The modem is queried every `update_interval` of the [Modem](/components/modem/) component, only while it is
+connected, starting right after it connects. When the connection is lost, the sensors become unknown.
+
+## Configuration Variables
+
+- **rssi** (*Optional*): The received signal strength in dBm, from `-113` to `-51`. The sensor is unknown when the
+  modem does not know the signal strength. All options from [Sensor](/components/sensor/#config-sensor).
+- **ber** (*Optional*): The bit error rate in percent: the representative value from 3GPP TS 45.008 for the quality
+  class the modem reports, from `0.14` to `18.10`. Many modems only report it on a GSM connection, so the sensor is
+  unknown on other networks. All options from [Sensor](/components/sensor/#config-sensor).
+- **modem_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the
+  [Modem](/components/modem/) component. Defaults to the configured modem.
+
+## See Also
+
+- [Modem Component](/components/modem/)
+- [Modem Text Sensor](/components/text_sensor/modem/)
+- <APIRef text="modem_component.h" path="modem/modem_component.h" />
