@@ -18,7 +18,53 @@ event:
 ## Configuration variables
 
 - **event_types** (**Required**, list): A list of custom event identifiers that this template event is capable of triggering. These identifiers can be used in Home Assistant automations or ESPHome scripts to perform actions when the event occurs.
+- **variables** (*Optional*, mapping): Values the events carry, such as the steps of a dimmer.
+  See [Variables](#variables).
 - All other options from [Event](/components/event#config-event).
+
+## Variables
+
+Each variable may be given as `name: type`, for example `label: string`, or as a mapping.
+Set the values with the **data** option of
+[`event.trigger`](/components/event#event-trigger-action). In [`on_event`](/components/event#on_event), each variable
+is available under its name.
+
+```yaml
+# Example configuration entry
+event:
+  - platform: template
+    id: dimmer
+    name: Dimmer
+    event_types:
+      - press
+      - rotate_left
+      - rotate_right
+    variables:
+      number_of_presses:
+        type: int
+        event_types: [press]
+      steps:
+        type: int
+        event_types: [rotate_left, rotate_right]
+```
+
+- **type** (**Required**, enum): One of:
+
+  - `bool`: A boolean. C++ type: `bool`
+  - `int`: A signed 32-bit integer. C++ type: `int32_t`
+  - `float`: A floating point number. C++ type: `float`
+  - `string`: A text. C++ type: `StringRef`, or `std::string` in an automation that waits, for example with `delay`
+
+- **max_length** (*Optional*, int): The longest text in bytes of UTF-8, from `1` to `127`. Only for `string`;
+  rejected for the other types. A longer text from a lambda is left out of the event, and a warning is logged.
+  Defaults to `64`.
+- **event_types** (*Optional*, list): The event types that carry this variable, each one of the event's
+  **event_types**. If not set, every event type carries it.
+
+Names follow the rules of an [ID](/guides/configuration-types#id). `assumed_state`, `attribution`, `device_class`,
+`entity_picture`, `event_type`, `event_types`, `friendly_name`, `icon`, `restored`, `supported_features` and
+`unit_of_measurement` are rejected, because Home Assistant uses them for the event. An event has at most 16
+variables, and an event with variables has at most 127 event types.
 
 ## See Also
 
