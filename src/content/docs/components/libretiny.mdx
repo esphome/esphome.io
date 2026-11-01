@@ -216,11 +216,12 @@ bk72xx:
 
 ## Crash Handler
 
-On BK7238, BK7231N, RTL8720C and LN882H, ESPHome captures crash data from the previous boot and logs it on
-startup, the same way it does on ESP32, ESP8266 and RP2040. On BK7238 and BK7231N it covers the chip's three
-fault traps: undefined instruction, prefetch abort and data abort. On RTL8720C and LN882H it covers the hard
-fault, bus fault, usage fault and memory management fault (and the secure fault on RTL8720C), and the report
-also shows the fault status register (`CFSR`) and, when the chip recorded one, the address that faulted.
+On BK7238, BK7231N, RTL8710B, RTL8720C and LN882H, ESPHome captures crash data from the previous boot and logs
+it on startup, the same way it does on ESP32, ESP8266 and RP2040. On BK7238 and BK7231N it covers the chip's
+three fault traps: undefined instruction, prefetch abort and data abort. On RTL8720C and LN882H it covers the
+hard fault, bus fault, usage fault and memory management fault (and the secure fault on RTL8720C). RTL8710B
+reports every fault as a hard fault. On all three the report also shows the fault status register (`CFSR`),
+which gives the cause, and, when the chip recorded one, the address that faulted.
 
 When a crash occurs, the fault PC, the return address and up to 8 stack-scanned return addresses are
 preserved across the reboot and logged at the `ERROR` level. The report is also replayed to the next log
@@ -237,8 +238,8 @@ client that connects over the API or MQTT, and the ESPHome CLI decodes the addre
 [E][libretiny.crash]:   BT1: 0x0001D305  (stack backtrace)
 ```
 
-On RTL8720C and LN882H the report adds the fault status register and the faulting address. `Address` is only
-recorded for bus and memory management faults and reads `0x00000000` otherwise, as in this usage fault:
+On RTL8710B, RTL8720C and LN882H the report adds the fault status register and the faulting address. `Address`
+is only recorded for bus and memory management faults and reads `0x00000000` otherwise, as in this usage fault:
 
 ```log
 [E][libretiny.crash]: *** CRASH DETECTED ON PREVIOUS BOOT ***
@@ -250,12 +251,13 @@ recorded for bus and memory management faults and reads `0x00000000` otherwise, 
 ```
 
 The crash handler also makes the device restart after a crash and report it: within a second on BK72xx and
-RTL8720C, and within a few seconds on LN882H. Without it, a BK72xx device with Wi-Fi connected hangs until its
-power is cycled, and an RTL8720C device waits for the 10 second watchdog.
+RTL8720C, within about 1.5 seconds on RTL8710B, and within a few seconds on LN882H. Without it, a BK72xx
+device with Wi-Fi connected hangs until its power is cycled, and an RTL8720C device waits for the 10 second
+watchdog.
 
-No configuration is needed — the crash handler is always enabled on BK7238, BK7231N, RTL8720C and LN882H.
-Other BK72xx and RTL8710B chips do not have it yet; on the other BK72xx chips a crash with Wi-Fi connected
-can still leave the device hung until it is power-cycled.
+No configuration is needed — the crash handler is always enabled on BK7238, BK7231N, RTL8710B, RTL8720C and
+LN882H. Other BK72xx chips do not have it yet, and a crash with Wi-Fi connected can still leave them hung
+until they are power-cycled.
 
 ## See Also
 
