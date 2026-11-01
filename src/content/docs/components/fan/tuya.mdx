@@ -61,6 +61,11 @@ fan:
   switch. Supported by some ceiling fans.
 
 - **speed_count** (*Optional*, int): Set the number of supported discrete speed levels. Defaults to `3`.
+- **optimistic** (*Optional*, boolean): Whether to operate in optimistic mode. When in this mode, any command sent
+  to the fan immediately updates the reported state without waiting for MCU feedback. Enable this option when the
+  MCU doesn't report state back. Until the MCU reports a datapoint's type, speed is sent as an integer and
+  oscillation as a boolean, so an MCU that expects enum datapoints may ignore those commands, including the state
+  restored at boot. If the MCU never reports its datapoint types, this stays the case. Defaults to `false`.
 - All other options from [Fan](/components/fan#config-fan).
 
 > [!NOTE]
