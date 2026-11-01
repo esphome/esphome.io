@@ -11,7 +11,8 @@ configuration to Home Assistant (the native MAC address is not readily available
 
 > [!NOTE]
 > HA will not automatically discover an ESPHome instance running on `host` using mDNS, and you will need
-> to add it explicitly using the IP address of your host computer. If HA cannot establish a connection when
+> to add it explicitly using the IP address of your host computer. The same applies to the ESPHome Device
+> Builder: set `use_address` to the host's IP address so that OTA updates and logs can reach it. If HA cannot establish a connection when
 > adding the device manually, the firewall settings of the local host computer may be the cause. The
 > ESPHome *API* port (`6053`  ) must be allowed through the firewall.
 > See [Api](/components/api/) for details.
@@ -23,11 +24,15 @@ configure wifi - network will automatically be available using the host computer
 # Example configuration entry
 host:
   mac_address: "06:35:69:ab:f6:79"
+  use_address: 10.0.0.100
 ```
 
 ## Configuration variables
 
 - **mac_address** (*Optional*, MAC address): A dummy MAC address to use when communicating with HA.
+- **use_address** (*Optional*, string): The address used to reach the running program for OTA updates and logs.
+  Defaults to `<name>.local`, which only resolves when the host computer announces itself over mDNS (for example
+  with Avahi); set it to the host's IP address otherwise.
 
 ## Build and run
 
