@@ -1,0 +1,89 @@
+---
+// Renders a "shared from" pill and cover image on blog grid cards for posts
+// crossposted from another site. Preview.astro (starlight-blog) has no override
+// hook, so this patches the DOM client-side instead.
+// A post opts in by setting `crosspostSource` in its frontmatter (see content.config.ts).
+// The cover is drawn as a plain <img> (never Astro's <Image>) so the remote image
+// is not probed/cached at build time and can be published before the post.
+import { getCollection } from "astro:content";
+
+const crosspostEntries = await getCollection("docs", (entry) => Boolean(entry.data.crosspostSource));
+const crossposts = crosspostEntries.map((entry) => ({
+  path: `/${entry.data.slug ?? entry.id}/`,
+  label: `This article is shared from the ${entry.data.crosspostSource}`,
+  cover: entry.data.crosspostCover ?? null,
+  coverAlt: entry.data.title ?? "",
+}));
+---
+
+<script is:inline define:vars={{ crossposts }}>
+  const externalIconSvg =
+    '<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M19.33 10.18a1 1 0 0 1-.77 0 1 1 0 0 1-.62-.93l.01-1.83-8.2 8.2a1 1 0 0 1-1.41-1.42l8.2-8.2H14.7a1 1 0 0 1 0-2h4.25a1 1 0 0 1 1 1v4.25a1 1 0 0 1-.62.93Z"/><path d="M11 4a1 1 0 1 1 0 2H7a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-4a1 1 0 1 1 2 0v4a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h4Z"/></svg>';
+
+  const decorate = (link) => {
+    const crosspost = crossposts.find((entry) => new URL(link.href).pathname === entry.path);
+    if (!crosspost) return;
+
+    const heading = link.querySelector("h2");
+
+    // Cover image, drawn inside the link as a plain <img> before any badge.
+    if (crosspost.cover && heading && !link.querySelector("figure.crosspost-cover")) {
+      const figure = document.createElement("figure");
+      figure.className = "crosspost-cover";
+      const img = document.createElement("img");
+      img.src = crosspost.cover;
+      img.alt = crosspost.coverAlt;
+      img.loading = "lazy";
+      img.decoding = "async";
+      figure.append(img);
+      heading.insertAdjacentElement("afterend", figure);
+    }
+
+    // "Shared from" badge, placed after the link.
+    if (!link.nextElementSibling?.classList.contains("crosspost-badge")) {
+      const badge = document.createElement("span");
+      badge.className = "crosspost-badge";
+      badge.innerHTML = externalIconSvg;
+      badge.append(document.createTextNode(crosspost.label));
+      link.insertAdjacentElement("afterend", badge);
+    }
+  };
+
+  const init = () => {
+    for (const link of document.querySelectorAll("article.preview > header > a.preview-link")) {
+      decorate(link);
+    }
+  };
+
+  init();
+  document.addEventListener("astro:page-load", init);
+</script>
+
+<style is:global>
+  .crosspost-cover {
+    margin: 0 0 1.5rem;
+  }
+  .crosspost-cover img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+  }
+  .crosspost-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    width: fit-content;
+    margin-bottom: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    background: var(--sl-color-text-accent);
+    color: var(--sl-color-text-invert);
+    font-size: var(--sl-text-xs);
+    font-weight: 600;
+  }
+  .crosspost-badge svg {
+    flex-shrink: 0;
+    fill: currentColor;
+  }
+</style>

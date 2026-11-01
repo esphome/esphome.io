@@ -1,0 +1,245 @@
+---
+description: "Requirements, application process and logo assets for the Made for ESPHome program"
+title: "Made for ESPHome"
+---
+
+import Figure from '@components/Figure.astro';
+
+<Figure
+  src="/images/made-for-esphome-black-on-white.svg"
+  width={682}
+  height={202}
+  layout="constrained"
+  alt="Made for ESPHome badge"
+  style="width: 60%; margin: 0 auto 2rem;"
+/>
+
+`Made for ESPHome` is our stamp of approval for hardware that ships with ESPHome. It tells a buyer three things
+before they hand over any money: the device runs ESPHome out of the box, its configuration is public, and they can
+take full control of it whenever they like without opening the case or soldering anything.
+
+Approved devices are listed on [devices.esphome.io/made-for-esphome](https://devices.esphome.io/made-for-esphome/) and
+may carry the [logo](#logos) on the product and its packaging.
+
+## What the Badge Promises
+
+- **It runs ESPHome.** Not a fork, not a lookalike, and not a cloud service with an ESPHome-compatible mode.
+- **The configuration is public.** Anyone can read the YAML that builds what ships on the device before buying it.
+- **The user can take control.** ESPHome Device Builder adopts the device, and the configuration builds and runs
+  unmodified, so nothing breaks the moment ownership changes hands.
+- **Updates keep working.** The manufacturer ships updates, and the user can push their own builds over the air.
+
+## Requirements
+
+The canonical list is the
+[Made for ESPHome checklist](https://github.com/esphome/devices.esphome.io/blob/main/.github/made-for-esphome-checklist.md)
+in the devices repository, which is added to your pull request automatically. The sections below explain what each
+item means and why it is there.
+
+### Hardware
+
+- The device uses an ESP32 or a *supported* ESP32 variant such as the C3, C6, S2 or S3. ESP8266 is not eligible.
+- The device ships with ESPHome already installed.
+
+### Naming
+
+Your product name must not contain **ESPHome**, except when it *ends with* **for ESPHome**. "ESPHome Widget" is not
+acceptable; "Acme Widget for ESPHome" is.
+
+### Configuration
+
+- The configuration is open source and published somewhere the public can read it, such as a GitHub repository.
+- Every entity and component (sensor, switch, i2c bus, output, and so on) has an `id`. Users need those ids to
+  [Extend](/components/packages#extend) or [Remove](/components/packages#remove) parts of your configuration when
+  they take control.
+- The configuration you ship contains no `!secret` references and no passwords, including the `wifi_ssid` /
+  `wifi_password` pair. Users provision their own Wi-Fi credentials, so anything baked in only leaves dummy
+  credentials sitting in the device's storage. Those secrets belong in the configuration a user ends up with *after*
+  adopting the device, not in what you ship.
+- Network configuration assumes defaults: no static IP addresses (`manual_ip`) and no hard-coded DNS servers.
+- The configuration is valid, builds and runs *without any user changes* after adoption. Remote packages are
+  permitted as long as this still holds.
+
+### Wi-Fi Provisioning
+
+Devices always arrive with no Wi-Fi credentials, so the user needs a way to supply them without a computer or a
+configuration file:
+
+- [`improv_ble`](/components/improv_ble/) provisions credentials over Bluetooth LE.
+- [`improv_serial`](/components/improv_serial/) does the same over USB, and is required if the device exposes a USB
+  port.
+
+Improv is required whenever `wifi:` appears in the configuration. That includes devices with wired
+[Ethernet](/components/ethernet/), since Ethernet and Wi-Fi can be configured together with automatic fallback
+between them. Only a configuration with no `wifi:` block at all is exempt.
+
+### Taking Control
+
+"Taking control" is a user adopting the device into their own ESPHome Device Builder and building ESPHome for it
+themselves. That requires:
+
+- [`dashboard_import`](/guides/creators/) with a `package_import_url` pointing at your public configuration.
+- [Project information](/components/esphome#esphome-creators_project) (`esphome` → `project` → `name` and `version`),
+  which is what the Device Builder matches on when it offers to adopt the device.
+- The [`api`](/components/api/) component, which the adoption flow relies on.
+- The [`esphome` OTA platform](/components/ota/esphome/), so the user can install their own builds over the air.
+- Serial flashing left enabled, as the escape hatch when everything else fails.
+
+### Updates
+
+Ship updates to devices you have sold using the
+[`http_request` update platform](/components/update/http_request/), which needs
+[`http_request`](/components/http_request/) and the
+[`http_request` OTA platform](/components/ota/http_request/) alongside it.
+
+The `source` URL must point at a publicly reachable
+[JSON manifest](/components/update/http_request#update_http_request-manifest_format) whose `builds` include a
+`chipFamily` matching your hardware and an `ota.path` that resolves to a downloadable binary. Our review tooling
+fetches the manifest and the binary, so a dead link or a chip family mismatch will fail the review.
+
+## Example Configuration
+
+The pieces every Made for ESPHome configuration needs:
+
+```yaml
+esphome:
+  name: "acme-widget"
+  friendly_name: "Acme Widget"
+  # One build works for every unit
+  name_add_mac_suffix: true
+  project:
+    name: acme.widget
+    version: "1.0"
+
+esp32:
+  variant: esp32c3
+
+# Required by the adoption flow
+api:
+
+ota:
+  - platform: esphome
+    id: ota_esphome
+  - platform: http_request
+    id: ota_http_request
+
+http_request:
+  id: http_request_id
+
+update:
+  - platform: http_request
+    id: update_http_request
+    name: "ESPHome update"
+    source: https://acme.example.com/widget/manifest.json
+
+wifi:
+  ap:
+
+improv_ble:
+  authorizer: none
+
+logger:
+
+improv_serial:
+
+dashboard_import:
+  package_import_url: github://acme/acme-widget/widget.yaml@main
+
+switch:
+  - platform: gpio
+    id: relay
+    name: "Relay"
+    pin: GPIOXX
+```
+
+See [Sharing ESPHome devices](/guides/creators/) for a fuller walkthrough of these options.
+
+## Applying
+
+1. **Publish your configuration** in a public repository.
+
+1. **Add your device** to [devices.esphome.io](https://devices.esphome.io) by opening a pull request in the
+   [devices.esphome.io repository](https://github.com/esphome/devices.esphome.io). Set `made-for-esphome: true` in the
+   page's front matter, and reference your configuration with a live `` ```yaml url=… `` fence pointing at the YAML
+   file in your repository, so the page always shows what actually ships. The
+   [Adding Devices guide](https://devices.esphome.io/devices/adding-devices/) covers the page format.
+
+1. **Email [esphome@openhomefoundation.org](mailto:esphome@openhomefoundation.org)** to apply for permission to carry
+   the logo, and **include a link to the pull request** so we can tie your application to it.
+
+Opening the pull request labels it `made-for-esphome` and `made-for-esphome-pending`, appends the checklist to the
+description for you to complete, and runs an automated review that downloads your configuration, builds it and posts
+the results as a comment. Work through anything it reports before asking for a human review.
+
+If something does not meet the requirements we will ask for changes on the pull request. Once your submission is
+accepted we apply the `made-for-esphome-approved` label and merge the pull request. Either of those is your
+confirmation that the device is in the program, so there is no need to wait for a reply to your email. Your device
+then appears in the [Made for ESPHome listing](https://devices.esphome.io/made-for-esphome/), and you may use the
+[logos](#logos).
+
+## Logos
+
+After your project is approved, you may use these logos on your product and/or its packaging.
+
+<Figure
+  src="/images/made-for-esphome-black-on-white.svg"
+  width={682}
+  height={202}
+  layout="constrained"
+  alt="Made for ESPHome badge - black on white"
+  style="width: 70%"
+>
+  <p slot="caption">
+    Black on white ([svg](/images/made-for-esphome-black-on-white.svg), [png](/images/made-for-esphome-black-on-white.png))
+  </p>
+</Figure>
+
+<Figure
+  src="/images/made-for-esphome-white-on-black.svg"
+  width={682}
+  height={202}
+  layout="constrained"
+  alt="Made for ESPHome badge - white on black"
+  style="width: 70%"
+>
+  <p slot="caption">
+    White on black ([svg](/images/made-for-esphome-white-on-black.svg), [png](/images/made-for-esphome-white-on-black.png))
+  </p>
+</Figure>
+
+<div class="transparent-background">
+  <Figure
+    src="/images/made-for-esphome-black-on-transparent.svg"
+    width={682}
+    height={202}
+    layout="constrained"
+    alt="Made for ESPHome badge - black on transparent"
+    style="width: 70%"
+  >
+    <p slot="caption">
+      Black on transparent ([svg](/images/made-for-esphome-black-on-transparent.svg), [png](/images/made-for-esphome-black-on-transparent.png))
+    </p>
+  </Figure>
+</div>
+
+<div class="transparent-background">
+  <Figure
+    src="/images/made-for-esphome-white-on-transparent.svg"
+    width={682}
+    height={202}
+    layout="constrained"
+    alt="Made for ESPHome badge - white on transparent"
+    style="width: 70%"
+  >
+    <p slot="caption">
+      White on transparent ([svg](/images/made-for-esphome-white-on-transparent.svg), [png](/images/made-for-esphome-white-on-transparent.png))
+    </p>
+  </Figure>
+</div>
+
+## See Also
+
+- [Sharing ESPHome devices](/guides/creators/) - the configuration options behind adoption and provisioning
+- [Made for ESPHome devices](https://devices.esphome.io/made-for-esphome/) - devices already approved
+- [Made for ESPHome checklist](https://github.com/esphome/devices.esphome.io/blob/main/.github/made-for-esphome-checklist.md) - the exact items we review against
+- [Adding Devices](https://devices.esphome.io/devices/adding-devices/) - how to write the device page

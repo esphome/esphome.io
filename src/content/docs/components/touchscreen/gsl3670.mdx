@@ -1,0 +1,115 @@
+---
+description: "Instructions for setting up GSL3670 touch screen controller with ESPHome"
+title: "GSL3670 Touch Screen Controller"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `gsl3670` touchscreen platform allows using the touch screen controllers based on the GSL3670 and the GSL3680 chips with ESPHome.
+An [I²C](/components/i2c) bus is required to be set up in your configuration for this touchscreen to work.
+
+The GSL3670 chip is used in the Seeed Studio reTerminal D1001. The GSL3680 chip is used in the Guition JC8012P4A1.
+
+The component requires a binary firmware file to be loaded into the controller during initialization. When using a built-in model, this firmware is downloaded automatically from the [esphome-libs/gsl3670-firmware](https://github.com/esphome-libs/gsl3670-firmware) release and cached locally, so it does not need to be supplied manually. The download is verified against a known SHA-256 checksum. Alternatively, a firmware file can be supplied from a custom URL or from a local file.
+
+## Base Touchscreen Configuration
+
+```yaml
+# Example configuration entry using the built-in Seeed reTerminal D1001 model
+touchscreen:
+  platform: gsl3670
+  id: my_touchscreen
+  model: SEEED-RETERMINAL-D1001
+```
+
+```yaml
+# Example configuration entry using the built-in Guition JC8012P4A1 model
+touchscreen:
+  platform: gsl3670
+  id: my_touchscreen
+  model: GUITION-JC8012P4A1
+```
+
+```yaml
+# Example configuration entry for a custom touchscreen, firmware from a URL
+touchscreen:
+  platform: gsl3670
+  id: my_touchscreen
+  interrupt_pin: GPIOXX
+  reset_pin: GPIOXX
+  firmware:
+    url: https://example.com/my_gsl3670_firmware.bin
+    sha256: 2e50501ad83656fb6fa3d92591f9f31add4d442c8e8a79f29f5c4d335bd127a4
+```
+
+```yaml
+# Example configuration entry using a local firmware file
+touchscreen:
+  platform: gsl3670
+  id: my_touchscreen
+  interrupt_pin: GPIOXX
+  reset_pin: GPIOXX
+  firmware:
+    file: my_gsl3670_firmware.bin
+```
+
+### Configuration variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually set the ID of this touchscreen.
+- **model** (*Optional*, string): A predefined model that sets default values for pin assignments, calibration, and firmware. Currently supported:
+  - `SEEED-RETERMINAL-D1001`: Seeed Studio reTerminal D1001. Sets appropriate defaults for interrupt pin, reset pin, calibration, axis mirroring/swapping, and the firmware download URL and checksum.
+  - `GUITION-JC8012P4A1`: Guition JC8012P4A1. Sets appropriate defaults for interrupt pin, reset pin, calibration, axis mirroring/swapping, and the firmware download URL and checksum.
+  - `CUSTOM`: No defaults are applied; all options must be configured manually. This is the default.
+- **interrupt_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The touch detection pin.
+- **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The chip reset pin.
+- **firmware** (**Required**, dict): The source of the GSL3670 binary firmware file. When using a built-in model, this is set automatically. Exactly one of `url` or `file` must be provided:
+  - **url** (*Optional*, string): URL of the firmware file. The file is downloaded and cached locally at build time.
+  - **sha256** (*Optional*, string): The expected SHA-256 checksum of the downloaded firmware file. When set, the download is rejected if the checksum does not match.
+  - **file** (*Optional*, string): Path to a local firmware file, used instead of downloading from `url`. If the file is not found at the given path, the component will also look for it in its own directory.
+
+The firmware is validated for correct format and integrity at config validation time.
+
+- All other options from [Touchscreen](/components/touchscreen#config-touchscreen).
+
+### Sample config for the Seeed reTerminal D1001
+
+```yaml
+i2c:
+  - id: lcd_i2c
+    sda:
+      ignore_strapping_warning: true
+      number: GPIO37
+    scl:
+      ignore_strapping_warning: true
+      number: GPIO38
+    scan: true
+    frequency: 400kHz
+
+touchscreen:
+  - platform: gsl3670
+    i2c_id: lcd_i2c
+    model: SEEED-RETERMINAL-D1001
+```
+
+### Sample config for the Guition JC8012P4A1
+
+```yaml
+i2c:
+  - id: lcd_i2c
+    sda: GPIO07
+    scl: GPIO08
+    scan: true
+    frequency: 400kHz
+    sda_pullup_enabled: False
+    scl_pullup_enabled: False
+
+touchscreen:
+  - platform: gsl3670
+    i2c_id: lcd_i2c
+    model: GUITION-JC8012P4A1
+```
+
+## See Also
+
+- [Touchscreen Components](/components/touchscreen/)
+- <APIRef text="gsl3670_touchscreen.h" path="gsl3670/gsl3670_touchscreen.h" />

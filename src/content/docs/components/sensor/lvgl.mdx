@@ -1,0 +1,47 @@
+---
+description: "Instructions for setting up an LVGL widget sensor component."
+title: "LVGL Sensor"
+---
+
+The `lvgl` sensor platform creates a sensor component from an LVGL widget
+and requires [LVGL](/components/lvgl/) to be configured.
+
+Supported widgets are [`arc`](/components/lvgl/widgets#arc), [`bar`](/components/lvgl/widgets#bar), [`slider`](/components/lvgl/widgets#slider) and [`spinbox`](/components/lvgl/widgets#spinbox). A single sensor supports only a single widget; in other words, it's not possible to have multiple widgets associated with a single ESPHome sensor.
+
+## Configuration variables
+
+- **widget** (**Required**): The ID of a supported widget configured in LVGL, which will reflect the state of the sensor.
+- **trigger** (*Optional*, string): Specifies which events will cause the sensor to be updated with the widget's value. One of `on_change`, `on_update`, `on_value`, `on_release`. Defaults to `on_value`.
+  - `on_change`: Update only when the user interacts with the widget.
+  - `on_update`: Update only when the value is changed programmatically (e.g. via an `lvgl.*.update` action).
+  - `on_value`: Update on both user interaction and programmatic changes.
+  - `on_release`: Update only when the user releases the widget after interaction.
+- All other variables from [Sensor](/components/sensor).
+
+Example:
+
+```yaml
+sensor:
+  - platform: lvgl
+    widget: slider_id
+    name: LVGL Slider
+```
+
+> [!NOTE]
+> Widget-specific actions (`lvgl.arc.update`, `lvgl.bar.update`, `lvgl.slider.update`, `lvgl.spinbox.update`, `lvgl.spinbox.decrement`, `lvgl.spinbox.increment`  )
+> will trigger corresponding component updates to be sent to Home Assistant if the `trigger` is set to `on_value` (the default) or `on_update`.
+
+## See Also
+
+- [LVGL Main component](/components/lvgl/)
+- [Arc widget](/components/lvgl/widgets#arc)
+- [Bar widget](/components/lvgl/widgets#bar)
+- [Slider widget](/components/lvgl/widgets#slider)
+- [Spinbox widget](/components/lvgl/widgets#spinbox)
+- [LVGL Binary Sensor](/components/binary_sensor/lvgl/)
+- [LVGL Switch](/components/switch/lvgl/)
+- [LVGL Select](/components/select/lvgl/)
+- [LVGL Light](/components/light/lvgl/)
+- [LVGL Number](/components/number/lvgl/)
+- [LVGL Text](/components/text/lvgl/)
+- [LVGL Text Sensor](/components/text_sensor/lvgl/)

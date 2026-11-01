@@ -1,0 +1,149 @@
+---
+description: "Instructions for setting up a UDP component on ESPHome"
+title: "UDP Component"
+---
+import APIRef from '@components/APIRef.astro';
+
+
+<span id="udp"></span>
+
+This component allows reception and transmission of data over a network using the [User Datagram Protocol (UDP)](https://en.wikipedia.org/wiki/User_Datagram_Protocol).
+In conjunction with the [Packet Transport Component](/components/packet_transport#packet-transport) it can be used to broadcast sensor data.
+
+```yaml
+# Example configuration entry
+udp:
+    listen_address: 239.0.60.53
+    addresses: ["255.255.255.255", "208.87.135.110"]
+```
+
+## Configuration variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+- **port** (*Optional*, int): The destination UDP port number to use. Defaults to `18511`. Different listen and broadcast ports can be specified via a map instead of a single port number.:
+  - **listen_port** (**Required**, int): The port to listen on for received packets.
+  - **broadcast_port** (**Required**, int): The port to send packets to.
+- **addresses** (*Optional*, list of IP addresses): One or more IPv4 or IPv6 addresses to send data to. Defaults to
+  `255.255.255.255`, the local network broadcast address. IPv6 addresses require `enable_ipv6: true` in the
+  [Network](/components/network/) component; on ESP8266 and RP2040 the `udp` component rejects them at validation.
+  A `%` scope suffix and link-local unicast destinations (`fe80::/10`) also fail validation, because the device
+  cannot pick an interface for them; use multicast, unique local or global addresses instead. Multicast destinations
+  leave on the interface the `listen_address` group was joined on, or on the first IPv6 interface when there is no
+  IPv6 group.
+
+- **listen_address** (*Optional*, IP address): An IPv4 multicast or broadcast address, or an IPv6 multicast
+  address, to listen on. A multicast address joins that group; a broadcast address, such as the default
+  `255.255.255.255`, only listens. IPv6 multicast addresses (e.g. `ff12::6053`) have the same `enable_ipv6`,
+  platform and `%` scope suffix requirements as IPv6 `addresses` above. With the default `listen_address` and
+  `enable_ipv6: true`, the device also receives IPv6 unicast datagrams sent to its own address, except on ESP8266
+  and RP2040.
+  **NOTE**: When set to a multicast address, the socket binds to the group address and receives only datagrams sent
+  to that group, whichever family the group is in: IPv4 broadcast packets (`255.255.255.255`) and IPv6 unicast
+  datagrams sent to the device's own address are no longer received. Outgoing `addresses` are unaffected.
+
+## Reliability
+
+UDP, like any other network protocol, does not provide a guarantee that data will be delivered, but unlike TCP it does not
+even provide any indication whether data has been successfully delivered or not.
+
+## `udp.write` Action
+
+To write data to the UDP port, use the `udp.write` action. This action takes a single argument, the data to write to the UDP port.
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): The id of the UDP component to use. If there is only one UDP component, this can be omitted.
+- **data** (**Required**, [templatable](/automations/templates), string or list of bytes): The data to write to the UDP port.
+
+## On Receive Trigger
+
+To trigger an action when data is received on the UDP port, use the `on_receive` trigger. The trigger is called with a single argument `data` representing a `std::vector<uint8_t>` of the received data.
+
+```yaml
+udp:
+    on_receive:
+      then:
+        - logger.log:
+            format: "Received %s"
+            args: [format_hex_pretty(data).c_str()]
+```
+
+## Examples
+
+See the [Packet Transport Component](/components/packet_transport#packet-transport) for examples of how to use this component.
+
+A more complex example is shown below:
+
+The example below shows a provider device separating data sent to different consumers. There are two provider confgurations, with different IDs.
+The `transport_internal` provider broadcasts the selected sensor states in plain text every 10 seconds to all the network members, while the `transport_external`
+provider sends other sensors data to an external IP address and port, with encryption. The node also listens to data from a `remote-node` through
+the port specified in the `transport_external` configuration:
+
+```yaml
+udp:
+ - id: udp_internal
+ - id: udp_external
+    port:
+      listen_port: 18511
+      broadcast_port: 18512
+    addresses:
+      - 10.87.135.110
+
+packet_transport:
+  - id: transport_internal
+    udp_id: udp_internal
+    update_interval: 10s
+    sensors:
+      - temp_outdoor
+      - temp_rooma
+      - temp_roomb
+      - temp_roomc
+      - temp_garage
+      - temp_water
+      - humi_rooma
+      - humi_roomb
+      - humi_roomc
+
+  - id: transport_external
+    udp_id: udp_external
+    update_interval: 60s
+    encryption: "Muddy Waters"
+    ping_pong_enable: true
+    rolling_code_enable: true
+    binary_sensors:
+      - binary_sensor_door
+    sensors:
+      - temp_outdoor
+
+binary_sensor:
+  - platform: packet_transport
+    id: binary_sensor_unlock
+    transport_id: transport_external
+    provider: remote-node
+    remote_id: binary_sensor_unlock_me
+    on_press:
+      - lambda: |-
+          ESP_LOGI("main", "d command to binary_sensor_unlock");
+```
+
+### IPv6 Multicast
+
+With IPv6 enabled in the [Network](/components/network/) component, both `listen_address` and `addresses` accept IPv6
+multicast addresses. Pick a group of your own, such as a transient link-local group; `ff02::1` would reach every
+IPv6 host on the link.
+
+```yaml
+network:
+  enable_ipv6: true
+
+udp:
+  listen_address: ff12::6053
+  addresses:
+    - ff12::6053
+```
+
+## See Also
+
+- [UDP Packet Transport Platform](/components/packet_transport/udp/)
+- [Packet Transport Binary Sensor](/components/binary_sensor/packet_transport/)
+- [Packet Transport Sensor](/components/sensor/packet_transport/)
+- [Automation](/automations)
+- <APIRef text="udp_component.h" path="udp/udp_component.h" />

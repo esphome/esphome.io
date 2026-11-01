@@ -1,0 +1,64 @@
+---
+/**
+ * ImgTable Component
+ * Creates a grid of component cards with images, titles, and optional descriptions.
+ *
+ * Usage in MDX:
+ * <ImgTable items={[
+ *   ["Title 1", "/path/to/page1/", "image1.png"],
+ *   ["Title 2", "/path/to/page2/", "image2.png", "caption"],
+ *   ["Title 3", "/path/to/page3/", "image3.png", "caption", "dark-invert"],
+ *   ["Title 4", "/path/to/page4/", "badge:Title_4"],
+ * ]} />
+ *
+ * An image of `badge:<Name>` uses a component name badge generated at build time
+ * (see src/lib/badges.mjs).
+ */
+
+import { resolveImagePath } from "../lib/img-table.mjs";
+
+interface Props {
+  items: Array<[string, string, string, string?, string?]>;
+}
+
+const { items } = Astro.props;
+
+// Helper to add word break opportunities after non-alphabetic characters
+function addWordBreaks(text: string): string {
+  return text.replace(/([^a-zA-Z])/g, "$1\u200B");
+}
+---
+
+<div class="component-grid not-content">
+  {
+    items.map((item) => {
+      const [title, link, image, ...rest] = item;
+      let caption = "";
+      let cssClass = "";
+
+      // Parse optional parameters
+      for (const param of rest) {
+        if (param === "dark-invert") {
+          cssClass = param;
+        } else if (param && param !== "") {
+          caption = caption ? `${caption} & ${param}` : param;
+        }
+      }
+
+      const resolvedLink = link.endsWith("/") ? link : `${link}/`;
+      const resolvedImage = resolveImagePath(image);
+
+      return (
+        <div class="component-card">
+          <a href={resolvedLink}>
+            <div class={`component-icon ${cssClass}`}>
+              <img src={resolvedImage} alt="" loading="lazy" />
+            </div>
+            <div class="component-name">{addWordBreaks(title)}</div>
+            {caption && <div class="component-caption">{addWordBreaks(caption)}</div>}
+          </a>
+        </div>
+      );
+    })
+  }
+</div>

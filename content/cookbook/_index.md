@@ -1,4 +1,0 @@
----
-description: "Cookbook"
-title: "Cookbook"
----

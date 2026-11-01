@@ -1,0 +1,30 @@
+---
+description: "Instructions for setting up an SDL keyboard binary sensor."
+title: "SDL Binary Sensor"
+---
+
+The `sdl` binary sensor platform creates a binary sensor from keyboard presses on the host platform.
+The sensor will be true when the key is pressed. The `sdl` display it belongs to must have a window - a display
+with [headless](/components/display/sdl#headless-operation) set receives no key presses.
+
+Holding a key down gives a single press: the key repeats the operating system sends while a key is held
+are ignored, so the sensor stays true until the key is released rather than switching on and off.
+
+## Configuration variables
+
+- **key** (**Required**): The ID of an [SDL key](https://www.libsdl.org/release/SDL-1.2.15/docs/html/sdlkey.html).
+- All other variables from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
+
+Example:
+
+```yaml
+binary_sensor:
+  - platform: sdl
+    id: key_id
+    key: SDLK_a
+```
+
+## See Also
+
+- [Host Platform](/components/host/)
+- [SDL display](/components/display/sdl#sdl)

@@ -1,0 +1,103 @@
+---
+import CardGroup from "@components/CardGroup.astro";
+
+import Card from "@components/Card.astro";
+import IconText from "@components/IconText.astro";
+import IconTextGroup from "@components/IconTextGroup.astro";
+
+import TitleText from "@components/starter-kit/TitleText.astro";
+---
+
+<section class="block-whats-possible">
+  <TitleText>
+    <h2 slot="title" class="title">Explore what’s possible</h2>
+    <p slot="text">
+      These are just four of the things you can build with the ESPHome Starter Kit. Each pairs one of the kit's modules
+      with an automation. Every module becomes a real, working smart home device – and once you've learned the basics,
+      what you do next is entirely up to you.
+    </p>
+  </TitleText>
+
+  <CardGroup columns={2}>
+    <Card>
+      <IconTextGroup line>
+        <IconText animated="click" text="Click a button" />
+        <IconText animated="music" delay="0.5s" text="Music plays" />
+      </IconTextGroup>
+      <h3>Manual trigger</h3>
+      <p>
+        Tap the button module to set off any Home Assistant automation you choose: wake up to your favourite song, turn
+        on the lights, or start the coffee machine.
+      </p>
+    </Card>
+    <Card data-delay="150">
+      <IconTextGroup line>
+        <IconText animated="motion" text="Walk into a room" />
+        <IconText animated="lights" delay="0.5s" text="Lights turn on" />
+      </IconTextGroup>
+      <h3>Motion detector</h3>
+      <p>
+        Step past your motion sensor in a darkened room and your lights come on automatically: no fumbling for switches
+        or an app.
+      </p>
+    </Card>
+    <Card>
+      <IconTextGroup line>
+        <IconText animated="temp-low" text="Temperature drops" />
+        <IconText animated="heater" delay="0.5s" text="Heater turns on" />
+      </IconTextGroup>
+      <h3>Thermostat</h3>
+      <p>Set a minimum temperature so your heaters warm up automatically if your bedroom gets too cold.</p>
+    </Card>
+    <Card data-delay="150">
+      <IconTextGroup line>
+        <IconText icon="calendar" text="Upcoming event" />
+        <IconText animated="led" delay="0.5s" text="LEDs flash and alarm sounds" />
+      </IconTextGroup>
+      <h3>Event notification</h3>
+      <p>
+        Program LEDs to turn red and a chime to sound so you don’t forget to put out the trash or take your medicine.
+      </p>
+    </Card>
+  </CardGroup>
+
+  <div class="container">
+    <p class="examples-note">
+      These are a few starting points. The possibilities are endless. Combine the modules however you like, then take
+      what you learn and build something new. <a
+        href="https://wiki.apolloautomation.com/products/ESPHome-Starter-Kit/start-here/"
+        target="_blank"
+        rel="noopener">See more in the Wiki &rarr;</a
+      >
+    </p>
+  </div>
+</section>
+
+<style lang="scss">
+  @use "../../styles/mixins" as *;
+
+  .examples-note {
+    @include fluid(14, 16);
+    margin: 1rem auto 0;
+    max-width: 720px;
+    text-align: center;
+    text-wrap: balance;
+    color: var(--esk-body-colour);
+    line-height: 1.5;
+
+    @include bp(tablet) {
+      margin: 2.5rem auto 0;
+    }
+
+    a {
+      color: var(--esk-title-colour);
+      font-weight: 600;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+
+      &:hover {
+        text-decoration-thickness: 2px;
+      }
+    }
+  }
+</style>

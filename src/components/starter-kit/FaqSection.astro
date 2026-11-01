@@ -1,0 +1,17 @@
+---
+import { getEntry } from "astro:content";
+const faq = await getEntry("faq", "starter-kit");
+import FAQ from "@components/FAQ.astro";
+
+import TitleText from "@components/starter-kit/TitleText.astro";
+---
+
+<section id="faq" class="block-faqs">
+  <TitleText>
+    <h2 slot="title" class="title">Any questions?</h2>
+  </TitleText>
+
+  <FAQ items={faq.data.items} />
+</section>
+
+<style lang="scss"></style>

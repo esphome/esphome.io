@@ -1,0 +1,106 @@
+---
+title: "Aranet BLE Sensors"
+description: "Instructions for reading Aranet air-quality, radon and radiation monitors over Bluetooth Low Energy."
+---
+
+The `aranet` sensor platform reads advertisements from Aranet Bluetooth Low Energy devices. It supports Aranet4,
+Aranet2, Aranet Radiation, Aranet Radon Plus, and Aranet Radon One devices. The platform listens passively and does not
+connect to the device.
+
+This platform requires the [ESP32 Bluetooth Low Energy Tracker](/components/esp32_ble_tracker/).
+
+> [!IMPORTANT]
+> Enable Smart Home integrations for the device in the Aranet Home app. The device does not include measurements in
+> its advertisements when this setting is disabled.
+
+## Configuration
+
+The sensors available depend on the Aranet device model. This minimal example configures an Aranet4:
+
+```yaml
+sensor:
+  - platform: aranet
+    mac_address: XX:XX:XX:XX:XX:XX
+    co2:
+      name: "Aranet4 Carbon Dioxide"
+```
+
+## Configuration Variables
+
+- **mac_address** (**Required**, MAC Address): The MAC address of the Aranet device.
+- **co2** (*Optional*, [Sensor](/components/sensor/)): The carbon dioxide concentration reported by an Aranet4.
+- **temperature** (*Optional*, [Sensor](/components/sensor/)): The temperature reported by an Aranet4, Aranet2, or
+  Aranet Radon Plus.
+- **humidity** (*Optional*, [Sensor](/components/sensor/)): The relative humidity reported by an Aranet4, Aranet2, or
+  Aranet Radon Plus.
+- **pressure** (*Optional*, [Sensor](/components/sensor/)): The atmospheric pressure reported by an Aranet4, Aranet
+  Radon Plus, or Aranet Radon One.
+- **radon** (*Optional*, [Sensor](/components/sensor/)): The radon concentration in Bq/m³ reported by an Aranet
+  Radon Plus or Aranet Radon One.
+- **radiation_rate** (*Optional*, [Sensor](/components/sensor/)): The radiation dose rate in µSv/h reported by an
+  Aranet Radiation.
+- **radiation_total** (*Optional*, [Sensor](/components/sensor/)): The accumulated radiation dose in nSv reported by
+  an Aranet Radiation.
+- **radiation_duration** (*Optional*, [Sensor](/components/sensor/)): The duration in seconds over which the
+  accumulated dose was measured by an Aranet Radiation.
+- **battery_level** (*Optional*, [Sensor](/components/sensor/)): The device battery level in percent. Reported by all
+  supported models.
+- **measurement_interval** (*Optional*, [Sensor](/components/sensor/)): The interval between device measurements in
+  seconds. Reported by all supported models.
+- **measurement_age** (*Optional*, [Sensor](/components/sensor/)): The time in seconds since the device took its most
+  recent measurement. Reported by all supported models.
+- **signal_strength** (*Optional*, [Sensor](/components/sensor/)): The RSSI of the received advertisement in dBm.
+
+All sensor options support the settings described in the [Sensor component](/components/sensor/).
+
+## Model Examples
+
+### Aranet2
+
+```yaml
+sensor:
+  - platform: aranet
+    mac_address: XX:XX:XX:XX:XX:XX
+    temperature:
+      name: "Aranet2 Temperature"
+    humidity:
+      name: "Aranet2 Humidity"
+```
+
+### Aranet Radiation
+
+```yaml
+sensor:
+  - platform: aranet
+    mac_address: XX:XX:XX:XX:XX:XX
+    radiation_rate:
+      name: "Aranet Radiation Dose Rate"
+    radiation_total:
+      name: "Aranet Radiation Total Dose"
+    radiation_duration:
+      name: "Aranet Radiation Dose Duration"
+```
+
+### Aranet Radon
+
+```yaml
+sensor:
+  - platform: aranet
+    mac_address: XX:XX:XX:XX:XX:XX
+    radon:
+      name: "Aranet Radon Concentration"
+    temperature:
+      name: "Aranet Radon Temperature"
+    humidity:
+      name: "Aranet Radon Humidity"
+    pressure:
+      name: "Aranet Radon Pressure"
+```
+
+Aranet Radon One devices do not report temperature or humidity.
+
+## See Also
+
+- [ESP32 Bluetooth Low Energy Tracker](/components/esp32_ble_tracker/)
+- [Aranet Home](https://aranet.com/en/home/aranet-home-app)
+- [Aranet4-Python](https://github.com/Anrijs/Aranet4-Python)
