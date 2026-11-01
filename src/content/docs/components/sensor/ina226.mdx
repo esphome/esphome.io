@@ -81,7 +81,8 @@ sensor:
     - `power_over`: the power goes above `limit`.
   - **limit** (**Required** for every function except `none`, voltage or power): The threshold. Use a
     voltage such as `75mV` for the shunt and bus functions, and a power such as `50W` for `power_over`.
-    A plain number is read as volts or watts. A value the chip cannot store with the configured
+    A plain number is read as volts or watts. For a current threshold, multiply it by `shunt_resistance`:
+    0.75A through a 0.1 Ω shunt is `75mV`. A value the chip cannot store with the configured
     `shunt_resistance` and `max_current` is rejected when the configuration is validated.
   - **conversion_ready** (*Optional*, boolean): Also pulse the pin each time a new measurement is ready.
     Defaults to `false`.
@@ -91,8 +92,9 @@ sensor:
     [`ina226.clear_alert`](#ina226-clear_alert-action) action, instead of releasing it when the reading
     returns within the limit. Defaults to `false`.
 
-The ALERT pin is open drain, so it needs a pull-up resistor. Watch it with a
-[GPIO Binary Sensor](/components/binary_sensor/gpio/):
+The ALERT pin is open drain, so it needs a pull-up resistor; the internal pull-up of the input works.
+Watch it with a [GPIO Binary Sensor](/components/binary_sensor/gpio/). `inverted: true` below matches the
+default active-low output; drop it if you set `active_high: true`.
 
 ```yaml
 binary_sensor:
@@ -131,7 +133,7 @@ All other options from [Sensor](/components/sensor).
 
 ## `ina226.clear_alert` Action
 
-Releases a latched alert on the ALERT pin by reading the chip's alert register.
+Releases a latched alert on the ALERT pin by reading the chip's Mask/Enable register.
 
 ```yaml
 on_...:
