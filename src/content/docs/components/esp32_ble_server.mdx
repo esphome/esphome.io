@@ -43,7 +43,7 @@ esp32_ble_server:
   [`ble_server.enable_pairing`](#ble_server-enable_pairing-action) and
   [`ble_server.disable_pairing`](#ble_server-disable_pairing-action) actions to change it later.
   Defaults to `true`. See [Security](#ble-security).
-- **services** (*Optional*, list of [Service Configuration](#esp32_ble_server-service)): A list of services to expose on the BLE GATT server.
+- **services** (*Optional*, list of [Service Configuration](#service-configuration)): A list of services to expose on the BLE GATT server.
 - **on_connect** (*Optional*, [Automation](/automations)): An action to be performed when a client connects to
   the BLE server. It provides the `id` variable which contains the ID of the client that connected. See
   [`on_connect`](#on_connect).
@@ -135,6 +135,10 @@ esp32_ble_server:
           address: !lambda return address;
           accept: true
 ```
+
+Accepting without asking the user, as above, skips the check that numeric comparison exists for, so it gives no
+more protection against a man in the middle than Just Works, even with `read_encrypt_mitm` or `write_encrypt_mitm`.
+To have the user confirm the number, see the button example in [Security](#ble-security).
 
 ## Service Configuration
 
@@ -430,8 +434,9 @@ esp32_ble_server:
 ```
 
 A device that uses numeric comparison. The user must confirm the number on both devices. On the ESP32 this is done
-with the `ble_server.numeric_comparison_reply` action, here from a button. The address of the client is kept in a
-global variable until the button is pressed.
+with the `ble_server.numeric_comparison_reply` action, here from two buttons that accept or reject the pairing. The
+address of the client is kept in a global variable until a button is pressed, so this example handles one pending
+pairing at a time.
 
 ```yaml
 esp32_ble:
@@ -459,9 +464,29 @@ button:
   - platform: template
     name: Confirm pairing
     on_press:
-      - ble_server.numeric_comparison_reply:
-          address: !lambda return id(pairing_address);
-          accept: true
+      - if:
+          condition:
+            lambda: return id(pairing_address) != 0;
+          then:
+            - ble_server.numeric_comparison_reply:
+                address: !lambda return id(pairing_address);
+                accept: true
+            - globals.set:
+                id: pairing_address
+                value: "0"
+  - platform: template
+    name: Reject pairing
+    on_press:
+      - if:
+          condition:
+            lambda: return id(pairing_address) != 0;
+          then:
+            - ble_server.numeric_comparison_reply:
+                address: !lambda return id(pairing_address);
+                accept: false
+            - globals.set:
+                id: pairing_address
+                value: "0"
 ```
 
 A device that only accepts new pairings for two minutes after a button press. Devices that are already bonded can
@@ -569,9 +594,6 @@ on_...:
 #### Configuration variables
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the BLE server.
-
-
-<span id="esp32_ble_server-service"></span>
 
 ## See Also
 
