@@ -80,7 +80,7 @@ sensor:
     - `bus_over`, `bus_under`: the bus voltage goes above or below `limit`, from `0V` to `36V`.
     - `power_over`: the power goes above `limit`.
   - **limit** (**Required** for every function except `none`, voltage or power): The threshold. Use a
-    voltage such as `75mV` for the shunt and bus functions, and a power such as `10W` for `power_over`.
+    voltage such as `75mV` for the shunt and bus functions, and a power such as `5W` for `power_over`.
     A plain number is read as volts or watts. For a current threshold, multiply it by `shunt_resistance`:
     0.75A through a 0.1 Ω shunt is `75mV`. A value the chip cannot store with the configured
     `shunt_resistance` and `max_current` is rejected when the configuration is validated.
@@ -118,11 +118,12 @@ sensor:
       name: "Power"
     alert:
       function: power_over
-      limit: 10W
+      limit: 5W
       latch: true
 ```
 
-Choose the power limit for your actual shunt resistance and bus voltage. With the `0.1 ohm` shunt above,
+The example uses a 5W limit for a 12V bus. Choose the power limit for your actual shunt resistance and
+bus voltage. With the `0.1 ohm` shunt above,
 the INA226's approximately 81.92mV shunt input range limits measurable current to about 0.819A, or 29.5W
 at the maximum 36V bus voltage. Increasing `max_current` changes the measurement scaling, not this input
 range. Use a lower power limit at lower bus voltages.
