@@ -1,0 +1,67 @@
+---
+description: "Instructions for using ESPHome's TLV320DAC3100 audio DAC platform to play media from your devices."
+title: "TLV320DAC3100"
+---
+import APIRef from '@components/APIRef.astro';
+
+The `tlv320dac3100` platform allows your ESPHome devices to use the TI TLV320DAC3100 stereo audio DAC, which has a
+built-in mono class-D speaker amplifier and a stereo headphone driver. This allows the playback of audio via the
+microcontroller from a range of sources via [Media Player](/components/media_player/).
+
+The [I²C bus](/components/i2c) is required in your configuration as this is used to communicate with the
+TLV320DAC3100. Audio data comes from an [I²S Audio Speaker](/components/speaker/i2s_audio/).
+
+```yaml
+# Example configuration entry
+audio_dac:
+  - platform: tlv320dac3100
+    id: dac
+    sample_rate: 44100
+
+speaker:
+  - platform: i2s_audio
+    dac_type: external
+    i2s_dout_pin: GPIOXX
+    sample_rate: 44100
+    audio_dac: dac
+```
+
+<span id="config-tlv320dac3100"></span>
+
+## Configuration variables
+
+- **sample_rate** (**Required**, int): The sample rate of the audio sent to the DAC, from `8000` to `192000`. Must
+  match the `sample_rate` of the I²S speaker.
+- **bits_per_sample** (*Optional*, string): The I²S sample size: `16bit`, `24bit` or `32bit`. Must match the I²S
+  speaker. Defaults to `16bit`.
+- **mclk_frequency** (*Optional*, int): The frequency of the clock on the MCLK pin, in Hz. Without it, the DAC's
+  clocks are generated from the I²S bit clock (BCLK), so no MCLK connection is needed.
+- **output** (*Optional*, string): The outputs to enable: `SPEAKER`, `HEADPHONE` or `BOTH`. With `SPEAKER`, the
+  left and right channels are mixed for the mono speaker. Defaults to `BOTH`.
+- **speaker_gain** (*Optional*, string): The class-D speaker amplifier gain: `6dB`, `12dB`, `18dB` or `24dB`.
+  Defaults to `6dB`.
+- **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The pin connected to the DAC's
+  RESET input. Boards that leave RESET to the microcontroller, such as the Adafruit breakout, need this.
+- **address** (*Optional*, int): The I²C address of the driver. Defaults to `0x18`.
+- **i2c_id** (*Optional*): The ID of the [I²C bus](/components/i2c) the TLV320DAC3100 is connected to.
+- All other options from [Audio DAC](/components/audio_dac#config-audio_dac).
+
+> [!NOTE]
+> The clock dividers are calculated from `sample_rate` and the clock source when the configuration is validated. A
+> combination the DAC can't produce within its datasheet limits is rejected. For example, 8 kHz with 16-bit samples
+> gives a BCLK below the PLL's minimum input; use `32bit` instead.
+
+> [!NOTE]
+> Without `mclk_frequency`, the DAC needs the I²S bit clock running while it powers up, so it powers up when audio
+> first plays. The outputs stay muted until then, which keeps the speaker free of pops at boot.
+
+## Automations
+
+All [Audio DAC Automations](/components/audio_dac#automations-audio_dac) are supported by this platform.
+
+## See Also
+
+- [Audio Dac Component](/components/audio_dac/)
+- [TLV320DAC3100 datasheet](https://www.ti.com/lit/ds/symlink/tlv320dac3100.pdf)
+- <APIRef text="tlv320dac3100.h" path="tlv320dac3100/tlv320dac3100.h" />
+- <APIRef text="audio_dac.h" path="audio_dac/audio_dac.h" />
