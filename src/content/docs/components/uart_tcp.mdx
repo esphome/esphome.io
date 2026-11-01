@@ -82,6 +82,7 @@ uart_tcp:
   while the handshake waits. After a failed handshake, a client waits `reconnect_interval` before it tries again,
   then twice as long after each further failure, up to 5 minutes; each wait varies at random by up to 20%. A
   successful handshake starts over at `reconnect_interval`.
+  A wait is never shorter than `reconnect_interval`.
   - **key** (**Required**, string): A base64 encoded 32-byte key, for example from `openssl rand -base64 32`. It must
     differ from the [API](/components/api/) and [OTA](/components/ota/esphome/) encryption keys, because the other
     device holds this key too; a configuration with an equal key is rejected. A key the API gets at runtime is not
