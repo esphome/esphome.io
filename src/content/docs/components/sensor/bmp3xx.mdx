@@ -116,7 +116,7 @@ sensor:
 By default the sensor takes one measurement each `update_interval` and sleeps in between. With `data_rate`
 set, it measures continuously at that rate and each update reads the latest result. Combined with
 `iir_filter`, the sensor's own filter then runs on every measurement, which gives lower noise for the same
-`update_interval`.
+`update_interval`. The sensor draws more current this way, so keep the default on battery-powered devices.
 
 ```yaml
 sensor:
@@ -133,7 +133,9 @@ sensor:
 ```
 
 Possible values: `200Hz`, `100Hz`, `50Hz`, `25Hz`, `12.5Hz`, `6.25Hz`, `3.1Hz`, `1.5Hz`, `0.78Hz`, `0.39Hz`,
-`0.2Hz`, `0.1Hz`, `0.05Hz`, `0.02Hz`, `0.01Hz`, `0.006Hz`, `0.003Hz` and `0.001Hz`.
+`0.2Hz`, `0.1Hz`, `0.05Hz`, `0.02Hz`, `0.01Hz`, `0.006Hz`, `0.003Hz` and `0.001Hz`. The slow labels are
+rounded: the period is 5 ms at `200Hz` and doubles with each slower value, so `0.02Hz` is 41 s and `0.001Hz` is
+655 s.
 
 One measurement must fit within one period of the data rate, so higher oversampling needs a slower rate.
 For example, pressure `32x` with temperature `2x` takes about 70 ms, which allows `12.5Hz` (80 ms) or slower.
