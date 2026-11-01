@@ -50,23 +50,6 @@ sensor:
       current: 332us
 ```
 
-```yaml
-# Example with alert pin control
-sensor:
-  - platform: ina226
-    address: 0x40
-    shunt_resistance: 0.1 ohm
-    max_current: 3.2A
-    current:
-      name: "INA226 Current"
-    alert:
-      function: bus_over
-      limit: 15.0
-      conversion_ready: false
-      active_high: true
-      latch: false
-```
-
 ## Configuration variables
 
 - **address** (*Optional*, integer): Manually specify the I²C address of the sensor. Defaults to `0x40`.
@@ -88,26 +71,52 @@ sensor:
 
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the sensor. Defaults to `60s`.
 
-- **alert** (*Optional*): Alert pin configuration for monitoring thresholds or conversion ready signal. If not specified, alert functionality is disabled.
+- **alert** (*Optional*): Drives the ALERT pin of the INA226 when a reading crosses a limit, or when a
+  new measurement is ready. Without it the pin stays unused.
 
-  - **function** (*Optional*, string): Alert function to trigger the alert pin. Defaults to `none`. Valid values are:
-    - `none`: No threshold/limit function, but alert pin can still be used for conversion_ready signal
-    - `shunt_over`: Alert when shunt voltage exceeds the limit
-    - `shunt_under`: Alert when shunt voltage falls below the limit
-    - `bus_over`: Alert when bus voltage exceeds the limit
-    - `bus_under`: Alert when bus voltage falls below the limit
-    - `power_over`: Alert when power exceeds the limit
+  - **function** (*Optional*, string): What triggers the alert. Defaults to `none`.
+    - `none`: no limit; use this to get only the conversion ready signal.
+    - `shunt_over`, `shunt_under`: the shunt voltage goes above or below `limit`.
+    - `bus_over`, `bus_under`: the bus voltage goes above or below `limit`, from `0V` to `36V`.
+    - `power_over`: the power goes above `limit`.
+  - **limit** (**Required** for every function except `none`, voltage or power): The threshold. Use a
+    voltage such as `75mV` for the shunt and bus functions, and a power such as `50W` for `power_over`.
+    A plain number is read as volts or watts. A value the chip cannot store with the configured
+    `shunt_resistance` and `max_current` is rejected when the configuration is validated.
+  - **conversion_ready** (*Optional*, boolean): Also pulse the pin each time a new measurement is ready.
+    Defaults to `false`.
+  - **active_high** (*Optional*, boolean): Drive the pin high when the alert is active, instead of low.
+    Defaults to `false`.
+  - **latch** (*Optional*, boolean): Keep the pin asserted until the alert is cleared with the
+    [`ina226.clear_alert`](#ina226-clear_alert-action) action, instead of releasing it when the reading
+    returns within the limit. Defaults to `false`.
 
-  - **limit** (*Required when function is not `none`*, float): Threshold value for the alert function. The unit depends on the alert function selected and should be specified without units:
-    - `shunt_over`, `shunt_under`: Shunt voltage threshold in Volts
-    - `bus_over`, `bus_under`: Bus voltage threshold in Volts
-    - `power_over`: Power threshold in Watts
+The ALERT pin is open drain, so it needs a pull-up resistor. Watch it with a
+[GPIO Binary Sensor](/components/binary_sensor/gpio/):
 
-  - **conversion_ready** (*Optional*, boolean): Enable the conversion ready flag on the alert pin. When enabled, the alert pin pulses when a new measurement is ready. Can be used independently (with `function: none`) or combined with any threshold alert function. Defaults to `false`.
+```yaml
+binary_sensor:
+  - platform: gpio
+    name: "INA226 Alert"
+    pin:
+      number: GPIOXX
+      inverted: true
+      mode:
+        input: true
+        pullup: true
 
-  - **active_high** (*Optional*, boolean): Set alert pin polarity. When `true`, alert pin is active high. When `false`, alert pin is active low. Defaults to `false`.
-
-  - **latch** (*Optional*, boolean): Enable latch mode for the alert pin. When enabled, the alert pin remains asserted until the mask/enable register is read. Defaults to `false`.
+sensor:
+  - platform: ina226
+    id: ina226_sensor
+    shunt_resistance: 0.1 ohm
+    max_current: 3.2A
+    power:
+      name: "Power"
+    alert:
+      function: power_over
+      limit: 50W
+      latch: true
+```
 
 ## Sensors
 
@@ -120,11 +129,9 @@ All other options from [Sensor](/components/sensor).
 - **bus_voltage** (*Optional*): Bus voltage output (voltage of the high side contact), Volts.
 - **shunt_voltage** (*Optional*): Shunt voltage (voltage across the shunt resistor) value of the sensor, Volts.
 
-## Alert Pin Actions
+## `ina226.clear_alert` Action
 
-### `ina226.clear_alert` Action
-
-This action clears the alert flag on the INA226 sensor by reading the mask/enable register. This is useful in latch mode where the alert pin remains asserted until the alert register is read.
+Releases a latched alert on the ALERT pin by reading the chip's alert register.
 
 ```yaml
 on_...:
@@ -132,47 +139,7 @@ on_...:
     - ina226.clear_alert: ina226_sensor
 ```
 
-Configuration variables:
-
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the INA226 component to clear the alert flag.
-
-## Examples
-
-### Monitor power consumption with alert
-
-The INA226 alert pin is open-drain, so GPIO must be configured with a pull-up resistor to properly detect the alert signal.
-
-```yaml
-binary_sensor:
-  - platform: gpio
-    pin:
-      number: GPIO26
-      mode:
-        input: true
-        pullup: true
-    name: "INA226 Alert"
-    id: ina226_alert_pin
-
-sensor:
-  - platform: ina226
-    id: ina226_sensor
-    address: 0x40
-    shunt_resistance: 0.1 ohm
-    max_current: 3.2A
-    power:
-      name: "Power Consumption"
-    alert:
-      function: power_over
-      limit: 100.0
-      active_high: true
-      latch: true
-
-button:
-  - platform: template
-    name: "Clear INA226 Alert"
-    on_press:
-      - ina226.clear_alert: ina226_sensor
-```
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the INA226 sensor.
 
 ## See Also
 
