@@ -1,0 +1,246 @@
+---
+description: "Instructions for setting up equitherm (weather compensated) climate controllers with ESPHome."
+title: "Equitherm Climate"
+---
+
+import deadband1Img from './images/deadband1.png';
+import deadband2Img from './images/deadband2.png';
+import Figure from '@components/Figure.astro';
+import APIRef from '@components/APIRef.astro';
+
+The `equitherm` climate platform is a weather compensated heating controller: it sets the boiler's flow temperature
+from the outdoor temperature along a heating curve, and a PID on the room temperature can trim that setpoint.
+
+> [!NOTE]
+> Weather compensation (equitherm regulation) is how most European boiler controllers work. Instead of reacting to
+> the room temperature alone, the controller raises the flow temperature as it gets colder outside, which keeps the
+> room temperature steadier and the boiler running at lower, more efficient temperatures.
+
+## How It Works
+
+- **Cold outside** means the boiler gets hotter water.
+- **Mild outside** means the boiler gets cooler water.
+- **You** set the target room temperature; the curve does the rest.
+
+### The Heating Curve
+
+$$T_{flow} = T_{target} + shift + hc \cdot (T_{target} - T_{outdoor})^{1/n}$$
+
+| Variable | Meaning |
+|----------|---------|
+| T_flow | Flow temperature sent to the boiler, kept between `min_flow_temp` and `max_flow_temp` |
+| T_target | The target room temperature |
+| T_outdoor | The outdoor temperature from `outdoor_sensor` |
+| hc | `heat_curve_coefficient`: how strongly the flow temperature follows the cold |
+| n | `heat_curve_exponent`: how the radiators give off heat |
+| shift | `heat_curve_shift`: moves the whole curve up or down |
+
+With `hc = 2.0`, `n = 1.25` and a target of 21 °C:
+
+| Outdoor | Flow |
+|---------|------|
+| -10 °C | 52 °C |
+| 0 °C | 44 °C |
+| 10 °C | 35 °C |
+| 20 °C | 25 °C (the minimum) |
+
+Once it is as warm outside as the target, there is no heating demand: the climate reports `IDLE`, nothing is sent
+to the boiler and a float output is set to `0`.
+
+### Which Setting To Change
+
+| Setting | Question it answers | When to change it |
+|---------|---------------------|-------------------|
+| `heat_curve_coefficient` | How hard does the heating react to cold? | Too cold in winter: raise. Too warm: lower. |
+| `heat_curve_exponent` | What kind of radiators are there? | Set once: 1.0 underfloor, 1.25 panels, 1.3 cast iron. |
+| `heat_curve_shift` | Is the whole curve too high or too low? | Too cold in mild weather: raise. Too warm: lower. |
+
+Typical values of `heat_curve_coefficient` are 1.0 to 1.5 for a well insulated building, 1.5 to 2.0 for average
+insulation and 2.0 to 2.5 for an older building.
+
+### PID Correction
+
+The PID adds a correction from the difference between the room temperature and the target, for what the curve
+cannot know about: sunshine, people, cooking. It is off until at least one of `kp`, `ki` or `kd` is set, and it is
+only stepped while the indoor sensor reports a value.
+
+## Configuration
+
+```yaml
+# Example configuration entry
+climate:
+  - platform: equitherm
+    name: "Central Heating"
+    outdoor_sensor: outdoor_temperature
+    indoor_sensor: room_temperature
+    default_target_temperature: 21°C
+    flow_setpoint: boiler_setpoint
+    control_parameters:
+      heat_curve_coefficient: 2.0
+      heat_curve_exponent: 1.25
+    output_parameters:
+      min_flow_temp: 25°C
+      max_flow_temp: 70°C
+```
+
+## Configuration Variables
+
+- **outdoor_sensor** (**Required**, [ID](/guides/configuration-types/#id)): The sensor measuring the outdoor
+  temperature, the input of the heating curve. While it reports no value or one outside -55 to 50 °C, the last
+  setpoint is kept.
+- **indoor_sensor** (**Required**, [ID](/guides/configuration-types/#id)): The sensor measuring the room
+  temperature. It is shown as the current temperature and feeds the PID.
+- **default_target_temperature** (**Required**, float): The target room temperature in °C used until one is set
+  from the frontend or restored.
+- **flow_setpoint** (*Optional*, [ID](/guides/configuration-types/#id)): A [number](/components/number/) that
+  receives the flow temperature in °C, such as the OpenTherm `t_set` number. Exactly one of `flow_setpoint` and
+  `heat_output` is required.
+- **heat_output** (*Optional*, [ID](/guides/configuration-types/#id)): A [float output](/components/output/) that
+  receives the flow temperature as a share of the range: `min_flow_temp` is `0.0` and `max_flow_temp` is `1.0`.
+  `0.0` is also written when heating stops, so give the boiler its enable signal from `on_heating_start` and
+  `on_heating_stop` rather than from the level.
+- **manual_flow_temp** (*Optional*, [ID](/guides/configuration-types/#id)): A [number](/components/number/) with a
+  flow temperature of your own. When set, the climate gets a `Manual` preset that sends this number's value instead
+  of the curve and the PID.
+- **control_parameters** (**Required**): The heating curve and PID settings, see below.
+- **output_parameters** (**Required**): The flow temperature limits, see below.
+- **deadband_parameters** (*Optional*): Calms the PID near the target, see below.
+- **on_heating_start** (*Optional*, [Automation](/automations/)): Runs when the climate action becomes `HEATING`.
+- **on_heating_stop** (*Optional*, [Automation](/automations/)): Runs when the climate action leaves `HEATING`.
+- All other options from [Climate](/components/climate/#config-climate).
+
+### Control Parameters
+
+- **heat_curve_coefficient** (**Required**, float): The coefficient `hc`, 0.5 to 5.0.
+- **heat_curve_exponent** (**Required**, float): The radiator exponent `n`, 0.5 to 3.0.
+- **heat_curve_shift** (*Optional*, float): A flat offset of the curve in °C. Defaults to `0°C`.
+- **kp** (*Optional*, float): The proportional gain of the PID. Defaults to `0`.
+- **ki** (*Optional*, float): The integral gain of the PID. Defaults to `0`.
+- **kd** (*Optional*, float): The derivative gain of the PID. Defaults to `0`.
+- **min_integral** (*Optional*, float): The lowest value the integral term may reach, in °C. Defaults to `-1`.
+- **max_integral** (*Optional*, float): The highest value the integral term may reach, in °C. Defaults to `1`.
+- **derivative_averaging_samples** (*Optional*, int): How many samples the derivative is averaged over, 1 to 16.
+  Defaults to `1`, which is no averaging.
+
+### Output Parameters
+
+- **min_flow_temp** (**Required**, float): The lowest flow temperature sent to the boiler, in °C.
+- **max_flow_temp** (**Required**, float): The highest flow temperature sent to the boiler, in °C.
+- **write_deadband** (*Optional*, float): The smallest change of the setpoint, in °C, that is written to the
+  output. The setpoint is sent in steps of 0.1 °C. Defaults to `0.05°C`.
+
+### Deadband Parameters
+
+Inside the deadband around the target the PID gains are scaled down, so the setpoint stops moving for every small
+change of the room temperature. This works as on the [PID Climate](/components/climate/pid/#deadband-setup).
+
+- **threshold_high** (**Required**, float): The upper edge of the deadband, in °C above the target.
+- **threshold_low** (**Required**, float): The lower edge of the deadband, in °C relative to the target, so usually
+  negative.
+- **kp_multiplier** (*Optional*, float): The factor on `kp` inside the deadband. Defaults to `0`.
+- **ki_multiplier** (*Optional*, float): The factor on `ki` inside the deadband. Defaults to `0`.
+- **kd_multiplier** (*Optional*, float): The factor on `kd` inside the deadband. Defaults to `0`.
+
+```yaml
+deadband_parameters:
+  threshold_high: 0.5°C
+  threshold_low: -0.5°C
+  ki_multiplier: 0.05
+```
+
+<Figure src={deadband1Img} alt="Deadband around the target" caption="Deadband around the target" layout="constrained" />
+
+<Figure src={deadband2Img} alt="PID gains in the deadband" caption="PID gains in the deadband" layout="constrained" />
+
+## Manual Flow Temperature
+
+```yaml
+number:
+  - platform: template
+    id: manual_flow_temp
+    name: "Manual Flow Temperature"
+    min_value: 25
+    max_value: 70
+    step: 1
+    optimistic: true
+    restore_value: true
+    initial_value: 40
+
+climate:
+  - platform: equitherm
+    # ...
+    manual_flow_temp: manual_flow_temp
+```
+
+Selecting the `Manual` preset sends the number's value to the boiler; selecting `None` returns to the curve.
+
+## OpenTherm Example
+
+With the [OpenTherm](/components/opentherm/) component the flow temperature goes to the boiler's `t_set` number,
+and the heating triggers switch central heating on and off.
+
+```yaml
+switch:
+  - platform: opentherm
+    ch_enable:
+      id: ch_enable
+
+number:
+  - platform: opentherm
+    t_set:
+      id: ch_setpoint
+      min_value: 25
+      max_value: 70
+
+climate:
+  - platform: equitherm
+    name: "Central Heating"
+    outdoor_sensor: outdoor_temperature
+    indoor_sensor: room_temperature
+    default_target_temperature: 21°C
+    flow_setpoint: ch_setpoint
+    on_heating_start:
+      - switch.turn_on: ch_enable
+    on_heating_stop:
+      - switch.turn_off: ch_enable
+    control_parameters:
+      heat_curve_coefficient: 2.0
+      heat_curve_exponent: 1.25
+      kp: 0.5
+    output_parameters:
+      min_flow_temp: 25°C
+      max_flow_temp: 70°C
+```
+
+## `climate.equitherm.force_recalculate` Action
+
+Recalculates the flow temperature right away, for example after a parameter was changed from a lambda.
+
+```yaml
+on_...:
+  - climate.equitherm.force_recalculate: heating
+
+on_...:
+  - climate.equitherm.force_recalculate:
+      id: heating
+      update_pid: false
+```
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The equitherm climate.
+- **update_pid** (*Optional*, boolean, [templatable](/automations/templates/)): Whether the PID takes a step too.
+  With `false` the last correction is kept. Defaults to `true`.
+
+## Tuning
+
+1. Leave the PID gains at `0` and set `heat_curve_exponent` for the radiators.
+2. Start with `heat_curve_coefficient: 1.0` and watch the room for a day or two: raise it when the room is too cold
+   in cold weather, lower it when too warm. Use `heat_curve_shift` for mild weather in the same way.
+3. Add `kp` (0.5 to 1.5) only if the curve alone does not hold the temperature, and a small `ki` (0.001 to 0.01) for
+   a lasting offset. `kd` is rarely needed for heating.
+
+## See Also
+
+- [OpenTherm Component](/components/opentherm/)
+- [PID Climate](/components/climate/pid/)
+- [Climate Component](/components/climate/)
+- <APIRef text="equitherm.h" path="equitherm/equitherm.h" />
