@@ -1,0 +1,78 @@
+---
+description: "Instructions for setting up a Home Assistant light in ESPHome that imports its state and controls it through your Home Assistant instance."
+title: "Home Assistant Light"
+---
+import APIRef from '@components/APIRef.astro';
+
+The `homeassistant` light platform creates a light that **imports** the state of a light in Home Assistant and
+**controls** it through the [native API](/components/api/). The light can then be used like any other light on
+the device: in [automations](/automations/), with the [light actions](/components/light/#light-automations), on a
+[display](/components/display/) or through [LVGL](/components/lvgl/).
+
+> [!NOTE]
+> Although you might not plan to *export* states from the node and you do not need an entity of the node in
+> Home Assistant, this component still requires you to register the node under Home Assistant. See:
+> [Connecting your device to Home Assistant](/install/getting-started/#connecting-your-device-to-home-assistant).
+> Controlling the light also needs "Allow the device to perform Home Assistant actions" checked in the device's
+> ESPHome integration options, as for any [Home Assistant action](/components/api/#actions); without it the state
+> is imported but a change made on the device is refused.
+
+```yaml
+# Example configuration entry
+light:
+  - platform: homeassistant
+    id: my_light_from_ha
+    entity_id: light.living_room
+```
+
+## Configuration variables
+
+- **entity_id** (*Optional*, string): The entity ID of the light to import and control from Home Assistant.
+  Required unless the entity is a linked input of the [API wizard](/components/api/#wizard), which lets the user
+  pick the entity when the device is added.
+- **report_timeout** (*Optional*, [Time](/guides/configuration-types/#time)): How long Home Assistant may
+  take to report a change made on the device back before the light returns to the state reported last. Raise it
+  for a light Home Assistant only polls, which can take a minute. From `1s` to `255s`. Defaults to `10s`.
+- **default_transition_length** (*Optional*, [Time](/guides/configuration-types/#time)): The transition length
+  used when an action does not give one. Defaults to `0s`, unlike other lights: a transition runs on the device
+  and Home Assistant is only sent the state it ends at.
+- All other options from [Light](/components/light/#config-light), except `gamma_correct`, `effects`,
+  `flash_transition_length`, `transition_state_publish_interval`, `initial_state`, `restore_mode` and
+  `restore_state`: Home Assistant renders the light and keeps its state, so these are rejected at validation.
+
+## How it works
+
+The supported color modes and the color temperature range come from Home Assistant as well, so `color_temperature`
+is given in mireds within that range. The state, color mode, brightness, color temperature and color follow the
+Home Assistant entity as they change there.
+
+A change made on the device is sent as a `light.turn_on` or `light.turn_off` action with the brightness, and
+with the color temperature or the color of the active color mode when either changed. A color is sent as
+`rgb_color`, which Home Assistant converts to the light's own channels; a brightness change alone keeps the
+white balance of a cold/warm white light. Brightness values are scaled to Home Assistant's `0` to `255`
+range. Effects cannot be configured on this light; use the ones Home Assistant offers for the entity. A
+transition runs on the device alone; Home Assistant receives the state the light ends at. A change that leaves
+Home Assistant as it is, such as turning on a light that is already on, is not sent. A flash ends where it began,
+so it is never sent and only the device's own state shows it; a warning in the log says so, as it does for
+a transition that ends in the state Home Assistant already has.
+
+## Examples
+
+A button on the device that dims the Home Assistant light:
+
+```yaml
+button:
+  - platform: template
+    name: "Living room dim"
+    on_press:
+      - light.turn_on:
+          id: my_light_from_ha
+          brightness: 40%
+          color_temperature: 370 mireds
+```
+
+## See Also
+
+- [Light](/components/light/)
+- [Home Assistant Switch](/components/switch/homeassistant/)
+- <APIRef text="homeassistant_light.h" path="homeassistant/light/homeassistant_light.h" />
