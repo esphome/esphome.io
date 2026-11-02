@@ -73,6 +73,14 @@ states whenever a device is attached. A [Serial Proxy](/components/serial_proxy/
 client change them at runtime, which many USB-serial devices use to pull the attached microcontroller into its
 bootloader; a state set that way is kept across reattachment.
 
+## Hardware Flow Control
+
+A [Serial Proxy](/components/serial_proxy/) client can ask a channel for RTS/CTS flow control. The `ch340`,
+`cp210x`, `ft232`, `ft2232`, `ft4232` and all `pl2303*` types pass the request on to the chip; a CP2102N with
+firmware 1.0.4 or older cannot do it and the request is ignored. The `cdc_acm`, `esp_jtag`, `stm32_vcp` and
+multi-channel `ch34x` types have no flow control register, so the request is accepted and ignored, as a Linux
+driver does.
+
 ## Channel configuration options
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): An id to assign to the channel. This id may be used anywhere a `uart` component is required.

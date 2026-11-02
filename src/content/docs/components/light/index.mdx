@@ -70,6 +70,15 @@ light:
   > This was counter-intuitive and has been fixed: such a light now boots ON, as `initial_state` says.
 
   - **state** (*Optional*, boolean, [templatable](/automations/templates)): The ON/OFF state for the light.
+  - **effect** (*Optional*, string): The name of the [effect](#light-effects) to start with, so the light can come up
+    already running an effect without an `on_boot` automation. Must match the name of one of the effects defined on
+    the same light, or `none` for no effect.
+    - It applies on a cold boot only; a state restored from flash keeps its own effect.
+    - The effect starts when the light boots ON. A light that boots OFF starts it at the first turn-on when
+      `resume_effect` (below) is set; otherwise it is not started, and config validation warns when the boot state
+      is known at build time (a `state` lambda is only known at boot, so there is no warning for it).
+    - Turning the light off stops the running effect, so without `resume_effect` an effect does not come back by
+      itself the next time the light is turned on.
   - All other options from [light state](#light-state).
 
   If **color_mode** is not given but color fields such as `red` or `brightness` are, the light uses the first
@@ -205,8 +214,9 @@ light:
 
 - **resume_effect** (*Optional*, boolean): Remember the effect that was running when the light was turned off,
   and start it again when the light is next turned on with a plain turn-on. A turn-on that also sets an effect,
-  brightness, color or transition uses those instead. The remembered effect is kept in memory only, so it is lost
-  on reboot. Defaults to `false`.
+  brightness, color or transition uses those instead. On a light that boots OFF, the effect from **initial_state**
+  counts as the remembered effect. The remembered effect is kept in memory only, so it is lost on reboot. Defaults
+  to `false`.
 
 - **on_turn_on** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform when the light is turned on. See
   [`light.on_turn_on` / `light.on_turn_off` Trigger](#light-on_turn_on_off_trigger).

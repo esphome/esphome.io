@@ -17,6 +17,9 @@ http_request:
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 - **follow_redirects** (*Optional*, boolean): Enable following HTTP redirects. Defaults to `true`.
 - **redirect_limit** (*Optional*, integer): Maximum amount of redirects to follow when enabled. Defaults to `3`.
+- **max_concurrent_requests** (*Optional*, integer): How many requests from the HTTP request actions run at the
+  same time, from `1` to `4`. Defaults to `1`. Each request holds its own connection, and on ESP32 an HTTPS
+  connection uses about 40 kB of memory.
 - **timeout** (*Optional*, [Time](/guides/configuration-types#time)): Timeout for request. Defaults to `4.5s`.
   Each action can override it with its own `timeout` option.
   On ESP32 this applies to each network operation (DNS lookup, connect, TLS handshake, every read and write)
@@ -93,6 +96,25 @@ http_request:
 ## Actions
 
 The `http_request` component supports a number of [actions](/automations/actions#all-actions) that can be used to send requests.
+
+The actions that follow an HTTP request action run only after the request has finished and its `on_response` or
+`on_error` automation has been triggered. Asynchronous actions in those automations, such as `delay`, may still be
+running. On ESP32 with ESP-IDF 5.5.3 or later, the rest of the device keeps running while the request waits for the
+server. Opening the connection and the TLS handshake still pause the device for a short time, typically a few
+hundred milliseconds. On other platforms the device waits for the whole request.
+
+Requests start in the order they were triggered, up to `max_concurrent_requests` at a time. When all of those are in
+progress, a new request waits until one has finished. Up to four requests can wait, counted across all HTTP request
+actions; if an action is triggered while four are already waiting, the request is not sent and `on_error` is
+triggered.
+
+When the device reboots or goes into deep sleep, requests that are waiting or in progress are dropped without
+triggering `on_response` or `on_error`. Requests made from an `on_shutdown` automation are still sent.
+
+> [!NOTE]
+> A [script](/components/script/) that contains an HTTP request action is still running while the request is in
+> progress. With the default `mode: single`, executing the script again during that time is ignored and a warning is
+> logged. Use `mode: queued` or `mode: parallel` if every execution must run.
 
 ### `http_request.get` Action
 
@@ -191,6 +213,8 @@ The following variables are available for use in [lambdas](/automations/template
 > [!NOTE]
 > The `status_code` should be checked before using the `body` variable. A successful response will usually have
 > a status code of `200`. Server errors such as "not found" (404) or "internal server error" (500) will have an appropriate status code, and may contain an error message in the `body` variable.
+> On ESP32, if the server accepts the request but no response arrives within the timeout, `status_code` is `-1`.
+> On other platforms `on_error` is triggered instead.
 
 ```yaml
 on_...
@@ -219,7 +243,7 @@ on_...
 ### `on_error` Trigger
 
 This automation will be triggered when the HTTP request fails to complete. This may be e.g. when the network is not available,
-or the server is not reachable. This will *not* be triggered if the request
+the server is not reachable, or too many requests are already waiting. This will *not* be triggered if the request
 completes, even if the response code is not 200. No information on the type of error is available and no variables
 are available for use in [lambdas](/automations/templates#config-lambda). See example usage above.
 
