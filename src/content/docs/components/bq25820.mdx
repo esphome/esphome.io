@@ -19,10 +19,6 @@ support on their [TI Forums](https://e2e.ti.com/search?category=forum&q=BQSTUDIO
 firmware profile (file) to take advantage of their bqStudio software, and begin bench-testing with the TI
 [BQ25820EVM](https://www.ti.com/tool/BQ25820EVM), or your own circuit design.
 
-All parameters (registers) of the BQ25820 are implemented in this Component, but not all are exposed to
-`.yaml` for configuration or as [binary sensors](/components/binary_sensor/), nor
-[text sensors](/components/text_sensor/).
-
 ESPHome exposes the chip's...
 
 - Voltage and current measurements as [sensors](/components/sensor/),
@@ -59,36 +55,44 @@ may be defined if the device has more than one BQ25820.
 - **i2c_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the
   [I²C](/components/i2c/) bus if you want to use multiple I²C buses.
 
-- **update_interval** (*Optional*, Time): The interval between polling the chip. Defaults to `500ms`.
+- **update_interval** (*Optional*, Time): The interval between polling the chip. Defaults to `60s`.
 
-- **charge_current** (*Optional*, Current): The battery charge current, in steps of 50mA between
-  `400mA` and `20A`. Setting `0` (the default) leaves the chip's ICHG register at its power-on-reset
-  value, which on many boards is programmed by the ICHG resistor (pin current / 5).
+- **charge_current** (*Optional*, Current): The battery charge current. With the reference `5mΩ`
+  battery sense resistor this is `400mA` to `20A` in steps of 50mA; the range and step scale with
+  `bat_sns_res`. When not set, the chip keeps its power-on value and the resistor on the ICHG pin
+  sets the current.
 
 - **bat_sns_res** (*Optional*, Resistance): The battery sense (shunt) resistor, between `0.01mΩ` and
-  `10mΩ`. Must match the hardware for correct battery current readings. Defaults to `5mΩ`.
+  `10mΩ`. Must match the hardware: the battery current readings and the charge and precharge
+  current settings are scaled by it. Defaults to `5mΩ`.
 
 - **ac_sns_res** (*Optional*, Resistance): The input sense (shunt) resistor, between `0.01mΩ` and
-  `10mΩ`. Must match the hardware for correct input current readings. Defaults to `2mΩ`.
+  `10mΩ`. Must match the hardware: the input current readings and `input_current_limit` are scaled
+  by it. Defaults to `2mΩ`.
 
-- **watchdog** (*Optional*, Boolean): The chip reverts its configuration registers to the
-  power-on-reset values when its I²C watchdog expires. When enabled, the component pulses the watchdog
-  and re-writes the charge configuration on every poll, so the settings survive gaps in I²C activity
-  (for example a microcontroller reboot). Defaults to `false`.
+- **watchdog** (*Optional*, Boolean): Enable the chip's 40 second I²C watchdog. The component resets
+  the watchdog every 15 seconds; if the microcontroller stops doing so, the chip falls back to its
+  power-on charge settings. The component writes the configuration again if the watchdog has expired.
+  When disabled, the watchdog is turned off. Defaults to `false`.
 
 - **charge_voltage** (*Optional*, Voltage): The VFB regulation trim point, in steps of 2mV between
   `1.504V` and `1.566V`. The battery charge voltage itself is set by the external VFB resistor divider;
   this option only trims the regulation limit. Defaults to `1.536V`.
 
-- **input_current_limit** (*Optional*, Current): The input current limit, in steps of 125mA between
-  `1A` and `50A`. Charging pauses when the input current exceeds this limit. Defaults to `50A`.
+- **input_current_limit** (*Optional*, Current): The input current limit. The charger reduces the
+  charge current to keep the input current below it. With the reference `2mΩ` input sense resistor
+  this is `1A` to `50A` in steps of 125mA; the range and step scale with `ac_sns_res`. When not set,
+  the chip keeps its power-on value (the maximum).
 
-- **input_voltage_limit** (*Optional*, Voltage): The input overvoltage limit, in steps of 20mV between
-  `4.4V` and `65V`. The undervoltage window of the input is set by external resistors on the ACUV pin,
+- **input_voltage_limit** (*Optional*, Voltage): The lowest input voltage the charger allows, in steps
+  of 20mV between `4.4V` and `65V`. The charger reduces the charge current to keep the input above it.
+  The input undervoltage and overvoltage window is set by external resistors on the ACUV and ACOV pins,
   not by I²C. Defaults to `4.4V`.
 
 - **precharge_current** (*Optional*, Current): The current used while the battery is below the
-  precharge voltage, in steps of 50mA between `250mA` and `10A`. Defaults to `4A`.
+  precharge voltage. With the reference `5mΩ` battery sense resistor this is `250mA` to `10A` in steps
+  of 50mA; the range and step scale with `bat_sns_res`. When not set, the chip keeps its power-on value
+  (`4A` with the reference resistor).
 
 - **reverse_system_voltage** (*Optional*, Voltage): The system voltage target in reverse mode (when
   the battery powers the system), in steps of 20mV between `3.3V` and `65V`. Defaults to `5V`.
@@ -147,8 +151,8 @@ sensor:
 
 ### Configuration variables
 
-- **bq25820_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the `bq25820`
-  component defined above.
+- **bq25820_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the `bq25820`
+  component defined above. Required only when there is more than one.
 
 - **vbat** (*Optional*): The battery voltage in V. All options from [Sensor](/components/sensor).
 
@@ -180,16 +184,17 @@ binary_sensor:
 
 ### Configuration variables
 
-- **bq25820_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the `bq25820`
-  component defined above.
+- **bq25820_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the `bq25820`
+  component defined above. Required only when there is more than one.
 
-- **charging** (*Optional*): Active while the charger is charging the battery (precharge or fast
-  charge). All options from [Binary Sensor](/components/binary_sensor).
+- **charging** (*Optional*): Active while the charger is charging the battery, in any phase from
+  trickle to top-off. All options from [Binary Sensor](/components/binary_sensor).
 
 - **charged** (*Optional*): Active while the battery is fully charged. All options from
   [Binary Sensor](/components/binary_sensor).
 
-- **low_battery** (*Optional*): Active while the battery voltage is below the low battery threshold.
+- **low_battery** (*Optional*): Active while the charger is in trickle or precharge, which means the
+  battery voltage is below the precharge threshold. It is only reported while charging.
   All options from [Binary Sensor](/components/binary_sensor).
 
 - **pg** (*Optional*): Active while the input power is good, that is present and within its operating
@@ -233,8 +238,8 @@ text_sensor:
 
 ### Configuration variables
 
-- **bq25820_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the `bq25820`
-  component defined above.
+- **bq25820_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the `bq25820`
+  component defined above. Required only when there is more than one.
 
 - **charge_status** (*Optional*): The charge cycle state: `Not Charging`, `Trickle`, `Precharge`,
   `Fast Charge`, `Taper`, `Top-Off` or `Done`. All options from [Text Sensor](/components/text_sensor).
@@ -263,10 +268,10 @@ bq25820:
   id: bq25820_charger
   i2c_id: i2c_bus
   # --- Current sensing ---
-  charge_current: 3A          # 0 keeps the ICHG-pin setting
+  charge_current: 3A         # leave out to keep the ICHG pin setting
   bat_sns_res: 5mΩ           # battery sense shunt resistor (0.01-10 mΩ)
   ac_sns_res: 2mΩ            # input sense shunt resistor (0.01-10 mΩ)
-  watchdog: false            # re-apply config on I2C watchdog expiry
+  watchdog: false            # chip falls back to defaults if not fed
   # --- Charge limits ---
   charge_voltage: 1.536V     # trims the VFB regulation point; the pack
                              # charge voltage is set by the external VFB
