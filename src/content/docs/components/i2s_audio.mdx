@@ -15,7 +15,7 @@ i2s_audio:
   i2s_bclk_pin: GPIOXX
 ```
 
-## Configuration variables
+## Configuration Variables
 
 - **i2s_lrclk_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The GPIO pin to use for the I²S `LRCLK` *(Left/Right Clock)* signal, also referred to as `WS` *(Word Select)* or `FS` *(Frame Sync)*.
 - **i2s_bclk_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The GPIO pin to use for the I²S `BCLK` *(Bit Clock)* signal, also referred to as `SCK` *(Serial Clock)*.
@@ -23,6 +23,9 @@ i2s_audio:
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this I²S bus if you need multiple.
 - **full_duplex** (*Optional*, boolean): Run a microphone and a speaker at the same time on this bus. See
   [Full Duplex](#full-duplex). Defaults to `false`.
+- **keep_alive** (*Optional*, boolean): Keep the shared I²S clocks running from startup, even when neither the
+  microphone nor a speaker is active. Requires `full_duplex: true`. See [Keeping Clocks Running](#keeping-clocks-running).
+  Defaults to `false`.
 
 ## Full Duplex
 
@@ -41,14 +44,18 @@ A full duplex bus must meet these requirements, which are checked when the confi
 - The microphone and every speaker use the same `sample_rate`, `bits_per_sample`, `i2s_mode`, `use_apll` and
   `mclk_multiple`, because both directions run from the same clocks. Note that `bits_per_sample` has a different
   default for the microphone (`32bit`) and the speaker (`16bit`), so set it explicitly on both.
+- The microphone and speakers use the same mono or stereo slot layout. For `channel: stereo` on the speaker, also
+  set `channel: stereo` on the microphone. For a mono speaker, use `left` or `right` on the microphone.
+- Speakers use Philips I²S framing: `stand_i2s` (the default), `i2s_msb`, `stand_pcm_long` or `pcm_long`.
 - All speakers use the same `i2s_dout_pin`, `channel` and `i2s_comm_fmt`, because they share one output channel.
 
 Because the output channel is set up only once, a speaker on a full duplex bus only accepts audio that matches its
 configured `sample_rate` and number of channels (`channel: stereo` takes two channel audio, `mono`, `left` and `right`
-take one channel audio) and whose bits per sample is the configured `bits_per_sample` or wider. Wider samples are
-narrowed to the configured width. A stream that does not match is rejected and a message is logged. Put a
-[Resampler Speaker](/components/speaker/resampler/) in front of the speaker to convert the sample rate and to widen the
-samples when the bus uses more bits than the source. A resampler does not change the number of channels, so a speaker
+take one channel audio). On the original ESP32, the speaker converts the source bit depth to the configured width.
+On other ESP32 variants, the source must use the configured `bits_per_sample` or wider; wider samples are narrowed.
+Unsupported streams sent directly to the speaker, or through a resampler or mixer, are rejected before playback.
+Put a [Resampler Speaker](/components/speaker/resampler/) in front of the speaker to convert the sample rate and to
+widen the samples when the bus uses more bits than the source. A resampler does not change the number of channels, so a speaker
 with `channel: mono`, `left` or `right` also needs a [Mixer Speaker](/components/speaker/mixer/) with `num_channels: 1`;
 see the [mono example](#mono-full-duplex-example) below.
 
@@ -70,6 +77,7 @@ microphone:
     i2s_audio_id: i2s_duplex_bus
     i2s_din_pin: GPIOXX
     adc_type: external
+    channel: stereo
     sample_rate: 48000
     bits_per_sample: 32bit
 
@@ -91,8 +99,9 @@ speaker:
 
 ### Mono Full Duplex Example
 
-A speaker with `channel: mono` only accepts one channel audio. The mixer converts stereo sources to one channel, and the
-resamplers convert each source to the sample rate and bits per sample of the bus.
+A speaker with `channel: mono` only accepts one channel audio. Set the microphone's `channel` to `left` or `right`
+when using this example. The mixer converts stereo sources to one channel, and the resamplers convert each source to
+the sample rate and bits per sample of the bus.
 
 ```yaml
 speaker:
@@ -119,6 +128,29 @@ speaker:
     output_speaker: media_mixer_input
     bits_per_sample: 32
 ```
+
+### Keeping Clocks Running
+
+Some codecs or amplifiers click when their I²S clocks stop or restart. Set `keep_alive: true` on the full duplex bus
+to keep its receive channel and shared clocks running from startup, including between recordings and playbacks:
+
+```yaml
+i2s_audio:
+  - id: i2s_duplex_bus
+    i2s_lrclk_pin: GPIOXX
+    i2s_bclk_pin: GPIOXX
+    full_duplex: true
+    keep_alive: true
+```
+
+Use this bus with the microphone and speaker described under [Full Duplex](#full-duplex). The receive channel and
+its DMA transfers remain active while idle, which can increase power use. This option does not start an Assist
+session or send microphone audio to Home Assistant by itself. It prevents clicks caused by clock restarts; it does
+not address clicks caused by amplifier power switching or abrupt audio samples.
+
+This bus option differs from the [I²S speaker's `keep_alive`](/components/speaker/i2s_audio/#configuration-variables),
+which keeps a dedicated output channel allocated between playbacks. Use the bus option when the microphone and
+speaker share a full duplex bus, and leave the speaker's `keep_alive` disabled.
 
 ## See Also
 
