@@ -36,7 +36,9 @@ audio_adc:
 - **tdm** (*Optional*, boolean): Enable four-channel time-division multiplexed (TDM) output. Enabling this option
   changes `SDOUT1` from a two-channel I2S output into a four-slot TDM stream containing microphones 1 through 4;
   `SDOUT2` is therefore not needed to receive all four microphones. When disabled, microphones 1 and 2 are output
-  on `SDOUT1`, and microphones 3 and 4 are output on `SDOUT2`. Defaults to `false`.
+  on `SDOUT1`, and microphones 3 and 4 are output on `SDOUT2`.
+  TDM mode is not supported on the original ESP32 or ESP32-S2; setting `tdm: true` on either variant causes a
+  configuration error. Defaults to `false`.
 - **address** (*Optional*, int): The I²C address of the driver. Defaults to `0x40`.
 - **i2c_id** (*Optional*): The ID of the [I²C bus](/components/i2c) the ES7210 is connected to.
 - All other options from [Audio ADC](/components/audio_adc#config-audio_adc).
@@ -52,6 +54,8 @@ audio_adc:
 All [Audio ADC Automations](/components/audio_adc#automations-audio_adc) are supported by this platform.
 Calling `audio_adc.set_mic_gain` applies the requested gain uniformly to all four microphone channels, replacing
 any individual gains configured with `channel_gains`.
+This includes any channel wired as an AEC reference input (for example MIC3), so calling this action can change
+the reference level used for AEC.
 
 ## Configuration Examples
 

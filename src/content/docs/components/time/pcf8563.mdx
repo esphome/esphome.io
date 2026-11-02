@@ -22,7 +22,7 @@ time:
 This [Action](/automations/actions#all-actions) triggers a synchronization of the current system time to the RTC hardware.
 
 > [!NOTE]
-> PCFe pcf8563 component will *not* write the RTC clock if not triggered *explicitly* by this action.
+> The pcf8563 component will *not* write the RTC clock if not triggered *explicitly* by this action.
 
 ```yaml
 on_...:
@@ -50,6 +50,13 @@ on_...:
   - pcf8563.read_time:
       id: pcf8563_time
 ```
+
+> [!NOTE]
+> The PCF8563 sets a voltage-low flag when its supply drops too low or its oscillator stops, for example when the
+> backup battery runs flat or is swapped. The chip also sets it at power-up, so a module whose time was never set has
+> it too. While the flag is set the stored time can't be trusted, so the component logs a warning and doesn't sync the
+> system clock from the RTC. Writing the time with `pcf8563.write_time` clears the flag. With the setup in the
+> [Full Configuration Example](#full-configuration-example), that happens on the first successful network sync.
 
 <span id="pcf8563-config_example"></span>
 

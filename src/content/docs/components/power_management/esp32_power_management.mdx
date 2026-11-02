@@ -1,0 +1,103 @@
+---
+description: "Instructions for setting up the ESP32 Power Management platform in ESPHome"
+title: "ESP32 Power Management"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `esp32_power_management` platform turns on ESP-IDF power management. It scales the CPU frequency between a
+minimum and a maximum depending on what the running components need, and it can put the chip into automatic
+light sleep whenever nothing is scheduled to run. Both work on the ESP-IDF and the Arduino framework.
+
+```yaml
+# Example configuration entry
+power_management:
+  - platform: esp32_power_management
+    enable_light_sleep: true
+```
+
+## Configuration Variables
+
+- **max_frequency** (*Optional*, frequency): The CPU frequency used while a component holds a CPU lock. Must be
+  one of the frequencies the chip supports (for example `80MHz`, `160MHz` or `240MHz` on the ESP32, and
+  `16MHz`, `32MHz`, `48MHz`, `64MHz` or `96MHz` on the ESP32-H2). Defaults to the `cpu_frequency` of the
+  [`esp32`](/components/esp32/) component. A different value is accepted; validation logs that the CPU will
+  be clocked down to it, or warns that it may run above the boot frequency under load.
+- **min_frequency** (*Optional*, frequency): The CPU frequency used while no CPU lock is held. Must divide the
+  crystal frequency (`40MHz` on most variants, `32MHz` on the ESP32-H2) or be one of the CPU frequencies, be at
+  least `10MHz` on the ESP32 and `2MHz` on the other variants, and be no higher than the maximum. Defaults to
+  the crystal frequency, limited to the maximum.
+- **enable_light_sleep** (*Optional*, boolean): Enter light sleep automatically whenever no task is runnable,
+  which also stops the periodic tick interrupt while idle. Defaults to `false`.
+- **idle_time_before_sleep** (*Optional*, int): How many FreeRTOS ticks (1 ms each, as ESPHome runs the ESP32
+  tick at 1 kHz) the system must stay idle before it enters light sleep. Minimum `2`. Defaults to `3`.
+- **power_down_flash** (*Optional*, boolean): Power down the flash chip during light sleep. Requires
+  `enable_light_sleep` and is rejected when the device has PSRAM. Defaults to `false`.
+- **power_down_peripherals** (*Optional*, boolean): Save and restore the peripheral registers around light
+  sleep so the peripherals themselves can be powered down. Only available on chips with a TOP power domain
+  (ESP32-C5, C6, C61, H2, H4, H21, P4 and S31), where it defaults to `true` when light sleep is enabled.
+  Requires `enable_light_sleep`.
+- **profiling** (*Optional*, boolean): Record how long each power management lock is held and how much time
+  the chip spends in each power state, for the lock dump described below. It costs some runtime overhead, so
+  leave it off in production. Defaults to `false`.
+- **trace** (*Optional*, boolean): Signal power management events (ticks, frequency changes, entering and
+  leaving idle) on a set of GPIOs, as listed in ESP-IDF's
+  [`pm_trace.c`](https://github.com/espressif/esp-idf/blob/master/components/esp_pm/pm_trace.c). Those pins
+  are taken over, so this is for analysing the behaviour on a bench only. Defaults to `false`.
+- All other options from [Power Management](/components/power_management/#configuration-variables).
+
+> [!WARNING]
+> Do not combine `enable_light_sleep: true` with the [Deep Sleep](/components/deep_sleep/) component. Nothing
+> validates the combination, and it has not been tested.
+
+> [!NOTE]
+> On chips with USB Serial/JTAG, light sleep is blocked while a USB host (not just power) is connected to
+> that port.
+
+## How It Works
+
+ESP-IDF components express their requirements by acquiring and releasing power management locks. While a
+lock is held, the CPU runs at `max_frequency` and light sleep is prevented; when none is held, the CPU drops to
+`min_frequency` and, with `enable_light_sleep`, the chip sleeps until the next scheduled task or an interrupt.
+In ESPHome the main loop interval sets the sleep rhythm, and [OpenThread](/components/openthread/) sleepy end
+devices (a `poll_period` greater than zero) switch the radio off between polls so the device can sleep in
+between.
+
+The price is interrupt latency, which can grow to around 40 µs, and peripheral behaviour under a changing
+APB frequency. Timers in the Timer Group peripheral, for example, keep counting but at a rate that follows
+the APB frequency. SPI, I²C, SDMMC, Ethernet, Wi-Fi, OpenThread, Bluetooth and CAN hold locks and behave
+well. Read ESP-IDF's
+[Dynamic Frequency Scaling and Peripheral Drivers](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/power_management.html#dynamic-frequency-scaling-and-peripheral-drivers)
+before enabling this on a device with other peripherals.
+
+In light sleep the peripherals are clock gated and raise no interrupts. Unlike deep sleep, the firmware
+resumes where it stopped rather than rebooting, and there is no companion component for wake-up sources.
+
+> [!WARNING]
+> `power_down_flash` powers the flash down under a timing condition that is meant to keep it safe, but it
+> costs wake-up time and needs testing on the actual board to be sure the flash is never corrupted.
+
+> [!NOTE]
+> Keep `power_down_peripherals` at its default of `true` on the chips that support it. A GPIO output may
+> then lose its level during light sleep, so set [`hold_state: true`](/guides/configuration-types/#pin-schema)
+> on any pin that must keep its state, and peripherals without register save and restore support come back
+> reset after sleep. With the option set to `false` an ESP32-C6 devkit has been seen to crash within a minute.
+
+## Inspecting the Locks
+
+With `profiling: true`, the ESP-IDF function `esp_pm_dump_locks()` prints every lock, how long it has been
+held and the time spent in each power state. The output goes to the chip's standard output, which is the
+serial console, not the ESPHome logger:
+
+```yaml
+interval:
+  - interval: 30s
+    then:
+      - lambda: |-
+          esp_pm_dump_locks(stdout);
+```
+
+## See Also
+
+- [Power Management Component](/components/power_management/)
+- <APIRef text="esp32_power_management.h" path="esp32_power_management/esp32_power_management.h" />

@@ -24,7 +24,6 @@ esp32_hosted:
   d1_pin: GPIOXX
   d2_pin: GPIOXX
   d3_pin: GPIOXX
-  active_high: true
   sdio_frequency: 10MHz
 
 wifi:
@@ -42,7 +41,7 @@ esp32_hosted:
   cmd_pin: GPIOXX
   clk_pin: GPIOXX
   d0_pin: GPIOXX
-  active_high: true
+  d1_pin: GPIOXX
 
 wifi:
   ssid: !secret wifi_ssid
@@ -57,12 +56,11 @@ wifi:
 - **variant** (*Required*, string): The variant of the ESP32 co-processor that is used by the
   host. One of `ESP32`, `ESP32S2`, `ESP32S3`, `ESP32C2`, `ESP32C3` and `ESP32C6`.
 - **reset_pin** (*Required*, [Pin](/guides/configuration-types#pin)): The reset pin of the co-processor.
-- **active_high** (*Required*, boolean): If enabled, the co-processor is active when reset is
-  high. If disabled, the co-processor is active when reset is low.
 - **clk_pin** (*Required*, [Pin](/guides/configuration-types#pin)): The SDIO clock pin.
 - **cmd_pin** (*Required*, [Pin](/guides/configuration-types#pin)): The SDIO command pin.
 - **d0_pin** (*Required*, [Pin](/guides/configuration-types#pin)): The SDIO D0 pin.
-- **d1_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The SDIO D1 pin. Required when `bus_width` is 4.
+- **d1_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The SDIO D1 pin. Also needed on a 1-bit bus, where it
+  carries the card interrupt.
 - **d2_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The SDIO D2 pin. Required when `bus_width` is 4.
 - **d3_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The SDIO D3 pin. Required when `bus_width` is 4.
 - **bus_width** (*Optional*, int): The SDIO bus width. Either `1` or `4`. Defaults to `4`.
@@ -89,7 +87,6 @@ esp32_hosted:
   cs_pin: GPIOXX
   handshake_pin: GPIOXX
   data_ready_pin: GPIOXX
-  active_high: true
 
 wifi:
   ssid: !secret wifi_ssid
@@ -102,8 +99,6 @@ wifi:
 - **variant** (*Required*, string): The variant of the ESP32 co-processor that is used by the
   host. One of `ESP32`, `ESP32S2`, `ESP32S3`, `ESP32C2`, `ESP32C3` and `ESP32C6`.
 - **reset_pin** (*Required*, [Pin](/guides/configuration-types#pin)): The reset pin of the co-processor.
-- **active_high** (*Required*, boolean): If enabled, the co-processor is active when reset is
-  high. If disabled, the co-processor is active when reset is low.
 - **clk_pin** (*Required*, [Pin](/guides/configuration-types#pin)): The SPI clock pin.
 - **mosi_pin** (*Required*, [Pin](/guides/configuration-types#pin)): The SPI MOSI pin.
 - **miso_pin** (*Required*, [Pin](/guides/configuration-types#pin)): The SPI MISO pin.
@@ -158,7 +153,6 @@ esp32_hosted:
   d1_pin: GPIOXX
   d2_pin: GPIOXX
   d3_pin: GPIOXX
-  active_high: true
 
 espnow:
   on_broadcast:

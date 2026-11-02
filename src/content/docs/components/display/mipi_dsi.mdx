@@ -67,6 +67,7 @@ will set the correct pins and dimensions for the display.
 | Model                  | Manufacturer   | Product Link                                                                                                     |
 | ---------------------- | -------------- | ---------------------------------------------------------------------------------------------------------------- |
 | JC1060P470             | Guition        | [JC1060P470 product page](https://aliexpress.com/item/1005008328088576.html)                                     |
+| JC1060P470-V2          | Guition        | [JC1060P470-V2 product page](https://aliexpress.com/item/1005008328088576.html)                                  |
 | JC4880P443             | Guition        | [JC4880P443 product page](https://aliexpress.com/item/1005009618259341.html)                                     |
 | JC8012P4A1             | Guition        | [JC8012P4A1 product page](https://aliexpress.com/item/1005008789890066.html)                                     |
 | JC8012P4A1-V2          | Guition        | [JC8012P4A1-V2 product page](https://aliexpress.com/item/1005008789890066.html)                                     |
@@ -111,6 +112,15 @@ Units manufactured with a lower batch number should use model `JC8012P4A1`
 
 Selecting the incorrect driver will show horizontal lines on the display.
 
+> [!NOTE]
+> The Guition JC1060P470 (also sold under JC1060P470C_I_W_Y) has two hardware revisions with different display
+> panels requiring different model selections.
+>
+> Units whose rear label shows `V2` after the material number (2026 batches) should use model `JC1060P470-V2`.
+> Units without the `V2` marking should use model `JC1060P470`.
+>
+> Selecting the incorrect driver will show a white or blank screen with a band of vertical noise.
+
 ## Configuration
 
 ```yaml
@@ -129,6 +139,10 @@ most of the configuration will be set by default, but can be overridden if neede
 - **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The RESET pin, if required.
 - **enable_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): An optional pin to enable the display, if required. A list of pins can be provided for displays that require multiple enable pins. A full pin configuration may be provided
   to set the pin mode and inverted property. By default the pin will be driven high to enable the display.
+  If `enable_pin` is not set, the model's default enable pins are used, if it has any. A default enable pin
+  that is also used elsewhere in the configuration, for example by a GPIO switch, is left out, so you can
+  control that pin yourself. If every other use of the pin sets `allow_other_uses: true`, the pin is shared
+  with the display instead. Setting `enable_pin` replaces all of the model's default enable pins.
 
 - **color_order** (*Optional*): Should be one of `bgr` (default) or `rgb`. This specifies the order of the color channels in the display panel. The default is `bgr` for most displays, but some displays may require `rgb`. It does not affect the color order of the display buffer, which is always RGB.
 - **dimensions** (*Optional*): Dimensions of the screen, specified either as *width* **x** *height* (e.g `320x240`  ) or with separate config keys. If not provided the dimensions will be determined by the model selected. This is required for the `CUSTOM` model, and is optional for other models. The dimensions are specified in pixels, and the width and height must be greater than 0. The following keys are available:

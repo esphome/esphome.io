@@ -32,7 +32,8 @@ speaker:
   with each right sample followed by a left sample. `left` and `right` mute the unused channel, while `mono` plays the same samples on both. Defaults to `mono`.
 
 - **sample_rate** (*Optional*, positive integer): I2S sample rate. If in `primary` I²S mode the sample rate of the audio stream is used. Defaults to `16000`.
-- **bits_per_sample** (*Optional*, enum): The bit depth of the audio samples sent to the DAC. One of `8bit`, `16bit`, `24bit`, or `32bit`. Defaults to `16bit`.
+- **bits_per_sample** (*Optional*, enum): The width of each I²S slot sent to the DAC. Audio with a different bit depth
+  is converted to this width. One of `8bit`, `16bit`, `24bit`, or `32bit`. Defaults to `16bit`.
 
 - **mclk_multiple** (*Optional*, enum): The multiple of the MCLK frequency to the sample rate. Must be divisible by 3 if using 24 bits per sample. One of `128`, `256`, `384`, `512`. Defaults to `256`.
 - **use_apll** (*Optional*, boolean): I2S using APLL as main I2S clock, enable it to get accurate clock. Defaults to `false`.
@@ -52,6 +53,12 @@ speaker:
 
 - **buffer_duration** (*Optional*, [Time](/guides/configuration-types#time)): The duration of the internal ring buffer. Larger values can reduce stuttering but uses more memory. Defaults to `500ms`.
 - **timeout** (*Optional*, [Time](/guides/configuration-types#time)): How long to wait after finishing playback before releasing the bus. Set to `never` to never stop the speaker due to a timeout. Defaults to `500ms`. **Note:** With `spdif_mode: true` (see below), buffer underflows are filled with silence frames until the specified interval elapses; this maintains the SPDIF signal to prevent the receiver from detecting a loss of signal/source change, which may otherwise lengthen gaps of silence.
+- **keep_alive** (*Optional*, boolean): Keep the I²S channel allocated between playbacks instead of tearing it down
+  and setting it up again. Some DAC and amplifier combinations, such as the ES8311 with an NS4150B, pop or click
+  every time the channel is set up, so with this option only the first playback after boot makes that sound. The
+  channel's DMA buffers stay allocated while idle, about 10 KB of internal RAM at 48 kHz 16-bit stereo. The speaker
+  then needs its own I²S bus with no other speaker or microphone on it, and the option is not available with
+  `spdif_mode`. Defaults to `false`.
 - **spdif_mode** (*Optional*, boolean): Enable S/PDIF (Sony/Philips Digital Interface) mode for digital audio output. When enabled, the speaker outputs a SPDIF-encoded bitstream format suitable for optical (TOSLINK optical fiber connector) or coaxial digital audio transmission. Defaults to `false`.
 - All other options from [Speaker Component](/components/speaker#config-speaker).
 

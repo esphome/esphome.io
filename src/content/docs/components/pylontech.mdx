@@ -99,6 +99,7 @@ sensor:
 - **voltage_low** (*Optional*): Voltage of the lowest cell. All options from [Sensor](/components/sensor).
 - **voltage_high** (*Optional*): Voltage of the highest cell. All options from [Sensor](/components/sensor).
 - **mos_temperature** (*Optional*): Temperature of the mosfets. All options from [Sensor](/components/sensor).
+- **cells** (*Optional*): Cells of this battery to monitor. See [Monitoring Individual Cells](#monitoring-individual-cells).
 
 ## Text Sensor
 
@@ -122,6 +123,62 @@ text_sensor:
 - **voltage_state** (*Optional*): Voltage state. Usually reads `Normal`. All options from [Text Sensor](/components/text_sensor#config-text_sensor).
 - **current_state** (*Optional*): Current state. Usually reads `Normal`. All options from [Text Sensor](/components/text_sensor#config-text_sensor).
 - **temperature_state** (*Optional*): Temperature state. Usually reads `Normal`. All options from [Text Sensor](/components/text_sensor#config-text_sensor).
+
+## Monitoring Individual Cells
+
+Each battery reports the voltage and temperature of its cells, numbered 0 to 14. After every `pwr` reading
+the component sends one `bat N` command for each battery that lists `cells`, so the cell sensors update at
+the same interval as the battery sensors.
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: pylontech
+    battery: 1
+    cells:
+      - cell: 0
+        voltage:
+          name: "Battery1 Cell0 Voltage"
+        temperature:
+          name: "Battery1 Cell0 Temperature"
+      - cell: 1
+        voltage:
+          name: "Battery1 Cell1 Voltage"
+        temperature:
+          name: "Battery1 Cell1 Temperature"
+```
+
+- **cell** (**Required**): Which cell to monitor, 0 to 14. Each cell may be listed once per battery.
+- **voltage** (*Optional*): Voltage of this cell. All options from [Sensor](/components/sensor/).
+- **temperature** (*Optional*): Temperature of this cell. All options from [Sensor](/components/sensor/).
+
+At least one of `voltage` or `temperature` is required for each cell.
+
+### `pylontech.set_cell_polling` Action
+
+Reading the cells adds one `bat` command per battery to every update. This action stops or resumes those
+commands at runtime. Cell polling is on at boot, and the action does nothing when no `cells` are configured.
+
+```yaml
+switch:
+  - platform: template
+    name: "Pylontech poll individual cells"
+    restore_mode: RESTORE_DEFAULT_ON
+    optimistic: true
+    entity_category: "config"
+    turn_on_action:
+      - pylontech.set_cell_polling:
+          id: pylontech0
+          enabled: true
+    turn_off_action:
+      - pylontech.set_cell_polling:
+          id: pylontech0
+          enabled: false
+```
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the pylontech component.
+- **enabled** (**Required**, boolean, [templatable](/automations/templates/)): `true` reads the cells after each
+  update, `false` skips them.
 
 ## Energy Monitoring
 
