@@ -73,6 +73,13 @@ light:
 | ESP32-S2      | 256 symbols      | 64 symbols |
 | ESP32-S3      | 192 symbols      | 48 symbols |
 
+Every component needs its own RMT channel of at least one block, so a variant has as many channels as the table lists
+blocks: on the `ESP32` and `ESP32-S2` shared by RX and TX, on other variants for each direction. ESPHome checks all
+`esp32_rmt_led_strip`, `remote_transmitter` and `remote_receiver` components together. Validation fails if they need
+more channels than are available, or if more than one RX or more than one TX component sets `use_dma`, since only one
+channel per direction supports DMA. A component with `use_dma` uses one block. If the components request more memory
+than is available, ESPHome logs a warning that suggests an `rmt_symbols` value that fits.
+
 - **use_dma** (*Optional*, boolean): Enable DMA on variants that support it. If enabled `rmt_symbols` controls
   the DMA buffer size and can be set to a large value.
 
