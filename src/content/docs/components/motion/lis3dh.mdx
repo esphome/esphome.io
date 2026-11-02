@@ -93,8 +93,9 @@ sensor:
     axis facing down stays over a small threshold at rest and is reported for every tap. The reported
     acceleration values are not affected. Defaults to `true`.
   - **interrupt_pin** (*Optional*, [Pin](/guides/configuration-types/#pin)): A GPIO wired to the chip's tap
-    interrupt pad. When set, the detector is read only while this pin is active, instead of being polled every
-    10 ms. Uses the polarity set by `interrupt` `active_high`. It cannot be used with both `on_tap` and
+    interrupt pad. It must be a GPIO of the microcontroller itself, not an I/O expander pin, because its edge
+    is caught by an interrupt. When set, the detector is read when this pin becomes active, instead of being
+    polled every 10 ms. Uses the polarity set by `interrupt` `active_high`. It cannot be used with both `on_tap` and
     `on_double_tap`, because the chip then raises its interrupt only for double taps.
   - **pin** (*Optional*, string): Which physical interrupt pad the tap detector drives, `INT1` or `INT2`.
     Only used with `interrupt_pin`, and it must differ from the motion interrupt's `pin`. Defaults to `INT1`.
