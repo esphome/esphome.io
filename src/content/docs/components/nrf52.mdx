@@ -17,9 +17,10 @@ nrf52:
 ## Configuration variables
 
 - **board** (*Required*, string): The board type. Valid options are `adafruit_feather_nrf52840`,
-  `adafruit_itsybitsy_nrf52840`, `xiao_ble`, `nrf52840dongle`, `nrf54lm20dk`. Other boards should work with those
-  configuration as well.
-  ESPHome takes the chip (nRF52840, nRF54LM20 or nRF51822) from the board name; the chip decides which
+  `adafruit_itsybitsy`, `xiao_ble`, `nrf52840dongle`, `nrf54lm20dk` (experimental). Other boards should work with
+  those configuration as well. `adafruit_itsybitsy` was called `adafruit_itsybitsy_nrf52840` in older Zephyr
+  versions.
+  ESPHome takes the chip (nRF52840 or nRF54LM20) from the board name; the chip decides which
   [pins](#gpio-pin-numbering) are valid. `nrf54lm20dk` is a short name for the Zephyr board
   `nrf54lm20dk/nrf54lm20a/cpuapp`; both names are accepted.
 - **bootloader** (*Optional*, string): Bootloader type. Valid options are `mcuboot`, `adafruit`, `adafruit_nrf52_sd132`, `adafruit_nrf52_sd140_v6`, `adafruit_nrf52_sd140_v7`, `nrf`. Default value depends on board type.
@@ -86,7 +87,7 @@ This bootloader supports updates over USB CDC.
 ```yaml
 # Example configuration entry
 nrf52:
-  board: adafruit_itsybitsy_nrf52840
+  board: adafruit_itsybitsy
 ```
 
 ## Flashing the Nordic nRF52840 Dongle (PCA10059)
@@ -136,6 +137,9 @@ channel at a time blends the colors.
 
 ## Nordic nRF54LM20 DK
 
+> [!WARNING]
+> Support for the nRF54LM20 is experimental.
+
 The nRF54LM20 DK (PCA10184) is supported with `board: nrf54lm20dk`.
 
 ```yaml
@@ -184,7 +188,6 @@ Which pins exist depends on the chip:
 | --------- | ----------------------------------------------- |
 | nRF52840  | `P0.00`–`P0.31`, `P1.00`–`P1.15`                |
 | nRF54LM20 | `P0.00`–`P0.09`, `P1.00`–`P1.31`, `P2.00`–`P2.10`, `P3.00`–`P3.12` |
-| nRF51822  | `P0.00`–`P0.31`                                 |
 
 ## DFU (Device Firmware Update)
 
@@ -301,7 +304,7 @@ Try minimum LED blinking config for the board:
 
 ```yaml
 nrf52:
-  board: adafruit_itsybitsy_nrf52840
+  board: adafruit_itsybitsy
 
 esphome:
   name: supermini-nrf52840
