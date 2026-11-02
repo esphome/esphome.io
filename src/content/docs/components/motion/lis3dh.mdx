@@ -79,7 +79,7 @@ sensor:
   At least one of `on_tap` and `on_double_tap` is required.
   - **threshold** (*Optional*, acceleration): How hard a tap must be to register. Defaults to `0.6g`. It has
     the same limits per `accelerometer_range` as the interrupt `threshold`, and can be changed at run time
-    with the [`lis3dh.set_tap_threshold`](#lis3dh-set_tap_threshold-action) action.
+    with the [`motion.set_tap_threshold`](/components/motion/#motion-set_tap_threshold-action) action.
   - **time_limit** (*Optional*, [Time](/guides/configuration-types/#time)): The longest the acceleration may
     stay over the threshold and still count as a tap. Defaults to `25ms`. At most 127 samples (for example
     `317ms` at `400HZ`).
@@ -164,33 +164,9 @@ Both triggers get two variables:
 - **negative** (`bool`): `true` if the tap was towards the negative end of that axis.
 
 When only `on_tap` or only `on_double_tap` is configured, the chip detects only that kind of tap and the
-trigger fires as soon as it is read. When both are configured, `on_tap` is held back for `latency` +
-`window` (about 300 ms with the defaults), in case a second tap follows. If one does, only `on_double_tap`
+trigger fires as soon as it is read. When both are configured, `on_tap` is held back for `time_limit` +
+`latency` + `window` (about 325 ms with the defaults), in case a second tap follows. If one does, only `on_double_tap`
 fires.
-
-### `lis3dh.set_tap_threshold` Action
-
-Changes the tap threshold at run time, for example from a [Number](/components/number/). Values outside what
-the `accelerometer_range` can represent are clamped.
-
-```yaml
-number:
-  - platform: template
-    name: "Tap Threshold"
-    min_value: 0.1
-    max_value: 2.0
-    step: 0.05
-    unit_of_measurement: g
-    optimistic: true
-    initial_value: 0.6
-    set_action:
-      - lis3dh.set_tap_threshold:
-          id: accel
-          threshold: !lambda "return x;"
-```
-
-- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the `lis3dh` motion platform.
-- **threshold** (**Required**, acceleration, [templatable](/automations/templates/)): The new threshold in g.
 
 ## See Also
 
