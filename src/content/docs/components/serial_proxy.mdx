@@ -61,7 +61,9 @@ can use it. Once subscribed, the client can:
 - **Receive data** from the serial device — data arriving on the UART is forwarded to the client automatically each
   loop iteration (up to 256 bytes at a time).
 - **Reconfigure the UART** at runtime — the API client may change the baud rate, data bits, stop bits, and parity
-  without reflashing firmware.
+  without reflashing firmware. It can also ask for hardware (RTS/CTS) flow control, which a
+  [USB UART](/components/usb_uart/#hardware-flow-control) channel applies on the chips that support it. As on
+  Linux, a port whose hardware has no flow control accepts the request and ignores it.
 - **Control modem pins** — the API client can set the RTS and DTR states at runtime. A line with a configured
   `rts_pin` or `dtr_pin` is driven by that GPIO pin. On a [USB UART](/components/usb_uart/) channel or a
   [host UART](/components/uart/#uart-component-with-the-host-platform), a line without a pin is driven by the UART
