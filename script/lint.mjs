@@ -39,6 +39,7 @@ const fileTypes = [
   ".jpg",
   ".js",
   ".json",
+  ".lock",
   ".md",
   ".mdx",
   ".png",
