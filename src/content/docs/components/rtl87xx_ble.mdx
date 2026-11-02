@@ -1,0 +1,45 @@
+---
+description: "Instructions for setting up the RTL87xx BLE controller in ESPHome."
+title: "RTL87xx Bluetooth Low Energy"
+---
+
+The `rtl87xx_ble` component enables the Bluetooth Low Energy controller of the Realtek
+AmebaD chips — the platform analog of [ESP32 BLE](/components/esp32_ble/) and
+[BK72xx BLE](/components/bk72xx_ble/). It owns the vendor GAP stack bring-up and the
+controller's BLE address; higher-level consumers (such as the
+[RTL87xx BLE tracker](/components/rtl87xx_ble_tracker/)) build on it and load it
+automatically.
+
+**Supported chips.** **RTL8720D** (AmebaD, e.g. the BW16 module) — hardware-verified.
+**RTL8720C / RTL8710C** (AmebaZ2, e.g. the BW15 module) — compiles and is CI-covered,
+but has not been verified on hardware yet; a warning says so at validation, and test
+reports are welcome. RTL8710B (AmebaZ) has no BLE radio and fails with a clear error.
+
+```yaml
+# Example configuration entry
+rtl87xx_ble:
+```
+
+## Configuration variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used
+  to reference this component.
+
+> [!NOTE]
+> **Shared radio.** WiFi and BLE share one radio, arbitrated in hardware. The stack comes
+> up after the WiFi station is running, so BLE becomes available a few seconds into boot.
+
+> [!NOTE]
+> **BLE adapter address.** Taken from the BT eFuse slot; on modules where that slot is
+> unprogrammed the WiFi MAC is used instead.
+
+> [!NOTE]
+> The stack cannot be torn down — the SDK's deinit path is unusable — so once it is up it
+> stays resident, and scanning is start/stop only.
+
+## See Also
+
+- [RTL87xx BLE Tracker](/components/rtl87xx_ble_tracker/)
+- [BK72xx BLE](/components/bk72xx_ble/)
+- [LN882H BLE](/components/ln882h_ble/)
+- [ESP32 BLE](/components/esp32_ble/)
