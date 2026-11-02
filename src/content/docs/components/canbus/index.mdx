@@ -93,7 +93,7 @@ canbus:
   if it keeps happening. Must be at least `1`. Defaults to `50`.
 
 - **default_pad_data** (*Optional*, boolean): Default padding behavior for `canbus.send` actions. Defaults to `false`.
-  See [`pad_data`](#canbussend-action).
+  See [`pad_data`](#canbus-send-action).
 
 - **default_fd** (*Optional*, boolean): Default frame format for `canbus.send` actions. Defaults to `false`, unless
   the platform specifies otherwise. CAN FD requires a platform that supports it.
@@ -167,6 +167,8 @@ canbus:
 
 ### `canbus.send` Action
 
+<span id="canbus-send-action"></span>
+
 The CAN bus can transmit frames by means of the `canbus.send` action. There are several ways to use it:
 
 ```yaml
@@ -223,8 +225,7 @@ during configuration validation, including when `fd` or `pad_data` uses the CAN 
 ## CAN FD and Bit Rate Switching
 
 CAN FD frames can carry up to 64 bytes, even with bit rate switching (BRS) disabled. With BRS disabled, the data
-phase uses the nominal bit rate. This allows larger payloads without switching to a faster data rate. Some platforms,
-such as [MCP251XFD](/components/canbus/mcp251xfd/) in `NORMAL` mode, send CAN FD frames by default with BRS disabled.
+phase uses the nominal bit rate. This allows larger payloads without switching to a faster data rate.
 
 Enabling BRS allows a faster data phase, but higher rates place greater demands on the transceiver, wiring, and
 termination. They can also require compensation for transceiver delays to sample the data phase correctly. Choose a
