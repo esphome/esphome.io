@@ -8,9 +8,9 @@ The nRF52 platform supports firmware updates over the air (OTA). The **only supp
 MCUboot can be used as a second-stage bootloader, enabling OTA updates even when the board was originally shipped with a different bootloader.
 
 > [!NOTE]
-> This OTA platform also works on [Zephyr](/components/zephyr/) builds — variants `NRF52`, `NRF54L15`,
-> `NRF54LM20A`, `EFR32MG24`, `RP2040`, and `RP2350` — not just the `nrf52` platform
-> named in this page's title.
+> This OTA platform also works on [Zephyr](/components/zephyr/) builds — variants `ESP32`, `ESP32C3`, `ESP32C5`,
+> `ESP32C6`, `ESP32H2`, `ESP32S3`, `NRF52`, `NRF54L15`, `NRF54LM20A`, `EFR32MG24`, `EFR32BG27`, `RP2040`, and
+> `RP2350` — not just the `nrf52` platform named in this page's title.
 
 To flash firmware onto the device, you can use any of the tools or libraries listed in the [Zephyr MCUmgr documentation](https://docs.zephyrproject.org/latest/services/device_mgmt/mcumgr.html#tools-libraries).
 Firmware updates are also available via the ESPHome command-line interface.
@@ -68,6 +68,8 @@ ota:
 ### Configuration variables
 
 - **ble** (*Optional*, boolean): Enable Bluetooth Low Energy transport for MCUmgr OTA. Default `false`.
+- **udp** (*Optional*, boolean): Enable UDP transport for MCUmgr OTA over the network. It needs a network, such as
+  `wifi:` or `openthread:`, and turns on IPv6. IPv4 stays on if the network uses it. Default `false`.
 - **hardware_uart** (*Optional*, enum): Select a hardware UART interface to use for MCUmgr OTA communication. This is used when updating devices over a serial interface rather than BLE. Options: `CDC`, `CDC1`, `UART0`, `UART1`. `CDC`/`CDC1` (USB CDC-ACM) need a board with a USB peripheral — the `nrf52` platform and the `nrf` platform's `NRF52`, `NRF54L15` and `NRF54LM20A` variants have one; `EFR32MG24` doesn't, so only `UART0` (its one physical UART, `usart0`) or `ble: true` are valid there.
 
 ## Usage
@@ -94,6 +96,23 @@ Or connect to a specific serial:
 
 ```bash
 esphome upload nrf52_device.yaml --device /dev/ttyACM0
+```
+
+On Zephyr platforms other than `nrf52`, `esphome upload` to a serial port flashes the whole firmware instead of
+using MCUmgr. Only BLE and UDP uploads go through MCUmgr there.
+
+To update the device over UDP, give its address:
+
+```bash
+esphome upload nrf52_device.yaml --device 192.168.1.50
+```
+
+Without `--device`, `esphome upload` also offers the device's network name as an over-the-air choice.
+
+To send an existing image instead of the one from the last build, add `--file`:
+
+```bash
+esphome upload device.yaml --device 192.168.1.50 --file zephyr.signed.bin
 ```
 
 > [!WARNING]

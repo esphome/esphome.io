@@ -451,6 +451,12 @@ to. **runner** and **main_stack_size** are the exceptions: they apply to every v
   - **reset_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): A GPIO wired to the chip's RESET line,
     driven to reset the chip instead of a software reboot. Defaults to `P0.19` (inverted) on `nrf52840dongle`,
     whose Open DFU bootloader only stays in DFU mode after a pin reset.
+- **dcdc** (*Optional*, boolean, `NRF52` only): Use the DC/DC converter instead of the LDO for the REG1 regulator
+  stage. Defaults to the board's setting. The board needs the external inductor, or it resets or hangs when DC/DC
+  starts. See the [`dcdc` option of the nRF52 platform](/components/nrf52/#configuration-variables).
+- **reg0** (*Optional*, mapping, `NRF52` only): Set the REGOUT0 voltage, which is the GPIO voltage of a board powered
+  through VDDH. Same options and limits as the
+  [nRF52 platform](/components/nrf52/#reg0-output-voltage-regout0): **voltage** and **uicr_erase**.
 - **commander_version** (*Optional*, string, `EFR32BG27`/`EFR32MG24`/`SIWX917` with `framework: type: silabs`
   only): Override the version of Silicon Labs' Simplicity Commander CLI used for secure-boot image
   signing. Defaults to a pinned known-good version. Commander is downloaded and cached automatically;
@@ -493,6 +499,17 @@ nrf:
   framework:
     advanced:
       bootloader: adafruit_nrf52_sd140_v6
+```
+
+```yaml
+# Example configuration entry -- nRF52840 with 3.3 V GPIO and the DC/DC converter
+nrf:
+  variant: NRF52
+  framework:
+    advanced:
+      dcdc: true
+      reg0:
+        voltage: 3.3V
 ```
 
 ```yaml
