@@ -155,10 +155,10 @@ but can be overridden if needed.
 - **full_update_every** (*Optional*, int): On screens that support partial updates, this sets the number of updates
   before a full update is forced. Defaults to `1` which will make every update a full update. A full update can also be
   requested at any time with the [`epaper_spi.full_update_next`](#epaper_spi-full_update_next-action) action.
-- **monochrome_partial_updates** (*Optional*, boolean): Only for four-level grayscale models
-  (`Seeed-reTerminal-Sticky-gray4`). Allows `full_update_every` greater than `1`, with the partial updates in between
-  in black and white. Defaults to `false`: every update is a full four-level update. See
-  [Four-level grayscale](#four-level-grayscale-reterminal-sticky) for the trade-off this accepts.
+- **monochrome_partial_updates** (*Optional*, boolean): Only for `Seeed-reTerminal-Sticky-gray4`. Allows
+  `full_update_every` greater than `1`, with the partial updates in between in black and white. Defaults to `false`:
+  every update is a full four-level update. See [Four-level grayscale](#four-level-grayscale-reterminal-sticky) for the
+  trade-off this accepts.
 - **border_waveform** (*Optional*, int): Only for SSD1677 models. The border waveform byte (controller command `0x3C`),
   which sets how the border around the active area is driven. Defaults to `0x01`, or `0x00` for
   `Seeed-reTerminal-Sticky-gray4`. Rarely needs changing.
@@ -237,8 +237,10 @@ display:
 ### Four-Level Grayscale (Waveshare 7.5in V2)
 
 The `Waveshare-7.5in-V2-gray4` model drives the 7.5" V2 panel in black, dark gray, light gray and white. Colors are
-reduced to the nearest of the four levels by brightness. Every update is a full refresh with the model's own waveform,
-so `full_update_every` must stay at `1`. The buffer takes 2 bits per pixel, 96 kB for the full panel.
+reduced to the four levels by their luma, as described in
+[Black and White and Grayscale Panels](#black-and-white-and-grayscale-panels). Every update is a full refresh with the
+model's own waveform, so `full_update_every` must stay at `1` and `monochrome_partial_updates` is not available. The
+buffer takes 2 bits per pixel, 96 kB for the full panel.
 
 ```yaml
 display:
@@ -251,7 +253,7 @@ display:
       number: GPIOXX
       inverted: true
     lambda: |-
-      it.filled_rectangle(0, 0, it.get_width() / 2, it.get_height(), Color(170, 170, 170));
+      it.filled_rectangle(0, 0, it.get_width() / 2, it.get_height(), Color(128, 128, 128));
 ```
 
 ### Four-Level Grayscale (reTerminal Sticky)
@@ -410,9 +412,9 @@ $$
 Y = 0.299R + 0.587G + 0.114B
 $$
 
-A luma of `128` or more draws white, anything lower draws black. The four-level grayscale model
-(`Seeed-reTerminal-Sticky-gray4`) uses the same luma, split into four bands: below `32` draws black, `32` to `95` dark
-gray, `96` to `159` light gray, and `160` or more white.
+A luma of `128` or more draws white, anything lower draws black. The four-level grayscale models
+(`Seeed-reTerminal-Sticky-gray4` and `Waveshare-7.5in-V2-gray4`) use the same luma, split into four bands: below `32`
+draws black, `32` to `95` dark gray, `96` to `159` light gray, and `160` or more white.
 
 Saturated colors therefore do not map the way their RGB values might suggest:
 
