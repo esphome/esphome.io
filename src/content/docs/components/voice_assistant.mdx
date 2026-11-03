@@ -37,11 +37,11 @@ voice_assistant:
   component used for wake word detection. Configuring this allows Home Assistant to change which wake word model is enabled.
 
 - **wake_word_audio** (*Optional*): Lets Home Assistant verify each wake word that `micro_wake_word` detects. Requires
-  `micro_wake_word`. See [Wake word verification](#wake-word-verification) below.
+  `micro_wake_word`. See [Wake Word Verification](#wake-word-verification) below.
 
-  - **buffer_duration** (*Optional*, [Time](/guides/configuration-types#time)): How much audio from before each
+  - **buffer_duration** (*Optional*, [Time](/guides/configuration-types/#time)): How much audio from before each
     detection to send to Home Assistant. Between `100ms` and `5s`. Defaults to `1500ms`.
-  - **timeout** (*Optional*, [Time](/guides/configuration-types#time)): How long to wait for Home Assistant to accept
+  - **timeout** (*Optional*, [Time](/guides/configuration-types/#time)): How long to wait for Home Assistant to accept
     or reject a detection. When it expires, the run stops and `on_error` is called with the code
     `wake-word-verification-timeout`. Defaults to `2s`.
 
@@ -76,7 +76,7 @@ voice_assistant:
 - **on_wake_word_detected** (*Optional*, [Automation](/automations)): An automation
   to perform when the assist pipeline has detected a wake word.
 
-- **on_wake_word_rejected** (*Optional*, [Automation](/automations)): An automation to perform when Home Assistant
+- **on_wake_word_rejected** (*Optional*, [Automation](/automations/)): An automation to perform when Home Assistant
   rejects a wake word detected on the device. Requires `wake_word_audio`.
 
 - **on_end** (*Optional*, [Automation](/automations)): An automation to perform
@@ -215,7 +215,7 @@ voice_assistant:
 See our [example YAML files on GitHub](https://github.com/esphome/wake-word-voice-assistants/blob/main/m5stack-atom-echo/m5stack-atom-echo.yaml)
 for continuous wake word detection.
 
-## Wake word verification
+## Wake Word Verification
 
 With `wake_word_audio`, Home Assistant can check each wake word that [Micro Wake Word](/components/micro_wake_word/)
 detects. A device can then detect at a lower probability cutoff without more false activations.
@@ -234,7 +234,9 @@ configured. While it is active:
 
 - The device keeps the last `buffer_duration` of audio from each microphone channel.
 - After a detection, `voice_assistant.start` sends that audio and then the live audio to Home Assistant, without
-  waiting for a response.
+  waiting for a response. Call it right away from the `on_wake_word_detected` automation of `micro_wake_word`: when it
+  starts more than one second after the detection, the run starts without verification. Don't play a wake sound
+  before it.
 - If Home Assistant accepts the wake word, the run continues as usual. If it rejects it, the device stops streaming
   and calls `on_wake_word_rejected`. Without an answer within `timeout`, `on_error` is called with the code
   `wake-word-verification-timeout`.
