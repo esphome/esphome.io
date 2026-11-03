@@ -38,7 +38,7 @@ sensor:
     name: Humidity
 ```
 
-## Configuration variables
+## Configuration Variables
 
 - **packet_interface** (**Required**, [ID](/guides/configuration-types#id)): The
   [packet interface](/components/packet_interface/) to send and receive states on.
@@ -67,7 +67,7 @@ sensor:
   already clears the states when the other device cannot be reached, and with it, states that have not changed may
   never be sent again.
 
-## When states are sent
+## When States Are Sent
 
 To keep packets small, entity transport does not send entity IDs with every state. Each device numbers its sensors
 and binary sensors, and sends a *dictionary* that gives the ID for each number. Packets with states then use the
@@ -103,7 +103,7 @@ that never transmits, the request for the dictionary is not heard. A receiver th
 gets the dictionary at the provider's next `update_interval`, and its sensors have no state until then. Keep an
 `update_interval` on the provider of such a link, and do not set it to `never`.
 
-## Sensor and binary sensor
+## Sensor and Binary Sensor
 
 A sensor or binary sensor with the `entity_transport` platform shows the state of a sensor on another device.
 
@@ -124,7 +124,7 @@ binary_sensor:
 - All other options from [Sensor](/components/sensor/#config-sensor) or
   [Binary Sensor](/components/binary_sensor/#config-binary_sensor).
 
-## Differences from packet transport
+## Differences from Packet Transport
 
 Entity transport does the same job as [packet transport](/components/packet_transport/), but leaves the work that
 is not about entities to the packet interface. It has no `encryption`, `rolling_code_enable`, `ping_pong_enable`

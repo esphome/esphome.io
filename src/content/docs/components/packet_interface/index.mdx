@@ -46,7 +46,7 @@ packet_interface:
     id: serial_link
 ```
 
-## Configuration variables
+## Configuration Variables
 
 These options are common to all platforms:
 
@@ -105,7 +105,7 @@ packet_interface:
 - **destination** (*Optional*, int): The address of the device to send to, or `broadcast` to send to every device on
   the channel. Defaults to `broadcast`. Cannot be used with `peers`.
 - **peers** (*Optional*, list): Talk to several devices on the channel, each with its own layers. See
-  [Several devices on one channel](#several-devices-on-one-channel). Each entry has:
+  [Several Devices on One Channel](#several-devices-on-one-channel). Each entry has:
 
   - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID that components such as
     [entity transport](/components/entity_transport/) use to send to and receive from this device.
@@ -124,7 +124,7 @@ With `broadcast`, every device on the channel receives every packet, from any de
 
 The addressing layer adds 4 bytes to each packet.
 
-### Several devices on one channel
+### Several Devices on One Channel
 
 With `peers`, one channel carries a separate link to each of several devices, each with its own layers, and
 optionally a `broadcast` entry for everything else. A packet sent to this device by a device that has its own entry
@@ -335,7 +335,7 @@ again when the other device is next heard, so that an application such as entity
 The session layer adds 1 byte to each packet, so the largest packet that can be sent through it is 1 byte smaller
 than the layer below allows.
 
-## Example: a binary sensor from another device over UDP
+## Example: A Binary Sensor from Another Device over UDP
 
 In this example, a device named `kitchen-display` shows the state of a door sensor on a device named `front-porch`.
 The two devices are connected over UDP, with reliability and session layers, and the kitchen display has a binary
