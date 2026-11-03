@@ -464,7 +464,8 @@ marks it offline. The hub does not send idle frames on its own, so run Jandy bus
 - **on_frame** (*Optional*, [Automation](/automations/)): Automation(s) that fire when a
   matching frame is received. Multiple entries may be listed; each fires independently based
   on its `frame_type` filter. The automation receives the payload as `payload`
-  (`std::span<const uint8_t>`, valid only while the automation runs). Use `[]` to match every frame.
+  (`std::span<const uint8_t>`). It points into the receive buffer, which the next frame
+  overwrites, so read it before any `delay:`.. Use `[]` to match every frame.
 
   - **frame_type** (**Required**, list of hex bytes *or* list of byte-lists): Frame-type
     prefix(es) to match against the start of each received payload. Two forms are
