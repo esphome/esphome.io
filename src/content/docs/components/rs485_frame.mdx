@@ -78,9 +78,7 @@ suppresses TX echo automatically; on Arduino, prefer `frame_trigger` or
 The following illustrates a Hayward AquaLogic wireless bus. The same structure applies to
 any DLE-framed bus — substitute the `uart:` settings, `framing.escape` scheme, `crc.type`,
 and `tx.gate.frame_type` for your controller. User payload decoding is done via `on_frame:`
-on the hub — one lambda per frame type, pushing values to `platform: template` sensors. Hub
-diagnostics (frame counters, CRC failures, queue depth) are exposed through the
-`rs485_frame` sensor and text_sensor platforms.
+on the hub — one lambda per frame type, pushing values to `platform: template` sensors.
 
 ```yaml
 uart:
@@ -259,7 +257,7 @@ button:
 
 #### Action configuration variables
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the `rs485_frame` hub.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the `rs485_frame` hub.
 - **frame_type** (**Required**, list of hex bytes or
   [Templatable](/automations/templates/#config-templatable)): The 2-byte (or longer, up to 8
   bytes) frame type prefix.
@@ -332,8 +330,8 @@ of the device's.
 
 Configure the bus explicitly: set the `uart:` parameters your device uses, declare the
 `framing.escape` scheme, choose the `crc:` algorithm, set `tx.gate.frame_type` to the bus
-keep-alive / poll frame, and (only if you want the `value:` button shorthand or
-`tx.idle_command`) add a `command_format:`. To find those values:
+keep-alive / poll frame, and (only if you want the `value:` button shorthand) add a
+`command_format:`. To find those values:
 
 - **Ready-to-flash configs** for Hayward AquaLogic and Jandy AquaLink RS (and a starting point
   for contributing new ones) live in the
@@ -351,24 +349,21 @@ keep-alive / poll frame, and (only if you want the `value:` button shorthand or
 > **have not been verified on physical hardware** — the AllButton ACK byte and poll-cycle timing
 > are reverse-engineering guesses. Treat them as a starting point and confirm against a live bus.
 
-A Jandy AllButton emulator must also set `tx.idle_command` (typically `0x00`) unless
-`sniffer_only: true`: it has to ACK every probe within the poll cycle or the controller
-marks it offline. `tx.idle_command` requires a `command_format:` (see below).
+A Jandy AllButton emulator has to ACK every probe within the poll cycle or the controller
+marks it offline. The hub does not send idle frames on its own, so run Jandy buses with
+`sniffer_only: true`.
 
 ## Configuration variables
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the hub.
-- **uart_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the [UART](/components/uart/) bus.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the hub.
+- **uart_id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the [UART](/components/uart/) bus.
 - **sniffer_only** (*Optional*, boolean): Disable all TX including buttons. Defaults to `false`.
 - **dump_frames** (*Optional*, boolean): Log every validated RX frame and every TX frame, as
   the full wire bytes (framing and CRC included), at DEBUG level. Defaults to `false`.
 - **max_frame_length** (*Optional*, integer, 6–1024): Discard frames longer than this many bytes. Defaults to `128`.
-- **frame_timeout** (*Optional*, [Time](/guides/configuration-types#time)): Reset receive
+- **frame_timeout** (*Optional*, [Time](/guides/configuration-types/#time)): Reset receive
   state if a partial frame sits on the bus longer than this. Prevents a noise burst or
   mid-frame cable pull from permanently stalling reception. Defaults to `50ms`.
-
-  Frames dropped by either of the two settings above are counted by the `discarded_frames`
-  sensor decode (see [Diagnostics](#diagnostics)).
 - **framing** (**Required**): DLE-framing configuration. The `escape:` sub-block must be set
   explicitly; the delimiter bytes default to the de-facto standard but can be overridden.
 
@@ -408,8 +403,8 @@ marks it offline. `tx.idle_command` requires a `command_format:` (see below).
 
 - **command_format** (*Optional*): How `value:` button entries are serialised into the
   frame payload. Used by the `value:` form of
-  [rs485_frame buttons](/components/button/rs485_frame/) and by `tx.idle_command`. Left
-  unset by default. Without `command_format:`, the `value:` button form is rejected at
+  [rs485_frame buttons](/components/button/rs485_frame/). Left unset by default. Without
+  `command_format:`, the `value:` button form is rejected at
   config time — use [raw frame transmission](#raw-frame-transmission) (`frame_type:` +
   `payload:` on the button, or the [`rs485_frame.send_frame` action](#raw-frame-transmission))
   instead, or add `command_format:` to opt into the encoder.
@@ -500,13 +495,6 @@ marks it offline. `tx.idle_command` requires a `command_format:` (see below).
     or `fifo`. Defaults to `replace_latest`.
   - **max_queue_size** (*Optional*, integer, 1–32): Maximum commands in queue. Must be `1`
     for `replace_latest`. Defaults to `1`.
-  - **idle_command** (*Optional*, hex uint32): Value to send on the gate trigger when
-    no real command is queued. **Requires a `command_format:`** on the hub so the value has a
-    defined encoding (rejected at config time otherwise). Encoded using the same rules as
-    `button.value`: the low `value_element_bytes × 8` bits are used. Idle transmissions are not
-    counted in the `commands_sent` diagnostic. Typically used (with `0x00`) to keep an
-    emulated bus device responding to every poll.
-
   - **gate** (*Optional*): TX gate — controls when queued commands are transmitted.
 
     - **mode** (*Optional*, string): `frame_trigger` (default), `idle_gap`, or `fixed_delay`.
@@ -515,11 +503,11 @@ marks it offline. `tx.idle_command` requires a `command_format:` (see below).
       **required and must be non-empty** when `mode` is `frame_trigger` and `sniffer_only` is
       false (a configuration that would never fire is rejected at config time). Not used by
       `idle_gap` / `fixed_delay`.
-    - **delay** (*Optional*, [Time](/guides/configuration-types#time)): Additional delay
+    - **delay** (*Optional*, [Time](/guides/configuration-types/#time)): Additional delay
       after the gate frame fires. Defaults to `0ms`.
-    - **min_silence** (*Optional*, [Time](/guides/configuration-types#time)): Bus silence
+    - **min_silence** (*Optional*, [Time](/guides/configuration-types/#time)): Bus silence
       required for `idle_gap` mode. Defaults to `4ms`.
-    - **interval** (*Optional*, [Time](/guides/configuration-types#time)): TX interval for
+    - **interval** (*Optional*, [Time](/guides/configuration-types/#time)): TX interval for
       `fixed_delay` mode. Defaults to `100ms`.
 
 ## Payload layout
@@ -589,21 +577,6 @@ rs485_frame:
       mode: double
   crc:
     type: none
-
-text_sensor:
-  - platform: rs485_frame
-    rs485_frame_id: bus
-    name: "Last Frame Type"
-
-sensor:
-  - platform: rs485_frame
-    rs485_frame_id: bus
-    name: "Frames Received"
-    decode: frames_received
-    # The rs485_frame sensor platform fills in state_class, unit_of_measurement, and
-    # entity_category automatically per decode value — no extra YAML needed.
-    filters:
-      - throttle: 10s
 ```
 
 ### Step 3: Catalog frame types from logs
@@ -623,61 +596,15 @@ watch for new frame types.
 
 ### Step 4: Confirm the CRC
 
-Once you have captured payloads, test CRC candidates. Temporarily set `rx_accept`
-to only one variant and watch whether `crc_failures` climbs.
+Once you have captured payloads, test CRC candidates. Set `crc.type` and temporarily set
+`rx_accept` to only one variant, then check that frames still appear in the `dump_frames`
+log; frames that fail the CRC check are not logged.
 
 ### Step 5: Configure decoders
 
 Replace the sniffer config with `on_frame:` handlers that decode each frame type
 of interest, plus `template` sensors that receive the decoded values via
 `id(...).publish_state(...)`. See the [Basic usage](#basic-usage) example.
-
-## Diagnostics
-
-The `rs485_frame` sensor and text_sensor platforms expose hub-state diagnostics
-as Home Assistant entities. They do **not** decode user payloads — for that, use
-`on_frame:`.
-
-| sensor `decode` | Description | `state_class` | `unit_of_measurement` | other |
-|---|---|---|---|---|
-| `frames_received` | Validated frames received. | `total_increasing` | `frames` | |
-| `crc_failures` | Frames that failed validation (CRC or structural). | `total_increasing` | `frames` | |
-| `discarded_frames` | Frames abandoned mid-receive (buffer overflow or intra-frame timeout), before CRC/structural validation ever ran. | `total_increasing` | `frames` | |
-| `commands_sent` | User commands transmitted (idle keepalives excluded). | `total_increasing` | `commands` | |
-| `command_drops` | Commands dropped (queue full or sniffer mode). | `total_increasing` | `commands` | |
-| `last_keepalive_ms` | Gate-frame interval in ms. | `measurement` | `ms` | `device_class: duration` |
-| `queue_depth` | Current TX queue depth (including any pending delayed). | `measurement` | `commands` | |
-
-All diagnostic sensors are emitted with `entity_category: diagnostic` so Home
-Assistant groups them under the device's Diagnostic section. You can override
-any of the defaults above by setting the same key explicitly in your YAML.
-
-The text_sensor exposes one diagnostic: the most recent validated frame type as a
-4-character hex string (e.g. `"0083"`, no separator). It also defaults to
-`entity_category: diagnostic`. It checks the hub every `update_interval` (default `60s`)
-and publishes only when the frame type differs from its last published value.
-
-```yaml
-sensor:
-  - platform: rs485_frame
-    rs485_frame_id: pool
-    name: "Frames Received"
-    decode: frames_received
-
-  - platform: rs485_frame
-    rs485_frame_id: pool
-    name: "CRC Failures"
-    decode: crc_failures
-
-text_sensor:
-  - platform: rs485_frame
-    rs485_frame_id: pool
-    name: "Last Frame Type"
-```
-
-A rising `crc_failures` with zero `frames_received` usually means the wrong baud
-rate or UART settings. A small steady `crc_failures` alongside healthy
-`frames_received` suggests `crc.type` or `crc.rx_accept` needs adjustment.
 
 ## Why buttons, not switches
 
@@ -696,8 +623,5 @@ answer.
 
 - [rs485_frame-examples](https://github.com/b3nj1/rs485_frame-examples) — ready-to-use
   configurations for Hayward AquaLogic and other DLE-framed RS485 controllers.
-- [rs485_frame sensor](/components/sensor/rs485_frame/) — hub diagnostic sensors.
-- [rs485_frame text\_sensor](/components/text_sensor/rs485_frame/) — `last_frame_type` diagnostic.
 - [rs485_frame button](/components/button/rs485_frame/)
-- [rs485_frame number](/components/number/rs485_frame/)
 - [UART](/components/uart/)
