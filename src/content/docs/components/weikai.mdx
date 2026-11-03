@@ -116,6 +116,9 @@ wk2168_spi:
 
   - **stop_bits** (*Optional*): The number of stop bits to send. Options: `1`, `2`.
     Defaults to `1`.
+  - **restore_baud_rate** (*Optional*, boolean): Keep the baud rate set by the
+    [`weikai.change_baud_rate`](#weikaichange_baud_rate-action) action across reboots.
+    Defaults to `false`.
 
 ## Connecting via an I²C bus
 
@@ -186,6 +189,67 @@ wk2168_i2c:
 
   - **stop_bits** (*Optional*): The number of stop bits to send. Options: `1`, `2`.
     Defaults to `1`.
+  - **restore_baud_rate** (*Optional*, boolean): Keep the baud rate set by the
+    [`weikai.change_baud_rate`](#weikaichange_baud_rate-action) action across reboots.
+    Defaults to `false`.
+
+## Changing the Baud Rate at Run Time
+
+The baud rate of a UART channel can be changed while the device is running.
+This is useful when the connected device can be switched to another speed,
+or when the speed is not known in advance.
+
+### `weikai.change_baud_rate` Action
+
+```yaml
+button:
+  - platform: template
+    name: "Set 115200 Bd"
+    on_press:
+      - weikai.change_baud_rate:
+          id: spi_uart_0
+          baud_rate: 115200
+```
+
+The new baud rate can also come from a [lambda](/automations/templates/#config-lambda):
+
+```yaml
+on_press:
+  - weikai.change_baud_rate:
+      id: spi_uart_0
+      baud_rate: !lambda 'return (uint32_t) id(my_baud_rate).state;'
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The id of the UART channel to change.
+- **baud_rate** (**Required**, int, [templatable](/automations/templates/)): The new baud rate.
+
+The action waits for the bytes still waiting to be sent to leave the chip, then changes the baud rate.
+If they are not sent in time, an error is logged and the baud rate is not changed.
+Bytes already received but not yet read by the connected component are discarded.
+If the new baud rate is too high for the crystal, it is reduced to the maximum value
+(see [Maximum Baud Rate](#maximum-baud-rate)).
+
+### Keeping the Baud Rate After a Reboot
+
+By default the device starts again with the `baud_rate` of the configuration.
+To keep the last baud rate set by the action, set `restore_baud_rate: true` on the UART channel:
+
+```yaml
+wk2168_spi:
+  - id: wk2168_bridge_spi
+    cs_pin: GPIOXX
+    uart:
+      - id: spi_uart_0
+        channel: 0
+        baud_rate: 9600
+        restore_baud_rate: true
+```
+
+The value is stored in flash, like the value of a [number](/components/number/template/) with
+`restore_value`, and only when the baud rate really changes.
+A stored value is ignored if the `baud_rate` of the configuration has been changed since it was stored.
 
 ## Using the GPIO pins
 
