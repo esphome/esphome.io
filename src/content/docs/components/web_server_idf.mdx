@@ -1,0 +1,39 @@
+---
+description: "Serve HTTPS from the ESP32 web server with your own certificate."
+title: "Web Server HTTPS (ESP32)"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+On ESP32, the HTTP server shared by ESPHome's web components can serve HTTPS instead of plain HTTP. You provide
+the certificate and private key in PEM format, for example a certificate from your own certificate authority.
+
+HTTPS can't be used together with the [Web Server](/components/web_server/) or the
+[Captive Portal](/components/captive_portal/) yet. It is meant for components that add their own pages to the
+shared server.
+
+```yaml
+# Example configuration entry
+web_server_idf:
+  ssl:
+    certificate: !secret web_certificate
+    private_key: !secret web_private_key
+```
+
+## Configuration Variables
+
+- **ssl** (*Optional*): Serve HTTPS with this certificate and key.
+
+  - **certificate** (**Required**, string): The server certificate in PEM format, starting with
+    `-----BEGIN CERTIFICATE-----`. To include intermediate certificates, append them after it.
+  - **private_key** (**Required**, string): The private key that belongs to the certificate, in PEM format.
+  - **port** (*Optional*, int): The port to serve HTTPS on. Defaults to `443`.
+
+> [!NOTE]
+> Each open HTTPS connection uses about 26 KB of RAM. On boards without PSRAM, keep the number of connections
+> small. ECDSA certificates (for example P-256) connect faster and use less memory than RSA certificates.
+
+## See Also
+
+- [Web Server](/components/web_server/)
+- <APIRef text="web_server_idf.h" path="web_server_idf/web_server_idf.h" />
