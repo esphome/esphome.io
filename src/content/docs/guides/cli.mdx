@@ -330,11 +330,12 @@ with it, uploads with the current key, and then confirms the device answers with
 it lives: the `key:` line in the yaml, or the line in `secrets.yaml` that its `!secret` points to. The key being
 replaced is kept as `old_key:`. For a key written in the yaml, that is a second line next to it. For a `!secret` key,
 the yaml gets `old_key: !secret device_name__encryption_key_old` (the secret's name with `_old` appended) and the
-previous value goes into `secrets.yaml` under that name, so no key lands in the device yaml. A key that comes from a
-substitution or a package is refused. A failure before the upload puts the previous key back; after the upload the
-configuration keeps the new key, since with `old_key:` the next install connects whether the device took the new
-firmware or not. The upload is protected by the current key, so this is for a planned change: replace a key you believe
-leaked by serial flash.
+previous value goes into `secrets.yaml` under that name, so no key lands in the device yaml. A key in a local package
+or included file is rewritten in that file. A key that comes from a substitution, or from a remote package or any other
+file outside the configuration directory, is refused. A failure before the upload puts the previous key back; after
+the upload the configuration keeps the new key, since with `old_key:` the next install connects whether the device took
+the new firmware or not. The upload is protected by the current key, so this is for a planned change: replace a key
+you believe leaked by serial flash.
 
 ```shell
 esphome rotate-key living-room.yaml
