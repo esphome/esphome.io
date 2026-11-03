@@ -16,17 +16,19 @@ nrf52:
 
 ## Configuration variables
 
-- **board** (*Required*, string): The board type. Valid options are `adafruit_feather_nrf52840`, `adafruit_itsybitsy_nrf52840`, `xiao_ble`. Other boards should work with those configuration as well.
-- **bootloader** (*Optional*, string): Bootloader type. Valid options are `mcuboot`, `adafruit`, `adafruit_nrf52_sd132`, `adafruit_nrf52_sd140_v6`, `adafruit_nrf52_sd140_v7`. Default value depends on board type.
+- **board** (*Required*, string): The board type. Valid options are `adafruit_feather_nrf52840`, `adafruit_itsybitsy_nrf52840`, `xiao_ble`, `nrf52840dongle`. Other boards should work with those configuration as well.
+- **bootloader** (*Optional*, string): Bootloader type. Valid options are `mcuboot`, `adafruit`, `adafruit_nrf52_sd132`, `adafruit_nrf52_sd140_v6`, `adafruit_nrf52_sd140_v7`, `nrf`. Default value depends on board type.
 - **dcdc** (*Optional*, boolean): Enable DC/DC converter for REG1 stage. Defaults follow board settings from Zephyr.
 External LC filters must be connected to the DC/DC regulator pins if it is being used.
 The advantage of using a DC/DC regulator is that the overall power consumption is normally reduced
 as the efficiency of such a regulator is higher than that of a LDO.
 ⚠️ Warning: Enabling DC/DC may cause the board to fail to boot if external LC filter is misconfigured or is poor quality.
+- **dfu** (*Optional*): Enter DFU mode automatically when flashing; see [DFU](#dfu-device-firmware-update).
+- **reg0** (*Optional*): Configure the REGOUT0 output voltage; see [REGOUT0](#reg0-output-voltage-regout0).
 
 ## Getting Started
 
-The nRF52840 requires a bootloader, with two supported options: `MCUboot` and `Adafruit nRF52 Bootloader`. It is recommended to use MCUboot as it supports OTA (Over-The-Air) updates. Your board most likely comes with a manufacturer-provided bootloader. ESPHome determines the bootloader type based on the board name.
+The nRF52840 requires a bootloader, with three supported options: `MCUboot`, `Adafruit nRF52 Bootloader`, and the Nordic Open DFU Bootloader (factory-flashed on the nRF52840 Dongle). It is recommended to use MCUboot as it supports OTA (Over-The-Air) updates with rollback. Boards with the Adafruit nRF52 Bootloader can be updated over BLE with [Adafruit BLE OTA](/components/ota/adafruit_ble/). Your board most likely comes with a manufacturer-provided bootloader. ESPHome determines the bootloader type based on the board name.
 
 Examples of low power [nRF52840 boards](https://github.com/joric/nrfmicro/wiki).
 
@@ -63,6 +65,51 @@ nrf52:
   board: adafruit_itsybitsy_nrf52840
 ```
 
+## Flashing the Nordic nRF52840 Dongle (PCA10059)
+
+The dongle ships with Nordic's Open DFU Bootloader factory-flashed at the top of
+flash (`0xE0000`–`0x100000`). ESPHome reserves that region and boots your
+application directly after the MBR page — no custom bootloader is built.
+
+The bootloader speaks Nordic's Secure DFU protocol, so ESPHome packages and
+uploads the firmware with Nordic's `nrfutil`. The first build downloads it from
+Nordic, together with its `nrf5sdk-tools` command, into ESPHome's tools cache;
+nothing has to be installed by hand.
+
+### First flash and recovery
+
+1. Connect the dongle to the PC and press the **RESET** button (the small
+   button on the side of the PCB, next to the USB connector). The red LED
+   fades in and out while the bootloader is running.
+2. Run `esphome run yourfile.yaml`. ESPHome builds the firmware and sends the
+   DFU package to the dongle over USB CDC.
+
+The same procedure recovers a device whose application won't boot; the factory
+bootloader is never erased by application uploads.
+
+### Updating a running device
+
+With `dfu: true` in the `nrf52` configuration, `esphome upload` reboots the running application
+into the bootloader itself and flashes it: the dongle has a GPIO wired to its RESET pin (P0.19),
+which the [dfu](#dfu-device-firmware-update) component uses as its `reset_pin` on this board
+without being told, and the factory bootloader stays in DFU mode after a pin reset. The bootloader
+shows up as its own USB device, so the upload looks for it rather than for the port you named.
+Without `dfu:`, press RESET while the application runs to drop back into the bootloader, then
+upload again.
+
+### OTA updates
+
+The Open DFU Bootloader has no secondary slot to stage a download into, so
+over-the-air updates are not supported with this bootloader. Choose `mcuboot`
+(with an SWD connection) on boards where wireless updates are required.
+
+### On-board LEDs
+
+All four on-board LEDs are active-low, so set `inverted: true` on their pins so
+that `on` lights the LED. LD1 is a dedicated green LED on `P0.6`; LD2 is an RGB LED
+with red on `P0.8`, green on `P1.9` and blue on `P0.12`, and turning on more than one
+channel at a time blends the colors.
+
 ## GPIO Pin Numbering
 
 There are two ways to reference GPIO pins:
@@ -75,6 +122,10 @@ There are two ways to reference GPIO pins:
 The `dfu` component enables automatic entry into **DFU (Device Firmware Update)** mode by monitoring
 the USB CDC serial connection. When a host opens the port at **1200 baud**, the component triggers
 a reset to put the device into DFU mode.
+
+Opening the port at **2001 baud** instead reboots the device straight back into its application,
+without entering DFU mode, regardless of whether `reset_pin` is set. The USB CDC has no reset line,
+so host tools such as the Device Builder use this for the **Reset device** action in the logs view.
 
 ESPHome uses this component internally when uploading firmware via:
 
@@ -110,9 +161,10 @@ nrf52:
 
 - **reset_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The pin to use to trigger a hardware reset.
   This pin should be connected to the MCU's reset line or to a circuit that causes the bootloader to enter DFU mode after reset.
-  When omitted, a software reset is used instead.
+  Defaults to `P0.19` on `nrf52840dongle`, which is wired to the dongle's RESET pin; on other boards a software
+  reset is used when omitted.
 
-## REGOUT0
+## REG0 Output Voltage (REGOUT0)
 
 Output voltage from the REG0 regulator stage, which powers the GPIO pins when the board operates in high-voltage mode.
 This setting can only be changed a limited number of times, unless uicr_erase is set to true.
@@ -134,6 +186,36 @@ nrf52:
 - **uicr_erase** (**Optional**, bool): If set to true, the User Information Configuration Registers (UICR)
 will be erased before writing the new voltage setting.
 ⚠️ Warning: Enabling this may cause the board to fail to boot if misconfigured. Default is false.
+
+## Powering a GPIO-Gated Peripheral Rail
+
+Some nRF52 boards -- mostly cheap hobby clones such as the "SuperMini nRF52840" (nRFMicro-style boards) -- have no
+pull-up resistor on the GPIO pin that gates their external peripheral header. Without one, that pin floats at an
+indeterminate voltage instead of the rail reliably being on, so anything wired to that header (sensors, displays,
+etc.) may not receive stable power.
+
+To check whether your board needs this before flashing, power the board on (without `power_supply` configured
+yet) and measure the candidate pin against ground with a multimeter: a genuine pull-up holds it close to the
+board's GPIO supply voltage (typically 3.3V) on its own, while a floating pin settles at an indeterminate voltage
+instead (around 1.9V was observed on a "SuperMini nRF52840" clone).
+
+The [Power Supply](/components/power_supply/) component already covers this case: with `enable_on_boot: true` on
+an internal pin, it sets up before any bus, so the rail is confirmed on before
+[I²C](/components/i2c/) or [SPI](/components/spi/) try to use it.
+
+```yaml
+power_supply:
+  - id: ext_vcc
+    pin: P0.13
+    enable_on_boot: true
+    enable_time: 500ms
+```
+
+`P0.13` is the external-VCC gate on nice!nano and SuperMini-nRF52840-style boards -- check your own board's
+schematic for the equivalent pin. `enable_time` is the delay other components wait for after the rail turns on,
+to let its voltage settle before anything uses it; 500ms was enough on a "SuperMini nRF52840" clone, but measure
+your own board's actual settle time rather than copying this value. See the [Power Supply](/components/power_supply/)
+page for the full set of configuration variables.
 
 ## Troubleshooting
 
@@ -196,6 +278,33 @@ interval:
       - output.turn_off: red_led
 ```
 
+[nrf52840-dongle](https://docs.nordicsemi.com/r/bundle/ug_nrf52840_dongle/page/ug/nrf52840_dongle/programming.html)
+
+```yaml
+nrf52:
+  board: nrf52840dongle
+
+esphome:
+  name: nrf52840-dongle
+
+logger:
+  level: DEBUG
+
+output:
+  - platform: gpio
+    pin:
+      number: P0.6
+      inverted: true
+    id: green_led
+
+interval:
+  - interval: 1s
+    then:
+      - output.turn_on: green_led
+      - delay: 0.5s
+      - output.turn_off: green_led
+```
+
 ### Board does not boot
 
 Disable DC/DC:
@@ -226,7 +335,8 @@ nrf52:
   Notably, the `%zu` specifier is not handled correctly, which can
   cause incorrect log output when the [logger](/components/logger) component is used.
   Set to `false` to use the full newlib, which supports all standard printf format specifiers
-  including `%zu` and 64-bit integers at the cost of a larger binary. Defaults to `true`.
+  including `%zu` and 64-bit integers at the cost of a larger binary.
+  Defaults to `false` when `logger` component is present, otherwise `true`.
 
 - **advanced** (*Optional*, mapping): See [Advanced Configuration](#advanced-configuration) below.
 
@@ -238,14 +348,20 @@ nrf52:
   `boot_is_good_after` time (default 60s), the firmware is marked as valid. Since ESPHome 2026.8.0, an orderly
   shutdown — entering [deep sleep](/components/deep_sleep#deep-sleep-and-ota-rollback), a restart or a shutdown —
   also counts as a successful boot and marks the firmware as valid. If the device crashes before the firmware is
-  marked as valid, it will roll back to the previous working firmware. Defaults to `true`.
+  marked as valid, it will roll back to the previous working firmware. Rollback needs MCUboot, either as the
+  bootloader or as the second stage used by [zephyr_mcumgr](/components/ota/zephyr_mcumgr/). Defaults to `true`
+  when MCUboot is present and to `false` otherwise; setting it to `true` without MCUboot is ignored with a
+  warning.
 
 ## See Also
 
 - [ESPHome Core Configuration](/components/esphome/)
 - [OpenThread Component](/components/openthread/)
 - [Network Component](/components/network/)
+- [Power Supply Component](/components/power_supply/)
 - [Zephyr BLE Server](/components/zephyr_ble_server/)
+- [nRF52 Firmware Updates](/components/ota/zephyr_mcumgr/)
+- [Adafruit BLE OTA](/components/ota/adafruit_ble/)
 - [Zephyr PWM](/components/output/zephyr_pwm/)
 
 - [Guidelines for Adafruit Bootloader Memory Map](https://learn.adafruit.com/introducing-the-adafruit-nrf52840-feather?view=all#hathach-memory-map)

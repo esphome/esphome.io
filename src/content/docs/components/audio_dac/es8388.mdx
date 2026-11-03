@@ -31,7 +31,7 @@ audio_dac:
 
 ## Select
 
-The `es8388` select allows you to control the `dac output` and the `adc input_mic` of your [Es8388](/components/audio_dac/es8388/).
+The `es8388` select controls the DAC output and ADC input routing of your [ES8388](/components/audio_dac/es8388/).
 
 ```yaml
 select:
@@ -45,22 +45,19 @@ select:
 
 ### Configuration variables
 
-- **es8388_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for the [Es8388](/components/audio_dac/es8388/) component.
-- **dac_output** (*Optional*): Control the DAC Audio output.
+- **es8388_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the
+  [ES8388](/components/audio_dac/es8388/) component.
+- **dac_output** (*Optional*): Control the DAC output routing. Options are `LINE1`, `LINE2` and `BOTH`.
 
-  - `LINE1` (default)
-  - `LINE2`
-  - `BOTH`
+  - **initial_option** (*Optional*, string): The routing to apply at startup. Without it the select reports
+    whatever the codec is set to, which is `LINE1` after a power-on reset.
+  - All other options from [Select](/components/select/#config-select).
 
-  All options from [Select](/components/select#config-select).
+- **adc_input_mic** (*Optional*): Control the ADC input routing. Options are `LINE1`, `LINE2` and `DIFFERENCE`.
 
-- **adc_input_mic** (*Optional*): Control the ADC Mic Input.
-
-  - `LINE1` (default)
-  - `LINE2`
-  - `DIFFERENCE`
-
-  All options from [Select](/components/select#config-select).
+  - **initial_option** (*Optional*, string): The routing to apply at startup. Without it the select reports
+    whatever the codec is set to, which is `LINE1` after a power-on reset.
+  - All other options from [Select](/components/select/#config-select).
 
 ## Automations
 
@@ -124,8 +121,22 @@ switch:
     restore_mode: ALWAYS_ON
 ```
 
+**Startup routing**:
+
+```yaml
+select:
+  - platform: es8388
+    es8388_id: es8388_dac
+    dac_output:
+      name: "DAC Output"
+      initial_option: BOTH
+    adc_input_mic:
+      name: "ADC Input MIC"
+      initial_option: LINE2
+```
+
 ## See Also
 
-- [Audio Dac Component](/components/audio_dac/)
+- [Audio DAC Component](/components/audio_dac/)
 - <APIRef text="es8388.h" path="es8388/es8388.h" />
 - <APIRef text="audio_dac.h" path="audio_dac/audio_dac.h" />

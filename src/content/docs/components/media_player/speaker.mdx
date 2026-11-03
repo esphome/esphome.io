@@ -34,10 +34,13 @@ media_player:
 
 - **announcement_pipeline** (**Required**, Pipeline Schema): Configuration settings for the announcement pipeline.
 
-  - **speaker** (**Required**, [ID](/guides/configuration-types#id)): The [speaker](/components/speaker/) to output the audio.
+  - **speaker** (**Required**, [ID](/guides/configuration-types/#id)): The [speaker](/components/speaker/) to output the audio.
   - **format** (*Optional*, enum): The audio format Home Assistant will transcode audio to before sending it to the device. One of `FLAC`, `MP3`, `OPUS`, `WAV`, or `NONE`. `NONE` disables transcoding in Home Assistant; ESPHome will then compile support for all supported codecs (`FLAC`, `MP3`, `OPUS`, and `WAV`), which increases firmware size. To compile in additional codecs without setting this to `NONE`, use the [Audio](/components/audio/) component. Defaults to `FLAC`.
   - **sample_rate** (*Optional*, positive integer): Sample rate for the transcoded audio. Should be supported by the configured `speaker` component. Defaults to the speaker's sample rate. The `OPUS` codec only supports a `48000` sample rate.
   - **num_channels** (*Optional*, positive integer): Number of channels for the transcoded audio. Must be either `1` or `2`. Defaults to the speaker's number of channels.
+  - **bitrate** (*Optional*, positive integer): Constant bitrate in kbps that Home Assistant encodes `MP3` at, one
+    of `8`, `16`, `24`, `32`, `40`, `48`, `56`, `64`, `80`, `96`, `112`, `128`, `144`, `160`, `192`, `224`, `256` or
+    `320`. Only valid when `format` is `MP3`. When omitted, Home Assistant uses its default variable bitrate.
 
 - **media_pipeline** (*Optional*, Pipeline Schema): Configuration settings for the media pipeline. Same options as the `announcement_pipeline`.
 - **buffer_size** (*Optional*, positive integer): The buffer size in bytes for each pipeline. Must be between `4000` and `4000000`. Defaults to `1000000`.
@@ -46,8 +49,11 @@ media_player:
 - **volume_initial** (*Optional*, percentage): The default volume that mediaplayer uses for first boot where a volume has not been previously saved. Defaults to `50%`.
 - **volume_min** (*Optional*, percentage): The minimum volume allowed. Defaults to `0%`.
 - **volume_max** (*Optional*, percentage): The maximum volume allowed. Defaults to `100%`.
+- **announcement_volume** (*Optional*, percentage): The volume for announcements that start while no media is
+  playing. Scaled between `volume_min` and `volume_max` like the media player volume. If not set, announcements use the
+  media player volume. See [Announcement Volume](#announcement-volume).
 - **files** (*Optional*, list): A list of media files to build into the firmware for on-device playback.
-  - **id** (**Required**, [ID](/guides/configuration-types#id)): Unique ID for the file.
+  - **id** (**Required**, [ID](/guides/configuration-types/#id)): Unique ID for the file.
   - **file** (**Required**, string): Path to audio file. Can be a local file path or a URL.
 - **on_mute** (*Optional*, [Automation](/automations)): An automation to perform when muted.
 - **on_unmute** (*Optional*, [Automation](/automations)): An automation to perform when unmuted.
@@ -55,6 +61,19 @@ media_player:
 - **on_turn_off** (*Optional*, [Automation](/automations)): An automation to perform when media_player is turned off, implements the `supports_turn_off_on` trait.
 - **on_turn_on** (*Optional*, [Automation](/automations)): An automation to perform when media_player is turned on, implements the `supports_turn_off_on` trait.
 - All other options from [Media Player](/components/media_player#config-media_player)
+
+### Announcement Volume
+
+When `announcement_volume` is set, an announcement that starts while nothing is playing uses that volume instead of
+the media player volume. Paused media counts as not playing. An announcement that starts while media is playing, or
+while another announcement plays at the media player volume, keeps the media player volume.
+
+The media player volume is restored when the announcements finish or when media starts playing. Changing the volume
+during the announcement, for example with `media_player.volume_set`, ends the announcement volume and applies the new
+volume right away. The volume reported to Home Assistant and saved to flash is always the media player volume.
+
+To change the announcement volume at runtime, use the
+[`media_player.speaker.set_announcement_volume` action](#media_player-speaker-set_announcement_volume-action).
 
 <span id="media_player-speaker-examples"></span>
 
@@ -158,9 +177,34 @@ on_...:
 
 Configuration variables:
 
-- **media_file** (**Required**, [ID](/guides/configuration-types#id)): The ID of the media file.
-- **announcement** (*Optional*, boolean, [templatable](/automations/templates)): Whether to play back the file as an announcement or media stream. Defaults to `false`.
-- **enqueue** (*Optional*, boolean, [templatable](/automations/templates)): Whether to add the media file to the end of the pipeline's internal playlist. Defaults to `false`.
+- **media_file** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the media file.
+- **announcement** (*Optional*, boolean, [templatable](/automations/templates/)): Whether to play back the file as an announcement or media stream. Defaults to `false`.
+- **enqueue** (*Optional*, boolean, [templatable](/automations/templates/)): Whether to add the media file to the end of the pipeline's internal playlist. Defaults to `false`.
+
+### `media_player.speaker.set_announcement_volume` Action
+
+This action sets the [announcement volume](#announcement-volume). If an announcement is playing at the announcement
+volume, the new volume applies right away. The value is not saved; after a reboot the configured
+`announcement_volume` applies again. If `announcement_volume` is not configured, this action turns the announcement
+volume on.
+
+```yaml
+on_...:
+  # Simple
+  - media_player.speaker.set_announcement_volume: 70%
+
+  # Full
+  - media_player.speaker.set_announcement_volume:
+      id: speaker_media_player_id
+      volume: 70%
+```
+
+Configuration variables:
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The speaker media player to control. Required if more
+  than one is configured.
+- **volume** (**Required**, percentage, [templatable](/automations/templates/)): The announcement volume. A lambda
+  returns a value between `0.0` and `1.0`.
 
 ## Performance
 

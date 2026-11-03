@@ -17,6 +17,7 @@ import xiaomiWx08zmImg from './images/xiaomi_wx08zm.jpg';
 import xiaomiMue4094rtImg from './images/xiaomi_mue4094rt.jpg';
 import xiaomiMjyd02ylaImg from './images/xiaomi_mjyd02yla.jpg';
 import xiaomiCgpr1Img from './images/xiaomi_cgpr1.png';
+import xiaomiMccgq02hlImg from './images/xiaomi_mccgq02hl.jpg';
 import telinkFlasherImg from './images/telink_flasher.jpg';
 import APIRef from '@components/APIRef.astro';
 
@@ -552,6 +553,44 @@ sensor:
     battery_level:
       name: "Mi Motion Sensor Battery Level"
 ```
+
+### MCCGQ02HL - Mi Door and Window Sensor 2
+
+Door/window contact with an ambient light sensor. Broadcasts the opening state, a bright/dark light state and
+battery level. Requires a bindkey in order to decrypt the received data (see
+[Obtaining the Bindkey](#obtaining-the-bindkey)).
+
+<Image
+  src={xiaomiMccgq02hlImg}
+  width={240}
+  layout="constrained"
+  alt="Xiaomi MCCGQ02HL door and window sensor with its magnet"
+/>
+
+Configuration example:
+
+```yaml
+binary_sensor:
+  - platform: xiaomi_mccgq02hl
+    name: "Front Door"
+    mac_address: "XX:XX:XX:XX:XX:XX"
+    bindkey: 00112233445566778899aabbccddeeff
+    light:
+      name: "Front Door Light"
+    battery_level:
+      name: "Front Door Battery Level"
+```
+
+The platform itself is a binary sensor for the opening state (device class `opening`). A door left open longer than
+the sensor's own timeout still shows as open, and resetting the sensor (for example by changing the battery) does not
+change the state. After ESPHome restarts, the door shows as closed and the light state is unknown until the sensor
+next reports a change.
+
+- **light** (*Optional*, [Binary Sensor](/components/binary_sensor/)): `ON` when the ambient light is above the
+  sensor's fixed threshold. The sensor only sends it when the state changes. All options from
+  [Binary Sensor](/components/binary_sensor/).
+- **battery_level** (*Optional*, [Sensor](/components/sensor/)): The battery level in percent. All options from
+  [Sensor](/components/sensor/).
 
 ## Setting Up Devices
 

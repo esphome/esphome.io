@@ -1,0 +1,77 @@
+---
+description: "Instructions for setting up resampler microphones in ESPHome."
+title: "Resampler Microphone"
+---
+
+The `resampler` microphone platform converts the sample rate of the audio from another
+[microphone component](/components/microphone/). Components that need a specific sample rate, such as a voice
+assistant expecting 16 kHz audio, can then use a microphone that only supports higher sample rates.
+
+Only the sample rate changes. The bits per sample and channels are selected with the
+[microphone source](/components/microphone#config-microphone-source) settings of the source microphone. If the source
+microphone already delivers the target sample rate, the audio is passed through unchanged.
+
+This platform only works on ESP32 based chips.
+
+> [!WARNING]
+> Audio and voice components consume a significant amount of resources (RAM and CPU) on the device.
+>
+> **Crashes are likely to occur** if you include too many additional components in your device's
+> configuration. In particular, Bluetooth/BLE components are known to cause issues when used in
+> combination with Voice Assistant and/or other audio components.
+
+```yaml
+# Example configuration entry
+microphone:
+  - platform: resampler
+    microphone: source_microphone_id
+```
+
+## Configuration Variables
+
+- **microphone** (**Required**, [Microphone Source](/components/microphone#config-microphone-source)): The source
+  microphone to resample. Supports `16` to `32` bits per sample and `1` or `2` channels.
+- **sample_rate** (*Optional*, positive integer): Sample rate to convert to. Must be between `8000` and `48000`.
+  Defaults to `16000`.
+- **filters** (*Optional*, positive integer): The number of windowed sinc interpolation filters to use. Must be
+  between `2` and `1024`. Defaults to `16`.
+- **taps** (*Optional*, positive integer): The number of taps per windowed sinc interpolation filter. Must be between
+  `16` and `128` and divisible by 4. Defaults to `16`.
+- All other options from [Microphone Component](/components/microphone#config-microphone).
+
+## Improving Quality
+
+Resampling is processor intensive and should be avoided where possible, for example by configuring the source
+microphone for the required sample rate directly. The audio quality is affected by the number of filters and the number
+of taps. Increasing the number of filters increases the memory load. Increasing the number of taps increases the CPU
+load.
+
+When downsampling, frequencies above the new Nyquist limit are filtered out to avoid aliasing.
+
+## Example
+
+An I²S microphone reading 48 kHz stereo audio, resampled to 16 kHz mono with 16 bits per sample:
+
+```yaml
+microphone:
+  - platform: i2s_audio
+    id: i2s_mic
+    i2s_din_pin: GPIOXX
+    adc_type: external
+    sample_rate: 48000
+    bits_per_sample: 32bit
+    channel: stereo
+  - platform: resampler
+    id: resampled_mic
+    microphone:
+      microphone: i2s_mic
+      channels: 0
+      bits_per_sample: 16
+    sample_rate: 16000
+```
+
+## See Also
+
+- [ART Audio Resampler (GitHub)](https://github.com/dbry/audio-resampler)
+- [Microphone Component](/components/microphone/)
+- [Resampler Speaker](/components/speaker/resampler/)

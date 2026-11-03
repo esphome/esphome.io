@@ -14,6 +14,10 @@ configuration; this requires a `network:` `priority:` list naming both interface
 [Multi-Interface Support](/components/network/#multi-interface-support) on the [Network](/components/network/)
 component. Using more than one network interface is not supported on other platforms.
 
+An access point alone can run next to [Ethernet](/components/ethernet/) or a [Modem](/components/modem/) without a
+`priority:` list; with `ap_mode: wisp` the devices that join it reach the network through the Ethernet or cellular
+connection, see [WISP Mode](#wisp-mode).
+
 It's recommended to provide a static IP for your node, as it can
 dramatically improve connection times.
 
@@ -48,6 +52,11 @@ wifi:
 - **password** (*Optional*, string): The password (or PSK) for your
   WiFi network. Leave empty for no password.
 
+- **hidden** (*Optional*, boolean): Set to `true` if the network does not broadcast its SSID.
+  Only for the single-network shorthand and requires `ssid` to be set; with `networks`,
+  set `hidden` on the network entry instead. Defaults to `false`.
+  See [Connecting to a Hidden Network](#connecting-to-a-hidden-network).
+
 - **networks** (*Optional*): Configure multiple WiFi networks to connect to, the best one
   that is reachable will be connected to. See [Connecting to Multiple Networks](#wifi-networks).
 
@@ -79,7 +88,17 @@ wifi:
 
   - **ap_timeout** (*Optional*, [Time](/guides/configuration-types#time)): The time after which to enable the
     configured fallback hotspot. Can be disabled by setting this to `0s`, which requires manually starting the AP by
-    other means (eg: from a button press). Defaults to `90s`.
+    other means (eg: from a button press). Defaults to `90s`. With `ap_mode: always_on` or `wisp`, it is instead
+    the wait before a failed start is tried again, and `0s` is rejected.
+
+  - **ap_mode** (*Optional*, string): One of `fallback`, `always_on` or `wisp`. Defaults to `fallback`, which
+    starts the access point only when no connection to the WiFi router can be made. `always_on` keeps the access
+    point up at all times, see [Always-On Access Point](#always-on-access-point). `wisp` also passes the traffic of
+    its clients on to the internet, see [WISP Mode](#wisp-mode). `always_on` and `wisp` are ESP32 only.
+
+  - **dns_servers** (*Optional*, list of IPv4 addresses): The DNS servers handed out to clients of the access point.
+    Only valid with `ap_mode: wisp`. Accepts one server, or two with ESP-IDF 6.0 or newer. If not set, the DNS
+    servers of the upstream connection are passed on to the clients.
 
 - **domain** (*Optional*, string): Set the domain of the node hostname used for uploading.
   For example, if it's set to `.local`, all uploads will be sent to `<HOSTNAME>.local`.
@@ -88,7 +107,9 @@ wifi:
 - **reboot_timeout** (*Optional*, [Time](/guides/configuration-types#time)): The amount of time to wait before rebooting when no
   WiFi connection exists. Can be disabled by setting this to `0s`, but note that the low level IP stack currently
   seems to have issues with WiFi where a full reboot is required to get the interface back working. Defaults to `15min`.
-  Does not apply when in access point mode.
+  The device does not reboot while a client (for example a phone) is connected to its fallback access point, or when
+  no networks are configured. RTL87xx and LN882x boards cannot detect connected clients, so on those boards the
+  device does not reboot while the fallback access point is up.
 
 - **power_save_mode** (*Optional*, string): The power save mode for the WiFi interface.
   See [Power Save Mode](#power-save-mode)
@@ -121,16 +142,65 @@ wifi:
     - `rtc`: stored in RTC memory, which survives software reboots and deep sleep but **not** power loss, and avoids
       flash wear. A good fit for battery-powered devices that wake from deep sleep frequently.
 
-    Defaults to `rtc` on ESP8266 and `flash` on ESP32, matching each platform's previous behavior. Only `flash` is
-    available on platforms without RTC-backed storage (the RP2040 and the ESP32-C2 and C61 variants, which have no
-    RTC memory), where `rtc` is rejected.
+    Defaults to `rtc` on ESP8266 and `flash` on ESP32, matching each platform's previous behavior. `rtc` is
+    available on ESP32 (except the C2 and C61 variants, which have no RTC memory), ESP8266 and the Beken BK7231T,
+    BK7231N and BK7238; elsewhere only `flash` is available and `rtc` is rejected. These Beken chips have no RTC memory:
+    there `rtc` keeps the details in flash and forgets them after a power cut, so it does not avoid flash wear.
 
   > [!NOTE]
   > While `fast_connect` skips the initial scan, if the connection attempt fails, ESPHome will still perform a scan
-  > to find available networks. For hidden networks, use `hidden: true` on the network configuration (see
-  > [Connecting to Multiple Networks](#wifi-networks)) to ensure the device always connects without scanning.
+  > to find available networks. For hidden networks, set `hidden: true`
+  > (see [Connecting to a Hidden Network](#connecting-to-a-hidden-network)) to ensure the device always connects
+  > without scanning.
   > Be aware that marking networks as hidden prevents ESPHome from finding the best access point to connect to,
   > so the device may not connect to the AP with the best signal strength.
+
+- **lease_cache** (*Optional*): Only on `esp32` with the ESP-IDF framework. Remembers the DHCP lease the device is
+  assigned and, on the next boot, re-applies it as a static IP **without running DHCP** while it is still valid. This
+  skips the DHCP handshake, so the network is usable in milliseconds. It is most useful for battery-powered devices
+  that wake from deep sleep frequently. Disabled by default. Accepts a boolean, or a settings block:
+
+  ```yaml
+  wifi:
+    # ...
+    lease_cache:
+      storage: rtc
+      max_age: 12h
+  ```
+
+  - **enabled** (*Optional*, boolean): Whether the lease cache is active. Defaults to `true` when the block form is
+    used.
+  - **storage** (*Optional*, string): Where to persist the cached lease. One of:
+
+    - `rtc`: stored in RTC memory, which survives software reboots and deep sleep but **not** power loss, and avoids
+      flash wear. This is the default where RTC memory is available.
+    - `flash`: survives power loss, but wears flash, so it must be selected explicitly. The lease is written again
+      whenever its details change. After a power cycle the device cannot age the stored lease (see the note below),
+      so it runs DHCP and writes the lease once more before the cache is useful again.
+
+    The ESP32-C2 and C61 variants have no RTC memory, so `storage: flash` must be set to use the cache on them.
+    Without it, the configuration is rejected.
+
+  - **max_age** (*Optional*, [Time](/guides/configuration-types#time)): Do not re-use a cached lease older than this,
+    regardless of the lease length the DHCP server granted. By default there is no extra limit, and a cached lease is
+    re-used until its renewal deadline.
+
+  > [!NOTE]
+  > A cached lease is only re-applied after a deep-sleep wake or a software reboot, where the device can measure how
+  > much time has passed; after a power cycle it cannot, so it falls back to a normal DHCP request. A user-configured
+  > `manual_ip` always takes precedence and disables the cache.
+  >
+  > If the device is still awake when a cached lease reaches its renewal deadline (about half the lease by default),
+  > it requests a new address over DHCP. This drops the address for a moment, so open connections such as the native
+  > API or MQTT may drop and reconnect.
+
+  > [!WARNING]
+  > A cached lease is re-applied without checking that the address is still free. If the network behind the SSID
+  > changes — the router is replaced or moved to a different subnet, or the DHCP server forgets the lease and reassigns
+  > the address — the cached address may be wrong or clash with another device. An awake device recovers at the lease's
+  > renewal deadline (about half the lease by default) by falling back to DHCP; a deep-sleep device only re-checks on
+  > each wake, so it can keep applying a stale address until the lease ages past that deadline. Use `max_age` to bound
+  > this window, or a `manual_ip` if the address must never be stale.
 
 - **min_auth_mode** (*Optional*, string): Only on `esp32` and `esp8266`. Sets the minimum WiFi authentication mode
   that the device will accept when connecting to access points. This controls the weakest encryption your device will
@@ -168,10 +238,25 @@ wifi:
   This helps devices recover from scenarios where they connect to a suboptimal
   AP (e.g., after an AP reboot or site power loss). Automatically disabled if
   `enable_btm` or `enable_rrm` is enabled. See
-  [Post-Connect Roaming](#post-connect-roaming). Defaults to `true`.
+  [Post-Connect Roaming](#post-connect-roaming). Set to `false` with `ap_mode: always_on`, see
+  [Always-On Access Point](#always-on-access-point). Defaults to `true`.
 
+- **dpp** (*Optional*): Let a phone provision the network with Wi-Fi Easy Connect. ESP32 only. See
+  [Wi-Fi Easy Connect](#wi-fi-easy-connect).
+  - **channels** (*Optional*, list of int): The channels the device listens on for a configurator. Defaults to `[6]`.
+  - **device_info** (*Optional*, string): Free text carried in the URI, such as a serial number, that some
+    configurators show. It cannot contain spaces.
+  - **private_key** (*Optional*, string): The bootstrapping private key, 32 bytes written as 64 hexadecimal
+    characters. A new key is generated on every boot when it is left out, so the URI, and with it the QR code,
+    changes with each boot.
+  - **timeout** (*Optional*, [Time](/guides/configuration-types#time)): How long the configured or saved networks
+    are tried before the device listens for a configurator. The device then listens during each pause between
+    connection attempts. Without any network it listens from boot, and listens again at most once per `timeout`
+    after an attempt that did not finish. Defaults to `1min`.
 - **on_connect** (*Optional*, [Automation](/automations)): An action to be performed when a connection is established.
 - **on_disconnect** (*Optional*, [Automation](/automations)): An action to be performed when the connection is dropped.
+- **on_dpp_uri** (*Optional*, [Automation](/automations)): An action to be performed when the Wi-Fi Easy Connect URI
+  is ready, available as `uri` of type `const char *`. Requires `dpp`.
 - **enable_on_boot** (*Optional*, boolean): If enabled, the WiFi interface will be enabled on boot. Defaults to `true`.
 - **use_psram** (*Optional*, boolean): For ESP32 only, requests that the WiFi libraries try to allocate memory from PSRAM.
   Defaults to `false`. Requires PSRAM to be configured.
@@ -183,8 +268,11 @@ wifi:
 ESPHome has an optional "Access Point Mode". If you include `ap:`
 in your wifi configuration, ESPHome will automatically set up an access point that you
 can connect to. Additionally, you can specify both a "normal" station mode and AP mode at the
-same time. This will cause ESPHome to only enable the access point when no connection
-to the WiFi router can be made.
+same time. By default, this will cause ESPHome to only enable the access point when no connection
+to the WiFi router can be made, also after a connection that was established and then lost. The exception is a device
+whose [provisioning](/components/provisioning/) window has closed: that shuts the access point down until the next
+restart. On ESP32, the access point can stay up at all times instead, see
+[Always-On Access Point](#always-on-access-point) and [WISP Mode](#wisp-mode).
 
 ```yaml
 wifi:
@@ -207,12 +295,144 @@ wifi:
     password: "W1PBGyrokfLz"
 ```
 
+For a device that only ever uses its access point, add [`web_server:`](/components/web_server/#access-point-mode)
+to control it from a phone without any internet connection.
+
+### Always-On Access Point
+
+With `ap_mode: always_on`, an ESP32 starts its access point at boot and keeps it up at all times, also while it is
+connected to the router. Devices that join the access point can reach the node, but not the router or the internet; use
+[WISP Mode](#wisp-mode) for that.
+
+```yaml
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  post_connect_roaming: false
+  ap:
+    ssid: "Livingroom Hotspot"
+    password: "W1PBGyrokfLz"
+    ap_mode: always_on
+
+captive_portal:
+```
+
+Notes:
+
+- Requires an ESP32 and an upstream connection: a WiFi network (`ssid` or `networks`),
+  [Ethernet](/components/ethernet/) or a [Modem](/components/modem/).
+- Set `post_connect_roaming: false`, because a roaming scan would take the access point down. This is only optional
+  when no WiFi network can be added at run time (no `networks`, DPP, captive portal or Improv).
+- With [Captive Portal](/components/captive_portal/) (or the captive mode of the
+  [web server](/components/web_server/)), the portal is shown only while the node is not connected to the router:
+  10 seconds after the connection is lost, or at once when there are no WiFi networks. Once the
+  [provisioning](/components/provisioning/) window has closed, the portal is not shown again.
+- The ESP32 has one radio, so the access point always uses the channel of the router. When that channel changes,
+  clients of the access point can be briefly disconnected.
+
+## WISP Mode
+
+With `ap_mode: wisp` an ESP32 runs an access point whose clients get an address from the node and have their
+traffic routed (NAT) through an upstream connection: the router it joins as a station, which makes the node a
+WiFi repeater, [Ethernet](/components/ethernet/) or a cellular [Modem](/components/modem/).
+
+```yaml
+wifi:
+  networks:
+    - ssid: "Router SSID"
+      password: "Router password"
+  ap:
+    ssid: "Repeater"
+    password: "W1PBGyrokfLz"
+    ap_mode: wisp
+```
+
+Without `networks`, the upstream is [Ethernet](/components/ethernet/) or a [Modem](/components/modem/) instead of the
+router: with Ethernet or the modem configured as described on its page, only the access point is added. Unless
+`dns_servers` or `captive_portal` is set, it starts once the Ethernet or cellular connection has an address and DNS
+servers, and the clients are routed through it.
+
+```yaml
+wifi:
+  ap:
+    ssid: "Bridge"
+    password: "W1PBGyrokfLz"
+    ap_mode: wisp
+```
+
+With a modem, all the clients' traffic goes through the serial link to the modem, so set a high `baud_rate` on the
+modem if it supports one (for example `3686400`). Even then, the link is much slower than Ethernet or WiFi, so this
+access point is meant for other ESPHome nodes that send little data, for example over MQTT, rather than for phones or
+laptops used to browse the web or for other heavy use.
+
+Notes:
+
+- Requires an ESP32, a password for the access point, and an upstream connection: a WiFi network (`ssid` or
+  `networks`), Ethernet or a modem.
+- Without `dns_servers` or `captive_portal`, the access point starts only once the upstream connection is up and its
+  DNS servers are known. A network or an Ethernet connection with `manual_ip` must then set `dns1`.
+- WISP mode enlarges the Wi-Fi driver buffers and enables frame aggregation, the Wi-Fi half of
+  [high performance networking](/components/network/#high-performance-networking); the TCP settings stay at their
+  defaults since the forwarded traffic never uses the node's own connections. Keeping the lwIP fast paths in IRAM
+  raises throughput further at the cost of about 10 KB of IRAM: set `CONFIG_LWIP_IRAM_OPTIMIZATION: y` in the esp32
+  `sdkconfig_options`.
+- If the node is close to the router, a lower `output_power` (for example `8.5dB`) and pinning `bssid` on the
+  network can improve speed noticeably.
+- The number of clients is limited by the ESP32 access point (five at the same time).
+
+### WISP Mode with a Captive Portal
+
+Add `captive_portal:` to let clients of the access point enter new router credentials, for example after the
+router password changed:
+
+```yaml
+wifi:
+  networks:
+    - ssid: "Router SSID"
+      password: "Router password"
+  ap:
+    ssid: "Repeater"
+    password: "W1PBGyrokfLz"
+    ap_mode: wisp
+
+captive_portal:
+```
+
+The access point then starts without waiting for the upstream connection, and the portal is shown while the router
+connection is down, as with an [always-on access point](#always-on-access-point). `dns_servers` cannot be combined
+with `captive_portal` in WISP mode.
+
+While the portal is shown, or while the upstream connection has no DNS servers, clients use the node as their DNS
+server so that they reach the portal. When this changes, clients are briefly disconnected to pick up the new DNS
+server.
+
+## Wi-Fi Easy Connect
+
+On the ESP32, `dpp` lets a phone provision the network with Wi-Fi Easy Connect, the Device Provisioning Protocol: the
+device publishes a bootstrapping URI, which is shown as a QR code, and a configurator such as the Android Wi-Fi
+settings scans it and sends the credentials. The device saves them and connects, and keeps using them on later boots
+like credentials entered on the captive portal. The device listens for a configurator right away when it has no
+network, neither configured nor saved, and otherwise once those networks have failed for `timeout`.
+
+```yaml
+# Example configuration entry
+wifi:
+  dpp:
+    channels: [1, 6, 11]
+  on_dpp_uri:
+    - lambda: id(my_qr_code).set_value(uri);
+```
+
+The [QR Code](/components/qr_code/) display component renders the URI from `on_dpp_uri` once a lambda passes it to
+`set_value()`.
+
 ## User Entered Credentials
 
-Some components such as [Captive Portal](/components/captive_portal/), [Improv Serial](/components/improv_serial/) and
-[Esp32 Improv](/components/esp32_improv/) enable the user to send and save Wi-Fi credentials to the device. Beginning in 2022.11.0,
-as long as no credentials are set in the config file, and firmware is uploaded without erasing
-the flash (via OTA), the device will keep the saved credentials.
+Some components such as [Captive Portal](/components/captive_portal/), [Improv Serial](/components/improv_serial/),
+[Improv via BLE](/components/improv_ble/) and [Wi-Fi Easy Connect](#wi-fi-easy-connect) enable the user to send and
+save Wi-Fi credentials to the device.
+Beginning in 2022.11.0, as long as no credentials are set in the config file, and firmware is uploaded without
+erasing the flash (via OTA), the device will keep the saved credentials.
 
 <span id="wifi-manual_ip"></span>
 
@@ -253,8 +473,8 @@ WiFi. While some options *can* reduce the power usage of the ESP, they generally
 reliability of the WiFi connection, with frequent disconnections from the router in the highest
 power saving mode.
 
-- `NONE` (least power saving, Default for ESP8266)
-- `LIGHT` (Default for ESP32)
+- `NONE` (least power saving, Default for ESP8266, BK72xx, RTL87xx and LN882x)
+- `LIGHT` (Default for ESP32 and RP2040)
 - `HIGH` (most power saving)
 
 ```yaml
@@ -377,6 +597,9 @@ seamless handoff:
 For seamless 802.11k/v/r roaming, use ESP32 and configure `enable_btm` and
 `enable_rrm`.
 
+To trigger a roaming check immediately instead of waiting for the periodic check, use the
+[`wifi.roam` action](#wifi-roam).
+
 <span id="wifi-networks"></span>
 
 ## Connecting to Multiple Networks
@@ -434,7 +657,18 @@ wifi:
   If all tracked BSSIDs have identical priorities, they are automatically reset to 0 to start fresh.
   Defaults to `0`.
 
-### Example: Connecting to a Hidden Network
+## Connecting to a Hidden Network
+
+A hidden network does not broadcast its SSID, so ESPHome tries to connect to it directly before scanning.
+
+```yaml
+wifi:
+  ssid: MyHiddenNetwork
+  password: VerySafePassword
+  hidden: true
+```
+
+With multiple networks, set `hidden` on the network entry instead:
 
 ```yaml
 wifi:
@@ -574,6 +808,22 @@ on_...:
 - **on_connect** (*Optional*, [Automation](/automations)): An action to be performed when a connection is established.
 - **on_error** (*Optional*, [Automation](/automations)): An action to be performed when the connection fails.
 
+<span id="wifi-roam"></span>
+
+### `wifi.roam` Action
+
+This action asks the WiFi component to check right away for a better access point on the current network, as
+described in [Post-Connect Roaming](#post-connect-roaming). It skips the usual 5-minute wait between checks, but
+still only roams if a meaningfully stronger access point is actually found.
+
+```yaml
+on_...:
+  then:
+    - wifi.roam:
+```
+
+The action is ignored if the device is not currently connected, or if a roaming check is already in progress.
+
 ## Conditions
 
 ### `wifi.connected` Condition
@@ -628,5 +878,6 @@ The lambda equivalent for this is `id(wifi_id).is_ap_active()`.
 - [WiFi Signal Sensor](/components/sensor/wifi_signal/)
 - [Network component](/components/network/)
 - [Ethernet Component](/components/ethernet/)
+- [Modem Component](/components/modem/)
 - [Native API](/components/api/)
 - <APIRef text="wifi_component.h" path="wifi/wifi_component.h" />

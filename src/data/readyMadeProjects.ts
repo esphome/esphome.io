@@ -51,10 +51,6 @@ export interface Device {
    * `installPlacement: "device"`.
    */
   manifest?: string;
-  /** Manual instructions shown in place of an install button. Inline HTML is allowed. */
-  steps?: string[];
-  /** Prompt above `steps`. */
-  stepsPrompt?: string;
 }
 
 export interface ProjectType {
@@ -348,6 +344,7 @@ export const PROJECT_TYPES: ProjectType[] = [
         title: "M5Stack AtomS3 Lite with ATOMIC RS485 Base",
         body: [
           "Turn an M5Stack AtomS3 Lite into an RS-485 proxy for Home Assistant. This lets Home Assistant talk to Modbus and other RS-485 devices over the network. Mount the AtomS3 Lite on the ATOMIC RS485 Base to connect the two.",
+          'Home Assistant finds the serial port on its own. Other software must address the port with a URL like <code>esphome://atoms3-lite-rs485-a1b2c3.local/?port_name=RS-485</code>. Replace the hostname portion ("atoms3-lite-rs485-a1b2c3.local") with the actual hostname or IP address of your device. The serial port is named <code>RS-485</code> by the <a href="https://github.com/esphome/serial-proxies">project configuration</a>. Add <code>&amp;noise_psk=&lt;key&gt;</code> if the device uses API encryption. Percent-encode the key first. A base64 key can contain <code>+</code>, and a URL reads <code>+</code> as a space, so write it as <code>%2B</code>.',
         ],
         linksLabel: "This project requires two devices from M5Stack:",
         links: [
@@ -380,13 +377,8 @@ export const PROJECT_TYPES: ProjectType[] = [
         id: "raspberry",
         image: "/projects/empty/pico-w.png",
         imageAlt: "Raspberry Pi Pico W",
-        stepsPrompt: "Installation instructions:",
-        steps: [
-          "Disconnect your Raspberry Pi Pico from your computer",
-          "Hold the BOOTSEL button and connect the Pico to your computer. The Pico will show up as a USB drive named RPI-RP2",
-          'Download <a href="https://firmware.esphome.io/esphome-web/pico-w/esphome-web-rp2040.uf2">ESPHome for Pico</a>',
-          "Drag the downloaded file to the RPI-RP2 USB drive. The installation is complete when the drive disappears",
-          'Connect your Pico to the Wi-Fi network. Once connected, it will automatically show up on your ESPHome dashboard.<br /><button type="button" id="improv-wifi-btn">Configure Wi-Fi</button>',
+        body: [
+          'Open <a href="https://web.esphome.io/?pico">ESPHome Web</a> and follow the instructions to install ESPHome on your Raspberry Pi Pico W and connect it to Wi-Fi.',
         ],
       },
     ],

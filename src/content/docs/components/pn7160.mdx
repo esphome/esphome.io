@@ -75,6 +75,8 @@ pn7160_spi:
 
 - **on_emulated_tag_scan** (*Optional*, [Automation](/automations)): An automation to perform when the PN7160 is
   scanned by another tag reader (such as a smartphone). See [`on_emulated_tag_scan` Trigger](#pn7160-on_emulated_tag_scan).
+- **on_finished_write** (*Optional*, [Automation](/automations)): An automation to perform when an NDEF write attempt finishes,
+  whether successful or not. Standalone clean/format operations and failures during pre-write formatting do not trigger it.
 
 - **spi_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [SPI Component](/components/spi) if you want
   to use multiple SPI buses.
@@ -122,6 +124,8 @@ pn7160_i2c:
 
 - **on_emulated_tag_scan** (*Optional*, [Automation](/automations)): An automation to perform when the PN7160 is
   scanned by another tag reader (such as a smartphone). See [`on_emulated_tag_scan` Trigger](#pn7160-on_emulated_tag_scan).
+- **on_finished_write** (*Optional*, [Automation](/automations)): An automation to perform when an NDEF write attempt finishes,
+  whether successful or not. Standalone clean/format operations and failures during pre-write formatting do not trigger it.
 
 - **i2c_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [I²C Component](/components/i2c) if you need
   to use multiple I²C buses.
@@ -382,7 +386,7 @@ pn7160_...:
   # ...
   on_tag:
     then:
-      - homeassistant.tag_scanned: !lambda "return tag.has_ha_tag_id() ? tag.get_ha_tag_id() : x;"
+      - homeassistant.tag_scanned: !lambda "return nfc::has_ha_tag_ndef(tag) ? nfc::get_ha_tag_ndef(tag) : x;"
 ```
 
 ### NDEF Writing
