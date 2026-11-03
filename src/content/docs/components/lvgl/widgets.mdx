@@ -197,8 +197,8 @@ In addition to visual styling, each widget supports some boolean **flags** to in
   accounting for rounded corners. Read further where applicable.
 - **checkable** (*Optional*, boolean): toggle checked state when the widget is clicked.
 - **click_focusable** (*Optional*, boolean): add focused state to the widget when clicked.
-- **clickable** (*Optional*, boolean): make the widget clickable by input devices. Defaults to `true`. If `false`, it
-  will pass the click to the widgets behind it (clicking through).
+- **clickable** (*Optional*, boolean): make the widget clickable by input devices. Defaults to `true` (`false` for a
+  [`container`](#container)). If `false`, it will pass the click to the widgets behind it (clicking through).
 - **event_bubble** (*Optional*, boolean): propagate the events to the parent.
 - **event_trickle** (*Optional*, boolean): propagate the events to the children as well.
 - **flex_in_new_track** (*Optional*, boolean): in a [flex layout](/components/lvgl/layouts#flex), start a new row or
@@ -1182,14 +1182,13 @@ on_...:
 ### `container`
 
 A `container` is an unstyled widget that is, as the name suggests, intended to act as a container for other widgets.
-It is functionally identical to an [`obj`](#obj) but has no styles applied to it, so without any styling or widgets
-it is invisible. It has a default width and height of 100%.
+It is like an [`obj`](#obj) but is not clickable by default and has no styles applied to it, so without any styling
+or widgets it is invisible. It has a default width and height of 100%.
 
 Unlike `obj`, a `container` does not catch touches, so a touch on its background goes to the widget behind it.
 A container is scrollable by default, but it only scrolls when you drag one of its clickable child widgets.
-An explicit `scrollable: true` or `clickable: true` will make the container
-clickable and enable scrolling by touches on the container itself.
-Setting `clickable` explicitly overrides this.
+Setting `scrollable: true` or `clickable: true` explicitly makes the container clickable, so a drag on its
+background scrolls it. With `clickable: false`, the container stays unclickable even if `scrollable: true` is set.
 
 **Configuration variables:**
 
