@@ -8,8 +8,8 @@ import APIRef from '@components/APIRef.astro';
 On ESP32, the HTTP server shared by ESPHome's web components can serve HTTPS instead of plain HTTP. You provide
 the certificate and private key in PEM format, for example a certificate from your own certificate authority.
 
-HTTPS can't be used together with the [Web Server](/components/web_server/) or the
-[Captive Portal](/components/captive_portal/) yet. It is meant for components that add their own pages to the
+HTTPS can't be used together with the [Web Server](/components/web_server/), the
+[Captive Portal](/components/captive_portal/) or [Prometheus](/components/prometheus/) yet. It is meant for components that add their own pages to the
 shared server.
 
 ```yaml
@@ -26,7 +26,8 @@ web_server_idf:
 
   - **certificate** (**Required**, string): The server certificate in PEM format, starting with
     `-----BEGIN CERTIFICATE-----`. To include intermediate certificates, append them after it.
-  - **key** (**Required**, string): The private key that belongs to the certificate, in PEM format.
+  - **key** (**Required**, string): The private key that belongs to the certificate, in PEM format. Encrypted keys
+    are not supported.
   - **port** (*Optional*, int): The port to serve HTTPS on. Defaults to `443`.
 
 > [!NOTE]
