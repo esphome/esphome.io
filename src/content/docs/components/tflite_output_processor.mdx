@@ -1,0 +1,46 @@
+---
+description: "Raw output tensor post-processing for TFLite Micro models"
+title: "TFLite Output Processor"
+---
+
+The `tflite_output_processor` component is a **library-only component**: it has no user-facing configuration options and is
+loaded automatically as a dependency of the `tflite_micro_runtime`
+component and of the third-party components that consume it.
+
+`process_output()` supports `const float *` and `TfLiteTensor *` overloads and handles both float models and
+quantized (`uint8`/`int8`) models with explicit dequantization and scale factors, applying the configured
+processing strategy (`direct_class`, `softmax`, `argmax` or `logits`).
+
+## Example configuration entry
+
+The component has no options of its own: `output_processing` and `scale_factor` on the
+`tflite_micro_runtime` instance select how the raw output tensor is converted:
+
+```yaml
+tflite_micro_runtime:
+  - id: digit_reader
+    model_type: image
+    model: "models/digit_recognizer.tflite"
+    # Post-processing of the raw output tensor: argmax over 10 classes
+    output_processing: argmax
+    scale_factor: 10
+```
+
+## Configuration Variables
+
+This component has no configuration variables of its own: it is loaded automatically by `tflite_micro_runtime`,
+which owns the user-facing options. The processing strategy and the scale factor are selected with `output_processing` and `scale_factor` on the consuming `tflite_micro_runtime` instance.
+
+The empty schema also allows loading it explicitly, which is mainly useful when another component declares it
+in its `DEPENDENCIES` (the ESPHome component tests do this):
+
+```yaml
+tflite_output_processor:
+```
+
+## See Also
+
+- `tflite_micro_runtime` - the user-facing component that loads this library
+  automatically
+- [esphome_ai_component Demo](https://github.com/nliaudat/esphome_ai_component) - working demo with pre-trained
+  models and camera integration
