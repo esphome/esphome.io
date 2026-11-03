@@ -100,7 +100,7 @@ When the device has an [API encryption key](/components/api/#configuration-varia
 the key, such as Home Assistant, can read the device's Sendspin pairing token and pass it to a Sendspin server. The
 server then pairs with the device without a pairing code or a confirmation on the device.
 
-> [!NOTE]
+> [!WARNING]
 > The token does not change and cannot be revoked. Anyone who can connect with the API encryption key can use it to
 > pair a server, even when `unpaired_access` is `false`. Without an encryption key, the device does not share the
 > token.
@@ -113,8 +113,9 @@ While `unpaired_access` is `true`, any server on the network may play on the dev
 
 > [!WARNING]
 > With `unpaired_access: false`, make sure the device offers a [static](#static-pairing-code) or
-> [dynamic](#dynamic-pairing-code) pairing code. Otherwise no new server can pair, so only servers that already
-> paired can play.
+> [dynamic](#dynamic-pairing-code) pairing code, or can be
+> [paired through the native API](#pairing-through-the-native-api). Otherwise no new server can pair, so only servers
+> that already paired can play.
 
 ## Automations
 
