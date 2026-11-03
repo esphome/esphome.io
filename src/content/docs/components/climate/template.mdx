@@ -271,6 +271,14 @@ button:
   action to perform when a custom preset is requested. Same `StringRef` handling as
   `set_custom_fan_mode_action`.
 
+- **unit_of_measurement** (*Optional*, string): The unit the lambdas, actions and `visual` temperatures use, one of
+  `°C` (default), `°F` or `K`. A temperature written with another unit in `visual`, `initial_state`,
+  `climate.control` or `climate.template.publish` is converted into it, and the default `visual` range follows the
+  unit. A `sensor` feeding the current temperature must report in this unit, since its
+  readings are used as they are. A target temperature saved by an earlier build is restored as a plain number, so
+  set it again after changing the unit. `K` is not available together with [MQTT](/components/mqtt/), whose climate
+  discovery only knows `°C` and `°F`.
+
 - **optimistic** (*Optional*, boolean): Controls whether a settable property (mode, target
   temperature, fan mode, swing mode, preset, etc.) updates immediately when a command is
   received (`true`, default) or only once `climate.template.publish` reports the device's actual

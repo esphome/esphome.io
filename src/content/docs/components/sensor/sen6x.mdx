@@ -67,12 +67,12 @@ sensor:
 - **type** (*Optional*): The type of sensor. If not specified, sensor type will be auto-detected. If specified,
   the value will override auto-detection. In case of mismatch, a warning will be provided in the log.
 
-  - SEN62
-  - SEN63C
-  - SEN65
-  - SEN66
-  - SEN68
-  - SEN69C
+  - `SEN62`
+  - `SEN63C`
+  - `SEN65`
+  - `SEN66`
+  - `SEN68`
+  - `SEN69C`
 
 - **pm_1_0** (*Optional*): The information for the **Weight Concentration** sensor for fine particles up to 1μm.
   Readings in µg/m³.
@@ -199,15 +199,39 @@ sensor:
 
   - All options from [Sensor](/components/sensor).
 
+- **temperature_compensation** (*Optional*): Corrects the reported ambient temperature for heat from the enclosure
+  or nearby components by applying an offset. Compensation slot 0 is used.
+
+  - **offset** (*Optional*, float): Temperature offset in °C. Allowed values are in range -163.84..163.835.
+    Defaults to `0`.
+  - **normalized_offset_slope** (*Optional*, float): Normalized temperature offset slope. Allowed values are in
+    range -3.2768..3.2767. Defaults to `0`.
+  - **time_constant** (*Optional*, int): Time constant in seconds. Allowed values are in range 0..65535.
+    Defaults to `0`.
+
+- **temperature_acceleration** (*Optional*): Parameters for the RH/T engine's temperature acceleration mode, from
+  Sensirion's [SEN6x Temperature Acceleration and Compensation](https://sensirion.com/media/documents/C964FCC8/69709EC3/PS_AN_SEN6x_Temperature_Compensation_and_Acceleration_Application_No.pdf)
+  application note.
+
+  All four accept values in range 0.1..6553.5.
+
+  - **k** (*Optional*, float): Filter constant K. Defaults to `20.0`.
+  - **p** (*Optional*, float): Filter constant P. Defaults to `20.0`.
+  - **t1** (*Optional*, float): Time constant T1 in seconds. Defaults to `100.0`.
+  - **t2** (*Optional*, float): Time constant T2 in seconds. Defaults to `300.0`.
+
+- **startup_delay** (*Optional*, [Time](/guides/configuration-types/#time)): Warm-up period after starting a
+  measurement during which values are discarded. Maximum 1 hour. Defaults to `60s`.
+
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor.
   Defaults to `0x6B`.
 
-- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the sensor.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval to check the sensor.
   Defaults to `60s`.
 
 > [!NOTE]
 > The sensor needs about a minute "warm-up". The VOC and NOx gas index algorithm needs a
-> number of samples before the values stabilize.
+> number of samples before the values stabilize. The warm-up period can be changed with `startup_delay`.
 
 ## Binary Sensor
 

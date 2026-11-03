@@ -352,6 +352,10 @@ By default, ESPHome uses its native ESP-IDF integration, including automatic fra
 > The `platformio` toolchain is deprecated and will be removed in 2027.2.0. Both the ESP-IDF and Arduino
 > frameworks build on the default `esp-idf` toolchain; remove `toolchain: platformio` from your configuration
 > to migrate.
+>
+> Some OEM single-core ESP32 modules have a MAC CRC that the `platformio` toolchain tolerated but the native
+> toolchain rejects; if a device rolls back after its first native OTA update, see
+> [`ignore_efuse_mac_crc`](#advanced-configuration).
 
 **Example for using the PlatformIO toolchain:**
 
@@ -491,7 +495,13 @@ esp32:
 
 - **ignore_efuse_mac_crc** (*Optional*, boolean): Can be set to `true` for devices on which the burned-in MAC
   address is not consistent with the burned-in CRC for that MAC address, resulting in an error like
-  `Base MAC address from BLK0 of EFUSE CRC error`. **Valid only on original ESP32 with** `esp-idf` **framework.**
+  `Base MAC address from BLK0 of EFUSE CRC error`. **Valid only on original ESP32.**
+
+  The `platformio` toolchain's ESP-IDF fork silently accepts a bad MAC CRC on chips reporting package version 3
+  (OEM single-core ESP32 modules, e.g. in some Xiaomi devices); the native `esp-idf` toolchain does not. Such devices
+  that worked with the `platformio` toolchain can fail to boot after migrating to the native toolchain — after an OTA
+  update the device resets shortly after boot and the bootloader rolls back to the previous firmware. Set this option
+  to `true` for them.
 
 - **minimum_chip_revision** (*Optional*, string): Sets the minimum ESP32 chip revision required for the firmware.
   One of `0.0`, `1.0`, `1.1`, `2.0`, `3.0`, or `3.1`. **Valid only on original ESP32.**

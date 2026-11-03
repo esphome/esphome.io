@@ -832,6 +832,13 @@ api:
   - **description** (*Optional*, string): Description of the variable.
   - **example** (*Optional*, string): Example value for the variable. Always a string, so
     quote values for numeric variables, e.g. `example: "420"`.
+  - **required** (*Optional*, boolean): Set to `false` to let callers omit the variable.
+    An omitted variable arrives as `false` for `bool`, `0` for `int`, `0.0` for `float` and
+    an empty string for `string`, so the action cannot tell it apart from that value sent on
+    purpose. To detect an omitted variable, set `default` to a value callers never send.
+    Array types such as `bool[]` cannot be optional. Defaults to `true`.
+  - **default** (*Optional*): Default value the client fills in when the caller omits
+    the variable. Must match the variable type and implies `required: false`.
 
 The `name: type` shorthand and the mapping form can be mixed within the same
 `variables:` block.
@@ -846,10 +853,10 @@ bidirectional communication where actions can report success/error status or ret
 The response behavior is controlled by the `supports_response` option, which can be set explicitly or
 auto-detected based on your action configuration:
 
-- **none** (default): No response is sent. The action is "fire and forget".
-- **status**: Reports success/error status without data. Auto-detected when `api.respond` is used without `data:`.
-- **optional**: Returns JSON data when the client requests it. Auto-detected when `api.respond` is used with `data:`.
-- **only**: Always returns JSON data. Must be set explicitly. Use this for query-type actions.
+- `none`: No response is sent. The action is "fire and forget". This is the default.
+- `status`: Reports success/error status without data. Auto-detected when `api.respond` is used without `data:`.
+- `optional`: Returns JSON data when the client requests it. Auto-detected when `api.respond` is used with `data:`.
+- `only`: Always returns JSON data. Must be set explicitly. Use this for query-type actions.
 
 #### Configuration Variables
 

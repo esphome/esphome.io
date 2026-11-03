@@ -135,11 +135,11 @@ conditions. Some [styling options](#lvgl-theme) can be set at this level too, bu
     on startup (especially useful if there is only one focusable widget.)
   - **enter_button** (**Required**, [ID](/guides/configuration-types#id)): The ID of a [Binary
     Sensor](/components/binary_sensor/), to be used as `ENTER` key.
-  - **sensor** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a [Rotary
+  - **sensor** (**Required**, [ID](/guides/configuration-types#id)): The ID of a [Rotary
     Encoder](/components/sensor/rotary_encoder/); or a list with buttons for left/right interaction with the widgets:
-    - **left_button** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a [Binary
+    - **left_button** (**Required**, [ID](/guides/configuration-types#id)): The ID of a [Binary
       Sensor](/components/binary_sensor/), to be used as `LEFT` key.
-    - **right_button** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a [Binary
+    - **right_button** (**Required**, [ID](/guides/configuration-types#id)): The ID of a [Binary
       Sensor](/components/binary_sensor/), to be used as `RIGHT` key.
   - **long_press_time** (*Optional*, [Time](/guides/configuration-types#time)): For the rotary encoder, delay after
     which the `on_long_pressed` [interaction trigger](/components/lvgl/widgets#triggers) will be called. Defaults to
@@ -237,7 +237,7 @@ conditions. Some [styling options](#lvgl-theme) can be set at this level too, bu
 - **byte_order** (*Optional*, string): The byte order of the data LVGL outputs; either `big_endian` or `little_endian`.
   Will try to auto-configure based on the display metadata. Defaults to `big_endian` if the display driver does not
   supply the information.
-- **refresh_interval** (*Optional*, [Time](/guides/configuration-types#time): The minimum interval for screen refresh.
+- **refresh_interval** (*Optional*, [Time](/guides/configuration-types#time)): The minimum interval for screen refresh.
   Defaults to 16ms.
 - **default_font** (*Optional*, ID): The ID of the [font](#fonts) used by default to render the text or symbols.
   Defaults to LVGL's internal `montserrat_14` if not specified.
@@ -864,7 +864,7 @@ In addition to the above, the following special fonts are available from LVGL as
 
 <span id="lvgl-theme"></span>
 
-### Themes
+### Theme
 
 You can configure a global theme at the top level with the `theme:` configuration variable.
 
@@ -1119,8 +1119,8 @@ currently active screen; you can also style and lay out the `top_layer` and/or `
 
 - **layout** (*Optional*): Update the [layout](/components/lvgl/layouts#updating-a-layout-at-runtime) options of the
   active screen. Only the layout options may be changed, not the layout type.
-- **top_layer** / **bottom_layer** (*Optional*): Update the [style properties](#lvgl-styling) and `layout:` of the
-  respective display layer.
+- **top_layer** (*Optional*): Update the [style properties](#lvgl-styling) and `layout:` of the top layer.
+- **bottom_layer** (*Optional*): Update the [style properties](#lvgl-styling) and `layout:` of the bottom layer.
 
 ```yaml
 # Examples:

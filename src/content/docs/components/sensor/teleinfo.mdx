@@ -116,12 +116,19 @@ based on the prefix of its `tag_name`, for the main tags of both standard and hi
 | `SINST`, `SMAX` | Standard | `VA` | `apparent_power` | `measurement` |
 | `PREF`, `PCOUP` | Standard | `kVA` | `apparent_power` | `measurement` |
 | `CC` | Standard | `W` | `power` | `measurement` |
+| `VTIC`, `NTARF`, `NJOURF`, `RELAIS` | Standard | *none* | *none* | *none* |
 | `BASE`, `HCH`, `EJP`, `BBRH` | Historical | `Wh` | `energy` | `total_increasing` |
 | `IINST`, `IMAX`, `ISOUSC`, `ADPS`, `ADIR` | Historical | `A` | `current` | `measurement` |
-| `PAPP` | Historical | `VA` | `apparent_power` | `measurement` |
-| `PMAX` | Historical | `W` | `power` | `measurement` |
+| `PAPP`, `PMAX` | Historical | `VA` | `apparent_power` | `measurement` |
+| `PEJP` | Historical | `min` | `duration` | `measurement` |
 
 For example, `IINST1`, `IINST2` and `IINST3` all match the `IINST` prefix.
+
+Some tags hold text, which a sensor cannot publish. Use a [text sensor](#text-sensor) for them
+instead: `ADSC`, `DATE`, `NGTF`, `LTARF`, `STGE`, `DPM1` to `DPM3`, `FPM1` to `FPM3`, `MSG1`,
+`MSG2`, `PRM`, `PJOURF+1` and `PPOINTE` in standard mode, and `ADCO`, `OPTARIF`, `PTEC`, `DEMAIN`,
+`HHPHC`, `MOTDETAT` and `PPOT` in historical mode. A sensor with one of these tags gets no
+pre-defined values, and a warning is logged when the configuration is validated.
 
 Tags that do not match any prefix get the following defaults: unit `Wh`, device class `energy`,
 state class `total_increasing` and icon `mdi:flash`.

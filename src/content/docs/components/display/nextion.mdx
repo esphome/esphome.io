@@ -77,6 +77,12 @@ display:
   On Arduino, this applies to the initial connection request. On ESP-IDF, this applies to chunk read operations.
   Range: 1-255. Defaults to `5`.
 
+- **tft_upload_http_buffer_size_tx** (*Optional*, int): Size in bytes of the HTTP client transmit buffer used for TFT
+  upload requests. The buffer must hold the request line, which carries the full URL. Set this when `tft_url` redirects
+  to a long URL (for example a GitHub release asset, which redirects to a signed URL of 600+ characters) and the upload
+  fails with `HTTP_CLIENT: Out of buffer`; `1024` is usually enough. When not set, the ESP-IDF default is used.
+  Range: 512-8192. Only available on ESP32.
+
 - **tft_upload_watchdog_timeout** (*Optional*, [Time](/guides/configuration-types#time)): Temporarily adjusts the system watchdog timeout
   for the duration of the TFT transfer process. The original timeout is automatically restored when the transfer
   completes (whether successful or not). May be useful on slow connections or when transferring large TFT files.
@@ -116,6 +122,14 @@ display:
 
 - **on_buffer_overflow** (*Optional*, [Action](/automations/actions#all-actions)): An action to be performed when the Nextion
   reports a buffer overflow. See [Nextion Automation](#nextion-on_buffer_overflow).
+- **on_custom_binary_sensor** (*Optional*, [Action](/automations/actions#all-actions)): An action to be performed when the
+  display sends a custom protocol binary sensor message. The variable name is available as `key` and its state as `value`.
+- **on_custom_sensor** (*Optional*, [Action](/automations/actions#all-actions)): An action to be performed when the display
+  sends a custom protocol sensor message. The variable name is available as `key` and the reading as `value`.
+- **on_custom_switch** (*Optional*, [Action](/automations/actions#all-actions)): An action to be performed when the display
+  sends a custom protocol switch message. The variable name is available as `key` and its state as `value`.
+- **on_custom_text_sensor** (*Optional*, [Action](/automations/actions#all-actions)): An action to be performed when the
+  display sends a custom protocol text sensor message. The variable name is available as `key` and the text as `value`.
 
 - **command_spacing** (*Optional*, [Time](/guides/configuration-types#time)): Sets the minimum time between commands sent to the Nextion display.
   A higher value can help prevent buffer overflows but will result in slower interface updates.
@@ -407,9 +421,10 @@ logging or other [automations](/automations/) will occur. This process uses the 
 You can use Home Assistant itself or any other web server to host the TFT file. When using HTTPS (generally
 recommended), you may notice reduced upload speeds as the encryption consumes more resources on the microcontroller.
 
-The HTTP timeout, retry count, and watchdog behavior during the upload can be customized using the
-`tft_upload_http_timeout`, `tft_upload_http_retries`, and `tft_upload_watchdog_timeout` configuration options.
-This can be helpful on slow or unreliable network connections.
+The HTTP timeout, retry count, transmit buffer size, and watchdog behavior during the upload can be customized using the
+`tft_upload_http_timeout`, `tft_upload_http_retries`, `tft_upload_http_buffer_size_tx`, and `tft_upload_watchdog_timeout`
+configuration options. This can be helpful on slow or unreliable network connections, or when the TFT URL redirects to
+a long URL.
 
 ```yaml
 # Example configuration with TFT upload parameters
@@ -420,6 +435,7 @@ display:
     tft_url: "http://192.168.1.100:8080/display.tft"
     tft_upload_http_timeout: 20s
     tft_upload_http_retries: 10
+    tft_upload_http_buffer_size_tx: 1024  # ESP32 only
     tft_upload_watchdog_timeout: 30s  # ESP32 only
 ```
 

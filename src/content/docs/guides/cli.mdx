@@ -219,7 +219,11 @@ Serial flashing and OTA `--bootloader` need a build without this flag.
 
 ### `upload` Command
 
-The `esphome upload <CONFIG>` validates the configuration and uploads the most recent firmware build.
+With a configuration, `esphome upload <CONFIG>` validates it and uploads the most recent firmware build.
+
+The configuration is optional for `upload`. Without it, a prebuilt firmware image given with `--file` is sent to the
+device given with `--device`; see
+[Uploading a Prebuilt Image Without a Configuration](#uploading-a-prebuilt-image-without-a-configuration).
 
 #### Options
 
@@ -260,6 +264,22 @@ when the OTA password has been lost but the `web_server` `auth` credentials are 
 **`--file FILE`**
 : Manually specify the binary file to upload instead of the most recent build. Can be combined with
 `--partition-table` or `--bootloader` to upload a custom partition table or bootloader image.
+Required when no configuration is given.
+
+
+**`--ota-port PORT`**
+: The device's OTA port, if a configuration file is not given. Defaults to the platform's port, read from the image
+named by `--file`; see
+[Uploading a Prebuilt Image Without a Configuration](#uploading-a-prebuilt-image-without-a-configuration).
+An explicit port must be between 1 and 65535 and is used as given. Can't be used together with a configuration,
+whose own OTA settings apply.
+
+
+**`--ota-password PASSWORD`**
+: The device's OTA password, if it has one and a configuration file is not given. The `ESPHOME_OTA_PASSWORD`
+environment variable keeps it out of the process list; if both are given, `--ota-password` is used.
+`--ota-password` can't be used together with a configuration, whose own OTA settings apply, and
+`ESPHOME_OTA_PASSWORD` is ignored with a warning.
 
 
 **`--partition-table`**
@@ -292,6 +312,56 @@ OTA encryption key:
 
 A program that runs the CLI, such as the Device Builder, can hand the key over in the `ESPHOME_OTA_KEY` environment
 variable instead; it is read once and removed from the environment before any build tool runs.
+
+#### Uploading a Prebuilt Image Without a Configuration
+
+Some devices ship with a prebuilt firmware image whose configuration is maintained by the manufacturer, so the
+owner has no YAML file. To update such a device, leave out the configuration and pass the image with `--file` and
+the device's IP address or hostname with `--device`:
+
+```shell
+esphome upload --file firmware.bin --device 192.168.1.50
+```
+
+The image is sent directly over the [ESPHome OTA platform](/components/ota/esphome/); no configuration is read or
+validated and nothing is compiled.
+
+The OTA port defaults to the [ESPHome OTA platform's default port](/components/ota/esphome/#configuration-variables)
+for the platform the image was built for, which is read from the image header.
+
+If the header does not name a platform, the upload is refused and the port must be given with `--ota-port`. A
+device on a port other than its platform's default also needs `--ota-port`:
+
+```shell
+esphome upload --file firmware.bin --device 192.168.1.50 --ota-port 3233
+```
+
+If the device has an OTA password, give it in the `ESPHOME_OTA_PASSWORD` environment variable, which keeps it out
+of the process list, or with `--ota-password`. Like `ESPHOME_OTA_KEY`, the variable is removed from the
+environment before anything else runs. Typing it on the command line saves it in the shell history, so read it
+without echo and pass it to this one command only:
+
+```shell
+printf 'OTA password: '; IFS= read -rs PASSWORD; echo
+ESPHOME_OTA_PASSWORD="$PASSWORD" esphome upload --file firmware.bin --device 192.168.1.50
+unset PASSWORD
+```
+
+For a device that uses [OTA encryption](/components/ota/esphome/#encryption), give the key with `--prompt-ota-key`.
+A program that runs the CLI can hand it over in the `ESPHOME_OTA_KEY` environment variable instead. A malformed key
+is refused before the device is contacted, and the upload is never sent unencrypted instead.
+
+```shell
+esphome upload --prompt-ota-key --file firmware.bin --device 192.168.1.50
+OTA encryption key:
+```
+
+An ESP32 factory image, which serial flashing tools write as bootloader, partition table and app in one file, is
+refused before the device is contacted, even with `--ota-port`; upload the app image (`firmware.ota.bin`) instead.
+
+`--partition-table` and `--bootloader` also work in this mode. The following need a configuration and are refused
+without one: a serial port or `SERIAL`, `OTA`, `MQTT`, `MQTTIP` or `BOOTSEL` as `--device`, and
+`--ota-platform web_server`.
 
 
 ### `clean-mqtt` Command
