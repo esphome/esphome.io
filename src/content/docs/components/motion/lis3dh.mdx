@@ -95,10 +95,12 @@ sensor:
   - **interrupt_pin** (*Optional*, [Pin](/guides/configuration-types/#pin)): A GPIO wired to the chip's tap
     interrupt pad. It must be a GPIO of the microcontroller itself, not an I/O expander pin, because its edge
     is caught by an interrupt. When set, the detector is read when this pin becomes active, instead of being
-    polled every 10 ms. Uses the polarity set by `interrupt` `active_high`. It cannot be used with both `on_tap` and
-    `on_double_tap`, because the chip then raises its interrupt only for double taps.
+    polled every 10 ms. Uses the polarity set by `interrupt` `active_high`, or active high when there is no
+    `interrupt` block. It cannot be used with both `on_tap` and `on_double_tap`, because the chip then raises
+    its interrupt only for double taps.
   - **pin** (*Optional*, string): Which physical interrupt pad the tap detector drives, `INT1` or `INT2`.
     Only used with `interrupt_pin`, and it must differ from the motion interrupt's `pin`. Defaults to `INT1`.
+    Both default to `INT1`, so when the `interrupt` block is also set, set one of them to `INT2`.
   - **on_tap** (*Optional*, [Automation](/automations/)): Actions to run when a single tap is detected.
   - **on_double_tap** (*Optional*, [Automation](/automations/)): Actions to run when a double tap is detected.
 
@@ -149,7 +151,6 @@ motion:
     id: accel
     accelerometer_odr: 400HZ
     tap:
-      threshold: 0.6g
       on_tap:
         - logger.log:
             format: "Tap on axis %u, %s side"
