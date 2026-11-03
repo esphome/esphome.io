@@ -8,9 +8,10 @@ import APIRef from '@components/APIRef.astro';
 
 
 The `stepper` component allows you to use stepper motors with ESPHome.
-Currently only the A4988 stepper driver
-([datasheet](https://www.pololu.com/file/0J450/a4988_DMOS_microstepping_driver_with_translator.pdf))
-and ULN2003 ([datasheet](http://www.ti.com/lit/ds/symlink/uln2003a.pdf)) are supported.
+Supported drivers are the A4988
+([datasheet](https://www.pololu.com/file/0J450/a4988_DMOS_microstepping_driver_with_translator.pdf)),
+the ULN2003 ([datasheet](http://www.ti.com/lit/ds/symlink/uln2003a.pdf)) and the
+[TMC2209](/components/stepper/tmc2209/).
 
 > [!NOTE]
 > This component will not show up in the Home Assistant front-end automatically because
@@ -83,7 +84,7 @@ Configuration variables:
 
 > [!NOTE]
 > TMC drivers are pin-compatible with the A4988, but instead of a `SLEEP` pin they expose an `ENABLE` pin.
-> When using a TMC driver with the `a4988` platform you therefore need to invert the `sleep_pin`  :
+> When using a TMC driver with the `a4988` platform you therefore need to invert the `sleep_pin`:
 >
 > ```yaml
 > stepper:
@@ -93,6 +94,9 @@ Configuration variables:
 >       number: GPIOXX
 >       inverted: true
 > ```
+>
+> For the TMC2209 there is also the [TMC2209](/components/stepper/tmc2209/) platform, which configures the driver
+> over UART.
 
 ## ULN2003 Component
 
@@ -131,8 +135,6 @@ Configuration variables:
   - `WAVE_DRIVE`
 
 - All other from [Base Stepper Configuration](#base_stepper_config).
-
-<span id="stepper-set_target_action"></span>
 
 ## `stepper.set_target` Action
 
@@ -178,8 +180,6 @@ Configuration options:
 >         target: 150
 > ```
 
-<span id="stepper-report_position_action"></span>
-
 ## `stepper.report_position` Action
 
 All steppers start out with a target and current position of `0` on boot. However, if you for example want to home
@@ -217,8 +217,6 @@ Configuration variables:
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the stepper.
 - **position** (**Required**, int, [templatable](/automations/templates)): The position to report in steps.
 
-<span id="stepper-set_speed_action"></span>
-
 ## `stepper.set_speed` Action
 
 This [Action](/automations/actions#all-actions) allows you to set the speed of a stepper at runtime.
@@ -236,8 +234,6 @@ Configuration variables:
 - **speed** (**Required**, float, [templatable](/automations/templates)): The speed
   in `steps/s` (steps per seconds) to drive the stepper at.
 
-<span id="stepper-set_acceleration_action"></span>
-
 ## `stepper.set_acceleration` Action
 
 This [Action](/automations/actions#all-actions) allows you to set the acceleration of a stepper at runtime.
@@ -254,8 +250,6 @@ Configuration variables:
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the stepper.
 - **acceleration** (**Required**, float, [templatable](/automations/templates)): The acceleration
   in `steps/s^2` (steps per seconds squared) to use when starting to move.
-
-<span id="stepper-set_deceleration_action"></span>
 
 ## `stepper.set_deceleration` Action
 
@@ -299,8 +293,6 @@ stepper:
     # [...] stepper config
     id: my_stepper
 ```
-
-<span id="stepper-lambda_calls"></span>
 
 ## lambda calls
 

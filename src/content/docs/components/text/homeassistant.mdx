@@ -1,0 +1,45 @@
+---
+description: "Instructions for setting up Home Assistant texts with ESPHome."
+title: "Home Assistant Text"
+---
+import APIRef from '@components/APIRef.astro';
+
+
+The `homeassistant` text platform allows you to create a text that mirrors a Home Assistant `text` or `input_text`
+entity using the [native API](/components/api/). The device subscribes to the entity's state, and changing the text
+on the device calls the `text.set_value` or `input_text.set_value` action, chosen from the entity's domain.
+
+The entity's `min`, `max` and `mode` attributes are read once when the device connects to Home Assistant, and the
+length limits are enforced on the device. The `pattern` attribute is not read.
+
+> [!NOTE]
+> Although you might not plan to *export* states from the node and you do not need an entity of the node
+> in Home Assistant, this component still requires you to register the node under Home Assistant. See:
+> [Connecting your device to Home Assistant](/install/getting-started/#connecting-your-device-to-home-assistant).
+>
+> Home Assistant must also allow the device to perform actions. See [Actions](/components/api/#actions).
+
+```yaml
+# Example configuration entry
+text:
+  - platform: homeassistant
+    id: greeting
+    entity_id: input_text.greeting
+```
+
+## Configuration Variables
+
+- **entity_id** (*Optional*, string): The entity ID to import / control from Home Assistant.
+  Must be in the `text` or `input_text` domain.
+  Required unless the entity is a linked input of the [API wizard](/components/api/#wizard), which lets the user
+  pick the entity when the device is added.
+- **internal** (*Optional*, boolean): Mark this component as internal. Internal components will not be exposed
+  to the frontend (like Home Assistant). Defaults to `true`.
+- **mode** (*Optional*, string): Defines how the text should be displayed in the frontend. One of `TEXT` or
+  `PASSWORD`. Defaults to `TEXT`. Replaced by the entity's `mode` attribute once it is received from Home Assistant.
+- All other options from [Text](/components/text#config-text).
+
+## See Also
+
+- [Automation](/automations)
+- <APIRef text="homeassistant_text.h" path="homeassistant/text/homeassistant_text.h" />

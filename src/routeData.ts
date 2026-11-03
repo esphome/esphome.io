@@ -27,6 +27,17 @@ export const onRequest = defineRouteMiddleware(async (context, next) => {
   await next();
 
   const route = context.locals.starlightRoute;
+
+  // Crossposts redirect off-site. Send the full referring path (not just the origin)
+  // so the destination can attribute the visit. Prepended so it is parsed before the
+  // redirect tags in the page's own `head`.
+  if (route.entry.data.crosspostSource) {
+    route.head.unshift({
+      tag: "meta",
+      attrs: { name: "referrer", content: "no-referrer-when-downgrade" },
+    });
+  }
+
   if (!route.toc) return;
 
   // Find the "Sensor Filters" heading in the TOC — only present on the sensor index page.

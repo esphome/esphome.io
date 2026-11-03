@@ -1,0 +1,110 @@
+---
+description: "Instructions for setting up OpenThread info diagnostic sensors."
+title: "OpenThread Info Sensor"
+---
+import APIRef from '@components/APIRef.astro';
+
+
+The `openthread_info` sensor platform exposes OpenThread diagnostic information
+via numeric sensors, complementing the
+[OpenThread Info Text Sensor](/components/text_sensor/openthread_info/).
+
+All sensors in this platform are diagnostic entities. They use the OpenThread
+instance provided by the [OpenThread Component](/components/openthread/), which must be configured.
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: openthread_info
+    parent_average_rssi:
+      name: "Thread Parent Average RSSI"
+    parent_last_rssi:
+      name: "Thread Parent Last RSSI"
+    parent_link_quality_in:
+      name: "Thread Parent Link Quality In"
+    parent_link_quality_out:
+      name: "Thread Parent Link Quality Out"
+    tx_total:
+      name: "Thread TX Total"
+    tx_retries:
+      name: "Thread TX Retries"
+    tx_err_cca:
+      name: "Thread TX CCA Errors"
+    tx_err_abort:
+      name: "Thread TX Abort Errors"
+    rx_total:
+      name: "Thread RX Total"
+    rx_err_fcs:
+      name: "Thread RX FCS Errors"
+    attach_attempts:
+      name: "Thread Attach Attempts"
+    parent_changes:
+      name: "Thread Parent Changes"
+    partition_id_changes:
+      name: "Thread Partition ID Changes"
+```
+
+## Configuration variables
+
+- **parent_average_rssi** (*Optional*): The average RSSI of the parent, in dBm.
+  Only valid when the device is an attached child; the sensor skips publishing otherwise.
+  All options from [Sensor](/components/sensor#config-sensor).
+  Default update interval: `5s`.
+
+- **parent_last_rssi** (*Optional*): The RSSI of the last frame received from the parent, in dBm.
+  Only valid when the device is an attached child; the sensor skips publishing otherwise.
+  All options from [Sensor](/components/sensor#config-sensor).
+  Default update interval: `5s`.
+
+- **parent_link_quality_in** (*Optional*): Incoming link quality from the parent (0-3).
+  Only valid when the device is an attached child.
+  All options from [Sensor](/components/sensor#config-sensor).
+  Default update interval: `5s`.
+
+- **parent_link_quality_out** (*Optional*): Outgoing link quality to the parent (0-3).
+  Only valid when the device is an attached child.
+  All options from [Sensor](/components/sensor#config-sensor).
+  Default update interval: `5s`.
+
+- **tx_total** (*Optional*): Total MAC TX frame transmissions since boot.
+  All options from [Sensor](/components/sensor#config-sensor).
+  Default update interval: `30s`.
+
+- **tx_retries** (*Optional*): Total MAC TX frame retransmissions since boot.
+  All options from [Sensor](/components/sensor#config-sensor).
+  Default update interval: `30s`.
+
+- **tx_err_cca** (*Optional*): Total MAC TX CCA (Clear Channel Assessment) errors since boot.
+  All options from [Sensor](/components/sensor#config-sensor).
+  Default update interval: `30s`.
+
+- **tx_err_abort** (*Optional*): Total MAC TX abort errors since boot.
+  All options from [Sensor](/components/sensor#config-sensor).
+  Default update interval: `30s`.
+
+- **rx_total** (*Optional*): Total MAC RX frames received since boot.
+  All options from [Sensor](/components/sensor#config-sensor).
+  Default update interval: `30s`.
+
+- **rx_err_fcs** (*Optional*): Total MAC RX FCS (Frame Check Sequence) errors since boot.
+  All options from [Sensor](/components/sensor#config-sensor).
+  Default update interval: `30s`.
+
+- **attach_attempts** (*Optional*): Total MLE attach attempts since boot.
+  All options from [Sensor](/components/sensor#config-sensor).
+  Default update interval: `30s`.
+
+- **parent_changes** (*Optional*): Total MLE parent changes since boot.
+  All options from [Sensor](/components/sensor#config-sensor).
+  Default update interval: `30s`.
+
+- **partition_id_changes** (*Optional*): Total MLE partition ID changes since boot.
+  All options from [Sensor](/components/sensor#config-sensor).
+  Default update interval: `30s`.
+
+## See Also
+
+- [OpenThread Component](/components/openthread/)
+- [OpenThread Info Text Sensor](/components/text_sensor/openthread_info/)
+- [Sensor Filters](/components/sensor#sensor-filters)
+- <APIRef text="openthread_info_sensor.h" path="openthread_info/openthread_info_sensor.h" />

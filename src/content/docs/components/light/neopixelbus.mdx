@@ -12,8 +12,9 @@ import APIRef from '@components/APIRef.astro';
 > ESPHome moves to ESP-IDF 6. ESP8266 is not affected.
 >
 > Migration paths for ESP32:
-> - Clockless lights (WS2811, WS2812, SK6812, etc.) → [Esp32 Rmt Led Strip](/components/light/esp32_rmt_led_strip/).
-> - 2-wire SPI lights (DotStar, WS2801, LPD8806, P9813) → [Spi Led Strip](/components/light/spi_led_strip/).
+> - Clockless lights (WS2811, WS2812, SK6812, etc.) → [ESP32 RMT LED Strip](/components/light/esp32_rmt_led_strip/) or
+>   [I2S Clockless LED Strip](/components/light/i2s_clockless_led_strip/).
+> - 2-wire SPI lights (DotStar, WS2801, LPD8806, P9813) → [SPI LED Strip](/components/light/spi_led_strip/).
 >
 > NeoPixelBus does **not** work with ESP-IDF (use the migration paths above).
 
@@ -76,7 +77,7 @@ light:
   - `P9813`
 
 - **method** (*Optional*, string): The method used to transmit the data. By default, ESPHome will try to use the best method
-  available for this chipset, ESP platform, and the given pin. See [methods](#neopixelbus-methods) for more information.
+  available for this chipset, ESP platform, and the given pin. See [methods](#methods) for more information.
 
 - **invert** (*Optional*, boolean): Invert data output, for use with n-type transistors. Defaults to `no`.
 
@@ -94,8 +95,6 @@ If you have one line, only specify `pin`, otherwise specify both `clock_pin` and
 > [!WARNING]
 > On ESP8266 it's highly recommended to connect the light strip to pin
 > GPIO3 to reduce flickering.
-
-<span id="neopixelbus-methods"></span>
 
 ## Methods
 

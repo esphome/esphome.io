@@ -43,7 +43,9 @@ power_supply:
 - **enable_on_boot** (*Optional*, bool): If the power supply should be enabled when the power supply
   component is setup. Defaults to false. The startup delay will be applied (other component setup will be blocked
   until the delay has elapsed.) This is useful for power supplies that will never be turned off and avoids the need
-  to specifically configure the power supply in a different component.
+  to specifically configure the power supply in a different component. When the pin is internal (not on an I/O
+  expander) and this is enabled, the component sets up before any bus (I²C, SPI, etc.), so the rail is confirmed
+  on before those buses try to use it.
 
 See the [output component base configuration](/components/output#config-output)
 for information on how to apply the power supply for a specific output.

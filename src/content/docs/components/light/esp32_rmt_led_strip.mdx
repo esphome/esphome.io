@@ -5,15 +5,28 @@ title: "ESP32 RMT LED Strip"
 import APIRef from '@components/APIRef.astro';
 
 
-This is a component using the ESP32 RMT peripheral to drive most addressable LED strips.
+The `esp32_rmt_led_strip` light platform drives most addressable LED strips using the RMT peripheral.
+
+Here's a comparison of some alternatives for driving these strips:
+
+- This component, the ESP32 RMT LED Strip, uses the RMT peripheral to precisely
+  control the timing of the output and ensure compatibility with a wide range of LED strips. However, there is only
+  enough RMT symbol memory to buffer a few pixels at a time. Flickering may occur when the microcontroller is busy
+  performing higher priority tasks and the RMT interrupt cannot be serviced soon enough to refill the buffer for
+  subsequent pixels.
+- The [I2S Clockless LED Strip](/components/light/i2s_clockless_led_strip/) component uses the I2S peripheral and DMA
+  to drive the output with larger buffers that are more immune to flickering caused by interrupt latency. However,
+  the resulting waveform diverges slightly from the datasheet timing recommendations although in practice it is
+  close enough for the LED pixels to work reliably.
 
 > [!NOTE]
 > The ESP32-C2 and ESP32-C61 do not have RMT hardware and are not supported by this component.
 
 ```yaml
+# Example configuration entry
 light:
   - platform: esp32_rmt_led_strip
-    rgb_order: GRB
+    channel_colors: GRB
     pin: GPIOXX
     num_leds: 30
     chipset: ws2812
@@ -25,7 +38,7 @@ light:
 - **pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin for the data line of the light.
 - **num_leds** (**Required**, int): The number of LEDs in the strip.
 - **chipset** (*Optional*, enum): The name of the chipset used; determines signal timing. Not required if
-  [specifying the timings manually](#esp32-rmt-led-strip-manual_timings).
+  [specifying the timings manually](#manual-timings).
 
   - `WS2811`
   - `WS2812`
@@ -33,17 +46,10 @@ light:
   - `APA106`
   - `SM16703`
 
-- **rgb_order** (**Required**, string): The RGB order of the strip.
+- **channel_colors** (**Required**, string): The order in which the strip expects its color channels. List each of
+  `R`, `G` and `B` exactly once, optionally with a single `W` in any position; for example `GRB`, `BGR`, `GRBW`,
+  `WRGB` or `RWGB`. The value is case-insensitive. Including a `W` makes this a four channel RGBW strip.
 
-  - `RGB`
-  - `RBG`
-  - `GRB`
-  - `GBR`
-  - `BGR`
-  - `BRG`
-
-- **is_rgbw** (*Optional*, boolean): Set to `true` if the strip is RGBW. Defaults to `false`.
-- **is_wrgb** (*Optional*, boolean): Set to `true` if the strip is WRGB. Defaults to `false`.
 - **max_refresh_rate** (*Optional*, [Time](/guides/configuration-types#time)): A time interval used to limit the number of commands a light
   can handle per second. For example, `16ms` will limit the light to a refresh rate of about 60Hz. Defaults to
   sending commands as quickly as changes are made to the lights.
@@ -71,8 +77,6 @@ light:
   the DMA buffer size and can be set to a large value.
 
 - All other options from [Light](/components/light#config-light).
-
-<span id="esp32-rmt-led-strip-manual_timings"></span>
 
 ### Manual Timings
 

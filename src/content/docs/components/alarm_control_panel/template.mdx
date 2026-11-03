@@ -47,7 +47,7 @@ alarm_control_panel:
   - **chime** (*Optional*, boolean): When set `true`, the chime callback will be called whenever the sensor goes from
     closed to open. (`false` is the default if not specified)
 
-- **restore_mode** (*Optional*, enum):
+- **restore_mode** (*Optional*, enum): The state to start in after boot. One of:
 
   - `ALWAYS_DISARMED` (Default): Always start in `disarmed` state.
   - `RESTORE_DEFAULT_DISARMED`  : Restore state or default to `disarmed` state if no saved state was found.
@@ -56,9 +56,7 @@ alarm_control_panel:
 
 > [!NOTE]
 > If `binary_sensors` is omitted then you're expected to trigger the alarm using
-> [`pending` Action](/components/alarm_control_panel#alarm_control_panel_pending_action) or [`triggered` Action](/components/alarm_control_panel#alarm_control_panel_triggered_action).
-
-<span id="template_alarm_control_panel-trigger_modes"></span>
+> [`pending` Action](/components/alarm_control_panel#alarm_control_panel-pending-action) or [`triggered` Action](/components/alarm_control_panel#alarm_control_panel-triggered-action).
 
 ## Trigger Modes
 
@@ -96,8 +94,6 @@ or door. If there is a PIR guarding the main hallway, it will cause an instant t
 entered the premises in an unusual manner. Likewise, if someone enters the premises through a door set to the `delayed`
 trigger mode, and then triggers the PIR, the alarm will stay in the `pending` state until either they disarm the alarm,
 or the pending timer expires.
-
-<span id="template_alarm_control_panel-state_flow"></span>
 
 ## State Flow
 

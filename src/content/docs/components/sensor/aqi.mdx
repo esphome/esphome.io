@@ -72,13 +72,25 @@ sensor:
 
   - `AQI`: US EPA Air Quality Index breakpoint formula applied to PM2.5 and PM10
     only. Returns values from 0-500, where higher values indicate worse air quality.
+    The scale is defined only up to 500, so readings above the top breakpoint are
+    clamped to 500 unless `extended_range` is enabled.
     **This is not a full EPA AQI** — the official standard covers five pollutant
     categories and also requires ozone, CO, SO₂, and NO₂ measurements. Based on the
     [EPA Technical Assistance Document](https://document.airnow.gov/technical-assistance-document-for-the-reporting-of-daily-air-quailty.pdf).
 
   - `CAQI`: European Common Air Quality Index. Returns values from 0 upward, where
     higher values indicate worse air quality. Typically 0-25 is very low, 25-50 is low,
-    50-75 is medium, 75-100 is high, and >100 is very high.
+    50-75 is medium, 75-100 is high, and >100 is very high. The CAQI specification
+    defines no maximum, so readings above 100 are always reported unbounded.
+
+- **extended_range** (*Optional*, boolean, default `false`): Applies only to
+  `calculation_type: AQI`. By default a reading above the top of the US AQI scale is
+  clamped to 500. When set to `true`, the index is instead linearly extrapolated past
+  500 so that extreme pollution is reported as an "over-range" value (for example,
+  above 500) rather than saturating. This goes beyond what the EPA specification
+  defines. Setting this option together with `calculation_type: CAQI` is a
+  configuration error, because CAQI has no defined maximum and is always reported
+  unbounded.
 
 - All other options from [Sensor](/components/sensor).
 

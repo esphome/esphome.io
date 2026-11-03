@@ -13,7 +13,7 @@ light:
     pin: GPIOXX
     num_leds: 10
     pio: 0
-    rgb_order: GRB
+    channel_colors: GRB
     chipset: WS2812B
 ```
 
@@ -29,15 +29,9 @@ light:
   - `SK6812`
   - `SM16703`
 
-- **rgb_order** (**Required**, string): The RGB order of the strip.
-  - `RGB`
-  - `RBG`
-  - `GRB`
-  - `GBR`
-  - `BGR`
-  - `BRG`
-
-- **is_rgbw** (*Optional*, boolean): Set to `true` if the strip is RGBW. Defaults to `false`.
+- **channel_colors** (**Required**, string): The order in which the strip expects its color channels. List each of
+  `R`, `G` and `B` exactly once, optionally with a single `W` in any position; for example `GRB`, `BGR`, `GRBW`,
+  `WRGB` or `RWGB`. The value is case-insensitive. Including a `W` makes this a four channel RGBW strip.
 
 - All other options from [Light](/components/light#config-light).
 

@@ -1,0 +1,69 @@
+---
+description: "Instructions for setting up hardware PWM outputs on RP2040 and RP2350 boards."
+title: "RP2040 PWM Output"
+---
+import APIRef from '@components/APIRef.astro';
+
+The `rp2040_pwm` output platform drives a pin with the hardware PWM of the RP2040 and RP2350, so
+the signal keeps running without any work from the main loop. Use it for dimmable lights, fan speed
+control, passive buzzers and anything else that takes a duty cycle.
+
+```yaml
+# Example configuration entry
+output:
+  - platform: rp2040_pwm
+    pin: GPIOXX
+    frequency: 1kHz
+    id: pwm_output
+
+# Example usage in a light
+light:
+  - platform: monochromatic
+    output: pwm_output
+    name: "Kitchen Light"
+```
+
+## Configuration variables
+
+- **pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin to output the PWM signal on.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The id to use for this output component.
+- **frequency** (*Optional*, frequency): The frequency of the PWM signal. Lower frequencies allow a
+  finer duty cycle resolution; at very high frequencies only a few duty cycle steps remain. Defaults to `1kHz`.
+- All other options from [Output](/components/output#config-output).
+
+> [!NOTE]
+> A PWM slice serves four pins. For GPIO0 to GPIO31 that is an adjacent pair and the pair 16 higher: GPIO0,
+> GPIO1, GPIO16 and GPIO17 are slice 0, GPIO2, GPIO3, GPIO18 and GPIO19 are slice 1, and so on. On the RP2350,
+> GPIO32 to GPIO47 have their own four slices, where the pair 8 higher shares instead: GPIO32, GPIO33, GPIO40
+> and GPIO41 are one slice. All outputs on a slice run at one frequency, so they must use the same
+> `frequency`: when one of them changes it, the others still scale their duty cycle for the old frequency and
+> can end up fully on. Give an output whose frequency changes at runtime a slice of its own. Pins that share
+> a slice and have the same parity are the same PWM channel and output the same signal: GPIO0 and GPIO16
+> below GPIO32, GPIO32 and GPIO40 above it.
+
+## `output.rp2040_pwm.set_frequency` Action
+
+This [Action](/automations/actions#all-actions) changes the frequency of a PWM output at runtime, for
+example to control the pitch of a passive buzzer.
+
+```yaml
+on_...:
+  - output.rp2040_pwm.set_frequency:
+      id: pwm_output
+      frequency: 100Hz
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the PWM output to change.
+- **frequency** (**Required**, [templatable](/automations/templates), frequency): The frequency to set.
+
+## See Also
+
+- [Output Component](/components/output/)
+- [RP2 Platform](/components/rp2/)
+- [ESP32 LEDC Output](/components/output/ledc/)
+- [ESP8266 Software PWM Output](/components/output/esp8266_pwm/)
+- [Monochromatic Light](/components/light/monochromatic/)
+- [Speed Fan](/components/fan/speed/)
+- <APIRef text="rp2040_pwm.h" path="rp2040_pwm/rp2040_pwm.h" />

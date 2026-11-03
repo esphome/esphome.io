@@ -155,11 +155,7 @@ Now that concludes the introduction to actions in ESPHome. They're a powerful to
 your device with an easy-to-use syntax. What follows below is an index of common actions which you're sure to find
 useful (and even essential) for building all sorts of automations.
 
-<span id="common-actions"></span>
-
 ## Common Actions
-
-<span id="delay_action"></span>
 
 ### `delay` Action
 
@@ -180,14 +176,12 @@ on_...:
 > This is a "smart" asynchronous delay - other code will still run in the background while
 > the delay is happening. When using a lambda call, you should return the delay value in milliseconds.
 
-<span id="if_action"></span>
-
 ### `if` Action
 
-This action first evaluates the `condition:` and then either
-executes the `then:` branch if the condition returns true or the `else:` branch if the condition returns false.
+This action first checks its condition and then either
+executes the `then:` branch if the condition is true or the `else:` branch if the condition is false.
 
-After the chosen branch (`then` or `else`  ) is done with execution, the next action is performed.
+After the chosen branch (`then` or `else`) is done with execution, the next action is performed.
 
 For example below you can see an automation that checks if a sensor value is below 30 and if so
 turns on a light for 5 seconds. Otherwise, the light is turned off immediately.
@@ -196,8 +190,7 @@ turns on a light for 5 seconds. Otherwise, the light is turned off immediately.
 on_...:
   then:
     - if:
-        condition:
-          lambda: 'return id(some_sensor).state < 30;'
+        lambda: 'return id(some_sensor).state < 30;'
         then:
           - logger.log: "The sensor value is below 30!"
           - light.turn_on: my_light
@@ -207,26 +200,73 @@ on_...:
     - light.turn_off: my_light
 ```
 
+To check more than one condition, use `all` or `any`:
+
+```yaml
+    - if:
+        any:
+          - lambda: 'return id(some_sensor).state < 30;'
+          - binary_sensor.is_on: override_switch
+        then:
+          - light.turn_on: my_light
+```
+
 #### Configuration variables
 
-At least one of `condition`, `all` or `any` must be provided.
+Exactly one condition, or one of `all` or `any`, must be provided.
 
-- **condition** (*Optional*, [Condition](#all-conditions)): The condition to check to determine which branch to take.
-  If this is configured with a list of conditions then they must all be true for the condition to be true.
-
-- **all** (*Optional*, [Condition](#all-conditions)): Takes a list of conditions, all of which must be true (and is
-  therefore equivalent to `condition`  .)
+- **all** (*Optional*, [Condition](#all-conditions)): Takes a list of conditions, all of which must be true.
 
 - **any** (*Optional*, [Condition](#all-conditions)): Takes a list of conditions; if at least one is true, the
   condition will be true.
 
-- **then** (*Optional*, [Action](#all-actions)): The action to perform if the condition evaluates to true.
+- **condition** (*Optional*, [Condition](#all-conditions)): A legacy option that is no longer needed. It takes a
+  single condition, which can now be given directly under `if:`, or a list of conditions that must all be true, which
+  is the same as `all`. It is still accepted, so existing configurations keep working.
+
+- **then** (*Optional*, [Action](#all-actions)): The action to perform if the condition is true.
   Defaults to doing nothing.
 
-- **else** (*Optional*, [Action](#all-actions)): The action to perform if the condition evaluates to false.
+- **else** (*Optional*, [Action](#all-actions)): The action to perform if the condition is false.
   Defaults to doing nothing.
 
-<span id="lambda_action"></span>
+### `choose` Action
+
+This action takes a list of choices. Each choice has a condition and a list of actions. The conditions are checked
+in order, and the actions of the first choice whose condition is true are performed. The other choices are skipped.
+If no condition is true, the actions under `else:` are performed, if it is given. Otherwise nothing is done.
+
+```yaml
+on_...:
+  then:
+    - choose:
+        - if:
+            lambda: 'return id(some_sensor).state < 10;'
+          then:
+            - logger.log: "Cold"
+        - if:
+            any:
+              - lambda: 'return id(some_sensor).state < 25;'
+              - binary_sensor.is_on: heater_running
+          then:
+            - logger.log: "Warm"
+        - else:
+            - logger.log: "Hot"
+```
+
+#### Configuration variables
+
+Each entry in the list has:
+
+- **if** (**Required**, [Condition](#all-conditions)): The condition to check. If this is a list of conditions, they
+  must all be true. Use `any` if only one of them needs to be true.
+
+- **then** (**Required**, [Action](#all-actions)): The actions to perform if this is the first choice whose condition
+  is true.
+
+The last entry in the list may instead have only:
+
+- **else** (*Optional*, [Action](#all-actions)): The actions to perform if no condition is true.
 
 ### `lambda` Action
 
@@ -238,8 +278,6 @@ on_...:
     - lambda: |-
         id(some_binary_sensor).publish_state(false);
 ```
-
-<span id="repeat_action"></span>
 
 ### `repeat` Action
 
@@ -265,8 +303,6 @@ on_...:
   lambdas using the implicit script parameter `iteration`.
 
 - **then** (**Required**, [Action](#all-actions)): The action to repeat.
-
-<span id="wait_until_action"></span>
 
 ### `wait_until` Action
 
@@ -300,11 +336,9 @@ on_...:
 - **condition** (**Required**, [Condition](#all-conditions)): The condition to wait to become true.
 - **timeout** (*Optional*, [Time](/guides/configuration-types#time), [templatable](/automations/templates)): Time to wait before timing out. Defaults to never timing out.
 
-<span id="while_action"></span>
-
 ### `while` Action
 
-This action is similar to the [if](#if_action) Action. The `while` action loops
+This action is similar to the [if](#if-action) Action. The `while` action loops
 through a block as long as the given condition is true.
 
 ```yaml
@@ -326,8 +360,6 @@ on_...:
 
 - **then** (**Required**, [Action](#all-actions)): The action to perform until the condition evaluates to false.
 
-<span id="component-update_action"></span>
-
 ### `component.update` Action
 
 Using this action you can manually call the `update()` method of a component.
@@ -344,8 +376,6 @@ on_...:
     - lambda: 'id(my_component).update();'
 ```
 
-<span id="component-suspend_action"></span>
-
 ### `component.suspend` Action
 
 Using this action you can manually call the `stop_poller()` method of a component.
@@ -353,7 +383,7 @@ Using this action you can manually call the `stop_poller()` method of a componen
 After this action the component will stop being refreshed.
 
 While the poller is suspendend, it's still possible to trigger on-demand updates by
-using [component.update](#component-update_action)
+using [component.update](#component-update-action)
 
 Please note that this only works with PollingComponent types and others will result in a
 compile error.
@@ -366,8 +396,6 @@ on_...:
     # The same as:
     - lambda: 'id(my_component).stop_poller();'
 ```
-
-<span id="component-resume_action"></span>
 
 ### `component.resume` Action
 
@@ -398,8 +426,6 @@ on_...:
         id: my_component
         update_interval: 15s
 ```
-
-<span id="common_conditions"></span>
 
 ## Common Conditions
 
@@ -434,8 +460,6 @@ on_...:
               binary_sensor.is_off: some_binary_sensor
           - binary_sensor.is_on: some_other_sensor
 ```
-
-<span id="for_condition"></span>
 
 ### `for` Condition
 
@@ -503,8 +527,6 @@ on_...:
 ## All Conditions
 
 <AutomationList type="Condition" />
-
-<span id="tips-and-tricks"></span>
 
 ## Tips and Tricks
 

@@ -1,0 +1,127 @@
+---
+description: "Instructions for setting up a counter sensor."
+title: "Counter Sensor"
+---
+import APIRef from '@components/APIRef.astro';
+
+The `counter` sensor holds a whole number that can be set and changed by [actions](/automations/actions/), and
+reports it as a sensor. The value is kept as a signed 64-bit integer and, by default, is stored on the device so
+that it survives a restart.
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: counter
+    name: "Door Openings"
+    id: door_openings
+```
+
+The counter starts at zero unless [`initial_value`](#configuration-variables) is set or a stored value is restored.
+Change it with the [`counter.increment`](#counter-increment-action) and
+[`counter.set_value`](#counter-set_value-action) actions.
+
+> [!NOTE]
+> The sensor state is published as a floating point number, so it shows whole numbers exactly only up to
+> 16,777,216. Larger values are still counted and stored exactly, but the published value is rounded.
+
+## Configuration Variables
+
+- **restore** (*Optional*, boolean): Whether to store the value on the device and restore it after a restart.
+  Defaults to `true`. See [Flash Wear](/components/preferences/#flash-wear) for how often the value is written to flash.
+- **initial_value** (*Optional*, integer): The value the counter starts with when no stored value is restored: on the
+  first boot, or when `restore` is `false`. Must be within the range of a signed 64-bit integer. Defaults to `0`.
+- **sensor** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a [sensor](/components/sensor/). The counter
+  increases by one each time this sensor publishes a value. The value the sensor publishes is not used.
+- **binary_sensor** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a
+  [binary sensor](/components/binary_sensor/). The counter increases by one each time this binary sensor changes to
+  `true`. A binary sensor does not report a new state that matches its current one, so a repeated `true` is not counted.
+- All other options from [Sensor](/components/sensor/).
+
+> [!NOTE]
+> If both **sensor** and **binary_sensor** are configured, the counter accumulates counts from both sources.
+
+> [!NOTE]
+> On ESP8266, stored values are kept in RTC memory by default. They survive a restart, but are lost when power is
+> removed. To save the value to flash, set `restore_from_flash: true` in the [ESP8266](/components/esp8266/) component.
+
+To count events from other kinds of component, call the [`counter.increment`](#counter-increment-action) action from
+that component's automations instead. For example, to count each time a text sensor publishes a value:
+
+```yaml
+text_sensor:
+  - platform: template
+    name: "Door Status"
+    on_value:
+      - counter.increment: door_openings
+```
+
+To count each time a binary sensor changes to `true`, use the **binary_sensor** option:
+
+```yaml
+binary_sensor:
+  - platform: gpio
+    pin: GPIOXX
+    id: door_contact
+
+sensor:
+  - platform: counter
+    name: "Door Openings"
+    binary_sensor: door_contact
+```
+
+## `counter.increment` Action
+
+This [Action](/automations/actions#all-actions) adds a number to the counter. The number defaults to `1`
+and can be negative to count down.
+
+```yaml
+on_...:
+  # Add one
+  - counter.increment: my_counter
+
+  # Add a chosen amount
+  - counter.increment:
+      id: my_counter
+      value: -5
+```
+
+Configuration options:
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the counter.
+  Must be specified if more than one counter is configured.
+- **value** (*Optional*, integer, [templatable](/automations/templates)): The amount to add. Defaults to `1`. Must be
+  within the range of a signed 64-bit integer. If the result goes past the largest or smallest 64-bit value, it wraps
+  around.
+
+## `counter.set_value` Action
+
+This [Action](/automations/actions#all-actions) sets the counter to a given value.
+
+```yaml
+on_...:
+  - counter.set_value:
+      id: my_counter
+      value: 100
+```
+
+Configuration options:
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the counter.
+  Must be specified if more than one counter is configured.
+- **value** (**Required**, integer, [templatable](/automations/templates)): The value to set. Must be within the range
+  of a signed 64-bit integer.
+
+When only one counter is configured, the value can be given directly:
+
+```yaml
+on_...:
+  - counter.set_value: 0
+```
+
+## See Also
+
+- [Sensor Component](/components/sensor/)
+- [Binary Sensor Component](/components/binary_sensor/)
+- [Integration Sensor](/components/sensor/integration/)
+- [Preferences](/components/preferences/)
+- <APIRef text="counter_sensor.h" path="counter/counter_sensor.h" />
