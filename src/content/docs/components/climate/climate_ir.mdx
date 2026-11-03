@@ -145,6 +145,11 @@ The Daikin ARC remotes (`daikin_arc` climate, `daikin_arc417`, `daikin_arc480` p
   - `yac1fb9`
   - `yx1ff`
   - `yag`
+  - `yap1f`
+
+  `yap1f` is the YAP1F / YAP1FB remote family. ESPHome encodes the YAP1F IR frame natively for transmit.
+  Configurable `horizontal_default` / `vertical_default` vane positions are not supported on `yap1f` (the current
+  frame layout does not carry them); only `auto` is accepted.
 
 ```yaml
 # Example configuration entry for climate only
@@ -154,6 +159,12 @@ climate:
     id: my_gree_ac
     sensor: room_temperature
     model: yan
+
+# YAP1F example
+climate:
+  - platform: gree
+    name: "Workplace AC"
+    model: yap1f
 ```
 
 Models `yan`, `yaa`, `yac` and `yac1fb9` support a couple of additional features which can be controlled with switches:
