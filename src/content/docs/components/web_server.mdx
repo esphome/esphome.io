@@ -185,7 +185,7 @@ Recommendations:
 ### Cross-Origin Requests
 
 By default the web server rejects cross-origin browser requests to every endpoint it serves, including the web
-OTA `/update` endpoint and the [Prometheus](/components/prometheus) `/metrics` endpoint. The captive portal
+OTA `/update` endpoint and the [Prometheus](/components/prometheus/) `/metrics` endpoint. The captive portal
 pages are open by design and not checked.
 When a request carries an `Origin` header, it is allowed only if it is *same-origin* — that is, the `Origin`
 matches the address the device is served on (its IP address, mDNS `<node_name>.local` name, or DNS name) — or
@@ -194,8 +194,7 @@ if the origin is listed in `allowed_origins`. This is defense-in-depth against t
 
 Requests that do not carry an `Origin` header — `curl`, scripts, the native API, and other non-browser
 clients — are always allowed. The `Origin` check only constrains browsers; it is **not** an authentication
-boundary. To restrict access itself, use `auth:` and keep
-devices on a trusted, segmented network. See the project
+boundary. To restrict access itself, use `auth:` and keep devices on a trusted, segmented network. See the project
 [threat model](https://github.com/esphome/esphome/blob/dev/THREAT_MODEL.md) for the full scope.
 
 To allow a specific external site to make cross-origin requests, list its origin:
