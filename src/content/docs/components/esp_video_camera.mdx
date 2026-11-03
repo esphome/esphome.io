@@ -7,9 +7,9 @@ The `esp_video_camera` [camera](/components/camera/) platform exposes the camera
 as a native camera entity, using Espressif's `esp_video` (V4L2) framework. It works with auto-detected MIPI-CSI
 sensors (SC202CS, OV5647, SC2336) through the hardware JPEG encoder, and with USB-UVC cameras on the USB-OTG port.
 
-Requires the ESP-IDF framework on an ESP32-P4 and [PSRAM](/components/psram/): a single 1280x720 capture buffer is
-already 1.8 MB, well past what internal RAM can hold. A MIPI-CSI sensor is probed over [I²C](/components/i2c/), so
-that bus has to be configured as well; a USB camera is not on any bus and needs none.
+Requires an ESP32-P4 with the ESP-IDF framework (version 5.4 or later) and [PSRAM](/components/psram/): a single
+1280x720 capture buffer is already 1.8 MB, well past what internal RAM can hold. A MIPI-CSI sensor is probed over
+[I²C](/components/i2c/), so that bus has to be configured as well; a USB camera is not on any bus and needs none.
 
 ## Configuration
 
@@ -21,14 +21,14 @@ esp_video_camera:
 
 ## Configuration Variables
 
-- **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must
-  be specified.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID for code generation. At least
+  one of **id** and **name** must be specified.
 - **name** (*Optional*, string): The name of the camera entity. At least one of **id** and **name** must be
   specified.
-- **i2c_id** (*Optional*, ID): The [I²C](/components/i2c/) bus used to talk to the MIPI-CSI sensor (SCCB). Required
-  for every device except a USB camera.
+- **i2c_id** (*Optional*, [ID](/guides/configuration-types/#id)): The [I²C](/components/i2c/) bus used to talk to the
+  MIPI-CSI sensor (SCCB). Required for every device except a USB camera.
 - **device** (*Optional*, string): Frame source. Defaults to `jpeg`.
-  - `jpeg`: the hardware JPEG encoder — works with every auto-detected MIPI sensor.
+  - `jpeg`: the hardware JPEG encoder. Works with every auto-detected MIPI sensor.
   - `uvc` / `uvc0` … `uvc9`: a USB-UVC camera; see [USB Cameras](#usb-cameras).
   - `/dev/videoN`: an explicit V4L2 device path. `esp_video` numbers USB-UVC cameras `/dev/video40` upwards, so
     such a path counts as a USB camera too.
@@ -37,24 +37,39 @@ esp_video_camera:
   [Sensors and Resolutions](#sensors-and-resolutions). A USB camera carries its own format list and is resized at
   runtime, so it takes a resolution on its own.
 - **sensor_model** (*Optional*, string): The MIPI-CSI sensor on the board: `sc202cs` (alias `sc2356`), `ov5647` or
-  `sc2336`. Only needed in order to ask for a specific `resolution`; detection does not use it.
-- **jpeg_quality** (*Optional*, int): `1`–`100` for the hardware JPEG encoder, where **higher is better**. Defaults
-  to `80`, the encoder's own default.
-- **max_framerate** (*Optional*, float): Maximum frames per second delivered to Home Assistant, `0.1`–`60`. Defaults
-  to `10`.
+  `sc2336`. Only needed in order to ask for a specific `resolution`; detection does not use it. Naming `sc202cs`
+  also applies a colour tuning file measured on real boards in place of the sensor's stock one.
+- **jpeg_quality** (*Optional*, int): `1` to `100` for the hardware JPEG encoder, where **higher is better**.
+  Defaults to `80`, the encoder's own default.
+- **max_framerate** (*Optional*, float): Maximum frames per second delivered to Home Assistant, `0.1` to `60`.
+  Defaults to `10`.
 - **xclk_pin** (*Optional*, pin): The pin to generate the sensor clock on. Naming one is what turns the clock on,
-  so leave it out — or give `-1` / `NO_CLOCK` — on a board that already drives the sensor clock itself, which most
-  ESP32-P4 boards do.
-- **xclk_frequency** (*Optional*, frequency): Sensor clock frequency, 1–40 MHz. Defaults to `24MHz`. Only used when
-  `xclk_pin` names a pin.
+  so leave it out (or give `-1` / `NO_CLOCK`) on a board that already drives the sensor clock itself, which most
+  ESP32-P4 boards do. See [Sensor Clock](#sensor-clock).
+- **xclk_frequency** (*Optional*, frequency): Sensor clock frequency, `1MHz` to `40MHz`. Defaults to `24MHz`. Only used
+  when `xclk_pin` names a pin.
 - **usb_peripheral_map** (*Optional*, int): Which of the ESP32-P4's two USB controllers the board wires its host
-  connector to, as a bit mask. Defaults to `0`, the High-Speed one, which is right for most boards.
-- All other options from the [Camera](/components/camera/) component.
+  connector to, as a bit mask from `0` to `0xFF`. Defaults to `0`, the High-Speed one, which is right for most
+  boards. Only used by a USB camera.
+- **icon** (*Optional*, icon): Manually set the icon to use for the camera in the frontend.
+- **internal** (*Optional*, boolean): Mark this component as internal. Internal components will not be exposed to
+  the frontend (like Home Assistant). Only specifying an `id` without a `name` will implicitly set this to true.
+- **disabled_by_default** (*Optional*, boolean): If true, then this entity should not be added to any client's
+  frontend (usually Home Assistant) without the user manually enabling it. Defaults to `false`.
+- **entity_category** (*Optional*, string): The category of the entity. See the
+  [Home Assistant entity docs](https://developers.home-assistant.io/docs/core/entity/#generic-properties) for a list
+  of available options. Set to `""` to remove the default entity category.
 
 > [!IMPORTANT]
 > `jpeg_quality` is not the `1`–`63` scale of the [ESP32 Camera](/components/esp32_camera/) component, where lower
 > is better. Here it is V4L2's `1`–`100`, where higher is better; a value around `10` gives a heavily blocked
 > picture of a few tens of kilobytes.
+
+> [!NOTE]
+> At an ESP-IDF log level of `DEBUG` or `VERBOSE` (`esp32: framework: log_level:`), `esp_video`'s image tuning
+> prints several lines for every frame, which buries the camera's own log lines and slows it down badly. ESPHome
+> warns about this at build time. Keep that level at `ERROR`; the [Logger](/components/logger/) level is a separate
+> setting and can stay at `DEBUG`.
 
 ## Sensors and Resolutions
 
@@ -81,6 +96,22 @@ esp_video_camera:
 ```
 
 Leaving `resolution` at `auto` needs no `sensor_model` and works with whichever of the three sensors is on the board.
+
+## Sensor Clock
+
+Most ESP32-P4 boards drive the sensor clock from an on-board oscillator, so `xclk_pin` is usually left out. When it
+is set, the clock is generated on the top LEDC timer (timer 3) and channel. The [LEDC](/components/output/ledc/)
+output component pairs its channels onto timers, so channels 6 and 7 share that timer: a `ledc` output on one of
+them, or one that would be given one of them automatically, is rejected at validation time. Give such outputs a
+`channel` below 6, or remove `xclk_pin` if the board drives the clock itself.
+
+```yaml
+esp_video_camera:
+  name: "ESP32-P4 Camera"
+  i2c_id: bus_a
+  xclk_pin: GPIO36
+  xclk_frequency: 24MHz
+```
 
 ## USB Cameras
 
