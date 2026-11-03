@@ -25,8 +25,9 @@ esp_video_camera:
   one of **id** and **name** must be specified.
 - **name** (*Optional*, string): The name of the camera entity. At least one of **id** and **name** must be
   specified.
-- **i2c_id** (*Optional*, [ID](/guides/configuration-types/#id)): The [I²C](/components/i2c/) bus used to talk to the
-  MIPI-CSI sensor (SCCB). Required for every device except a USB camera.
+- **i2c_id** (*Optional*, [ID](/guides/configuration-types/#id)): The [I²C](/components/i2c/) bus the MIPI-CSI sensor
+  is probed on (SCCB). Optional only because a USB camera sits on no bus and needs none; every other device has to
+  name one, and there is no fallback to a single configured bus.
 - **device** (*Optional*, string): Frame source. Defaults to `jpeg`.
   - `jpeg`: the hardware JPEG encoder. Works with every auto-detected MIPI sensor.
   - `uvc` / `uvc0` … `uvc9`: a USB-UVC camera; see [USB Cameras](#usb-cameras).
@@ -109,8 +110,7 @@ them, or one that would be given one of them automatically, is rejected at valid
 esp_video_camera:
   name: "ESP32-P4 Camera"
   i2c_id: bus_a
-  xclk_pin: GPIO36
-  xclk_frequency: 24MHz
+  xclk_pin: GPIOXX
 ```
 
 ## USB Cameras
