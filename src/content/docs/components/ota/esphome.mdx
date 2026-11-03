@@ -76,6 +76,11 @@ ota:
   - `8892` for Realtek RTL87xx chips
   - `8820` for LN882x chips
   - `8082` for the [host platform](/components/host/)
+  - `4232` for the `nrf`, `nxp`, `renesas`, `silabs` and `stm32` platforms
+
+- **swap_method** (*Optional*, string): Zephyr platforms other than `nrf52` only. The MCUboot image-swap algorithm to use for
+  applying an update. One of `scratch`, `move`, `offset`. See [Swap methods](#swap-methods) below for
+  what each one does and the per-variant defaults/availability.
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 - **version** (*Optional*, int): Version of OTA protocol to use. Version 2 is more stable. To downgrade to legacy
    ESPHome, the device should be updated with OTA version 1 first. Defaults to `2`.
@@ -86,6 +91,48 @@ ota:
 > After a serial upload, ESP8266 modules must be reset before OTA updates will work. If you attempt to perform an OTA
 > update and receive the error message `Bad Answer: ERR: ERROR[11]: Invalid bootstrapping`, the ESP module/board
 > must be power-cycled.
+
+## Swap methods
+
+`swap_method` (Zephyr platforms other than `nrf52` only) picks which of [MCUboot](https://docs.mcuboot.com/)'s image-swap
+algorithms applies an update. All three write the new image into the secondary (update) slot first,
+then swap it into the primary (boot) slot in place, sector by sector -- they differ in what extra flash
+space that swap needs and how the work is split between the two slots:
+
+| Method | Extra flash needed | How it swaps | Erase cycles per update |
+| --- | --- | --- | --- |
+| `scratch` | A separate scratch partition (at least as large as the biggest sector being swapped) | Each sector is copied out to scratch, the primary slot's copy erased, the secondary slot's copy moved into its place, then scratch's copy moved into the secondary slot | Highest -- scratch is erased on every sector swapped, on top of one erase per slot |
+| `move` | One extra sector at the *end* of the primary slot | Primary slot's sectors shift up by one to free room at the start, then secondary and primary alternate copying into place | Two erases on the primary slot, one on the secondary slot |
+| `offset` | One extra sector at the *end* of the secondary slot (equal-sized slots are also accepted) | Primary and secondary swap sector-by-sector using the secondary slot's extra sector as a staging area, rather than shifting the whole primary slot | One erase on each slot -- the most balanced of the three |
+
+`scratch` needs a dedicated scratch partition and wears it out fastest of the three, but it's the
+original/most conservative algorithm and needs no extra sector in either slot. `move` avoids the
+scratch partition at the cost of an extra sector in the primary slot and uneven wear between the two
+slots. `offset` is a newer algorithm that also avoids the scratch partition, needs an extra sector in
+the secondary slot instead, and spreads wear evenly across both slots -- generally the preferred choice
+where a variant's port supports it.
+
+Which methods a given variant/board's flash layout supports (and which one it defaults to) varies:
+
+| Variant | Supported methods | Default |
+| --- | --- | --- |
+| `esp32`, `esp32c3`, `esp32c5`, `esp32c6`, `esp32h2`, `esp32s3` | `scratch`, `move`, `offset` | `offset` |
+| `stm32f4` | `scratch`, `move`, `offset` | `offset` |
+| `nrf52`, `nrf54l15`, `nrf54lm20a` | `move`, `offset` | `move` |
+| `efr32mg24`, `ra4m1`, `rp2040`, `rp2350`, `stm32f1`, `stm32l4`, `stm32u5` | `move`, `offset` | `offset` |
+
+`scratch` needs a `scratch_partition` in the board's devicetree, so it is only offered on the variants whose boards
+can have one. `siwx917` has no MCUboot, so `swap_method` does not apply there. `mcxn236` runs MCUboot in
+upgrade-only mode, which has no swap method, so it has no OTA. The build checks the
+flash layout and stops with an error if the chosen method does not fit it.
+
+The build also stops with an error when the application image is larger than MCUboot can swap in on the board, and
+removes that image. Otherwise the update would stay pending and block every later OTA. The build output shows
+`Application image: N of M bytes MCUboot can swap in`, so you can see how much room is left.
+
+> [!IMPORTANT]
+> The Espressif boards have no `scratch_partition` in Zephyr 4.5 and newer. To use `scratch` on an Espressif
+> variant, add one with `framework: overlays:`.
 
 ## Updating the Password
 

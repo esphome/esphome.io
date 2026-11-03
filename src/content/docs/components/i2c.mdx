@@ -7,8 +7,8 @@ import APIRef from '@components/APIRef.astro';
 
 <span id="i2c"></span>
 
-This component sets up the I²C bus for your `esp32`, `esp8266`, `rp2040`, `nrf52`, `bk72xx`, or `host` platform. In
-order for these components to work correctly, you need to define the I²C bus in your configuration. On ESP32 (both
+This component sets up the I²C bus for your `esp32`, `esp8266`, `rp2040`, `nrf`, `nrf52`, `nxp`, `renesas`, `silabs`,
+`stm32`, `bk72xx`, or `host` platform. In order for these components to work correctly, you need to define the I²C bus in your configuration. On ESP32 (both
 Arduino and ESP-IDF frameworks), internal pullup resistors are enabled by default. On ESP8266, the internal 10kΩ pullup
 resistors are always enabled. External pullups are still recommended for longer wire runs or multiple devices. You can
 use multiple devices on one I²C bus as each device is given a unique address for communicating between it and the ESP.
@@ -92,6 +92,18 @@ transfer small. The actual clock frequency can be lower than configured because 
 ### `host`
 
 - **device** (**Required**, string): The I²C device path to use (e.g., `/dev/i2c-0`, `/dev/i2c-1`).
+
+### Zephyr
+
+- **sda**, **scl** (*Optional*, [Pin](/guides/configuration-types#pin)): If not set, ESPHome tries to read the
+  pin assignments from the board's devicetree. If they can't be determined this way (for example, a custom
+  board with flexible pin muxing, like nRF52), both must be set explicitly.
+- **dts_node_override** (*Optional*, string): The devicetree node label of the I²C controller to use (e.g.
+  `i2c0`), for when ESPHome can't automatically determine which of the board's I²C buses is enabled. Only
+  needed if config validation reports it couldn't resolve the bus automatically.
+
+> [!NOTE]
+> Only a single I²C bus is currently supported on the Zephyr platforms.
 
 ## Multiple I²C buses
 

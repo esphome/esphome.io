@@ -1,0 +1,92 @@
+---
+description: "Configuration for the NXP platform for ESPHome."
+title: "NXP Platform"
+---
+
+> [!NOTE]
+> Support for this platform is still experimental. Not every ESPHome component or feature is available
+> on every variant.
+
+This component contains platform-specific options for NXP chips, built with
+[Zephyr](/components/zephyr/).
+
+```yaml
+# Example configuration entry
+nxp:
+  variant: MCXN236
+```
+
+## Configuration variables
+
+- **variant** (**Required**, string): The chip to build for: `MCXN236`. See [Variants](#variants).
+- **board** (*Optional*, string): The Zephyr board to build for. Defaults to the variant's default board.
+  See [`board`](/components/zephyr/#configuration-variables).
+- **watchdog_timeout** (*Optional*, [Time](/guides/configuration-types#time)): How long the main loop may go
+  without checking in before the hardware watchdog resets the device. `0` disables it. Defaults to `10s`,
+  or the variant's maximum when that is lower. See [Notes](#notes) for each variant's range.
+- **framework** (*Optional*, mapping): **type** is `zephyr` (mainline Zephyr). Every other Zephyr option goes here
+  too; see [Zephyr](/components/zephyr/#configuration-variables).
+
+## Variants
+
+| Variant | Chip | Default board | Default framework | Supports |
+| --- | --- | --- | --- | --- |
+| `MCXN236` | NXP MCX N236 (Cortex-M33) | [`frdm_mcxn236`](https://docs.zephyrproject.org/latest/boards/nxp/frdm_mcxn236/doc/index.html) | mainline Zephyr | No wireless |
+
+## Notes
+
+`watchdog_timeout` on `MCXN236` is `0` or `5s`–`60s`.
+
+The FRDM-MCXN236's devicetree places `slot1_partition` so that it runs 8K into `storage_partition`, and the build
+stops with a flash layout error. Until Zephyr fixes the board, move `slot1_partition` in both the app and MCUboot
+images:
+
+```yaml
+nxp:
+  variant: MCXN236
+  framework:
+    overlays:
+      app: |
+        &slot1_partition { reg = <0x82000 DT_SIZE_K(440)>; };
+      mcuboot: |
+        &slot1_partition { reg = <0x82000 DT_SIZE_K(440)>; };
+```
+
+MCUboot is the default bootloader and is needed to boot the default board. MCUboot can only run in upgrade-only
+mode on this chip, so there is no swap method and no OTA.
+
+The board leaves GPIO port 5 disabled. To use `P5_x` pins, enable it with an overlay:
+
+```yaml
+nxp:
+  framework:
+    overlays:
+      app: |
+        &gpio5 { status = "okay"; };
+```
+
+## Serial Load Process
+
+See [Serial Load Process](/components/zephyr/#serial-load-process) for what applies to every platform.
+
+The FRDM-MCXN236 has two USB ports. The **MCU-Link** port powers the board, flashes it through the on-board
+MCU-Link debug probe, and carries the console UART, so logs appear on its serial port (`/dev/ttyACM0` on Linux).
+The **MCU USB** port connects to the chip's own USB controller and is only used with `logger: hardware_uart: USB_CDC`
+or [`usb_cdc_acm`](/components/usb_cdc_acm/).
+
+The board's default flash runner is NXP's LinkServer, which must be installed separately. Instead, pyOCD, which
+ships with the Zephyr tools, works with the MCU-Link's factory firmware. Install the chip's support pack once with
+`pyocd pack install mcxn236`, and select the runner:
+
+```yaml
+nxp:
+  framework:
+    advanced:
+      runner: pyocd
+```
+
+Then flash with `esphome run <config-file> --device /dev/ttyACM0`.
+
+## See Also
+
+- [Zephyr](/components/zephyr/)

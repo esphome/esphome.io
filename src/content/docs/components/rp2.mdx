@@ -163,7 +163,61 @@ Then connect a USB-to-serial adapter to your board's UART0 pins:
 Open a serial terminal at 115200 baud to view logs. This is especially useful for diagnosing boot
 failures, WiFi issues, or crashes that prevent USB from initializing.
 
+## Zephyr framework
+
+`framework: type: zephyr` builds this platform with [Zephyr](/components/zephyr/) instead of
+Arduino. It supports the `RP2040` and `RP2350` variants, and every
+Zephyr option goes under `framework:`; see [Zephyr](/components/zephyr/#configuration-variables). Options
+on this page that belong to Arduino don't apply.
+
+> [!NOTE]
+> Support for Zephyr is still experimental. Not every ESPHome component or feature is available on every
+> variant.
+
+```yaml
+# Example configuration entry
+rp2:
+  variant: RP2040
+  framework:
+    type: zephyr
+```
+
+### Zephyr variants
+
+| Variant | Chip | Default board | Default framework | Supports |
+| --- | --- | --- | --- | --- |
+| `RP2040` | Raspberry Pi RP2040 (Cortex-M0+) | [`rpi_pico`](https://docs.zephyrproject.org/latest/boards/raspberrypi/rpi_pico/doc/index.html) | mainline Zephyr | No wireless |
+| `RP2350` | Raspberry Pi RP2350 (Cortex-M33, dual-core) | [`rpi_pico2`](https://docs.zephyrproject.org/latest/boards/raspberrypi/rpi_pico2/doc/index.html) | mainline Zephyr | No wireless |
+
+### Zephyr notes
+
+`RP2350` and `RP2040` do not have SMP support. `RP2350`'s real hardware TRNG currently hangs the boot
+sequence with Zephyr's driver, so it uses the same software-PRNG fallback (`TEST_RANDOM_GENERATOR`) as
+`RP2040` pending an upstream update. `watchdog_timeout`'s upper bound is lower than the generic 60s
+ceiling on this hardware watchdog: **8s** on `RP2040`, and **16s** on `RP2350`, due to clock limitations.
+
+### Zephyr serial load process
+
+See [Serial Load Process](/components/zephyr/#serial-load-process) for what applies to every platform.
+
+`RP2040`/`RP2350` have a ROM bootloader, `BOOTSEL`, that flashes the chip directly — MCUboot is
+optional (default `framework: advanced: bootloader:`). On blank silicon, the physical BOOTSEL button must
+be held once to enter BOOTSEL mode manually for that first flash. When MCUboot is enabled, ESPHome's
+own upload code (`_upload_using_picotool()`) explicitly flashes both the MCUboot image and the signed
+application together — `picotool` isn't sysbuild-domain-aware the way `west flash` is, so ESPHome
+does that two-image handling itself rather than relying on the tool.
+
+After initial flash via `esphome run`, the `RP2040` and `RP2350` boards use the cross-ecosystem 
+"1200 baud touch" convention: opening the board's USB CDC port at 1200 baud tells firmware to reboot
+into the ROM USB (BOOTSEL) bootloader, so `esphome run` no longer needs the physical BOOTSEL button
+held.
+
+> [!IMPORTANT]
+> Once triggered, BOOTSEL mode is anonymous, therefore, for serial flash, only 1 device should be
+> available to ESPHome.
+
 ## See Also
 
 - [RP2040 BLE Component](/components/rp2040_ble/)
 - [ESPHome Core Configuration](/components/esphome/)
+- [Zephyr](/components/zephyr/)

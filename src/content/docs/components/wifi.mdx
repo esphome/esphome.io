@@ -21,6 +21,11 @@ connection, see [WISP Mode](#wisp-mode).
 It's recommended to provide a static IP for your node, as it can
 dramatically improve connection times.
 
+> [!NOTE]
+> On Zephyr, WiFi is only supported on some variants — see the
+> [Zephyr platforms](/components/zephyr/).
+> ON the `esp32`, the wifi component is unstable and my not run.
+
 ```yaml
 # Example configuration entry
 wifi:
@@ -155,7 +160,8 @@ wifi:
   > Be aware that marking networks as hidden prevents ESPHome from finding the best access point to connect to,
   > so the device may not connect to the AP with the best signal strength.
 
-- **lease_cache** (*Optional*): Only on `esp32` with the ESP-IDF framework. Remembers the DHCP lease the device is
+- **lease_cache** (*Optional*): Only on `esp32` with the ESP-IDF framework, and on the Zephyr platforms, where it works
+  differently (see below). Remembers the DHCP lease the device is
   assigned and, on the next boot, re-applies it as a static IP **without running DHCP** while it is still valid. This
   skips the DHCP handshake, so the network is usable in milliseconds. It is most useful for battery-powered devices
   that wake from deep sleep frequently. Disabled by default. Accepts a boolean, or a settings block:
@@ -202,6 +208,11 @@ wifi:
   > each wake, so it can keep applying a stale address until the lease ages past that deadline. Use `max_age` to bound
   > this window, or a `manual_ip` if the address must never be stale.
 
+  On the Zephyr platforms, only the address is saved, in flash (the default storage there, since Zephyr has no RTC
+  memory). The device still runs DHCP on the next connect, but starts by asking the server to confirm the saved
+  address (DHCP INIT-REBOOT). This is quicker than a full DHCP exchange and keeps the same address, and since the
+  server confirms it, the address cannot be stale. `max_age` has no effect there.
+
 - **min_auth_mode** (*Optional*, string): Only on `esp32` and `esp8266`. Sets the minimum WiFi authentication mode
   that the device will accept when connecting to access points. This controls the weakest encryption your device will
   allow. Possible values are:
@@ -218,6 +229,11 @@ wifi:
 
 - **passive_scan** (*Optional*, boolean): If enabled, then the device will perform WiFi scans in a passive fashion.
   Defaults to `false`.
+
+- **min_rssi** (*Optional*, string): Only on the Zephyr platforms. The minimum signal strength a scanned network must have to be
+  considered as a connection candidate at all, e.g. `-85dB`. Accepts values from `-100dB` to `-20dB`. Weaker scan
+  results are discarded before any connection attempt is made. If not specified, no filtering is applied (all scan
+  results are considered, down to the lowest signal strength the radio reports).
 
 - **enable_btm** (*Optional*, bool): Only on `esp32`. Enable 802.11v BSS Transition Management support.
 - **enable_rrm** (*Optional*, bool): Only on `esp32`. Enable 802.11k Radio Resource Management support.

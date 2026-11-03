@@ -1,0 +1,76 @@
+---
+description: "Configuration for the STM32 platform for ESPHome."
+title: "STM32 Platform"
+---
+
+> [!NOTE]
+> Support for this platform is still experimental. Not every ESPHome component or feature is available
+> on every variant.
+
+This component contains platform-specific options for STMicroelectronics STM32 chips, built with
+[Zephyr](/components/zephyr/).
+
+```yaml
+# Example configuration entry
+stm32:
+  variant: STM32F4
+```
+
+## Configuration variables
+
+- **variant** (**Required**, string): The chip to build for: `STM32C5`, `STM32F1`, `STM32F4`, `STM32L4` or `STM32U5`. See [Variants](#variants).
+- **board** (*Optional*, string): The Zephyr board to build for. Defaults to the variant's default board.
+  See [`board`](/components/zephyr/#configuration-variables).
+- **watchdog_timeout** (*Optional*, [Time](/guides/configuration-types#time)): How long the main loop may go
+  without checking in before the hardware watchdog resets the device. `0` disables it. Defaults to `10s`,
+  or the variant's maximum when that is lower. See [Notes](#notes) for each variant's range.
+- **framework** (*Optional*, mapping): **type** is `zephyr` (mainline Zephyr). Every other Zephyr option goes here
+  too; see [Zephyr](/components/zephyr/#configuration-variables).
+
+## Variants
+
+| Variant | Chip | Default board | Default framework | Supports |
+| --- | --- | --- | --- | --- |
+| `STM32F1` | STM32F1 (Cortex-M3) | [`nucleo_f103rb`](https://docs.zephyrproject.org/latest/boards/st/nucleo_f103rb/doc/index.html) | mainline Zephyr | No wireless |
+| `STM32C5` | STM32C5 (Cortex-M33) | [`nucleo_c5a3zg`](https://docs.zephyrproject.org/latest/boards/st/nucleo_c5a3zg/doc/index.html) | mainline Zephyr | No wireless |
+| `STM32F4` | STM32F4 (Cortex-M4) | [`nucleo_f401re`](https://docs.zephyrproject.org/latest/boards/st/nucleo_f401re/doc/index.html) | mainline Zephyr | No wireless |
+| `STM32L4` | STM32L4 (Cortex-M4) | [`nucleo_l476rg`](https://docs.zephyrproject.org/latest/boards/st/nucleo_l476rg/doc/index.html) | mainline Zephyr | No wireless |
+| `STM32U5` | STM32U5 (Cortex-M33) | [`stm32u5g9j_dk1`](https://docs.zephyrproject.org/latest/boards/st/stm32u5g9j_dk1/doc/index.html) | mainline Zephyr | No wireless |
+
+## Notes
+
+`watchdog_timeout` on `STM32L4` and `STM32F4` is `0` or `5s`–`32s`; on `STM32F1` is `0` and `5s`-`26s`;
+`STM32U5` and `STM32C5` is `0` and `5s`-`60s`.
+
+The Seeed XIAO STM32C5 (`board: xiao_stm32c5`) needs Zephyr 4.5.0 or later (the default). ESPHome
+adds the USB clock and USB pins that the board's devicetree is missing, so the USB serial port works.
+
+## Serial Load Process
+
+See [Serial Load Process](/components/zephyr/#serial-load-process) for what applies to every platform.
+
+STM32 boards typically have a ROM-resident "system memory" bootloader, this has been tested
+using the stm32f4 WEACT Black Pill and allowed use of the default dfu-utils using 
+`esphome run <config-file> --device /dev/ttyACM<n>`.  The device had to be in boot mode and
+only oddity was having to put the device back into boot mode after the MCUBoot was loaded.
+Installation via SWD is also typically available for serial flash. MCUboot is optional
+(`framework: advanced: bootloader:`, defaulted to `none` on `STM32L4`; and 'mcuboot` for `STM32F1`,`STM32F4`
+, and `STM32U5`.
+
+The Seeed XIAO STM32C5 ships with a TinyUF2 bootloader, and `esphome run` writes `zephyr.uf2` straight to
+the bootloader's USB disk without mounting it. On Linux, give your user write access to that disk once
+with a udev rule, then unplug and replug the board:
+
+```bash
+echo 'SUBSYSTEM=="block", ATTRS{idVendor}=="2886", ATTRS{idProduct}=="00c5", GROUP="plugdev", MODE="0660"' | sudo tee /etc/udev/rules.d/63-tinyuf2.rules
+sudo udevadm control --reload-rules
+```
+
+For the first flash, put the board into bootloader mode by hand, because the factory firmware cannot reboot
+into it, then run `esphome run <config-file> --device /dev/ttyACM0`. After that, `esphome run` reflashes
+with no button: opening the USB serial port at 1200 baud reboots the app into the bootloader.
+`esphome logs <config-file> --reset` reboots the app.
+
+## See Also
+
+- [Zephyr](/components/zephyr/)

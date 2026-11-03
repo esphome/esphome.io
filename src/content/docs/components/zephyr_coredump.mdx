@@ -1,5 +1,5 @@
 ---
-description: "Store a crash dump in flash on nRF52 devices and print it at the next boot"
+description: "Store a crash dump in flash on nRF52 and Zephyr devices and print it at the next boot"
 title: "Zephyr Coredump"
 ---
 
@@ -85,6 +85,43 @@ arm-zephyr-eabi-gdb zephyr.elf
 The [Zephyr coredump documentation](https://docs.zephyrproject.org/latest/services/debugging/coredump.html)
 describes the tools in more detail. The dump holds every thread's stack with nRF Connect SDK 2.9.2 and
 later; older SDKs store the faulting thread only.
+
+## Zephyr Platform
+
+The component also works on every [Zephyr](/components/zephyr/) variant. There, the dump goes to a `coredump_partition` from the board's devicetree. Some boards already
+have one (the Espressif boards ship a 4 KB one, too small for a dump of every thread); otherwise add it with
+[`framework: overlays`](/components/zephyr/#overlays). The build fails if the partition is missing.
+
+```yaml
+# Example configuration entry: replace the ESP32-H2 board's 4 KB partition with a 32 KB one
+esp32:
+  variant: ESP32H2
+  framework:
+    type: zephyr
+    overlays:
+      app: |
+        /delete-node/ &coredump_partition;
+
+        &flash0 {
+          partitions {
+            coredump_partition: partition@3f8000 {
+              compatible = "zephyr,mapped-partition";
+              label = "coredump";
+              reg = <0x3f8000 0x8000>;
+            };
+          };
+        };
+
+zephyr_coredump:
+```
+
+The dump holds every thread's stack, except on `esp32` and `esp32s3` (Xtensa), which store the faulting thread
+only. `zephyr.elf` is at `.esphome/build/<name>/.west_build/zephyr/zephyr/zephyr.elf`.
+
+> [!WARNING]
+> On Zephyr 4.1 and later, a dump larger than about 4 KB fails its check and is lost when an `ota:` platform is
+> also configured, because of a Zephyr bug in progressive flash erase. The fix,
+> [zephyrproject-rtos/zephyr#122423](https://github.com/zephyrproject-rtos/zephyr/pull/122423), is not yet merged.
 
 ## See Also
 

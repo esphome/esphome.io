@@ -1093,6 +1093,71 @@ binary_sensor:
     pin: GPIO23
 ```
 
+## Zephyr framework
+
+`framework: type: zephyr` builds this platform with [Zephyr](/components/zephyr/) instead of
+ESP-IDF or Arduino. It supports the `ESP32`, `ESP32C3`, `ESP32C5`, `ESP32C6`, `ESP32H2` and `ESP32S3` variants, and every
+Zephyr option goes under `framework:`; see [Zephyr](/components/zephyr/#configuration-variables). Options
+on this page that belong to ESP-IDF and Arduino don't apply.
+
+> [!NOTE]
+> Support for Zephyr is still experimental. Not every ESPHome component or feature is available on every
+> variant.
+
+```yaml
+# Example configuration entry
+esp32:
+  variant: ESP32C6
+  framework:
+    type: zephyr
+```
+
+### Zephyr variants
+
+| Variant | Chip | Default board | Default framework | Supports |
+| --- | --- | --- | --- | --- |
+| `ESP32` | Original ESP32 (Xtensa, dual-core) | [`esp32_devkitc`](https://docs.zephyrproject.org/latest/boards/espressif/esp32_devkitc/doc/index.html) | mainline Zephyr | Wi-Fi, BLE |
+| `ESP32C3` | ESP32-C3 (RISC-V, single-core) | [`esp32c3_devkitm`](https://docs.zephyrproject.org/latest/boards/espressif/esp32c3_devkitm/doc/index.html) | mainline Zephyr | Wi-Fi, BLE |
+| `ESP32C5` | ESP32-C5 (RISC-V, dual-band Wi-Fi 6) | [`esp32c5_devkitc`](https://docs.zephyrproject.org/latest/boards/espressif/esp32c5_devkitc/doc/index.html) | mainline Zephyr | Wi-Fi (2.4GHz + 5GHz), BLE, Thread (via `openthread:`) |
+| `ESP32C6` | ESP32-C6 (RISC-V) | [`esp32c6_devkitc`](https://docs.zephyrproject.org/latest/boards/espressif/esp32c6_devkitc/doc/index.html) | mainline Zephyr | Wi-Fi, BLE, Thread (via `openthread:`) |
+| `ESP32H2` | ESP32-H2 (RISC-V) | [`esp32h2_devkitm`](https://docs.zephyrproject.org/latest/boards/espressif/esp32h2_devkitm/doc/index.html) | mainline Zephyr | BLE, Thread (via `openthread:`) |
+| `ESP32S3` | ESP32-S3 (Xtensa, dual-core) | [`esp32s3_devkitc`](https://docs.zephyrproject.org/latest/boards/espressif/esp32s3_devkitc/doc/index.html) | mainline Zephyr | Wi-Fi, BLE |
+
+### Zephyr notes
+
+`esp32` and `ESP32S3` are dual-core, but only the first core (PRO_CPU) is used; a warning is logged at
+config time. Espressif is working on SMP solutions for `ESP32S3` and `esp32p4`; they have remained
+silent on `esp32`.
+
+The default `esp32s3_devkitc` board assumes an N8 module (8MB flash, no PSRAM). For other modules, add
+Espressif's flash and PSRAM snippets. Octal PSRAM (R8 modules) also needs `CONFIG_SPIRAM_MODE_OCT`, and
+uses GPIO33-37, which are not blocked at config time:
+
+```yaml
+esp32:
+  variant: ESP32S3
+  # N16R8 module: 16MB flash, 8MB octal PSRAM
+  framework:
+    type: zephyr
+    snippets:
+      - espressif-flash-16M
+      - espressif-psram-8M
+    kconfig_options:
+      CONFIG_SPIRAM_MODE_OCT: true
+```
+
+### Zephyr serial load process
+
+See [Serial Load Process](/components/zephyr/#serial-load-process) for what applies to every platform.
+
+Espressif chips have a ROM bootloader that can flash images over serial from blank silicon.
+MCUboot is not optional on `esp32*` — there is no `framework: advanced: bootloader: none` option for any
+`esp32*` variant. A plain `esphome run` with no `--device` works out of the box, even on blank
+silicon: the ROM bootloader accepts a full sysbuild image over serial, and Zephyr's own esptool
+runner is sysbuild-domain-aware, so MCUboot and the signed application are flashed together in one
+command, every time.  Espressif chips are signed with a `RSA-2048` verification code.
+
 ## See Also
 
 - [ESPHome Core Configuration](/components/esphome/)
+- [Zephyr](/components/zephyr/)

@@ -45,7 +45,8 @@ Advanced settings:
    for log messages. Decrease this if you're having memory problems.
    Defaults to `512`.
 
-- **task_log_buffer_size** (*Optional*, int): **ESP32, LibreTiny and nRF52 only**: The size of the internal thread-safe ring buffer for task log messages.
+- **task_log_buffer_size** (*Optional*, int): **ESP32, LibreTiny, nRF52, and Zephyr only**: The size of the
+   internal thread-safe ring buffer for task log messages.
    This prevents API disconnections when multiple threads attempt to log simultaneously.
    Set to `0` to disable the log buffer. Defaults to `768B`.
 
@@ -63,7 +64,8 @@ Advanced settings:
    boot level cannot be more verbose than its `logs` level.
 
 - **hardware_uart** (*Optional*, string): The Hardware UART to use for logging. The default varies depending on
-   the specific processor/chip and framework you are using. See the [table below](#default-hardware-interfaces).
+   the specific processor/chip and framework you are using. See the [table below](#default-hardware-interfaces),
+   and [Zephyr](#zephyr) for the values the Zephyr platforms accept.
 
 - **esp8266_store_log_strings_in_flash** (*Optional*, boolean): **ESP8266 only, deprecated.**
    Log format strings always live in flash via `PROGMEM`; the logger reads and formats them from
@@ -86,10 +88,10 @@ Advanced settings:
    level since RTS/DTR are usually low active signals.
 
 - **wait_for_cdc** (*Optional*, boolean): Waits for the CDC port before starting setup (10-second timeout).
-   Only on nRF52.
+   Only on nRF52 and Zephyr, with `hardware_uart: USB_CDC`.
 
 - **early_message** (*Optional*, boolean): Displays early debug information, such as the boot reason.
-   Only on nRF52.
+   Only on nRF52 and Zephyr.
 
 ## Hardware UARTs
 
@@ -138,6 +140,37 @@ the original ESP32 or ESP8266) continue to use USB-to-serial bridge ICs for comm
 | ESP32-S3  | `USB_SERIAL_JTAG` |
 | RP2040    | `USB_CDC`         |
 | NRF52     | `USB_CDC`         |
+
+### Zephyr
+
+On the [Zephyr platforms](/components/zephyr/) (not `nrf52`), **hardware_uart** accepts:
+
+- `UART0`, `UART1`, and any other `UART<n>`: ESPHome maps the number to the board's own UART node (for example
+  `uart20` on the nRF54 variants).
+- `"&<label>"`: any UART devicetree node, by its label, for example `"&uart30"`.
+- `USB_SERIAL_JTAG`: on `ESP32C3`, `ESP32C5`, `ESP32C6`, `ESP32H2` and `ESP32S3`.
+- `USB_CDC`: on the Nordic, Raspberry Pi, Renesas and STM32 variants.
+- `RTT0`, `RTT1`, `RTT2`: a SEGGER RTT channel, read through a debug probe, for example with openocd or J-Link. Not
+  available on the Espressif variants. Each channel can have only one user; with
+  [`debug: enable_rtt_console`](/components/debug/), `RTT0` is taken. When nothing reads the channel, lines are lost
+  once its buffer is full, but the device keeps running.
+- `"&rtt0"` to `"&rtt3"`: an RTT channel through a node you declare yourself with `overlays:`, with SEGGER RTT
+  turned on in `kconfig_options:`; this is the only way to use channel 3. See the
+  [UART Bus Zephyr notes](/components/uart/#zephyr) for what it needs and an example.
+- `RAM`: lines go to a 1 KB buffer in RAM (`ram_console_buf`) that a debugger reads. The oldest text is overwritten
+  when the buffer is full.
+- `SEMIHOST`: lines go to the debugger's console through semihosting. The device stops for every line until the
+  debugger has handled it, so logging is slow; set the platform's `watchdog_timeout: 0s`, or the watchdog resets the device.
+  Without a debugger attached, the device stops at the first log line.
+
+The default is `USB_SERIAL_JTAG` on `ESP32C3`, `ESP32C5`, `ESP32C6` and `ESP32H2`, `USB_CDC` on `NRF52`, `RP2040`
+and `RP2350`, and `UART0` on every other variant.
+
+```yaml
+# Example configuration entry: logs on RTT channel 1
+logger:
+  hardware_uart: RTT1
+```
 
 ## Log Levels
 

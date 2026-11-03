@@ -1,0 +1,56 @@
+---
+description: "Configuration for the Renesas platform for ESPHome."
+title: "Renesas Platform"
+---
+
+> [!NOTE]
+> Support for this platform is still experimental. Not every ESPHome component or feature is available
+> on every variant.
+
+This component contains platform-specific options for Renesas RA chips, built with
+[Zephyr](/components/zephyr/).
+
+```yaml
+# Example configuration entry
+renesas:
+  variant: RA4M1
+```
+
+## Configuration variables
+
+- **variant** (**Required**, string): The chip to build for: `RA4M1`. See [Variants](#variants).
+- **board** (*Optional*, string): The Zephyr board to build for. Defaults to the variant's default board.
+  See [`board`](/components/zephyr/#configuration-variables).
+- **watchdog_timeout** (*Optional*, [Time](/guides/configuration-types#time)): How long the main loop may go
+  without checking in before the hardware watchdog resets the device. `0` disables it. Defaults to `10s`,
+  or the variant's maximum when that is lower. See [Notes](#notes) for each variant's range.
+- **framework** (*Optional*, mapping): **type** is `zephyr` (mainline Zephyr). Every other Zephyr option goes here
+  too; see [Zephyr](/components/zephyr/#configuration-variables).
+
+## Variants
+
+| Variant | Chip | Default board | Default framework | Supports |
+| --- | --- | --- | --- | --- |
+| `RA4M1` | Renesas RA4M1 (Cortex-M4) | [`ek_ra4m1`](https://docs.zephyrproject.org/latest/boards/renesas/ek_ra4m1/doc/index.html) | mainline Zephyr | No wireless |
+
+## Notes
+
+The initial variant: `RA4M1` is a Renesas RA4M1 device. `watchdog_timeout` has no usable range on
+this hardware: its WDT clock tops out at ~5.6s regardless of what's requested, so `0` or exactly `5s`
+are the only valid values.
+
+## Serial Load Process
+
+See [Serial Load Process](/components/zephyr/#serial-load-process) for what applies to every platform.
+
+Renesas RA MCUs have an on-chip USB boot mode, but that has not been investigated;
+installation via SWD is expected for serial flash.
+
+> [!IMPORTANT]
+> The Arduino Nano R4 is a popular device and comes with a vendor provided bootloader.  Serial
+> flash is recommended using the `arduino-cli upload -b <fqbn> -i <file>` command.
+> `<fqbn>` is `arduino:renesas_uno:nanor4` and `<file>` is the full path to your zephyr.bin file.
+
+## See Also
+
+- [Zephyr](/components/zephyr/)

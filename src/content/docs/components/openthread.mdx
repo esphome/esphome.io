@@ -22,15 +22,22 @@ This component is supported on the following platforms:
   ESP-IDF framework, version 5.5.5 or newer.
 - **ESP32** with Wi-Fi and an external OpenThread Radio Co-Processor, with the same ESP-IDF framework and version,
   as a border router only, see [OpenThread Border Router](#openthread-border-router).
-- **nRF52840** with the Zephyr framework.
+- **nRF52840** with the [`nrf52` platform](/components/nrf52/) — uses Nordic's prebuilt OpenThread
+  libraries (Thread 1.3.1).
+- [Zephyr](/components/zephyr/) on the `ESP32C5`, `ESP32C6`, `ESP32H2`, `NRF52`, `NRF54L15`, `NRF54LM20A`, and
+  `EFR32MG24` variants only. These build OpenThread from Zephyr source (Thread 1.4) rather than Nordic's
+  prebuilt libraries, regardless of variant. `EFR32MG24`
+  additionally needs Zephyr 4.5.0 or newer (the default), the first release with its
+  802.15.4 radio driver.
 
 <span id="config-openthread"></span>
 
 ## Full Configuration
 
-The configuration depends on the platform. On ESP32, the Thread dataset can be specified using the individual fields
-shown below or a `tlv` string. On nRF52840, the dataset must be provided as a hex-encoded `tlv` string from Home
-Assistant's Thread integration.
+The configuration depends on the platform. On ESP32 (ESP-IDF framework), the Thread dataset can be specified using
+the individual fields shown below or a `tlv` string. On the `nrf52` platform and every Zephyr variant
+(`ESP32C5`, `ESP32C6`, `ESP32H2`, `NRF52`, `NRF54L15`, `NRF54LM20A`, `EFR32MG24`), the dataset must be provided as a
+hex-encoded `tlv` string from Home Assistant's Thread integration — individual fields are not yet supported there.
 
 With OpenThread configured, IPv4 is disabled by default unless another component requires it. Add
 `enable_ipv4: true` under [network](/components/network/) to keep it enabled on ESP32.
@@ -58,10 +65,11 @@ openthread:
 
 ### Configuration Variables
 
-- **device_type** (*Optional*, enum): OpenThread Device Type, either `FTD` or `MTD`. Defaults to `FTD`. On nRF52840
-  this selects the matching Nordic prebuilt OpenThread library.
+- **device_type** (*Optional*, enum): OpenThread Device Type, either `FTD` or `MTD`. Defaults to `FTD`. On the
+  `nrf52` platform this selects the matching Nordic prebuilt OpenThread library; on every other Zephyr
+  variant it sets the equivalent mainline Zephyr Kconfig option instead.
 - **tlv** (*Optional*, string): The Thread dataset as a hex-encoded TLV string, taken from the Thread information in
-  Home Assistant. **Required** on nRF52840.
+  Home Assistant. **Required** on the `nrf52` platform and on every Zephyr variant.
 - **force_dataset** (*Optional*, bool): Forces ESPHome to override any OpenThread network dataset previously stored on
   the device, ensuring the configured dataset is applied at startup. Defaults to `false`.
 - **use_address** (*Optional*, string): Manually override the address used to connect to the device.
@@ -84,7 +92,7 @@ openthread:
 - **poll_period** (*Optional*, [Time](/guides/configuration-types#time)): When set on an MTD device, the parent
   router enqueues any messages and waits for the child to submit a poll data request.
 - **core_options** (*Optional*, mapping): OpenThread compile-time options to set. See
-  [OpenThread Core Options](#openthread-core-options-esp32).
+  [OpenThread Core Options](#openthread-core-options-esp32-and-zephyr).
 
 > [!NOTE]
 > `esphome.ota` does not work when `poll_period` > 0. Use the `openthread.set_poll_period` action to set the poll
@@ -92,8 +100,9 @@ openthread:
 
 ## Dataset TLV Configuration
 
-On nRF52840, the TLV approach is **required** for configuring the Thread dataset. On ESP32, it is an alternative
-to the individual field-based configuration shown above.
+On the `nrf52` platform and on every Zephyr variant, the TLV approach is **required** for configuring
+the Thread dataset. On ESP32 (ESP-IDF framework), it is an alternative to the individual field-based configuration
+shown above.
 
 It is also possible to supply the entire dataset TLVs from the Thread information in Home Assistant and the individual values will be automatically extracted from it.
 
@@ -230,11 +239,12 @@ esp32:
     log_level: INFO
 ```
 
-## OpenThread Core Options (ESP32)
+## OpenThread Core Options (ESP32 and Zephyr)
 
 OpenThread has many compile-time options that ESP-IDF does not offer as Kconfig options, such as frame retry counts
-or optional features. On ESP32 they can be set with `core_options`. ESPHome writes each entry as
-`#define NAME VALUE` to a header file in the build directory and tells ESP-IDF to include it when building OpenThread.
+or optional features. On ESP32 and the other Zephyr platforms they can be set with `core_options`. On ESP32, ESPHome writes
+each entry as `#define NAME VALUE` to a header file in the build directory and tells ESP-IDF to include it when
+building OpenThread.
 
 Every name must start with `OPENTHREAD_CONFIG_` and may only contain `A-Z`, `0-9` and `_`. Values must be strings, so
 quote numbers. The available options and
@@ -258,6 +268,11 @@ ESP-IDF Kconfig options for OpenThread (`CONFIG_OPENTHREAD_*`) are still set wit
 > `OPENTHREAD_CONFIG_MLE_MAX_CHILDREN` from `CONFIG_OPENTHREAD_MLE_MAX_CHILDREN`. Setting one of these in
 > `core_options` stops the build with an `is redefined` error; set the matching `CONFIG_OPENTHREAD_*` option in
 > `sdkconfig_options` instead.
+
+On the Zephyr platforms, `core_options` needs `framework: type: zephyr`, where OpenThread is built from source; the
+options are passed through Zephyr's `CONFIG_OPENTHREAD_CUSTOM_PARAMETERS`, so values must not contain spaces. They
+are rejected on `platform: nrf52` and with `framework: type: ncs`. Zephyr's own OpenThread Kconfig options
+(`CONFIG_OPENTHREAD_*`) are set with [`kconfig_options`](/components/zephyr/#kconfig_options).
 
 ## See Also
 

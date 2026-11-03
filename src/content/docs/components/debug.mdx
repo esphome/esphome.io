@@ -100,14 +100,43 @@ sensor:
 
 ## Zephyr
 
-The component enables debugging features for ESPHome devices running on the Zephyr RTOS.
-It helps with low-level firmware debugging using **SWD (Serial Wire Debug)**. It enables:
+The component enables debugging features for ESPHome devices running on [Zephyr](/components/zephyr/) (the `nrf52` platform and
+the other Zephyr platforms). It helps with low-level firmware debugging using **SWD (Serial Wire Debug)**. It enables:
 
 - **Thread Awareness in GDB**  
 Injects Zephyr thread metadata so that all active threads can be inspected via GDB when connected over SWD.
 
 - **Real-Time Logging over RTT**  
-Enables logging output over **SEGGER RTT** (Real Time Transfer), allowing non-intrusive debug logs through SWD.
+Sends every log line, and the fault dump after a crash, to **SEGGER RTT** (Real Time Transfer) channel 0 as well,
+so they can be read through SWD. Always on with the `nrf52` platform; on the other Zephyr platforms, set
+**enable_rtt_console** to enable.
+
+- **Threads and Flash Partitions**  
+On the Zephyr platforms other than `nrf52`, logs each thread's unused stack space and the flash partition table at startup.
+
+- **Power Management Stats**  
+If [`zephyr_power_management`](/components/power_management/zephyr_power_management/)'s **stats** option is enabled elsewhere in the
+config, this component periodically logs each power state's entry count and cycles spent, at debug log
+level. `zephyr_power_management`'s **stats** option alone only turns the underlying counters on -- `debug` must be
+present to actually see them.
+
+### Configuration variables
+
+- **enable_rtt_console** (*Optional*, boolean): Zephyr platforms other than `nrf52` only, on variants with SEGGER RTT (not the
+  Espressif variants). Sends every log line and the fault dump after a crash to RTT channel 0, in
+  blocking mode, so nothing is lost while a debug probe reads it. After a crash, the device waits up to 300 ms for an
+  attached probe to read the rest of the dump before it resets. RTT channel 0 is then reserved: `logger:` and
+  `uart:` cannot use `RTT0` or `"&rtt0"`, but the other channels stay available. Defaults to `false`.
+
+> [!WARNING]
+> With `enable_rtt_console: true`, the device stops once the RTT buffer is full if no debug probe is reading it,
+> and the watchdog then resets it. Turn it on only while a probe is attached, for example with openocd or J-Link.
+
+```yaml
+# Example configuration entry
+debug:
+  enable_rtt_console: true
+```
 
 ## See Also
 

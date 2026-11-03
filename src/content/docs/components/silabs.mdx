@@ -1,0 +1,78 @@
+---
+description: "Configuration for the Silicon Labs platform for ESPHome."
+title: "Silicon Labs Platform"
+---
+
+> [!NOTE]
+> Support for this platform is still experimental. Not every ESPHome component or feature is available
+> on every variant.
+
+This component contains platform-specific options for Silicon Labs chips, built with
+[Zephyr](/components/zephyr/).
+
+```yaml
+# Example configuration entry
+silabs:
+  variant: EFR32MG24
+```
+
+## Configuration variables
+
+- **variant** (**Required**, string): The chip to build for: `EFR32BG27`, `EFR32MG24`, `SIMG301` or `SIWX917`. See [Variants](#variants).
+- **board** (*Optional*, string): The Zephyr board to build for. Defaults to the variant's default board.
+  See [`board`](/components/zephyr/#configuration-variables).
+- **watchdog_timeout** (*Optional*, [Time](/guides/configuration-types#time)): How long the main loop may go
+  without checking in before the hardware watchdog resets the device. `0` disables it. Defaults to `10s`,
+  or the variant's maximum when that is lower. See [Notes](#notes) for each variant's range.
+- **framework** (*Optional*, mapping): **type** is `zephyr` (mainline Zephyr, the default) or `silabs` (Silicon Labs' Simplicity SDK for Zephyr, not on `SIMG301`). Every other Zephyr option goes here
+  too; see [Zephyr](/components/zephyr/#configuration-variables).
+
+## Variants
+
+| Variant | Chip | Default board | Default framework | Supports |
+| --- | --- | --- | --- | --- |
+| `EFR32BG27` | Silicon Labs EFR32BG27 (Cortex-M33) | [`xg27_dk2602a`](https://docs.zephyrproject.org/latest/boards/silabs/dev_kits/xg27_dk2602a/doc/index.html) | mainline Zephyr | BLE |
+| `EFR32MG24` | Silicon Labs EFR32MG24 (Cortex-M33) | [`xg24_ek2703a`](https://docs.zephyrproject.org/latest/boards/silabs/dev_kits/xg24_ek2703a/doc/index.html) | mainline Zephyr | BLE, Thread (via `openthread:`) |
+| `SIMG301` | Silicon Labs SiMG301 (Cortex-M33) | `simg301_ek2719a` (custom board, see [Notes](#notes)) | mainline Zephyr | BLE |
+| `SIWX917` | Silicon Labs SiWx917 (Cortex-M4F, Wi-Fi 6) | [`siwx917_dk2605a`](https://docs.zephyrproject.org/latest/boards/silabs/dev_kits/siwx917_dk2605a/doc/index.html) | mainline Zephyr | Wi-Fi, BLE |
+
+## Notes
+
+Silicon Labs' provides its own vendor SDK, "Simplicity SDK for Zephyr"
+(`framework: type: silabs`), it is currently the alternate to the default mainline Zephyr build
+— See [`framework`](/components/zephyr/#framework) and see [`advanced`](/components/zephyr/#advanced) for its `commander_version` option.
+
+`SIWX917` has no MCUboot/OTA support: its default board's flash is a single fixed partition, and
+this chip's real firmware-upgrade path is Silicon Labs' own RPS mechanism, not MCUboot-compatible.
+There is no `framework: advanced: bootloader:` option for this variant. UART and I2C pin remapping are not
+supported yet — only the board's default pins work; SPI pin remapping is supported. The MAC address
+reads as all-zero, since mainline Zephyr has no HWINFO backend for this chip yet. A factory-fresh
+board also needs a one-time network-coprocessor firmware update before Wi-Fi works — see
+[Silicon Labs Serial Load Process](#serial-load-process). Wi-Fi scanning and AP
+association work, but a full STA connection is not yet reliable, due to an issue in the
+upstream Zephyr/WiseConnect Wi-Fi driver rather than this platform.
+
+`EFR32BG27` is BLE only. The onboard sensors of its default board (Si7021, VEML6035, Si7210) are
+powered on at boot.
+
+`SIMG301`'s default board is not in mainline Zephyr yet: set `board_source:` to
+`https://github.com/esphomeplatformzephyr/custom_zephyr_boards`. It needs Zephyr 4.5.0 or later
+(the default). The UART can only use pins PA0–PA8 and PB0–PB3; ADC and SPI are not supported yet.
+
+## Serial Load Process
+
+See [Serial Load Process](/components/zephyr/#serial-load-process) for what applies to every platform.
+
+Silicon Labs chips do not have a ROM bootloader, installation via SWD is expected for serial flash.
+
+`framework: type: silabs` flashes via Silicon Labs' own Commander tool instead — see
+[`advanced`](/components/zephyr/#advanced) for its `commander_version` option.
+
+A factory-fresh `SIWX917` board needs a one-time network-coprocessor (NWP) firmware update before
+Wi-Fi works at all — a mismatched NWP firmware version logs `Unexpected NWP firmware version` or
+`NWP device not ready` at boot. Flash the matching image once via Commander:
+`commander rps load <path-to>/SiWG917-B.2.15.5.0.0.12.rps --device SiWG917M111MGTBA`.
+
+## See Also
+
+- [Zephyr](/components/zephyr/)

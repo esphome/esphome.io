@@ -1,0 +1,83 @@
+---
+description: "Configuration for the nRF platform for ESPHome."
+title: "nRF Platform"
+---
+
+> [!NOTE]
+> Support for this platform is still experimental. Not every ESPHome component or feature is available
+> on every variant.
+
+This component contains platform-specific options for Nordic Semiconductor nRF chips, built with
+[Zephyr](/components/zephyr/).
+
+The separate [nRF52 platform](/components/nrf52/) also builds the nRF52840 with Zephyr. `nrf:` is planned to replace it after a deprecation period. `NRF52` on `nrf:` uses the same MAC address as `nrf52:`, so a device keeps its address when moved.
+
+```yaml
+# Example configuration entry
+nrf:
+  variant: NRF54L15
+```
+
+## Configuration variables
+
+- **variant** (**Required**, string): The chip to build for: `NRF52`, `NRF5340`, `NRF54L15` or `NRF54LM20A`. See [Variants](#variants).
+- **board** (*Optional*, string): The Zephyr board to build for. Defaults to the variant's default board.
+  See [`board`](/components/zephyr/#configuration-variables).
+- **watchdog_timeout** (*Optional*, [Time](/guides/configuration-types#time)): How long the main loop may go
+  without checking in before the hardware watchdog resets the device. `0` disables it. Defaults to `10s`,
+  or the variant's maximum when that is lower. See [Notes](#notes) for each variant's range.
+- **framework** (*Optional*, mapping): **type** is `ncs` (nRF Connect SDK, the default) or `zephyr` (mainline Zephyr). Every other Zephyr option goes here
+  too; see [Zephyr](/components/zephyr/#configuration-variables).
+
+## Variants
+
+| Variant | Chip | Default board | Default framework | Supports |
+| --- | --- | --- | --- | --- |
+| `NRF5340` | nRF5340 application core (Cortex-M33) | [`nrf7002dk/nrf5340/cpuapp`](https://docs.zephyrproject.org/latest/boards/nordic/nrf7002dk/doc/index.html) | nRF Connect SDK (NCS) | Wi-Fi (via the onboard nRF7002) |
+| `NRF52` | nRF52840 (Cortex-M4) | [`adafruit_feather_nrf52840`](https://docs.zephyrproject.org/latest/boards/adafruit/feather_nrf52840/doc/index.html) | nRF Connect SDK (NCS) | BLE, Thread (via `openthread:`), Zigbee (via `zigbee:`) |
+| `NRF54L15` | nRF54L15 (Cortex-M33) | [`nrf54l15dk`](https://docs.zephyrproject.org/latest/boards/nordic/nrf54l15dk/doc/index.html) | nRF Connect SDK (NCS) | BLE, Thread (via `openthread:`), Zigbee (via `zigbee:`) |
+| `NRF54LM20A` | nRF54LM20A (Cortex-M33) | [`nrf54lm20dk`](https://docs.zephyrproject.org/latest/boards/nordic/nrf54lm20dk/doc/index.html) | nRF Connect SDK (NCS) | BLE, Thread (via `openthread:`), Zigbee (via `zigbee:`) |
+
+## Notes
+
+Nordic provides its own vendor Zephyr, "nRF Connect SDK (NCS)", but `framework: type: zephyr` builds
+against mainline Zephyr instead. See [`framework`](/components/zephyr/#framework).
+
+`NRF5340` builds only the application core, so BLE, Thread and Zigbee (which need the network core)
+are not available; Wi-Fi uses the onboard nRF7002. A Wi-Fi build is too large for the default MCUboot
+slot and needs `framework: single_slot: true` plus a partition overlay (see the example configs). `wifi: ap:` is
+not supported yet. With `framework: type: zephyr` an insecure software random number generator is used,
+and a warning is logged; NCS, the default, uses the chip's hardware one.
+
+The NFC antenna pins are ordinary GPIOs on every variant, as on the [nRF52 platform](/components/nrf52/), so a
+board that brings them out can use them like any other pin. They cannot be used for NFC at the same time.
+
+With [BLE NUS](/components/ble_nus/), `esphome logs` reads the device's logs over BLE with `--device BLE` or a BLE
+address.
+
+## Serial Load Process
+
+See [Serial Load Process](/components/zephyr/#serial-load-process) for what applies to every platform.
+
+Nordic chips do not have a ROM bootloader, installation via SWD is expected for serial flash.
+
+The `NRF52` variant can instead keep a serial DFU bootloader that the board already has, with
+`framework: advanced: bootloader:` (see [`advanced`](/components/zephyr/#advanced)):
+
+- `adafruit_nrf52_sd140_v6` or `adafruit_nrf52_sd140_v7`: the Adafruit UF2 bootloader, with the S140 v6 or v7
+  SoftDevice. `esphome compile` builds a `firmware.zip`, and `esphome upload` reboots the running application into
+  the bootloader (a 1200 baud touch on the USB serial port) and sends the package over serial DFU with
+  `adafruit-nrfutil`, which is installed on first use. `esphome logs --reset` reboots the application with a
+  2001 baud touch.
+- `nrf`: the Nordic Open DFU bootloader factory-flashed on the nRF52840 Dongle (`board: nrf52840dongle`). Upload uses
+  Nordic's `nrfutil`. On the dongle, the reboot into the bootloader goes through P0.19, which is wired to RESET.
+
+Both keep the vendor bootloader, so there is no MCUboot and no OTA. The touch that reboots into the bootloader is
+`framework: advanced: dfu:`, on by default with these bootloaders. Only USB serial port 0 reacts to it.
+
+`NRF54L15` and `NRF54LM20A` default to MCUboot and also accept `framework: advanced: bootloader: none`.
+`NRF5340` always uses MCUboot.
+
+## See Also
+
+- [Zephyr](/components/zephyr/)

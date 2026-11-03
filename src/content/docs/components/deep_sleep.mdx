@@ -49,12 +49,13 @@ deep_sleep:
 - **touch_wakeup** (*Optional*, boolean): Only on ESP32. Use a touch event to wakeup from deep sleep. To be able
   to wakeup from a touch event, [Binary Sensor](/components/binary_sensor/esp32_touch#binary-sensor) must be configured properly.
 
-- **wakeup_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema) / list): Only on ESP32/BK72xx. A single pin to wake up to once
+- **wakeup_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema) / list): Only on ESP32/BK72xx and Zephyr (see
+  [Zephyr-based platforms](#zephyr-based-platforms)). A single pin to wake up to once
   in deep sleep mode. Use the inverted property to wake up to LOW signals.
   If you want to specify multiple wake-up pins (BK72xx only) specify them under `wakeup_pin` using a list of entries consisting of:
   - **pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema))
   - **wakeup_pin_mode** (*Optional*) see below
-- **wakeup_pin_mode** (*Optional*): Only on ESP32/BK72xx. Specify how to handle waking up from a `wakeup_pin` if
+- **wakeup_pin_mode** (*Optional*): Only on ESP32/BK72xx and Zephyr. Specify how to handle waking up from a `wakeup_pin` if
   the wakeup pin is already in the state with which it would wake up when attempting to enter deep sleep.
   See [Wakeup Pin Mode](#deep_sleep-esp32_wakeup_pin_mode). Defaults to `IGNORE`
 - **on_wake** (*Optional*, [Automation](/automations)): An automation to run when the device boots after waking
@@ -206,10 +207,15 @@ The following integers are the wakeup causes:
 - **11** - `ESP_SLEEP_WAKEUP_COCPU_TRAP_TRIG`  : Wakeup caused by COCPU crash
 - **12** - `ESP_SLEEP_WAKEUP_BT`  : Wakeup caused by BT (light sleep only)
 
-## nRF52
+## Zephyr-based platforms
 
-When `sleep_duration` is configured or Zigbee is used, the nRF52 resumes normal operation after waking up.
-Otherwise, the nRF52 performs a full reset instead of continuing execution.
+This applies to the `nrf52` platform and to the Espressif, Nordic and STM32 variants on Zephyr; the other
+Zephyr variants do not support `deep_sleep`, since their chips have no power-off mode in
+Zephyr. When `sleep_duration` is configured, or Zigbee is used, the device resumes normal operation after waking up.
+Otherwise, it performs a full reset instead of continuing execution.
+
+On those Zephyr variants, **wakeup_pin** wakes the chip from power-off, and also ends a `sleep_duration` wait early.
+**wakeup_pin_mode** works as on the ESP32.
 
 ## `deep_sleep.enter` Action
 
