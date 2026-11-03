@@ -15,8 +15,8 @@ This tracks **every** validated frame on the bus, not only frames matched by an
 `on_frame:` trigger — so it reflects the last frame type seen on the wire,
 whatever it was.
 
-This is useful for cataloging frame types on an unknown bus during the
-discovery workflow. For user payload decoding, use [`on_frame:` on the
+This is useful for cataloging frame types on an unknown bus while you work out
+its protocol. For user payload decoding, use [`on_frame:` on the
 hub](/components/rs485_frame/#configuration-variables) — that handles every
 text-decoding case from a single ASCII frame through Hayward AquaLogic's
 blink-bit-and-degree-symbol display encoding.
@@ -47,10 +47,6 @@ frame, use the hub's own tools:
 
 - [`dump_frames: true`](/components/rs485_frame/#configuration-variables) logs every validated RX
   frame and every TX frame at DEBUG level, and is cheap enough to leave on while you work.
-- [`sniffer_stats:`](/components/rs485_frame/#optional-enable-sniffer-stats) logs a per-frame-type
-  table of counts and timings on a fixed interval.
-- [`frame_trace:`](/components/rs485_frame/#frame-trace) keeps a ring buffer of recent RX and TX
-  frames, including ones that failed validation, and dumps it to the log on demand.
 - [`on_frame:`](/components/rs485_frame/#configuration-variables) runs your automation for every
   matching frame.
 
