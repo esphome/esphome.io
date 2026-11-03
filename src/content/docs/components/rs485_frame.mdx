@@ -199,7 +199,7 @@ like Jandy). To keep long-uptime devices stable, follow these patterns:
   race-free.
 - **Guard payload lengths.** Always `if (payload.size() < N) return;` before
   indexing past the frame type. A short or malformed frame would otherwise
-  read past the vector end.
+  read past the end of the payload.
 - **Avoid `std::to_string`, `String::format`, and other allocating helpers**
   inside the lambda. Use `snprintf` into a `static char[]` buffer if you need
   formatted text.
@@ -464,7 +464,7 @@ marks it offline. The hub does not send idle frames on its own, so run Jandy bus
 - **on_frame** (*Optional*, [Automation](/automations/)): Automation(s) that fire when a
   matching frame is received. Multiple entries may be listed; each fires independently based
   on its `frame_type` filter. The automation receives the payload as `payload`
-  (`const std::vector<uint8_t> &`). Use `[]` to match every frame.
+  (`std::span<const uint8_t>`, valid only while the automation runs). Use `[]` to match every frame.
 
   - **frame_type** (**Required**, list of hex bytes *or* list of byte-lists): Frame-type
     prefix(es) to match against the start of each received payload. Two forms are
@@ -512,7 +512,7 @@ marks it offline. The hub does not send idle frames on its own, so run Jandy bus
 
 ## Payload layout
 
-All `on_frame:` handlers receive the same payload byte vector:
+All `on_frame:` handlers receive the same payload bytes:
 
 ```
 Bytes 0..N-1   frame_type prefix bytes (N = length of the configured frame_type)
