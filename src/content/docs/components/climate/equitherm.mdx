@@ -35,7 +35,7 @@ $$T_{flow} = T_{target} + shift + hc \cdot (T_{target} - T_{outdoor})^{1/n}$$
 | n | `heat_curve_exponent`: how the radiators give off heat |
 | shift | `heat_curve_shift`: moves the whole curve up or down |
 
-With `hc = 2.0`, `n = 1.25` and a target of 21 °C:
+With `hc = 2.0`, `n = 1.25`, `min_flow_temp: 25°C` and a target of 21 °C:
 
 | Outdoor | Flow |
 |---------|------|
@@ -94,7 +94,8 @@ climate:
   from the frontend or restored.
 - **flow_setpoint** (*Optional*, [ID](/guides/configuration-types/#id)): A [number](/components/number/) that
   receives the flow temperature in °C, such as the OpenTherm `t_set` number. Exactly one of `flow_setpoint` and
-  `heat_output` is required.
+  `heat_output` is required. A number has no value that means off, so it keeps the last setpoint when heating stops:
+  switch the boiler off from `on_heating_stop`, as in the [OpenTherm Example](#opentherm-example).
 - **heat_output** (*Optional*, [ID](/guides/configuration-types/#id)): A [float output](/components/output/) that
   receives the flow temperature as a share of the range: `min_flow_temp` is `0.0` and `max_flow_temp` is `1.0`.
   `0.0` is also written when heating stops, so give the boiler its enable signal from `on_heating_start` and
@@ -233,8 +234,9 @@ on_...:
 ## Tuning
 
 1. Leave the PID gains at `0` and set `heat_curve_exponent` for the radiators.
-2. Start with `heat_curve_coefficient: 1.0` and watch the room for a day or two: raise it when the room is too cold
-   in cold weather, lower it when too warm. Use `heat_curve_shift` for mild weather in the same way.
+2. Start with the typical `heat_curve_coefficient` for your building (see above) and watch the room for a day or
+   two: raise it when the room is too cold in cold weather, lower it when too warm. Use
+   `heat_curve_shift` for mild weather in the same way.
 3. Add `kp` (0.5 to 1.5) only if the curve alone does not hold the temperature, and a small `ki` (0.001 to 0.01) for
    a lasting offset. `kd` is rarely needed for heating.
 
