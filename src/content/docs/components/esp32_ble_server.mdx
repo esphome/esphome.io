@@ -195,12 +195,14 @@ esp32_ble_server:
 - **description** (*Optional*, [Value Configuration](#esp32_ble_server-value)): The description of the characteristic - not templatable. It will add a `CUD` descriptor (0x2901) to the characteristic with the value of the description.
 - **read** (*Optional*, boolean): If the characteristic should be readable. Defaults to `false`.
 - **read_encrypt** (*Optional*, boolean): If the characteristic should be readable only through a secure
-  connection. Defaults to `false`. See [Security](#ble-security).
+  connection. It does not make the characteristic readable, so it needs `read`, `notify` or `indicate`. Defaults
+  to `false`. See [Security](#ble-security).
 - **read_encrypt_mitm** (*Optional*, boolean): Like `read_encrypt`, but the client must also have paired with a
   passkey or numeric comparison, not Just Works. Defaults to `false`. See [Security](#ble-security).
 - **write** (*Optional*, boolean): If the characteristic should be writable. Defaults to `false`.
 - **write_encrypt** (*Optional*, boolean): If the characteristic should be writable only through a secure
-  connection. Defaults to `false`. See [Security](#ble-security).
+  connection. It does not make the characteristic writable, so it needs `write` or `write_no_response`. Defaults
+  to `false`. See [Security](#ble-security).
 - **write_encrypt_mitm** (*Optional*, boolean): Like `write_encrypt`, but the client must also have paired with a
   passkey or numeric comparison, not Just Works. Defaults to `false`. See [Security](#ble-security).
 - **broadcast** (*Optional*, boolean): If the characteristic should be broadcast. Defaults to `false`.
@@ -436,7 +438,7 @@ esp32_ble_server:
 A device that uses numeric comparison. The user must confirm the number on both devices. On the ESP32 this is done
 with the `ble_server.numeric_comparison_reply` action, here from two buttons that accept or reject the pairing. The
 address of the client is kept in a global variable until a button is pressed, so this example handles one pending
-pairing at a time.
+pairing at a time: a new request rejects the one still waiting, which would otherwise time out without an answer.
 
 ```yaml
 esp32_ble:
@@ -452,6 +454,13 @@ esp32_ble_server:
   id: my_ble_server
   on_numeric_comparison_request:
     then:
+      - if:
+          condition:
+            lambda: return id(pairing_address) != 0;
+          then:
+            - ble_server.numeric_comparison_reply:
+                address: !lambda return id(pairing_address);
+                accept: false
       - logger.log:
           format: "Press the button if your BLE device shows %06u"
           args: ["(unsigned) passkey"]
@@ -490,7 +499,7 @@ button:
 ```
 
 A device that only accepts new pairings for two minutes after a button press. Devices that are already bonded can
-still connect.
+still connect. The script restarts on each press, so every press gives a full two minutes.
 
 ```yaml
 esp32_ble_server:
@@ -498,14 +507,26 @@ esp32_ble_server:
   pairing_enabled: false
   services: ...
 
+script:
+  - id: pairing_window
+    mode: restart
+    then:
+      - ble_server.enable_pairing:
+      - delay: 120s
+      - ble_server.disable_pairing:
+
 button:
   - platform: template
     name: Allow pairing
     on_press:
-      - ble_server.enable_pairing:
-      - delay: 120s
-      - ble_server.disable_pairing:
+      - script.execute: pairing_window
 ```
+
+> [!WARNING]
+> On ESP-IDF 5.5.6, the current default, a bond only survives the first reconnect after each boot
+> ([espressif/esp-idf#19286](https://github.com/espressif/esp-idf/issues/19286)). From the next reconnect on, the
+> client has to pair again until the ESP32 reboots, and with `pairing_enabled: false` it cannot, so it loses access
+> to encrypted characteristics. Open the pairing window again, or reboot the ESP32, to let it back in.
 
 ## Security Actions
 
