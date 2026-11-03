@@ -30,6 +30,12 @@ udp:
   cannot pick an interface for them; use multicast, unique local or global addresses instead. Multicast destinations
   leave on the interface the `listen_address` group was joined on, or on the first IPv6 interface when there is no
   IPv6 group.
+  On nRF52 with [OpenThread](/components/openthread/), a `udp:` block with a destination outside the Thread mesh (a
+  global address, or a multicast address with a scope wider than realm-local, such as `ff05::`) sends its IPv6
+  datagrams from the device's off-mesh routable (OMR) address. Until a Thread border router has given the device one,
+  its IPv6 datagrams are dropped, not queued, and a warning is logged. Destinations treated as inside the mesh
+  (unique local addresses in `fc00::/7` and multicast up to realm-local scope) in the same block are dropped too.
+  Use two `udp:` blocks to keep the mesh traffic independent.
 
 - **listen_address** (*Optional*, IP address): An IPv4 multicast or broadcast address, or an IPv6 multicast
   address, to listen on. A multicast address joins that group; a broadcast address, such as the default
