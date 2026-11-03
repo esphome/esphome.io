@@ -1,0 +1,47 @@
+---
+description: "Debug tooling for TFLite Micro models (CRC32, architecture, tensors)"
+title: "TFLite Model Debug"
+---
+
+The `tflite_model_debug` component is a **library-only component**: it has no user-facing configuration options and is
+loaded automatically as a dependency of the `tflite_micro_runtime`
+component and of the third-party components that consume it.
+
+Everything is guarded by the `DEBUG_TFLITE_MICRO_HELPER` define emitted when the `debug: true` option is set
+on the consuming `tflite_micro_runtime` component. When enabled it provides CRC32 model verification, model
+architecture inspection, tensor input/output statistics and quantization analysis, parameter sweeps for
+tuning preprocessing configuration, and watchdog feeding during long debug operations.
+
+## Example configuration entry
+
+The component has no options of its own: the diagnostics are enabled with `debug: true` on the
+`tflite_micro_runtime` instance that loads it:
+
+```yaml
+tflite_micro_runtime:
+  - id: digit_reader
+    model_type: image
+    model: "models/digit_recognizer.tflite"
+    tensor_arena_size: 200KB
+    # Enables the tflite_model_debug diagnostics (CRC32, architecture, tensors)
+    debug: true
+```
+
+## Configuration Variables
+
+This component has no configuration variables of its own: it is loaded automatically by `tflite_micro_runtime`,
+which owns the user-facing options. The diagnostics are enabled with `debug: true` on the consuming `tflite_micro_runtime` instance.
+
+The empty schema also allows loading it explicitly, which is mainly useful when another component declares it
+in its `DEPENDENCIES` (the ESPHome component tests do this):
+
+```yaml
+tflite_model_debug:
+```
+
+## See Also
+
+- `tflite_micro_runtime` - the user-facing component that loads this library
+  automatically
+- [esphome_ai_component Demo](https://github.com/nliaudat/esphome_ai_component) - working demo with pre-trained
+  models and camera integration
