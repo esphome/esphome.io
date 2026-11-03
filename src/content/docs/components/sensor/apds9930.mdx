@@ -1,0 +1,203 @@
+---
+description: "Instructions for setting up APDS9930 ambient light and proximity sensors."
+title: "APDS9930 Sensor"
+---
+
+import Figure from '@components/Figure.astro';
+import APIRef from '@components/APIRef.astro';
+
+<span id="apds9930-component"></span>
+
+## Component Hub
+
+The `apds9930` sensor platform allows you to use APDS9930 ambient light and proximity sensors
+([datasheet](https://docs.broadcom.com/doc/AV02-3190EN),
+[Broadcom](https://www.broadcom.com/products/optical-sensors/ambient-light-photo-sensors/apds-9930)) with ESPHome.
+The [I²C](/components/i2c/) bus is required to be set up in your configuration for this sensor to work.
+
+<Figure
+  src="/images/apds9930.jpg"
+  alt="APDS9930 sensor module"
+  caption="APDS9930 ambient light and proximity sensor module"
+  layout="constrained"
+  width={300}
+  height={300}
+/>
+
+```yaml
+# Example configuration entry
+apds9930:
+
+sensor:
+  - platform: apds9930
+    type: illuminance
+    illuminance:
+      name: "Room Illuminance"
+
+  - platform: apds9930
+    type: proximity
+    proximity:
+      name: "Object Proximity"
+```
+
+## Configuration Variables
+
+The configuration is made up of two parts: The central component and individual sensors.
+
+### Base Configuration
+
+- **address** (*Optional*, int): The I²C address of the sensor. Defaults to `0x39`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval to check the
+  sensor. Defaults to `60s`.
+- **led_drive** (*Optional*): The LED drive strength for proximity detection. One of `100ma`, `50ma`,
+  `25ma`, `12.5ma`. Defaults to `100ma`.
+- **proximity_gain** (*Optional*): The proximity sensor gain level. One of `1x`, `2x`, `4x`, `8x`.
+  Defaults to `8x`.
+- **ambient_light_gain** (*Optional*): The ambient light sensor gain level. One of `1x`, `8x`, `16x`,
+  `120x`. Defaults to `1x`.
+- **proximity_diode** (*Optional*, int): Which diode to use for proximity detection. Valid range: `0` to `3`.
+  Defaults to `2`.
+
+## Sensor
+
+The `apds9930` sensor platform exposes measurements from an APDS9930 hub.
+
+Configuration variables:
+
+- **type** (**Required**, string): The type of sensor measurement. One of:
+
+  - `illuminance`: Measures illuminance in lux using a two-channel photodiode with IR compensation.
+  - `proximity`: Measures object proximity as a raw count. Higher values indicate closer objects.
+
+- **apds9930_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the
+  APDS9930 hub.
+- All other options from [Sensor](/components/sensor/).
+
+## Sensor Type Details
+
+### Ambient Light Sensor
+
+The ambient light sensor uses two photodiodes, Ch0 for visible and IR light and Ch1 for IR light, to calculate
+lux values with IR compensation. These illuminance measurements are suitable for automatic display brightness
+adjustment, daylight harvesting systems, light level monitoring, and circadian rhythm lighting control.
+
+**Output**: Illuminance in lux (unit: `lx`, device class: `illuminance`)
+
+### Proximity Sensor
+
+The proximity sensor uses an infrared LED and photodiode to detect nearby objects. Unlike the APDS9960, which
+outputs percentages, the APDS9930 provides raw proximity counts for threshold-based detection.
+
+**Output**: Raw proximity count (unitless, higher values indicate closer objects)
+
+Typical values:
+
+- Far away, more than 10cm: `0` to `50`
+- Medium distance, 5cm to 10cm: `50` to `200`
+- Near, less than 5cm: `200` and above
+
+## Advanced Configuration
+
+### Gain Settings
+
+The gain settings affect sensor sensitivity. Higher gain increases sensitivity but may cause saturation in bright
+conditions.
+
+Ambient light gain:
+
+- `1x`: Best for bright environments above 1000 lux.
+- `8x`: Good for office lighting, 100 lux to 1000 lux.
+- `16x`: Good for dim lighting, 10 lux to 100 lux.
+- `120x`: Best for very dim conditions below 10 lux.
+
+Proximity gain:
+
+- `1x`: Short range, less sensitive.
+- `2x`: Moderate range.
+- `4x`: Good range.
+- `8x`: Maximum range and sensitivity. This is the default.
+
+### LED Drive Strength
+
+The LED drive setting controls the infrared LED current for proximity detection. Higher current increases detection
+range but consumes more power:
+
+- `100ma`: Maximum range. This is the default.
+- `50ma`: Good range, lower power.
+- `25ma`: Reduced range, low power.
+- `12.5ma`: Minimal range, minimum power.
+
+### Example With Hub ID
+
+```yaml
+apds9930:
+  id: light_proximity_sensor
+  address: 0x39
+  update_interval: 60s
+  led_drive: 100ma
+  proximity_gain: 8x
+  ambient_light_gain: 1x
+  proximity_diode: 2
+
+sensor:
+  - platform: apds9930
+    apds9930_id: light_proximity_sensor
+    type: illuminance
+    illuminance:
+      name: "Living Room Illuminance"
+      id: living_room_lux
+      filters:
+        - sliding_window_moving_average:
+            window_size: 5
+            send_every: 5
+
+  - platform: apds9930
+    apds9930_id: light_proximity_sensor
+    type: proximity
+    proximity:
+      name: "Object Proximity"
+      id: object_proximity
+      filters:
+        - throttle: 1s
+```
+
+## Troubleshooting
+
+### Proximity Sensor Not Responding
+
+- Increase `led_drive` to `100ma` for maximum range.
+- Increase `proximity_gain` to `8x`.
+- Verify the IR LED is powered. Some modules require a connection to the VL pin.
+- Check for obstructions or coverings on the sensor.
+- Ensure the proximity diode setting is correct. The default is `2`.
+
+### Noisy or Unstable Readings
+
+- Add filters to smooth readings:
+
+  ```yaml
+  filters:
+    - sliding_window_moving_average:
+        window_size: 10
+        send_every: 5
+  ```
+
+- Decrease `update_interval` for faster updates.
+- Shield the sensor from electrical noise sources.
+- Use proper power supply decoupling capacitors.
+
+## Device IDs
+
+The APDS9930 may report one of two device IDs:
+
+- `0x12`: Most common.
+- `0x39`: Alternative ID.
+
+Both IDs are valid and the component automatically recognizes either.
+
+## See Also
+
+- [Sensor Filters](/components/sensor/#sensor-filters)
+- [I²C Bus](/components/i2c/)
+- <APIRef text="apds9930.h" path="apds9930/apds9930.h" />
+- [APDS9930 Datasheet](https://docs.broadcom.com/doc/AV02-3190EN)
