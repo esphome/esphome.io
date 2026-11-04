@@ -7,7 +7,7 @@ This component contains platform-specific options for the [LibreTiny](https://do
 It provides support for the following microcontrollers, commonly used in Tuya devices, amongst others:
 
 - **BK72xx**: BK7231T, BK7231N, BK7238
-- **RTL87xx**: RTL8710BN, RTL8710BX
+- **RTL87xx**: RTL8710BN, RTL8710BX, RTL8720CF, RTL8720CM
 - **LN882x**: LN882H
 
 Since different microcontrollers are supported, you need to include the appropriate ESPHome component,
@@ -216,9 +216,11 @@ bk72xx:
 
 ## Crash Handler
 
-On BK7238 and BK7231N, ESPHome captures crash data from the previous boot and logs it on startup, the
-same way it does on ESP32, ESP8266 and RP2040. It covers the chip's three fault traps: undefined
-instruction, prefetch abort and data abort.
+On BK7238, BK7231N and RTL8720C, ESPHome captures crash data from the previous boot and logs it on
+startup, the same way it does on ESP32, ESP8266 and RP2040. On BK7238 and BK7231N it covers the chip's three
+fault traps: undefined instruction, prefetch abort and data abort. On RTL8720C it covers the hard fault, bus
+fault, usage fault, memory management fault and secure fault, and the report also shows the fault status
+register (`CFSR`) and, when the chip recorded one, the address that faulted.
 
 When a crash occurs, the fault PC, the return address and up to 8 stack-scanned return addresses are
 preserved across the reboot and logged at the `ERROR` level. The report is also replayed to the next log
@@ -235,13 +237,25 @@ client that connects over the API or MQTT, and the ESPHome CLI decodes the addre
 [E][libretiny.crash]:   BT1: 0x0001D305  (stack backtrace)
 ```
 
-The crash handler also makes the device restart after a crash. Once Wi-Fi is connected, the SDK's own
-crash handling leaves a BK72xx device hung until its power is cycled; with the crash handler the device
-reboots within a second and reports the crash.
+On RTL8720C the report adds the fault status register and the faulting address. `Address` is only recorded for
+bus and memory management faults and reads `0x00000000` otherwise, as in this usage fault:
 
-No configuration is needed — the crash handler is always enabled on BK7238 and BK7231N. Other BK72xx,
-RTL87xx and LN882x chips do not have it yet; on the other BK72xx chips a crash with Wi-Fi connected can
-still leave the device hung until it is power-cycled.
+```log
+[E][libretiny.crash]: *** CRASH DETECTED ON PREVIOUS BOOT ***
+[E][libretiny.crash]:   Reason: Usage fault
+[E][libretiny.crash]:   CFSR: 0x00010000  Address: 0x00000000
+[E][libretiny.crash]:   PC:  0x9B0073A4  (fault location)
+[E][libretiny.crash]:   LR:  0x9B0073A5  (return address)
+[E][libretiny.crash]:   BT0: 0x9B007301  (stack backtrace)
+```
+
+The crash handler also makes the device restart within a second of a crash and report it. Without it, a
+BK72xx device with Wi-Fi connected hangs until its power is cycled, and an RTL8720C device waits for the
+10 second watchdog.
+
+No configuration is needed — the crash handler is always enabled on BK7238, BK7231N and RTL8720C. Other
+BK72xx, RTL8710B and LN882x chips do not have it yet; on the other BK72xx chips a crash with Wi-Fi connected
+can still leave the device hung until it is power-cycled.
 
 ## See Also
 
