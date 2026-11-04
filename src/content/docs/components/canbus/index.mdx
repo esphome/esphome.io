@@ -18,9 +18,9 @@ data errors. These features have led to CAN's popularity in a variety of industr
 automation, medical, and manufacturing.
 
 ESPHome supports single frame data transfer: up to 8 bytes per frame for classic CAN, and up to 64 bytes for CAN FD on a
-platform that supports it, currently the [MCP251xFD](/components/canbus/mcp251xfd/). With this you can transmit the
-press of a button or the feedback from a sensor on the bus. All other devices on the bus will be able to get this data
-to switch on/off a light or display the transmitted data.
+platform that supports it, such as the MCP251xFD. With this you can transmit the press of a button or the feedback from
+a sensor on the bus. All other devices on the bus will be able to get this data to switch on/off a light or display the
+transmitted data.
 
 The CAN bus itself has only two wires named Can High and Can Low or CanH and CanL. For the ESPHome
 CAN bus to work, you need to select the device that has the physical CAN bus implemented.
@@ -92,8 +92,8 @@ canbus:
   firmware. A warning is logged each time the limit is reached, since the receive queue may overflow and drop frames
   if it keeps happening. Must be at least `1`. Defaults to `50`.
 
-The next three options exist only on platforms that support CAN FD, such as the
-[MCP251xFD](/components/canbus/mcp251xfd/):
+The next three options exist only on platforms that support CAN FD, such as the MCP251xFD. Other platforms reject
+them, even when set to `false`:
 
 - **default_fd** (*Optional*, boolean): Default frame format for `canbus.send` actions. Defaults to `false`, unless
   the platform specifies otherwise.
@@ -171,8 +171,6 @@ canbus:
 
 ### `canbus.send` Action
 
-<span id="canbus-send-action"></span>
-
 The CAN bus can transmit frames by means of the `canbus.send` action. There are several ways to use it:
 
 ```yaml
@@ -219,7 +217,7 @@ on_...:
   Remote transmission requests cannot be used with CAN FD.
 
 The `fd`, `bit_rate_switch` and `pad_data` options need a platform that supports CAN FD. On any other CAN bus they
-are rejected during configuration validation.
+are rejected during configuration validation, even when set to `false`, so leave them out there.
 
 - **fd** (*Optional*, boolean, [templatable](/automations/templates)): Send a CAN FD frame. Defaults to
   `default_fd` on the CAN bus.
