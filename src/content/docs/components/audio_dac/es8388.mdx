@@ -27,6 +27,10 @@ audio_dac:
 
 - **address** (*Optional*, int): The I²C address of the driver. Defaults to `0x10`.
 - **i2c_id** (*Optional*): The ID of the [I²C bus](/components/i2c) the ES8388 is connected to.
+- **volume_min_db** (*Optional*, float): The DAC attenuation at volume 0, from `-96dB` to `0dB`. Defaults to `-96dB`.
+- **volume_max_db** (*Optional*, float): The DAC attenuation at volume 1, from `-96dB` to `0dB`. Must be higher than
+  `volume_min_db`. Defaults to `0dB`. The volume maps linearly in dB between the two. With a small speaker that is
+  barely heard at low volumes, raise `volume_min_db` (for example to `-50dB`) so the whole volume range can be used.
 - All other options from [Audio DAC](/components/audio_dac#config-audio_dac).
 
 ## Select
