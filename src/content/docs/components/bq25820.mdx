@@ -76,7 +76,7 @@ may be defined if the device has more than one BQ25820.
   `80s` or `160s`. The component feeds the watchdog on every poll, so `update_interval` must be shorter
   than the period, or the configuration is rejected. If the microcontroller stops polling, the chip falls
   back to its power-on charge settings when the watchdog expires; the component writes the configuration
-  again once polling resumes. `true` and `false` are still accepted as `160s` and `disabled`.
+  again once polling resumes. `true` is accepted as `160s` and `false` as `disabled`.
   Defaults to `disabled`.
 
 - **charge_voltage** (*Optional*, Voltage): The VFB regulation trim point, in steps of 2mV between
@@ -265,10 +265,11 @@ At least one text sensor must be set.
   component defined above. Required only when there is more than one.
 
 - **charge_status** (*Optional*): The charge cycle state: `Not Charging`, `Trickle`, `Precharge`,
-  `Fast Charge`, `Taper`, `Top-Off` or `Done`. All options from [Text Sensor](/components/text_sensor).
+  `Fast Charge`, `Taper`, `Top-Off` or `Done`, and `Unknown` for a reserved code. All options from
+  [Text Sensor](/components/text_sensor).
 
 - **temp_status** (*Optional*): The battery temperature state: `Normal`, `Warm`, `Cool`, `Cold` or
-  `Hot`. Requires `temp_en: true` and a connected NTC. All options from
+  `Hot`, and `Unknown` for a reserved code. Requires `temp_en: true` and a connected NTC. All options from
   [Text Sensor](/components/text_sensor).
 
 ## BQ25820 Full example `.YAML`
