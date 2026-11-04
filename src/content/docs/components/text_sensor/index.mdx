@@ -168,6 +168,68 @@ Does not change the value of the text sensor if the current value wasn't found.
 
 The arguments are a list of substitutions, each in the form `LOOKUP -> REPLACEMENT`.
 
+### `throttle`
+
+Lets a value through at most once per given time period; values that come sooner are dropped.
+
+```yaml
+# Example configuration entry
+- platform: template
+  # ...
+  filters:
+    - throttle: 1s
+```
+
+### `throttle_with_priority`
+
+Like `throttle`, but the listed values are always let through at once.
+
+```yaml
+# Example configuration entry
+- platform: template
+  # ...
+  filters:
+    - throttle_with_priority:
+        timeout: 1s
+        value: "NA"
+```
+
+- **timeout** (**Required**, [Time](/guides/configuration-types/#time)): The minimum time between two values.
+- **value** (*Optional*, string or list of strings): The values that are let through at once. Without any, this works
+  like `throttle`.
+
+The short form `- throttle_with_priority: 1s` sets only the time, so it works like `throttle`.
+
+### `timeout`
+
+Lets every value through, and sends a value again once no new one has come for the given time period.
+
+```yaml
+# Example configuration entry
+- platform: template
+  # ...
+  filters:
+    - timeout:
+        timeout: 30s
+        value: "Offline"
+```
+
+- **timeout** (**Required**, [Time](/guides/configuration-types/#time)): How long to wait for a new value.
+- **value** (*Optional*, string): The text to send when the time runs out, or `last` to send the last value again.
+  Defaults to `last`. Because `last` is a keyword, the timeout cannot send the literal text "last".
+
+The short form `- timeout: 1s` sends the last value again after 1s.
+
+Put `timeout` before `throttle_with_priority` so the last value before a pause still gets through the throttle:
+
+```yaml
+filters:
+  - timeout: 1s
+  - throttle_with_priority:
+      timeout: 1s
+      value: "NA"
+```
+
 ### `lambda`
 
 Perform a advanced operations on the text sensor value. The input string is `x` and
