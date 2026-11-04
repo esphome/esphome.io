@@ -276,9 +276,10 @@ detected model are ignored with an error in the log.
 ## Actions
 
 The measurement can be controlled and maintenance functions triggered from automations. On the SEN6x family,
-fan cleaning and the SHT heater only work while the measurement is stopped, and the device needs wait time
-after each command (1400 ms after stop, 10 s after fan cleaning, 20 s after the heater). Commands sent too
-early are ignored with a "Device busy" warning.
+fan cleaning, the SHT heater and the forced CO₂ recalibration only work while the measurement is stopped, and
+the device needs wait time after each command (1400 ms after stop, 10 s after fan cleaning, 20 s after the
+heater, 500 ms after a forced CO₂ recalibration). Commands sent too early are ignored with a "Device busy"
+warning.
 
 ### `sen6x.start_measurement` Action
 
@@ -309,6 +310,33 @@ button:
       - delay: 2s
       - sen6x.start_fan_cleaning: my_sen6x
       - delay: 11s
+      - sen6x.start_measurement: my_sen6x
+```
+
+### `sen6x.perform_forced_co2_recalibration` Action
+
+Recalibrates the CO₂ sensor to a known reference concentration (forced recalibration, FRC). Only available with
+SEN63C, SEN66 or SEN69C, and only accepted in idle mode. Before triggering it, keep the sensor measuring for at
+least 3 minutes in air with a stable, known CO₂ concentration, such as fresh outdoor air at about 420 ppm. The
+device keeps the correction across restarts. The applied correction is logged, and a recalibration the device
+rejects is logged as a warning.
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the sen6x sensor.
+- **value** (**Required**, int, [templatable](/automations/templates)): The reference CO₂ concentration in ppm.
+  Allowed values are in range 0..40000.
+
+```yaml
+# Example: forced CO2 recalibration in fresh outdoor air
+button:
+  - platform: template
+    name: CO2 Recalibration
+    on_press:
+      - sen6x.stop_measurement: my_sen6x
+      - delay: 2s
+      - sen6x.perform_forced_co2_recalibration:
+          id: my_sen6x
+          value: 420
+      - delay: 1s
       - sen6x.start_measurement: my_sen6x
 ```
 
