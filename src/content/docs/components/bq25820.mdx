@@ -55,8 +55,9 @@ may be defined if the device has more than one BQ25820.
 - **i2c_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the
   [I²C](/components/i2c/) bus if you want to use multiple I²C buses.
 
-- **update_interval** (*Optional*, Time): The interval between polling the chip. Defaults to `60s`;
-  set a shorter interval (for example `1s`) for more granular battery data.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval between
+  polling the chip. Defaults to `60s`; set a shorter interval (for example `1s`) for more granular battery
+  data. With the `watchdog` enabled, it must be shorter than the watchdog period.
 
 - **charge_current** (*Optional*, Current): The battery charge current. With the reference `5mΩ`
   battery sense resistor this is `400mA` to `20A` in steps of 50mA; the range and step scale with
@@ -71,10 +72,12 @@ may be defined if the device has more than one BQ25820.
   `10mΩ`. Must match the hardware: the input current readings and `input_current_limit` are scaled
   by it. Defaults to `2mΩ`.
 
-- **watchdog** (*Optional*, Boolean): Enable the chip's 40 second I²C watchdog. The component resets
-  the watchdog every 15 seconds; if the microcontroller stops doing so, the chip falls back to its
-  power-on charge settings. The component writes the configuration again if the watchdog has expired.
-  When disabled, the watchdog is turned off. Defaults to `false`.
+- **watchdog** (*Optional*, Enum): The period of the chip's I²C watchdog, one of `disabled`, `40s`,
+  `80s` or `160s`. The component feeds the watchdog on every poll, so `update_interval` must be shorter
+  than the period, or the configuration is rejected. If the microcontroller stops polling, the chip falls
+  back to its power-on charge settings when the watchdog expires; the component writes the configuration
+  again once polling resumes. `true` and `false` are still accepted as `160s` and `disabled`.
+  Defaults to `disabled`.
 
 - **charge_voltage** (*Optional*, Voltage): The VFB regulation trim point, in steps of 2mV between
   `1.504V` and `1.566V`. The battery charge voltage itself is set by the external VFB resistor divider;
@@ -120,8 +123,9 @@ may be defined if the device has more than one BQ25820.
 
 - **force_mppt_sweep** (*Optional*, Boolean): Run one MPPT sweep at startup. Defaults to `false`.
 
-- **temp_en** (*Optional*, Boolean): Enable the TS (temperature) input. The TS pin expects a 10kΩ NTC
-  thermistor from TS to PGND with a 10kΩ reference resistor. Defaults to `true`.
+- **temp_en** (*Optional*, Boolean): Enable the TS (temperature) input. The TS pin expects an NTC
+  thermistor from TS to PGND with a resistor from REGN to TS; the `ts_t*` thresholds are rated for a 10kΩ
+  NTC with a 10kΩ resistor. Defaults to `true`.
 
 - **ts_t1** (*Optional*, Enum): One of `-10C`, `-5C`, `0C` or `5C`. Below this temperature, charging
   is disabled. Defaults to `0C`.
@@ -152,6 +156,8 @@ sensor:
 
 ### Configuration variables
 
+At least one sensor must be set.
+
 - **bq25820_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the `bq25820`
   component defined above. Required only when there is more than one.
 
@@ -167,7 +173,19 @@ sensor:
 - **iac** (*Optional*): The input current in A. All options from [Sensor](/components/sensor).
 
 - **temp_in_c** (*Optional*): The battery thermistor temperature on the TS pin in °C. Requires
-  `temp_en: true` and a connected NTC. All options from [Sensor](/components/sensor).
+  `temp_en: true` and a connected NTC. The defaults match a 10kΩ NTC with a B constant of 3435 and a
+  10kΩ resistor. All options from [Sensor](/components/sensor), and:
+
+  - **b_constant** (*Optional*, float): The B constant of the NTC thermistor. Defaults to `3435`.
+
+  - **reference_resistance** (*Optional*, Resistance): The resistance of the NTC thermistor at
+    `reference_temperature`. Defaults to `10kΩ`.
+
+  - **reference_temperature** (*Optional*, Temperature): The temperature at which the NTC thermistor has
+    `reference_resistance`. Defaults to `25°C`.
+
+  - **resistor** (*Optional*, Resistance): The resistor from REGN to TS, above the NTC thermistor.
+    Defaults to `10kΩ`.
 
 ## Binary Sensor
 
@@ -184,6 +202,8 @@ binary_sensor:
 ```
 
 ### Configuration variables
+
+At least one binary sensor must be set.
 
 - **bq25820_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the `bq25820`
   component defined above. Required only when there is more than one.
@@ -239,6 +259,8 @@ text_sensor:
 
 ### Configuration variables
 
+At least one text sensor must be set.
+
 - **bq25820_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the `bq25820`
   component defined above. Required only when there is more than one.
 
@@ -272,7 +294,8 @@ bq25820:
   charge_current: 3A         # leave out to keep the ICHG pin setting
   bat_sns_res: 5mΩ           # battery sense shunt resistor (0.01-10 mΩ)
   ac_sns_res: 2mΩ            # input sense shunt resistor (0.01-10 mΩ)
-  watchdog: false            # chip falls back to defaults if not fed
+  watchdog: 160s             # chip falls back to defaults if not fed;
+                             # must be longer than update_interval
   # --- Charge limits ---
   charge_voltage: 1.536V     # trims the VFB regulation point; the pack
                              # charge voltage is set by the external VFB
@@ -291,7 +314,7 @@ bq25820:
   mppt_sweep_timer: 10m
   force_mppt_sweep: false    # run one panel sweep at startup
   # --- Temperature ---
-  # TS pin: 10k NTC from TS to PGND with a 10k reference resistor
+  # TS pin: 10k NTC from TS to PGND with a 10k resistor from REGN to TS
   temp_en: true
   ts_t1: 0C
   ts_t2: 10C
@@ -313,6 +336,10 @@ sensor:
       name: "Input Current"
     temp_in_c:
       name: "Pack Temperature"
+      b_constant: 3435
+      reference_resistance: 10kΩ
+      reference_temperature: 25°C
+      resistor: 10kΩ
 
 binary_sensor:
   - platform: bq25820
