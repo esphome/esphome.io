@@ -1,0 +1,171 @@
+---
+description: "Instructions for setting up feedback valves in ESPHome."
+title: "Feedback Valve"
+---
+
+import { Image } from 'astro:assets';
+import valveUiImg from './images/valve-ui.png';
+import APIRef from '@components/APIRef.astro';
+
+The `feedback` valve platform allows you to create valves with position control that
+can optionally have feedback from sensors to detect the fully-open and fully-closed states (endstops),
+and from sensors to detect actual movement (opening/closing). In all the cases the current
+position is approximated with the time the valve has been moving in a direction.
+
+It supports *open*, *close*, *stop* and *toggle* actions.
+
+<Image src={valveUiImg} layout="constrained" alt="" />
+
+```yaml
+# Example configuration entry
+valve:
+  - platform: feedback
+    name: "Gate"
+
+    open_action:
+      - switch.turn_on: open_valve_switch
+    open_duration: 2.1min
+    open_endstop: open_endstop_binary_sensor
+    open_sensor: open_movement_binary_sensor
+
+    close_action:
+      - switch.turn_on: close_valve_switch
+    close_duration: 2min
+    close_endstop: close_endstop_binary_sensor
+    close_sensor: close_movement_binary_sensor
+
+    stop_action:
+      - switch.turn_off: open_valve_switch
+      - switch.turn_off: close_valve_switch
+```
+
+## Use Cases
+
+It is a versatile valve that can accommodate for a number of DIY setups, or monitoring an externally controlled valve:
+
+### Time-Based
+
+Simplest case, when no sensors are available. The state is thus assumed.
+
+It is a drop-in replacement of [Time Based](/components/valve/time_based/)
+
+### Endstop Sensors
+
+For cases where there are endstops at one or both ends of the valve to detect the fully-open and fully-closed states.
+When any of these endstops are reached, an actual state is read and updated and the valve optionally
+stopped (via `stop_action`). The state is not assumed.
+
+The extension also handles the case where the valve has builtin endstops, which stops the movement, independently to
+the component's logic. In this case, when the valve is fully closed (either if timed based or sensor based) the
+`stop_action` is not triggered.
+
+It is a drop-in replacement of [Endstop](/components/valve/endstop/).
+
+### Movement Sensors
+
+If movement feedback is available, the valve no longer operates in *optimistic mode* (assuming that movement starts
+as soon as an action is triggered) and can also react to commands issued to the valve from an external control and still
+keep states in sync (useful for "smartization" of an existing valve).
+
+When there are no specific endstop sensors, and if the valve has builtin endstops and no external control logic,
+these movement sensors can optionally be used to infer the endstop state.
+When the movement stops (with no stop action being requested) it is assumed that it was caused by
+the builtin endstops, and so the close/open state (according to current direction) was reached.
+This function is activated setting `infer_endstop` to True.
+
+## Safety Features
+
+To protect the valve hardware from damage, some safety options are available:
+
+- *Max duration*, to protect from faulty endstops
+- *Direction change wait time*, like an interlock wait time, to protect motors from sudden direction changes
+- *Obstacle sensors* and *rollback*, possibility to stop and optionally rollback the valve when some external sensors detects an obstacle
+  (it might be a sensor for high current consumption or an infrared light detecting an obstruction in the path).
+
+## Configuration variables
+
+- **stop_action** (**Required**, [Action](/automations/actions#all-actions)): The action that should
+  be performed when the remote requests the valve to be closed or an endstop is reached.
+
+Open options:
+
+- **open_action** (**Required**, [Action](/automations/actions#all-actions)): The action that should
+  be performed when the remote requests the valve to be opened.
+
+- **open_duration** (**Required**, [Time](/guides/configuration-types#time)): The amount of time it takes the valve
+  to open up from the fully-closed state.
+
+- **open_endstop** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the
+  [Binary Sensor](/components/binary_sensor#config-binary_sensor) that turns on when the open position is reached.
+
+- **open_sensor** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the
+  [Binary Sensor](/components/binary_sensor#config-binary_sensor) that turns on when the valve is moving in the open direction.
+
+- **open_obstacle_sensor** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the
+  [Binary Sensor](/components/binary_sensor#config-binary_sensor) that turns on when an obstacle that blocks the
+  open direction is detected.
+
+Close options:
+
+- **close_action** (**Required**, [Action](/automations/actions#all-actions)): The action that should
+  be performed when the remote requests the valve to be closed.
+
+- **close_duration** (**Required**, [Time](/guides/configuration-types#time)): The amount of time it takes the valve
+  to close from the fully-open state.
+
+- **close_endstop** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the
+  [Binary Sensor](/components/binary_sensor#config-binary_sensor) that turns on when the closed position is reached.
+
+- **close_sensor** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the
+  [Binary Sensor](/components/binary_sensor#config-binary_sensor) that turns on when the valve is moving in the close direction.
+
+- **close_obstacle_sensor** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the
+  [Binary Sensor](/components/binary_sensor#config-binary_sensor) that turns on when an obstacle that blocks the
+  close direction is detected.
+
+Additional options:
+
+- **has_built_in_endstop** (*Optional*, boolean): Indicates that the valve has built in end stop
+  detectors. In this configuration the `stop_action` is not performed when the open or close
+  time is completed and if the valve is commanded to open or close the corresponding actions
+  will be performed without checking current state. Defaults to `false`.
+
+- **infer_endstop_from_movement** (*Optional*, boolean): Whether to infer endstop state from the movement sensor.
+  Requires movement sensors to be set, no endstop sensors and to have builtin endstops. Defaults to `false`.
+
+- **assumed_state** (*Optional*, boolean): Whether the true state of the valve is not known.
+  This will make the Home Assistant frontend show buttons for both OPEN and CLOSE actions, instead
+  of hiding or disabling one of them. Defaults to `true` if no sensor is available to known
+  the actual state of the valve.
+
+- **max_duration** (*Optional*, [Time](/guides/configuration-types#time)): The maximum duration the valve should be opening
+  or closing. Useful for protecting from dysfunctional endstops.
+  Requires internal, builtin or inferred endstops.
+
+- **direction_change_wait_time** (*Optional*, [Time](/guides/configuration-types#time)): Stops valve and forces a wait time between changes in direction,
+  and takes it into account when computing valve position (useful to protect motors).
+  When this option is set (even at 0s) if an open/close action is invoked while the valve is moving in the opposite direction,
+  then an intermediate stop action will be invoked to generate the delay.
+
+- **acceleration_wait_time** (*Optional*, [Time](/guides/configuration-types#time)): Considers a wait time needed by the valve to actually
+  start moving after command is issued and takes it into account when computing valve position
+  (useful for heavy valves with large inertia).
+  Intended to not accumulate error when doing multiple partial open/close actions).
+  The open/close duration includes one instance of this delay, as it is the total amount of time from
+  issuing a command to reaching endstop.
+  Defaults to `0s`.
+
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval
+  to publish updated position information to the UI while the valve is moving.
+  Defaults to `1s`.
+
+- **obstacle_rollback** (*Optional*, percentage): The percentage of rollback the valve will perform in case of
+  obstacle detection while moving. Defaults to `10%`.
+
+- All other options from [Valve](/components/valve#config-valve).
+
+## See Also
+
+- [Valve Component](/components/valve/)
+- [Automation](/automations)
+- <APIRef text="feedback_valve.h" path="feedback/feedback_valve.h" />
