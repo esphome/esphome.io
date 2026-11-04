@@ -48,10 +48,11 @@ voice_assistant:
 - **tts_playback_start_timeout** (*Optional*, [Time](/guides/configuration-types/#time)): How long to wait for the
   media player to start playing the TTS response. Must be at least `1ms`. Defaults to `15s`.
   Increase this if a slow TTS engine, such as XTTS, takes longer than that to start. If playback has not started in
-  time, the response is treated as finished and a continued conversation does not open the microphone, so a late
-  start cannot be recorded. A larger value only delays recovery when the media player never starts.
-  Once playback runs, a fixed 2 second check detects a stalled media player instead. With a `speaker` this option
-  has no effect: the response finishes 2 seconds after the speaker stops, unless a stream-end event ends it first.
+  time, the response is treated as finished and the follow-up turn Home Assistant asked for is skipped. Continuous
+  mode (`voice_assistant.start_continuous`) still starts listening again. A larger value only delays recovery when
+  the media player never starts. Once playback has started, the response ends when the media player stops playing
+  it. With a `speaker` this option has no effect: the response finishes 2 seconds after the speaker stops, unless a
+  stream-end event ends it first.
 
 - **on_intent_start** (*Optional*, [Automation](/automations)): An automation to perform when intent processing starts.
 - **on_intent_progress** (*Optional*, [Automation](/automations)): An automation to perform when intent progress happens.
