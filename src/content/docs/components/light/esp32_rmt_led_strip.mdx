@@ -92,11 +92,12 @@ fails if:
   other variants, the RX memory for an RX component, and the TX and RX memory together for a TX component
 - a transmitter or LED strip with `use_dma` sets `rmt_symbols` above 2046
 
-A component with `use_dma` uses one block. ESPHome also works out which memory each channel gets when the components
-are set up, by `setup_priority` and then in the order of the configuration. If a channel does not fit, ESPHome logs a
-warning that suggests an `rmt_symbols` value that fits. The order matters because a TX channel can extend into memory
-that the next one would need: on an `ESP32-S3`, a 48 symbol strip followed by a 288 symbol strip fits, but not the
-other way round.
+A component with `use_dma` uses one block. When it compiles, ESPHome also works out which memory each channel gets
+when the components are set up: by `setup_priority`, and otherwise usually in the order of the configuration. If a
+channel does not fit, ESPHome logs a warning that suggests an `rmt_symbols` value that fits, or a `setup_priority`
+that sets up the smaller ones first. `esphome config` does not show this warning. The order matters because a TX
+channel can extend into memory that the next one would need: on an `ESP32-S3`, a 48 symbol strip followed by a 288
+symbol strip fits, but not the other way round.
 
 - **use_dma** (*Optional*, boolean): Enable DMA on variants that support it. If enabled `rmt_symbols` controls
   the DMA buffer size and can be set to a large value, up to 2046.
