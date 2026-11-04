@@ -1,0 +1,562 @@
+---
+description: "Instructions for setting up the Trinamic TMC2209 stepper motor driver in ESPHome"
+title: "TMC2209 Stepper Motor Driver"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `tmc2209` stepper platform supports the Trinamic TMC2209 stepper motor driver
+([datasheet](https://www.analog.com/media/en/technical-documentation/data-sheets/TMC2209_datasheet_rev1.09.pdf)).
+The driver is configured over its single wire UART interface. Several drivers can share one UART bus by using
+different addresses.
+
+The motor can be driven in two ways:
+
+- **STEP/DIR pins**: ESPHome generates the steps on `step_pin`, like the [A4988](/components/stepper/#a4988-component).
+  The driver is set to step on both edges, so every change of the step pin is one step.
+- **UART speed control**: the driver generates the steps itself from the speed written over UART (the `VACTUAL`
+  register). ESPHome counts the position from the step pulses the driver outputs on its `INDEX` pin, so no STEP or
+  DIR connection is needed.
+
+This component requires a [UART bus](/components/uart/) to be configured. The TMC2209 accepts baud rates between
+9600 and 500000 baud and detects the rate automatically.
+
+```yaml
+# Example configuration entry
+stepper:
+  - platform: tmc2209
+    id: my_stepper
+    step_pin: GPIOXX
+    dir_pin: GPIOXX
+    rsense: 110 mOhm
+    max_speed: 2000 steps/s
+```
+
+## Wiring
+
+The TMC2209 uses a single wire for UART (the `PDN_UART` pin). Connect the RX pin of the microcontroller directly to
+`PDN_UART`, and the TX pin through a 1 kΩ resistor. On the single wire bus every byte sent is also received; the
+component discards this echo.
+
+The UART address (0-3) is set by the `MS1` and `MS2` pins of the driver. Drivers on the same bus need different
+addresses. Check the schematic of your driver module, as some boards tie these pins to a fixed level.
+
+## Configuration Variables
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): Specify the ID of the stepper so that you can control
+  it.
+
+- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the [UART bus](/components/uart/) the
+  driver is connected to. Required if you have multiple UART buses.
+
+- **address** (*Optional*, int): The UART address of the driver, `0` to `3`. Defaults to `0`.
+
+- **step_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The `STEP` pin of the driver.
+  Enables STEP/DIR mode. Exactly one of `step_pin` or `index_pin` is required.
+
+- **dir_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The `DIR` pin of the driver.
+  Required when `step_pin` is set.
+
+- **index_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The `INDEX` pin of the driver.
+  Enables UART speed control mode. Must be a pin that supports interrupts. Exactly one of `step_pin` or `index_pin`
+  is required.
+
+- **diag_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The `DIAG` pin of the driver.
+  Must be a pin that supports interrupts. The driver sets this pin high on a driver error or a stall. See
+  [Driver Status](#driver-status) and [Stall Detection](#stall-detection).
+
+- **enn_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The `ENN` (enable, active low) pin
+  of the driver. When not set, the motor outputs are turned on and off over UART.
+
+- **rsense** (*Optional*, resistance): The value of the external sense resistors on the driver module, for example
+  `110 mOhm`. Used to convert currents to driver settings. When not set, the driver is switched to its internal sense
+  resistors, which only works on boards designed for it. Most driver modules have external sense resistors.
+
+- **vsense** (*Optional*, boolean): Use the high sensitivity sense voltage range. This lowers the maximum current
+  and gives finer current steps, useful for small motors. When not set, the driver setting is not changed.
+
+- **run_current** (*Optional*, current): The motor current while running, in A RMS. Values above the maximum of the
+  driver are limited to the maximum and a warning is logged. The maximum is shown in the log at startup.
+
+- **hold_current** (*Optional*, current): The motor current at standstill, in A RMS.
+
+- **microsteps** (*Optional*, int): The number of microsteps per full step. One of `1`, `2`, `4`, `8`, `16`, `32`,
+  `64`, `128` or `256`. Written to the driver at startup, which then ignores the `MS1` and `MS2` pins. Default: `16`.
+
+- **analog_current_scale** (*Optional*, boolean): Scale the motor current with the voltage on the `VREF` pin of the
+  driver. Defaults to `false`.
+
+- **ottrim** (*Optional*, int): The overtemperature thresholds, `0` to `3`. See the `OTTRIM` setting in the
+  datasheet. When not set, the driver setting is not changed.
+
+- **clock_frequency** (*Optional*, frequency): The clock frequency of the driver. Only used to convert the speed in
+  UART speed control mode. Change this when the driver runs from an external clock. Defaults to `12MHz`.
+
+- **on_status** (*Optional*, [Automation](/automations/)): An automation to perform when a driver condition, such as
+  an overtemperature warning or a short circuit, starts or ends. The variables `event` (`tmc22xx::DriverEvent`) and
+  `active` (`bool`) are available. See [Driver Status](#driver-status).
+
+- **on_stall** (*Optional*, [Automation](/automations/)): An automation to perform when the driver reports a stall.
+  Requires `diag_pin`. See [Stall Detection](#stall-detection).
+
+- All other options from [Base Stepper Configuration](/components/stepper/#base_stepper_config).
+
+> [!NOTE]
+> Positions and speeds are in microsteps. With `microsteps: 16`, a motor with 200 full steps per revolution needs
+> 3200 steps for one revolution.
+
+> [!NOTE]
+> In STEP/DIR mode the steps are generated from the main loop, so the maximum speed depends on how busy the
+> microcontroller is. In UART speed control mode the driver generates the steps, which allows higher speeds.
+
+The driver is enabled at startup. When a new target is set while the driver is disabled, it is enabled again. If
+the driver does not respond during setup, the component is marked as failed.
+
+## Multiple Drivers on One Bus
+
+Up to four drivers can share one UART bus. Give each driver a different `address`. Configurations with two drivers
+using the same address on the same bus are rejected.
+
+```yaml
+stepper:
+  - platform: tmc2209
+    id: x_axis
+    address: 0
+    step_pin: GPIOXX
+    dir_pin: GPIOXX
+    rsense: 110 mOhm
+    max_speed: 2000 steps/s
+
+  - platform: tmc2209
+    id: y_axis
+    address: 1
+    index_pin: GPIOXX
+    rsense: 110 mOhm
+    max_speed: 1000 steps/s
+```
+
+## Driver Status
+
+When `diag_pin` or `on_status` is configured, the component reads the driver status every second, and also right
+away when `DIAG` goes high. Every condition that starts or ends is logged and passed to `on_status`.
+
+If the driver reports that it was reset, for example after its supply voltage dropped, all settings are written to
+the driver again, including changes made with actions. A move that was in progress continues from standstill.
+
+The `event` variable of `on_status` is one of:
+
+| Event                                              | Condition                                                   |
+| -------------------------------------------------- | ----------------------------------------------------------- |
+| `tmc22xx::DRIVER_EVENT_RESET`                      | The driver was reset. Settings are restored.                |
+| `tmc22xx::DRIVER_EVENT_DRIVER_ERROR`               | The driver shut down because of overtemperature or a short. |
+| `tmc22xx::DRIVER_EVENT_CHARGE_PUMP_UNDERVOLTAGE`   | Charge pump undervoltage. The driver is disabled.           |
+| `tmc22xx::DRIVER_EVENT_OVERTEMPERATURE_PREWARNING` | Overtemperature prewarning threshold reached.               |
+| `tmc22xx::DRIVER_EVENT_OVERTEMPERATURE`            | Overtemperature limit reached. The driver shuts down.       |
+| `tmc22xx::DRIVER_EVENT_SHORT_TO_GROUND_A`, `_B`    | Short to ground on phase A or B.                            |
+| `tmc22xx::DRIVER_EVENT_LOW_SIDE_SHORT_A`, `_B`     | Short on the low side MOSFET of phase A or B.               |
+| `tmc22xx::DRIVER_EVENT_OPEN_LOAD_A`, `_B`          | Open load on phase A or B. Only a hint, see the datasheet.  |
+| `tmc22xx::DRIVER_EVENT_TEMPERATURE_120C`           | Temperature above 120 °C.                                   |
+| `tmc22xx::DRIVER_EVENT_TEMPERATURE_143C`           | Temperature above 143 °C.                                   |
+| `tmc22xx::DRIVER_EVENT_TEMPERATURE_150C`           | Temperature above 150 °C.                                   |
+| `tmc22xx::DRIVER_EVENT_TEMPERATURE_157C`           | Temperature above 157 °C.                                   |
+
+`active` is `true` when the condition starts and `false` when it ends. Open load and the temperature levels are
+informational, the driver keeps running.
+
+This example disables the motor outputs at the overtemperature prewarning:
+
+```yaml
+stepper:
+  - platform: tmc2209
+    id: my_stepper
+    # ...
+    on_status:
+      - if:
+          condition:
+            lambda: "return event == tmc22xx::DRIVER_EVENT_OVERTEMPERATURE_PREWARNING && active;"
+          then:
+            - tmc2209.disable: my_stepper
+```
+
+## Stall Detection
+
+The TMC2209 measures the motor load with StallGuard and sets `DIAG` high when the motor stalls. This can be used for
+sensorless homing: drive the motor against a mechanical stop and set the position when the stall is reported.
+`on_stall` requires `diag_pin`.
+
+StallGuard only works in StealthChop mode, within a speed range: faster than the speed set by `tcool_threshold`, and
+slower than the speed set by `tpwm_threshold` when that is not `0`. `tcool_threshold` is `0` at power-up, which
+disables stall reports, so set it and the sensitivity with the [`tmc2209.stallguard`](#tmc2209-stallguard-action)
+action.
+
+Both thresholds are compared with `TSTEP`, the time between two 1/256 microsteps in clock cycles, so a higher value
+means a lower speed. For a speed in steps/s:
+
+$$
+\text{TSTEP} = \frac{\text{clock\_frequency} \times \text{microsteps}}{256 \times \text{speed}}
+$$
+
+At 12 MHz and 16 microsteps, a `tcool_threshold` of `1000` enables stall reports above 750 steps/s. Home at a speed
+that is safely inside the range.
+
+The example below homes the motor at startup. The `homing` flag makes sure that only a stall during the homing move
+sets the position, and not a stall or a false report during a normal move.
+
+```yaml
+esphome:
+  on_boot:
+    - tmc2209.stallguard:
+        id: my_stepper
+        threshold: 50
+        tcool_threshold: 1000
+    - script.execute: home
+
+globals:
+  - id: homing
+    type: bool
+    initial_value: "false"
+
+script:
+  - id: home
+    then:
+      - globals.set:
+          id: homing
+          value: "true"
+      # Further than the full travel, so the motor reaches the mechanical stop
+      - stepper.set_target:
+          id: my_stepper
+          target: -100000
+
+stepper:
+  - platform: tmc2209
+    id: my_stepper
+    step_pin: GPIOXX
+    dir_pin: GPIOXX
+    diag_pin: GPIOXX
+    rsense: 110 mOhm
+    max_speed: 2000 steps/s
+    on_stall:
+      - if:
+          condition:
+            lambda: "return id(homing);"
+          then:
+            - globals.set:
+                id: homing
+                value: "false"
+            - stepper.report_position:
+                id: my_stepper
+                position: 0
+            - stepper.set_target:
+                id: my_stepper
+                target: 0
+```
+
+The right `threshold` depends on the motor, its current and speed, and the load. Start low and raise it until a stall
+is detected reliably without false reports during normal moves. The `stallguard_result` and `motor_load`
+[sensors](#sensor) help to find a value: watch them during a normal move and while the motor is blocked.
+
+## Sensor
+
+The `tmc2209` sensor platform reads the motor current, the StallGuard load measurement and the StealthChop
+regulation values from the driver.
+
+```yaml
+sensor:
+  - platform: tmc2209
+    actual_current:
+      name: "Motor Current"
+    motor_load:
+      name: "Motor Load"
+```
+
+### Configuration Variables
+
+- **tmc2209_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the TMC2209 stepper. Required if you
+  have multiple TMC2209 drivers.
+
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to read the sensors.
+  Defaults to `60s`.
+
+- **actual_current** (*Optional*): The motor current the driver is set to, in A RMS. This is the run current or the
+  hold current, lowered by CoolStep when it is active. Cannot be used when `analog_current_scale` is `true`, because
+  the current then depends on the voltage on `VREF`. All options from [Sensor](/components/sensor/).
+
+- **stallguard_result** (*Optional*): The StallGuard result, `0` to `510`. A lower value means a higher load. Only
+  valid while the motor runs in StealthChop mode. All options from [Sensor](/components/sensor/).
+
+- **motor_load** (*Optional*): The StallGuard result as a load in percent. `0%` is a result of `510` (no load) and
+  `100%` is twice the StallGuard `threshold`, where a stall is reported. Values above `100%` are possible. Only valid
+  while the motor runs in StealthChop mode. Has no value while the motor is stopped. All options from
+  [Sensor](/components/sensor/).
+
+- **pwm_scale_sum** (*Optional*): The StealthChop PWM duty cycle, `0` to `255`. A value close to `255` means that
+  the supply voltage is too low to reach the motor current at this speed. All options from
+  [Sensor](/components/sensor/).
+
+- **pwm_scale_auto** (*Optional*): The offset that the StealthChop automatic current regulation adds to the PWM
+  amplitude, `-255` to `255`. All options from [Sensor](/components/sensor/).
+
+- **pwm_ofs_auto** (*Optional*): The PWM amplitude offset determined by the StealthChop automatic tuning, `0` to
+  `255`. All options from [Sensor](/components/sensor/).
+
+- **pwm_grad_auto** (*Optional*): The PWM amplitude gradient determined by the StealthChop automatic tuning, `0` to
+  `255`. All options from [Sensor](/components/sensor/).
+
+`stallguard_result`, `pwm_scale_sum`, `pwm_scale_auto`, `pwm_ofs_auto` and `pwm_grad_auto` are diagnostic sensors.
+See the `SG_RESULT`, `PWM_SCALE` and `PWM_AUTO` registers in the datasheet for details.
+
+> [!NOTE]
+> The sensors only show the value at the moment they are read. To follow the load during a move, use a short
+> `update_interval`. Every update reads the driver registers over UART. When a read fails, that sensor and the
+> sensors after it have no value until the next update.
+
+## `tmc2209.enable` / `tmc2209.disable` Actions
+
+Turn the motor outputs on or off. This uses the `enn_pin` when configured, and the chopper off time setting
+(`TOFF`) of the driver otherwise. When disabled, the target is set to the current position, so the motor does not
+move again when it is enabled.
+
+```yaml
+on_...:
+  then:
+    - tmc2209.disable: my_stepper
+    - tmc2209.enable: my_stepper
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the stepper.
+
+## `tmc2209.configure` Action
+
+Change driver settings at runtime.
+
+```yaml
+on_...:
+  then:
+    - tmc2209.configure:
+        id: my_stepper
+        inverse_direction: true
+        microsteps: 16
+        interpolation: true
+        enable_spreadcycle: false
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the stepper.
+
+- **inverse_direction** (*Optional*, boolean, [templatable](/automations/templates)): Reverse the direction of the
+  motor.
+
+- **microsteps** (*Optional*, int, [templatable](/automations/templates)): The number of microsteps per full step.
+  One of `1`, `2`, `4`, `8`, `16`, `32`, `64`, `128` or `256`.
+
+- **interpolation** (*Optional*, boolean, [templatable](/automations/templates)): Interpolate each step to 256
+  microsteps, for smoother and quieter movement at low microstep settings.
+
+- **enable_spreadcycle** (*Optional*, boolean, [templatable](/automations/templates)): `true` uses SpreadCycle
+  chopper mode, `false` uses StealthChop. StealthChop is quieter, SpreadCycle gives more torque at higher speeds.
+
+- **tpwm_threshold** (*Optional*, int, [templatable](/automations/templates)): The `TPWMTHRS` value, `0` to
+  `1048575`. When StealthChop is used, the driver switches to SpreadCycle above the speed set by this value. `0`
+  disables the switch. See the datasheet for the conversion between this value and speed.
+
+## `tmc2209.currents` Action
+
+Change the motor currents at runtime.
+
+```yaml
+on_...:
+  then:
+    - tmc2209.currents:
+        id: my_stepper
+        run_current: 800mA
+        hold_current: 400mA
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the stepper.
+
+- **run_current** (*Optional*, current, [templatable](/automations/templates)): The motor current while running,
+  in A RMS. Cannot be used together with `irun`.
+
+- **irun** (*Optional*, int, [templatable](/automations/templates)): The run current as a raw driver value, `0` to
+  `31`. Cannot be used together with `run_current`.
+
+- **hold_current** (*Optional*, current, [templatable](/automations/templates)): The motor current at standstill,
+  in A RMS. Cannot be used together with `ihold`.
+
+- **ihold** (*Optional*, int, [templatable](/automations/templates)): The hold current as a raw driver value, `0`
+  to `31`. Cannot be used together with `hold_current`.
+
+- **iholddelay** (*Optional*, int, [templatable](/automations/templates)): How gradually the current is lowered
+  from the run current to the hold current, `0` to `15`. `0` switches at once.
+
+- **tpowerdown** (*Optional*, int, [templatable](/automations/templates)): The delay after the motor stops before
+  the current is lowered to the hold current, `0` to `255`. Each unit is $2^{18}$ clock cycles (about 22 ms at
+  12 MHz). The driver default is `20`.
+
+- **standstill_mode** (*Optional*, enum, [templatable](/automations/templates)): What the driver does at standstill
+  when the hold current is zero. Only works in StealthChop mode. One of:
+
+  - `normal`: Normal operation.
+  - `freewheeling`: The motor can turn freely.
+  - `coil_short_ls`: The coils are shorted through the low side switches (passive braking).
+  - `coil_short_hs`: The coils are shorted through the high side switches (passive braking).
+
+## `tmc2209.stallguard` Action
+
+Change the StallGuard settings at runtime. See [Stall Detection](#stall-detection).
+
+```yaml
+on_...:
+  then:
+    - tmc2209.stallguard:
+        id: my_stepper
+        threshold: 50
+        tcool_threshold: 1000
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the stepper.
+
+- **threshold** (*Optional*, int, [templatable](/automations/templates)): The `SGTHRS` value, `0` to `255`. A stall
+  is reported when the StallGuard result drops below twice this value, so a higher value detects a stall sooner.
+
+- **tcool_threshold** (*Optional*, int, [templatable](/automations/templates)): The `TCOOLTHRS` value, `0` to
+  `1048575`. StallGuard and CoolStep are active above the speed set by this value. A higher value means a lower
+  speed. `0` disables both. See [Stall Detection](#stall-detection) for the conversion between this value and speed.
+
+## `tmc2209.coolconf` Action
+
+Change the CoolStep settings at runtime. CoolStep uses the StallGuard result to lower the motor current when the
+load is low and raise it again when the load increases. It is active in the same speed range as StallGuard. See the
+`COOLCONF` register in the datasheet for details.
+
+```yaml
+on_...:
+  then:
+    - tmc2209.coolconf:
+        id: my_stepper
+        semin: 5
+        semax: 2
+        seup: 1
+        sedn: 0
+        seimin: false
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the stepper.
+
+- **semin** (*Optional*, int, [templatable](/automations/templates)): The lower StallGuard threshold for raising
+  the current, `0` to `15`. The current is raised when the StallGuard result drops below `semin` × 32. `0` disables
+  CoolStep, which is the power-up value.
+
+- **semax** (*Optional*, int, [templatable](/automations/templates)): The upper StallGuard threshold for lowering
+  the current, `0` to `15`. The current is lowered when the StallGuard result is at or above
+  (`semin` + `semax` + 1) × 32.
+
+- **seup** (*Optional*, int, [templatable](/automations/templates)): The current increment step size, `0` to `3`,
+  for 1, 2, 4 or 8 current steps.
+
+- **sedn** (*Optional*, int, [templatable](/automations/templates)): How fast the current is lowered, `0` to `3`.
+  `0` lowers the current by one step for every 32 StallGuard measurements, `1` for every 8, `2` for every 2 and `3`
+  for every measurement.
+
+- **seimin** (*Optional*, boolean, [templatable](/automations/templates)): The minimum current CoolStep lowers to.
+  `false` for half of the run current, `true` for a quarter.
+
+## `tmc2209.chopconf` Action
+
+Change the chopper settings at runtime. `toff` and `tbl` apply in both chopper modes, `hstrt` and `hend` set the
+SpreadCycle hysteresis. The driver defaults work for most motors. See the `CHOPCONF` register and the SpreadCycle
+section in the datasheet for tuning.
+
+The power-up values below are the values of a driver as shipped. The driver reads them from its OTP memory, so they
+can differ when that memory was programmed. These are not the reset values in the datasheet's register table.
+
+```yaml
+on_...:
+  then:
+    - tmc2209.chopconf:
+        id: my_stepper
+        toff: 5
+        tbl: 1
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the stepper.
+
+- **toff** (*Optional*, int, [templatable](/automations/templates)): The chopper off time, `1` to `15`. The slow
+  decay phase lasts 24 + 32 × `toff` clock cycles. `1` only works with `tbl` set to `2` or higher. This is checked
+  when both are set to fixed values in the same action. Without an `enn_pin`, the driver is disabled by setting the
+  off time to `0`. While the motor is disabled, the new value is stored and written on the next enable. The power-up
+  value is `3`.
+
+- **tbl** (*Optional*, int, [templatable](/automations/templates)): The comparator blank time, `0` to `3`, for 16,
+  24, 32 or 40 clock cycles. The datasheet recommends `0` or `1` for most motors. The power-up value is `2`.
+
+- **hstrt** (*Optional*, int, [templatable](/automations/templates)): The hysteresis start value added to `hend`,
+  `0` to `7`, for 1 to 8. The power-up value is `5` (6).
+
+- **hend** (*Optional*, int, [templatable](/automations/templates)): The hysteresis end value, `0` to `15`, for -3
+  to 12. The power-up value is `0` (-3). The sum of `hstrt` and `hend` (as the datasheet values) must not exceed 16.
+  This is checked when both are set to fixed values in the same action.
+
+## `tmc2209.pwmconf` Action
+
+Change the StealthChop PWM settings at runtime. The driver defaults work for most motors. See the `PWMCONF`
+register and the StealthChop section in the datasheet for tuning. The power-up values are those of a driver as
+shipped, see the [`tmc2209.chopconf` action](#tmc2209-chopconf-action).
+
+```yaml
+on_...:
+  then:
+    - tmc2209.pwmconf:
+        id: my_stepper
+        pwm_freq: 2
+        pwm_reg: 4
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the stepper.
+
+- **pwm_ofs** (*Optional*, int, [templatable](/automations/templates)): The PWM amplitude offset, `0` to `255`.
+  With `pwm_autoscale`, this is the start value for the automatic tuning. The power-up value is `36`.
+
+- **pwm_grad** (*Optional*, int, [templatable](/automations/templates)): The velocity dependent PWM amplitude
+  gradient, `0` to `255`. With `pwm_autograd`, this is the start value for the automatic tuning. The power-up value
+  is `14`.
+
+- **pwm_freq** (*Optional*, int, [templatable](/automations/templates)): The PWM frequency, `0` to `3`, for 2/1024,
+  2/683, 2/512 or 2/410 of the clock frequency (about 23.4, 35.1, 46.9 or 58.5 kHz at 12 MHz). The power-up value
+  is `1`.
+
+- **pwm_autoscale** (*Optional*, boolean, [templatable](/automations/templates)): Regulate the PWM amplitude to
+  the motor current automatically. When `false`, `pwm_ofs` and `pwm_grad` set the amplitude directly. The power-up
+  value is `true`.
+
+- **pwm_autograd** (*Optional*, boolean, [templatable](/automations/templates)): Tune the PWM amplitude gradient
+  automatically. Requires `pwm_autoscale`. The power-up value is `true`.
+
+- **pwm_reg** (*Optional*, int, [templatable](/automations/templates)): The regulation loop gradient for
+  `pwm_autoscale`, `1` to `15`. This is the maximum change of the PWM amplitude per half wave, from 0.5 for `1` to
+  7.5 for `15`. A higher value adapts faster to load changes. The power-up value is `8`.
+
+- **pwm_lim** (*Optional*, int, [templatable](/automations/templates)): The limit for the PWM amplitude when
+  switching from SpreadCycle back to StealthChop, `0` to `15`, in units of 16. The power-up value is `12`.
+
+## See Also
+
+- [Stepper Component](/components/stepper/)
+- [UART Bus](/components/uart/)
+- [Sensor Component](/components/sensor/)
+- <APIRef text="tmc2209.h" path="tmc2209/tmc2209.h" />
+- <APIRef text="tmc2209_sensor.h" path="tmc2209/sensor/tmc2209_sensor.h" />
+- <APIRef text="tmc22xx.h" path="tmc22xx/tmc22xx.h" />

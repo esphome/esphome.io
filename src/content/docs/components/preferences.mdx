@@ -6,7 +6,8 @@ import APIRef from '@components/APIRef.astro';
 
 This component is used to store data that persists across device reboots, e.g. the latest state of a light or the
 accumulated energy used by an appliance. The data is normally stored in flash memory; the
-[host](/components/host/) platform stores it in a file instead, and on ESP32 it can optionally be kept in RTC memory.
+[host](/components/host/) platform stores it in a file instead, on ESP32 it can optionally be kept in RTC memory, and
+the Beken BK7231T, BK7231N and BK7238 can emulate RTC storage with flash that is forgotten after a power cut.
 
 ```yaml
 # Example configuration entry
@@ -20,12 +21,13 @@ preferences:
   data is flushed to the flash. This setting helps to prevent rapid changes to a component from being quickly
   written to the flash and wearing it out. Defaults to `1min`. Set to `never` to disable this feature.
 
-- **rtc_storage** (*Optional*, boolean): Only useful on ESP32. Compile RTC-memory-backed preference storage into the
+- **rtc_storage** (*Optional*, boolean): Only useful on ESP32 and the Beken BK7231T, BK7231N and BK7238. Compile
+  RTC-memory-backed preference storage (on the Beken chips, flash storage that is forgotten after a power cut) into the
   firmware even when no other option selects it (options such as `safe_mode`'s and `fast_connect`'s `storage: rtc`
   enable it automatically). This is intended for external components that request RTC storage through the C++
-  preferences API; without it, such requests fall back to flash (NVS) with a warning in the log. Not available on
-  ESP32 variants without RTC memory (C2 and C61). On ESP8266, RTC storage is integral and always enabled: `true` is
-  accepted (and does nothing), while `false` is rejected since it cannot be disabled.
+  preferences API; without it, such requests fall back to ordinary flash storage (NVS on ESP32) with a warning in the
+  log. Not available on ESP32 variants without RTC memory (C2 and C61). On ESP8266, RTC storage is integral and always enabled: `true` is accepted
+  (and does nothing), while `false` is rejected since it cannot be disabled.
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this component, required to
   reference it from `component.suspend` / `component.resume` / `component.update`.

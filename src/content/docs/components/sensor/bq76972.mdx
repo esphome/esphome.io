@@ -1,0 +1,96 @@
+---
+description: "Instructions for setting up the Texas Instruments BQ76972 battery monitor in ESPHome."
+title: "Texas Instruments BQ76972 Battery Monitor"
+---
+
+The `bq76972` component reads a Texas Instruments BQ76972 battery monitor
+([datasheet](https://www.ti.com/lit/ds/slusfc9/slusfc9.pdf),
+[technical reference manual](https://www.ti.com/lit/ug/sluucw9/sluucw9.pdf)) over the
+[I²C Bus](/components/i2c/). The default I²C address is `0x08`.
+
+The BQ76972 monitors 3 to 16 series cells and reports each cell voltage, the stack voltage and the
+temperature of its internal die and of thermistors on up to nine pins.
+
+## Configuration
+
+```yaml
+# Example configuration entry
+bq76972:
+  id: bms
+
+sensor:
+  - platform: bq76972
+    stack_voltage:
+      name: "Pack Total Voltage"
+    internal_temperature:
+      name: "Temperature - Internal"
+    ts1_temperature:
+      name: "Temperature - Pin TS1"
+    cell_1_voltage:
+      name: "Cell 1 Voltage"
+    cell_2_voltage:
+      name: "Cell 2 Voltage"
+    # The top cell of a pack with fewer than 16 cells is wired to the VC16 input
+    cell_16_voltage:
+      name: "Cell 3 Voltage"
+```
+
+## Configuration Variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used by the sensor platform
+  and actions.
+- **address** (*Optional*, int): The I²C address of the device. Defaults to `0x08`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often to poll the monitor.
+  Defaults to `10s`.
+- **crc_enabled** (*Optional*, boolean): Use the CRC-protected I²C mode. Must match the mode the chip is
+  configured for. Defaults to `false`.
+- **reg_disabled** (*Optional*, boolean): Turn the chip's REG0, REG1 and REG2 regulators off during setup. Leave
+  this off when one of them powers the host or the I²C bus. Defaults to `false`.
+
+## Sensor
+
+The measurements are exposed through the `bq76972` sensor platform.
+
+### Configuration Variables
+
+- **bq76972_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `bq76972` component. Required
+  when more than one `bq76972` is configured.
+- **stack_voltage** (*Optional*): The total stack voltage, in V. All options from [Sensor](/components/sensor/).
+- **cell_1_voltage** to **cell_16_voltage** (*Optional*): The voltage on each VC cell input, in V. The number is
+  the input, not the cell's position in the pack: a pack with fewer than 16 cells has its top cell wired to VC16,
+  so that cell is `cell_16_voltage`, and the board's wiring decides which other inputs carry a cell. Inputs shorted
+  to the cell below read 0 and are not published. All options from [Sensor](/components/sensor/).
+- **internal_temperature** (*Optional*): The die temperature, in °C. All options from
+  [Sensor](/components/sensor/).
+- **cfetoff_temperature**, **dfetoff_temperature**, **alert_temperature**, **ts1_temperature**,
+  **ts2_temperature**, **ts3_temperature**, **hdq_temperature**, **dchg_temperature**, **ddsg_temperature**
+  (*Optional*): The temperature of a thermistor on that pin, in °C. Configuring one of these sets the pin up
+  as a thermistor input during setup; TS1 is a thermistor input by default. All options from
+  [Sensor](/components/sensor/).
+
+## `bq76972.program_i2c_address` Action
+
+Writes a new I²C address into the chip's data memory and switches to it. The address is held in the chip's RAM:
+it survives a reboot of the ESP but reverts to the default when the chip loses power, so `address` in the
+configuration must match whichever address the chip currently answers to. After an ESP-only reboot the chip still
+answers at the programmed address and setup at the configured one fails; either power-cycle the chip or set
+`address` to the programmed value. A permanent change needs the address programmed into the chip's OTP memory with
+the manufacturer's tools.
+
+```yaml
+button:
+  - platform: template
+    name: "Program BQ76972 Address"
+    on_press:
+      - bq76972.program_i2c_address:
+          id: bms
+          address: 0x09
+```
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `bq76972` component.
+- **address** (**Required**, int, [templatable](/automations/templates/)): The new I²C address.
+
+## See Also
+
+- [I²C Bus](/components/i2c/)
+- [Sensor Component](/components/sensor/)
