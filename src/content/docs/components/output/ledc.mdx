@@ -17,6 +17,8 @@ bit depth which means the output is not that accurate for frequencies above ~300
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The id to use for this output component.
 - **frequency** (*Optional*, frequency): At which frequency to run the LEDC
   channel's timer. Defaults to `1kHz`.
+- **dithering** (*Optional*, boolean): Enable hardware duty-cycle dithering for finer average brightness control.
+  Defaults to `false`. See [Hardware Duty Dithering](#hardware-duty-dithering) for supported variants and limitations.
 
 - All other options from [Output](/components/output#config-output).
 
@@ -119,6 +121,25 @@ also support 20-bit LEDC timers. */}
 
 The ESP8266 for instance has *usually* a frequency of 1000Hz with a resolution of 10 bits.
 This means that there are only 4 steps between each value.
+
+## Hardware Duty Dithering
+
+Set `dithering: true` for smoother low-brightness light transitions without reducing the PWM frequency.
+The hardware varies pulse widths across PWM cycles to provide average-duty increments of 1/16 of a timer tick.
+
+Dithering is supported on ESP32, ESP32-S2, ESP32-S3, ESP32-S31, ESP32-C2, ESP32-C3, ESP32-C5, ESP32-C6,
+ESP32-C61, ESP32-H2, and ESP32-P4.
+
+```yaml
+output:
+  - platform: ledc
+    pin: GPIOXX
+    id: led_pwm
+    dithering: true
+```
+
+> [!NOTE]
+> At very low PWM frequencies and low brightness, dithering may introduce visible flicker.
 
 ## `output.ledc.set_frequency` Action
 

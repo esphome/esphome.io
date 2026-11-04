@@ -28,7 +28,7 @@ as the efficiency of such a regulator is higher than that of a LDO.
 
 ## Getting Started
 
-The nRF52840 requires a bootloader, with three supported options: `MCUboot`, `Adafruit nRF52 Bootloader`, and the Nordic Open DFU Bootloader (factory-flashed on the nRF52840 Dongle). It is recommended to use MCUboot as it supports OTA (Over-The-Air) updates. Your board most likely comes with a manufacturer-provided bootloader. ESPHome determines the bootloader type based on the board name.
+The nRF52840 requires a bootloader, with three supported options: `MCUboot`, `Adafruit nRF52 Bootloader`, and the Nordic Open DFU Bootloader (factory-flashed on the nRF52840 Dongle). It is recommended to use MCUboot as it supports OTA (Over-The-Air) updates with rollback. Boards with the Adafruit nRF52 Bootloader can be updated over BLE with [Adafruit BLE OTA](/components/ota/adafruit_ble/). Your board most likely comes with a manufacturer-provided bootloader. ESPHome determines the bootloader type based on the board name.
 
 Examples of low power [nRF52840 boards](https://github.com/joric/nrfmicro/wiki).
 
@@ -348,7 +348,10 @@ nrf52:
   `boot_is_good_after` time (default 60s), the firmware is marked as valid. Since ESPHome 2026.8.0, an orderly
   shutdown — entering [deep sleep](/components/deep_sleep#deep-sleep-and-ota-rollback), a restart or a shutdown —
   also counts as a successful boot and marks the firmware as valid. If the device crashes before the firmware is
-  marked as valid, it will roll back to the previous working firmware. Defaults to `true`.
+  marked as valid, it will roll back to the previous working firmware. Rollback needs MCUboot, either as the
+  bootloader or as the second stage used by [zephyr_mcumgr](/components/ota/zephyr_mcumgr/). Defaults to `true`
+  when MCUboot is present and to `false` otherwise; setting it to `true` without MCUboot is ignored with a
+  warning.
 
 ## See Also
 
@@ -357,6 +360,8 @@ nrf52:
 - [Network Component](/components/network/)
 - [Power Supply Component](/components/power_supply/)
 - [Zephyr BLE Server](/components/zephyr_ble_server/)
+- [nRF52 Firmware Updates](/components/ota/zephyr_mcumgr/)
+- [Adafruit BLE OTA](/components/ota/adafruit_ble/)
 - [Zephyr PWM](/components/output/zephyr_pwm/)
 
 - [Guidelines for Adafruit Bootloader Memory Map](https://learn.adafruit.com/introducing-the-adafruit-nrf52840-feather?view=all#hathach-memory-map)
