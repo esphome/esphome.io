@@ -75,7 +75,8 @@ individually.
 So, first a few basics: When setting up a display platform in ESPHome there will be a configuration
 option called `lambda:` which will be called every time ESPHome wants to re-render the display.
 In each cycle, the display is automatically cleared before the lambda is executed. You can disable
-this behavior by setting `auto_clear_enabled: false`.
+this behavior by setting `auto_clear_enabled: false`. Most displays clear to `Color::BLACK`, but some e-paper
+displays such as [ePaper SPI](/components/display/epaper_spi/) clear to white.
 In the lambda, you can write code like in any [lambda](/automations/templates#config-lambda) in ESPHome. Display
 lambdas are additionally passed a variable called `it` which represents the rendering engine object.
 
@@ -151,7 +152,9 @@ display:
 ```
 
 All the above methods can optionally also be called with an argument at the end which specifies in which
-color to draw. For monochrome displays, only `COLOR_ON` (the default if color is not given) and `COLOR_OFF` are supported.
+color to draw. If no color is given, `Color::WHITE` is used. On monochrome displays, `Color::WHITE` turns a pixel on
+and `Color::BLACK` turns it off. See [Color Mapping](#color-mapping) for how displays show colors they cannot
+reproduce.
 
 ```yaml
 display:
@@ -159,12 +162,12 @@ display:
     # ...
     lambda: |-
       // Turn the whole display on
-      it.fill(COLOR_ON);
+      it.fill(Color::WHITE);
       // Turn the whole display off
-      it.fill(COLOR_OFF);
+      it.fill(Color::BLACK);
 
       // Turn a single pixel off at [50,60]
-      it.draw_pixel_at(50, 60, COLOR_OFF);
+      it.draw_pixel_at(50, 60, Color::BLACK);
 ```
 
 For color displays (e.g. TFT displays), you can use the Color class.
@@ -199,7 +202,7 @@ display:
       it.filled_circle(it.get_width() / 2, it.get_height() / 2, 20);
 
       // Turn off bottom half of the screen
-      it.filled_rectangle(0, it.get_height()/2, it.get_width(), it.get_height()/2, COLOR_OFF);
+      it.filled_rectangle(0, it.get_height()/2, it.get_width(), it.get_height()/2, Color::BLACK);
 ```
 
 You can view the full API documentation for the rendering engine in the "API Reference" in the See Also section.
@@ -247,19 +250,20 @@ display:
   - platform: ...
     # ...
     lambda: |-
-      // Syntax is always: it.print(<x>, <y>, <font>, [color=COLOR_ON], [align=TextAlign::TOP_LEFT], <text>);
-      it.print(0, 0, id(my_font), COLOR_ON, "Left aligned");
+      // Syntax is always: it.print(<x>, <y>, <font>, [color=Color::WHITE], [align=TextAlign::TOP_LEFT], <text>);
+      it.print(0, 0, id(my_font), Color::WHITE, "Left aligned");
 ```
 
-In case of fonts rendered at higher bit depths, the background color has to be specified after the text in order for antialiasing to work:
+In case of fonts rendered at higher bit depths, the background color has to be specified after the text in order for
+antialiasing to work. It defaults to `Color::BLACK`, so set it when drawing on any other background:
 
 ```yaml
 display:
   - platform: ...
     # ...
     lambda: |-
-      // Syntax is always: it.print(<x>, <y>, <font>, [color=COLOR_ON], [align], <text>, [color=COLOR_OFF]);
-      it.print(0, 0, id(my_font_with_icons), COLOR_ON, TextAlign::CENTER, "Just\U000f05d4here. Already\U000F02D1this.", COLOR_OFF);
+      // Syntax is always: it.print(<x>, <y>, <font>, [color=Color::WHITE], [align], <text>, [color=Color::BLACK]);
+      it.print(0, 0, id(my_font_with_icons), Color::WHITE, TextAlign::CENTER, "Just\U000f05d4here. Already\U000F02D1this.", Color::BLACK);
 ```
 
 <Image src={displayRenderingTextImg} layout="constrained" alt="" />
@@ -347,7 +351,7 @@ display:
   - platform: ...
     # ...
     lambda: |-
-        it.printf(10, 100, id(roboto), Color(0x123456), COLOR_OFF, display::TextAlign::BASELINE, "%f", id(heap_free).state);
+        it.printf(10, 100, id(roboto), Color(0x123456), Color::BLACK, display::TextAlign::BASELINE, "%f", id(heap_free).state);
 ```
 
 The last printf tip for use in displays I will discuss here is how to display binary sensor values. You
@@ -472,17 +476,43 @@ color:
 
 Configuration variables:
 
-- **red** (*Optional*, percentage): The percentage of the red component. Defaults to `100%`.
-- **red_int** (*Optional*, integer): The brightness of the red component on a scale of `0` to `255`. Defaults to `255`.
-- **green** (*Optional*, percentage): The percentage of the green component. Defaults to `100%`.
-- **green_int** (*Optional*, integer): The brightness of the green component on a scale of `0` to `255`. Defaults to `255`.
-- **blue** (*Optional*, percentage): The percentage of the blue component. Defaults to `100%`.
-- **blue_int** (*Optional*, integer): The brightness of the blue component on a scale of `0` to `255`. Defaults to `255`.
-- **white** (*Optional*, percentage): The percentage of the white component. Defaults to `100%`.
-- **white_int** (*Optional*, integer): The brightness of the white component on a scale of `0` to `255`. Defaults to `255`.
-- **hex** (*Optional*, string): The color in hexadecimal representation. Defaults to `FFFFFF`.
+- **red** (*Optional*, percentage): The percentage of the red component. Defaults to `0%`.
+- **red_int** (*Optional*, integer): The brightness of the red component on a scale of `0` to `255`.
+  Defaults to `0`.
+- **green** (*Optional*, percentage): The percentage of the green component. Defaults to `0%`.
+- **green_int** (*Optional*, integer): The brightness of the green component on a scale of `0` to `255`.
+  Defaults to `0`.
+- **blue** (*Optional*, percentage): The percentage of the blue component. Defaults to `0%`.
+- **blue_int** (*Optional*, integer): The brightness of the blue component on a scale of `0` to `255`.
+  Defaults to `0`.
+- **white** (*Optional*, percentage): The percentage of the white component. Defaults to `0%`.
+- **white_int** (*Optional*, integer): The brightness of the white component on a scale of `0` to `255`.
+  Defaults to `0`.
+- **hex** (*Optional*, string): The color in hexadecimal representation, for example `FF3340`. Cannot be combined
+  with the component options. The white component is set to `0`.
 
-RGB displays use red, green, and blue, while grayscale displays may use white.
+RGB displays use red, green, and blue, while grayscale OLED displays use only white. See
+[Color Mapping](#color-mapping).
+
+In lambdas, `Color::BLACK` and `Color::WHITE` are predefined. `Color::BLACK` has all four components at `0`, and
+`Color::WHITE` has all four, including white, at `255`, so both work on every type of display.
+
+#### Color Mapping
+
+Each display driver converts the colors you draw to what its hardware can show, and drivers do this in different ways.
+Some conversions give results you may not expect:
+
+- **Monochrome displays** such as [SSD1306](/components/display/ssd1306/), [ST7567](/components/display/st7567/),
+  [PCD8544](/components/display/pcd8544/), [ST7920](/components/display/st7920/) and
+  [MAX7219 Digit](/components/display/max7219digit/) turn a pixel off only for `Color::BLACK`. Any other color,
+  however dark, turns the pixel on: `Color(10, 10, 10)` and `Color(255, 0, 0)` both light the pixel.
+- **Grayscale OLED displays** ([SSD1322](/components/display/ssd1322/), [SSD1325](/components/display/ssd1325/),
+  [SSD1327](/components/display/ssd1327/)) use only the white component and ignore red, green and blue.
+  `Color(255, 255, 255)` and any `color` defined with `hex` have a white component of `0`, so they draw black. Use
+  `Color::WHITE`, `Color(0, 0, 0, 255)` or a `color` with `white` set.
+- **E-paper displays** using [ePaper SPI](/components/display/epaper_spi/) convert colors by brightness, and color
+  panels pick the nearest of their inks. Saturated colors such as pure green may show as white. See
+  [Colors](/components/display/epaper_spi/#colors) on that page.
 
 ### Display Pages
 

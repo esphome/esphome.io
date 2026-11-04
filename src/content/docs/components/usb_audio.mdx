@@ -1,0 +1,68 @@
+---
+description: "Instructions for setting up USB Audio Class (UAC) devices on an ESP32 in ESPHome"
+title: "USB Audio"
+---
+import APIRef from '@components/APIRef.astro';
+
+The `usb_audio` component lets an ESP32 act as a USB host for USB Audio Class (UAC) devices such as USB sound cards,
+USB DACs, USB microphones and USB speakerphones. A connected device can be used as a
+[USB Audio Speaker](/components/speaker/usb_audio/), a [USB Audio Microphone](/components/microphone/usb_audio/),
+or both. Each `usb_audio` component supports one speaker and one microphone.
+
+This component requires an ESP32 variant with a USB OTG peripheral (ESP32-S2, ESP32-S3, ESP32-S31, ESP32-P4 or
+ESP32-H4). It automatically loads the [USB Host](/components/usb_host/) component, so it can be used alongside
+other USB host components such as [USB UART](/components/usb_uart/).
+
+> [!WARNING]
+> Audio and voice components consume a significant amount of resources (RAM, CPU) on the device.
+>
+> Crashes are likely to occur if you include too many in the same configuration. In particular, Bluetooth/BLE
+> components are known to cause issues when used in combination with audio and voice components.
+
+```yaml
+# Example configuration entry
+usb_audio:
+  id: usb_audio_hub
+
+speaker:
+  - platform: usb_audio
+    id: usb_speaker
+    sample_rate: 48000
+    bits_per_sample: 16bit
+    num_channels: 2
+
+microphone:
+  - platform: usb_audio
+    id: usb_mic
+    sample_rate: 16000
+    bits_per_sample: 16bit
+    num_channels: 1
+```
+
+## Configuration variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The id to use for this component.
+
+## Stream format
+
+The speaker and microphone each stream in one fixed format, set by their `sample_rate`, `bits_per_sample` and
+`num_channels` options. The USB device must support that format. If it does not, the stream is not started and the
+formats the device does support are written to the log, so you can choose one of them. Devices that store samples
+padded to a larger size, such as 24-bit samples in 4 bytes, are not supported in that format.
+
+On the ESP32-S2 and ESP32-S3, the USB controller has 800 bytes of usable FIFO memory for all USB packets, and the
+speaker and microphone streams get their share of it based on their formats. Formats with larger packets than
+ESP-IDF's default split allows, including the speaker defaults of 48 kHz 16-bit stereo, make ESPHome size the FIFO
+itself, which needs ESP-IDF 5.5 or later (the default); on an older ESP-IDF, validation fails and says so. If the
+formats need more than the FIFO holds, for example a 96 kHz 32-bit stereo speaker and microphone together,
+validation fails; lower the sample rate, bits per sample or channels.
+
+The device can be plugged in and removed while ESPHome is running. A speaker stops playback when the device is removed,
+and a microphone resumes streaming when the device is plugged in again.
+
+## See Also
+
+- [USB Audio Speaker](/components/speaker/usb_audio/)
+- [USB Audio Microphone](/components/microphone/usb_audio/)
+- [USB Host Interface](/components/usb_host/)
+- <APIRef text="usb_audio.h" path="usb_audio/usb_audio.h"/>

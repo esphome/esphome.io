@@ -37,6 +37,7 @@ Multiple remote receivers can be configured as a list of dict definitions within
     [transmitter description](/components/remote_transmitter#remote_transmitter-transmit_abbwelcome) for more details.
 
   - **aeha**: Decode and dump AEHA infrared codes.
+  - **aok**: Decode and dump A-OK RF codes.
   - **beo4**: Decode and dump B&O Beo4 infrared codes.
   - **brennenstuhl**: Decode and dump brennenstuhl RF codes.
   - **byronsx**: Decode and dump Byron SX doorbell RF codes.
@@ -47,20 +48,29 @@ Multiple remote receivers can be configured as a list of dict definitions within
   - **dooya**: Decode and dump Dooya RF codes.
   - **drayton**: Decode and dump Drayton Digistat RF codes.
   - **dyson**: Decode and dump Dyson Cool AM7 tower fan codes.
+  - **hob2hood**: Decode and dump AEG Hob2Hood infrared codes.
   - **jvc**: Decode and dump JVC infrared codes.
   - **gobox**: Decode and dump Go-Box infrared codes.
   - **keeloq**: Decode and dump KeeLoq RF codes.
   - **haier**: Decode and dump Haier infrared codes.
+  - **ira211**: Decode and dump Siemens IRA211 infrared codes.
   - **lg**: Decode and dump LG infrared codes.
   - **magiquest**: Decode and dump MagiQuest wand infrared codes.
   - **midea**: Decode and dump Midea infrared codes.
   - **nec**: Decode and dump NEC infrared codes.
   - **nexa**: Decode and dump Nexa (RF) codes.
-  - **panasonic**: Decode and dump Panasonic infrared codes.
+  - **nexus**: Decode and dump Nexus temperature and humidity sensor (RF) codes.
+  - **onkyori**: Decode and dump Onkyo RI codes. See
+    [transmitter description](/components/remote_transmitter#remote_transmitter-transmit_onkyori)
+    for wiring and voltage-level details.
+  - **panasonic**: Decode and dump Panasonic infrared codes. Both 48-bit and 56-bit codes are decoded. A 56-bit
+    remote that an earlier release showed as a 48-bit code needs a fresh dump.
+  - **pd_pioneer**: Decode and dump PD Pioneer mini-split infrared codes.
   - **pioneer**: Decode and dump Pioneer infrared codes.
   - **pronto**: Print remote code in Pronto form. Useful for using arbitrary protocols.
   - **raw**: Print all remote codes in their raw form. Also useful for using arbitrary protocols.
   - **rc5**: Decode and dump RC5 IR codes.
+  - **rc5x**: Decode and dump RC5X (Marantz Extended RC5) infrared codes.
   - **rc6**: Decode and dump RC6 IR codes.
   - **rc_switch**: Decode and dump RCSwitch RF codes.
   - **roomba**: Decode and dump Roomba infrared codes.
@@ -79,8 +89,16 @@ Multiple remote receivers can be configured as a list of dict definitions within
   - **value** (**Required**, int or [Time](/guides/configuration-types#time)): The percentage or time value. Allowed values are in range `0`
     to `100%` or `0` to `4294967295us`.
 
-- **buffer_size** (*Optional*, int): The size of the internal buffer for storing the remote codes. Defaults to `10kB`
-  on the ESP32 and `1kB` on the ESP8266.
+- **buffer_size** (*Optional*, int): The size in bytes of the internal buffer for storing the remote codes. On ESP32
+  variants with RMT one receive slot is `receive_symbols` x 4 + 16 bytes (784 bytes at the default 192 symbols); the
+  default is four slots, 3136 bytes, and an explicit value below two slots is raised to two. On other platforms each
+  buffered pulse takes 4 bytes; the default is `4000B`, which holds 1000 pulses.
+
+  > [!WARNING]
+  > Before 2026.10.0 the value was applied as a number of pulses on ESP8266, RP2040, LibreTiny, ESP32-C2 and
+  > ESP32-C61, four times the bytes requested. Multiply an explicit `buffer_size` on those platforms by 4 to keep the
+  > same capacity. On ESP32 variants with RMT the default was `10kB`; an explicit `buffer_size: 10kb` copied from that
+  > can be removed, since the default now follows `receive_symbols`.
 
 - **filter** (*Optional*, [Time](/guides/configuration-types#time)): Filter any pulses that are shorter than this. Useful for removing
   glitches from noisy signals. Allowed values are in range `0` to `4294967295us`. Defaults to `50us`.
@@ -121,7 +139,8 @@ Multiple remote receivers can be configured as a list of dict definitions within
 | ESP32-S3      | 192 symbols      | 48 symbols |
 
 - **receive_symbols** (*Optional*, int): Maximum receive length in symbols. On some variants the maximum receive is
-  limited to `rmt_symbols`.
+  limited to `rmt_symbols`. Defaults to `192` on every variant; the receive slot size follows this value, while the
+  longest frame that can be received is limited by `rmt_symbols` where that is lower.
 
 - **filter_symbols** (*Optional*, int): Filter out any data received with a length in symbols less than
   `filter_symbols`. Useful for filtering out short bursts of noise.
@@ -161,6 +180,10 @@ To enable signal demodulation, configure the signal carrier frequency and duty c
   AEHA remote code has been decoded. A variable `x` of type <APIStruct text="remote_base::AEHAData" path="remote_base::AEHAData" />
   is passed to the automation for use in lambdas.
 
+- **on_aok** (*Optional*, [Automation](/automations)): An automation to perform when an
+  A-OK RF remote code has been decoded. A variable `x` of type
+  <APIStruct text="remote_base::AOKData" path="remote_base::AOKData" /> is passed to the automation for use in lambdas.
+
 - **on_beo4** (*Optional*, [Automation](/automations)): An automation to perform when a
   B&O Beo4 infrared remote code has been decoded. A variable `x` of type <APIStruct text="remote_base::Beo4Data" path="remote_base::Beo4Data" />
   is passed to the automation for use in lambdas.
@@ -196,7 +219,8 @@ To enable signal demodulation, configure the signal carrier frequency and duty c
 
 - **on_drayton** (*Optional*, [Automation](/automations)): An automation to perform when a
   Drayton Digistat RF code has been decoded. A variable `x` of type <APIStruct text="remote_base::DraytonData" path="remote_base::DraytonData" />
-  is passed to the automation for use in lambdas.
+  is passed to the automation for use in lambdas. It has the fields `address`, `data`, and the legacy `channel` and
+  `command`. Packets that fail the checksum are dropped and do not trigger the automation.
 
 - **on_dyson** (*Optional*, [Automation](/automations)): An automation to perform when a
   Dyson cool AM07 code has been decoded. A variable `x` of type <APIStruct text="remote_base::DysonData" path="remote_base::DysonData" />
@@ -206,17 +230,31 @@ To enable signal demodulation, configure the signal carrier frequency and duty c
   Go-Box remote code has been decoded. A variable `x` of type <APIStruct text="remote_base::GoboxData" path="remote_base::GoboxData" />
   is passed to the automation for use in lambdas.
 
+- **on_hob2hood** (*Optional*, [Automation](/automations)): An automation to perform when a
+  Hob2Hood remote code has been decoded. A variable `x` of type
+  <APIStruct text="remote_base::Hob2HoodData" path="remote_base::Hob2HoodData" />
+  is passed to the automation for use in lambdas.
+
 - **on_jvc** (*Optional*, [Automation](/automations)): An automation to perform when a
   JVC remote code has been decoded. A variable `x` of type <APIStruct text="remote_base::JVCData" path="remote_base::JVCData" />
   is passed to the automation for use in lambdas.
 
 - **on_keeloq** (*Optional*, [Automation](/automations)): An automation to perform when a
   KeeLoq RF code has been decoded. A variable `x` of type <APIStruct text="remote_base::KeeloqData" path="remote_base::KeeloqData" />
-  is passed to the automation for use in lambdas.
+  is passed to the automation for use in lambdas. Up to 16 bits that follow the 66-bit HCS301 word are in
+  `x.suffix`, lowest bit first, and their number is in `x.suffix_bits`. Both are `0` when these bits do not end
+  at a gap or at the end of the capture, or when there are more than 16; the 66-bit word is still reported.
+  For a 72-bit Jarolift TDEF frame, where `x.suffix_bits` is `6`, `x.group()` returns its 8 group bits. Check
+  `x.suffix_bits` first: for other frames `x.group()` is not a group. The log shows such a frame with `group=`.
 
 - **on_haier** (*Optional*, [Automation](/automations)): An automation to perform when a
   Haier remote code has been decoded. A variable `x` of type <APIStruct text="remote_base::HaierData" path="remote_base::HaierData" />
   is passed to the automation for use in lambdas.
+
+- **on_ira211** (*Optional*, [Automation](/automations/)): An automation to perform when a
+  Siemens IRA211 remote code has been decoded. A variable `x` of type
+  <APIStruct text="remote_base::IRA211Data" path="remote_base::IRA211Data" /> is passed to the automation for use in
+  lambdas.
 
 - **on_lg** (*Optional*, [Automation](/automations)): An automation to perform when a
   LG remote code has been decoded. A variable `x` of type <APIStruct text="remote_base::LGData" path="remote_base::LGData" />
@@ -224,7 +262,9 @@ To enable signal demodulation, configure the signal carrier frequency and duty c
 
 - **on_magiquest** (*Optional*, [Automation](/automations)): An automation to perform when a
   MagiQuest wand remote code has been decoded. A variable `x` of type <APIStruct text="remote_base::MagiQuestData" path="remote_base::MagiQuestData" />
-  is passed to the automation for use in lambdas.
+  is passed to the automation for use in lambdas. Since 2026.11, `x.wand_id` is the wand's full 31 bit id and
+  `x.magnitude` its 9 bit magnitude field; earlier versions read both fields at the wrong offsets, so lambdas that
+  compare them need the new values shown by the dumper.
 
 - **on_midea** (*Optional*, [Automation](/automations)): An automation to perform when a
   Midea remote code has been decoded. A variable `x` of type <APIClass text="remote_base::MideaData" path="remote_base::MideaData" />
@@ -238,8 +278,23 @@ To enable signal demodulation, configure the signal carrier frequency and duty c
   Nexa RF code has been decoded. A variable `x` of type <APIStruct text="remote_base::NexaData" path="remote_base::NexaData" />
   is passed to the automation for use in lambdas.
 
+- **on_nexus** (*Optional*, [Automation](/automations)): An automation to perform when a
+  Nexus RF code has been decoded. A variable `x` of type <APIStruct text="remote_base::NexusData" path="remote_base::NexusData" />
+  is passed to the automation for use in lambdas. It carries `channel` (1 to 4), `address`, `temperature` in °C,
+  `humidity` in %, `battery_level` (`true` while the battery is fine) and `force_update` (`true` for a transmission
+  started by the sensor's button). Each sensor repeats its code several times per transmission.
+
+- **on_onkyori** (*Optional*, [Automation](/automations)): An automation to perform when an
+  Onkyo RI code has been decoded. A variable `x` of type <APIStruct text="remote_base::OnkyoRIData" path="remote_base::OnkyoRIData" />
+  is passed to the automation for use in lambdas.
+
 - **on_panasonic** (*Optional*, [Automation](/automations)): An automation to perform when a
   Panasonic remote code has been decoded. A variable `x` of type <APIStruct text="remote_base::PanasonicData" path="remote_base::PanasonicData" />
+  is passed to the automation for use in lambdas. Its fields are `x.nbits` (`48` or `56`), `x.address`
+  (16 bits), `x.address_2` (8 bits, always `0` for a 48-bit code) and `x.command` (32 bits).
+
+- **on_pd_pioneer** (*Optional*, [Automation](/automations)): An automation to perform when a
+  PD Pioneer mini-split remote code has been decoded. A variable `x` of type <APIStruct text="remote_base::PDPioneerData" path="remote_base::PDPioneerData" />
   is passed to the automation for use in lambdas.
 
 - **on_pioneer** (*Optional*, [Automation](/automations)): An automation to perform when a
@@ -257,6 +312,10 @@ To enable signal demodulation, configure the signal carrier frequency and duty c
 - **on_rc5** (*Optional*, [Automation](/automations)): An automation to perform when a
   RC5 remote code has been decoded. A variable `x` of type <APIStruct text="remote_base::RC5Data" path="remote_base::RC5Data" />
   is passed to the automation for use in lambdas.
+
+- **on_rc5x** (*Optional*, [Automation](/automations)): An automation to perform when a
+  RC5X (Marantz Extended RC5) remote code has been decoded. A variable `x` of type <APIStruct text="remote_base::RC5XData" path="remote_base::RC5XData" />
+  is passed to the automation for use in lambdas. It has the fields `address`, `command` and `extension`.
 
 - **on_rc6** (*Optional*, [Automation](/automations)): An automation to perform when a
   RC6 remote code has been decoded. A variable `x` of type <APIStruct text="remote_base::RC6Data" path="remote_base::RC6Data" />
@@ -388,6 +447,13 @@ Remote code selection (exactly one of these has to be included):
     [transmitter description](/components/remote_transmitter#remote_transmitter-transmit_aeha) for more info. Usually you only need to copy this
     directly from the dumper output.
 
+- **aok**: Trigger on a decoded A-OK RF remote code with the given data.
+
+  - **remote_id** (**Required**, int): The 24-bit ID of the remote. Range is 0 to 0xFFFFFF.
+  - **channels** (**Required**, int): The 16-bit channel mask. Each of the 16 channels on the remote corresponds to
+    one bit of the mask.
+  - **command** (**Required**, int): The 1-byte command code. Range is 0 to 0xFF.
+
 - **beo4**: Trigger on a decoded B&O Beo4 infrared remote code with the given data.
 
   - **source** (**Required**, int): The 8-bit source to trigger on, e.g. 0x00=video, 0x01=audio,..., see dumper output for more info.
@@ -439,11 +505,21 @@ Remote code selection (exactly one of these has to be included):
   - **button** (**Required**, int): The 4-bit button to listen for.
   - **check** (**Required**, int): The 4-bit check to listen for. Includes an indication that a button is being held down.
 
-- **drayton**: Trigger on a decoded Drayton Digistat RF remote code with the given data.
+- **drayton**: Trigger on a decoded Drayton Digistat RF remote code with the given data. Set `address` and either
+  `data` or both `channel` and `command`. Packets that fail the checksum are dropped and never trigger.
 
-  - **address** (**Required**, int): The 16-bit ID code to trigger on, see dumper output for more info.
-  - **channel** (**Required**, int): The 7-bit switch/channel to listen for.
-  - **command** (**Required**, int): The 5-bit command to listen for.
+  - **address** (**Required**, int): The 16-bit address to trigger on, see dumper output for more info. It is the
+    12-bit thermostat ID followed by a 4-bit pairing field. The pairing field is normally 0; a thermostat sets bit 0
+    in the first packets after its batteries are inserted, so a receiver in pairing mode can learn its ID.
+  - **data** (*Optional*, int): The 4-bit data value to trigger on. Range is `0` to `0xF`. Bit `0x8` means the
+    thermostat calls for heat and bit `0x2` means low battery, so `0x8` is On with the battery OK and `0x0` is Off.
+    The other two bits have not been seen set. Cannot be used with `channel` and `command`.
+  - **channel** (*Optional*, int): The legacy 5-bit channel, the low 5 checksum bits. Range is `0` to `0x1F`. Must
+    be used together with `command`; kept for configurations written for the first Drayton release. It is not
+    compared when matching, since the checksum is verified before a packet gets this far.
+  - **command** (*Optional*, int): The legacy 7-bit command, the 4 data bits followed by the top 3 checksum bits.
+    Range is `0` to `0x7F`. Must be used together with `channel`. Only its 4 data bits are compared with the received
+    packet.
 
 - **dyson**: Trigger on a decoded dyson cool AM07 infrared remote code with the given data.
 
@@ -454,11 +530,23 @@ Remote code selection (exactly one of these has to be included):
 
   - **code** (**Required**, int): The Go-Box code to trigger on, see dumper output for more info.
 
+- **hob2hood**: Trigger on a decoded Hob2Hood remote code with the given data.
+
+  - **command** (**Required**, enum): The Hob2Hood command to trigger on, see dumper output for more info.
+    - `light_off`
+    - `light_on`
+    - `fan_off`
+    - `fan_low`
+    - `fan_medium`
+    - `fan_high`
+    - `fan_max`
+
 - **jvc**: Trigger on a decoded JVC remote code with the given data.
 
   - **data** (**Required**, int): The JVC code to trigger on, see dumper output for more info.
 
-- **keeloq**: Trigger on a decoded KeeLoq RF remote code with the given data.
+- **keeloq**: Trigger on a decoded KeeLoq RF remote code with the given data. Suffix bits after the 66-bit word
+  are not compared.
 
   - **address** (**Required**, int): The 32-bit ID code to trigger on, see dumper output for more info.
   - **command** (*Optional*, int): The 8-bit switch/command to listen for. If omitted, will match on any command/button.
@@ -469,16 +557,31 @@ Remote code selection (exactly one of these has to be included):
     [transmitter description](/components/remote_transmitter#remote_transmitter-transmit_haier) for more info. Usually you only need to copy
     this directly from the dumper output.
 
+- **ira211**: Trigger on a decoded Siemens IRA211 remote code with the given data. `SYNC` and `POWER` carry the
+  full state (temperature, mode and fan), `TEMP_UP` and `TEMP_DOWN` carry only the temperature, `MODE` only the
+  mode and `FAN` only the fan speed; a frame matches when its command and the fields it carries match.
+
+  - **command** (**Required**, string): The command to trigger on. One of `TEMP_UP`, `TEMP_DOWN`, `MODE`, `FAN`,
+    `POWER` or `SYNC`.
+  - **temperature** (*Optional*, float): The target temperature in °C, from `5` to `35` in `0.5` steps. Defaults to
+    `20`.
+  - **mode** (*Optional*, string): The operating mode. One of `PROTECTION`, `TIMER` or `COMFORT`. Defaults to
+    `COMFORT`.
+  - **fan_mode** (*Optional*, string): The fan speed. One of `AUTO`, `LOW`, `MEDIUM` or `HIGH`. Defaults to `AUTO`.
+
 - **lg**: Trigger on a decoded LG remote code with the given data.
 
   - **data** (**Required**, int): The LG code to trigger on, see dumper output for more info.
   - **nbits** (*Optional*, int): The number of bits of the remote code. Defaults to `28`.
 
-- **magiquest**: Trigger on a decoded MagiQuest wand remote code with the given wand ID.
+- **magiquest**: Trigger on a decoded MagiQuest wand remote code, optionally limited to one wand ID.
 
-  - **wand_id** (**Required**, int): The MagiQuest wand ID to trigger on, see dumper output for more info.
-  - **magnitude** (*Optional*, int): The magnitude of swishes and swirls of the wand. If omitted, will match on any
-    activation of the wand.
+  - **wand_id** (*Optional*, int): The MagiQuest wand ID to trigger on, see dumper output for more info. If omitted,
+    any wand triggers the sensor. Ids written down with ESPHome versions before 2026.11 keep working: they are the
+    new id without its five lowest bits, and both forms are matched. Because of that, an id below `0x04000000` also
+    matches the 32 wands whose full id shortens to it; a full id from a current dump is unambiguous above that value.
+  - **magnitude** (*Optional*, int): Accepted for compatibility but ignored; the magnitude field encodes the kind of
+    cast rather than a strength, so every activation of the wand matches.
 
 - **midea**: Trigger on a Midea remote code with the given code.
 
@@ -499,10 +602,30 @@ Remote code selection (exactly one of these has to be included):
   - **channel** (**Required**, int): The Nexa channel code to trigger on, see dumper output for more info.
   - **level** (**Required**, int): The Nexa level code to trigger on, see dumper output for more info.
 
-- **panasonic**: Trigger on a decoded Panasonic remote code with the given data.
+- **nexus**: Trigger on any decoded Nexus RF code from the given sensor, whatever it reports.
 
-  - **address** (**Required**, int): The address to trigger on, see dumper output for more info.
-  - **command** (**Required**, int): The command.
+  - **channel** (**Required**, int): The channel (1 to 4) to trigger on, see dumper output for more info.
+  - **address** (**Required**, int): The address (sensor ID) to trigger on, see dumper output for more info.
+
+- **onkyori**: Trigger on a decoded Onkyo RI code with the given data.
+
+  - **data** (**Required**, int): The Onkyo RI code to trigger on, in the range `0x000` to `0xFFF`, see dumper
+    output for more info.
+
+- **panasonic**: Trigger on a decoded Panasonic remote code with the given data. A 56-bit remote that an earlier
+  release showed as a 48-bit code needs a fresh dump; its `nbits`, `address_2` and `command` change.
+
+  - **address** (**Required**, int): The 16-bit address to trigger on, see dumper output for more info.
+  - **address_2** (*Optional*, int): The extra 8-bit address byte of a 56-bit code, see dumper output for more
+    info. Only allowed with `nbits: 56`. Defaults to `0`.
+  - **command** (**Required**, int): The 32-bit command.
+  - **nbits** (*Optional*, int): The number of bits of the remote code, `48` or `56`. Defaults to `48`.
+
+- **pd_pioneer**: Trigger on a decoded PD Pioneer mini-split remote code with the given data.
+
+  - **code** (**Required**, 13- or 14-byte list): The code to listen for, see
+    [transmitter description](/components/remote_transmitter#remote_transmitter-transmit_pd_pioneer-action)
+    for more info. Usually you only need to copy this directly from the dumper output.
 
 - **pioneer**: Trigger on a decoded Pioneer remote code with the given data.
 
@@ -527,6 +650,12 @@ Remote code selection (exactly one of these has to be included):
 
   - **address** (**Required**, int): The address to trigger on, see dumper output for more info.
   - **command** (**Required**, int): The RC5 command to listen for.
+
+- **rc5x**: Trigger on a decoded RC5X (Marantz Extended RC5) remote code with the given data.
+
+  - **address** (**Required**, int): The address to trigger on, see dumper output for more info. Range is 0 to 0x1F.
+  - **command** (**Required**, int): The RC5X command to listen for. Range is 0 to 0x7F.
+  - **extension** (**Required**, int): The RC5X extension field to listen for. Range is 0 to 0x3F.
 
 - **rc6**: Trigger on a decoded RC6 remote code with the given data.
 

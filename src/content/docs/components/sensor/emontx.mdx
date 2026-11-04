@@ -61,8 +61,20 @@ In `emontx` platform:
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation or multiple hubs.
 - **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [UART Component](/components/uart) if you want to use multiple UART buses.
-- **on_json** (*Optional*): An automation that will be triggered whenever new JSON data is received from the EmonTx. Within this trigger, the `raw_json` variable (string type) contains the received JSON data as a string. A parsed JSON object is also available as the `json` variable (JsonObject type), which can be used to access and manipulate specific fields in the JSON data.
-- **on_data** (*Optional*): An automation that will be triggered for every serial line received from the EmonTx (both plain text and JSON). Within this trigger, the `data` variable (string type) contains the received line. This is useful for debugging, logging all serial output, or handling configuration responses from the EmonTx.
+- **lock_on_reboot** (*Optional*, boolean or `auto`): The ESPHome device sends `emonlock` to the EmonTx right before it reboots (OTA update, restart, safe mode, ...), and `emonunlock` once it has booted. While locked, the EmonTx ignores configuration commands, so serial noise during the reboot cannot change its settings. A crash, watchdog reset or power loss skips the lock. These commands need EmonTx firmware v1.2.0 or later: older firmware reads them as a request to enter the bootloader. Defaults to `auto`.
+  - `auto`: ESPHome asks the EmonTx for its firmware version with the `v` command after it boots, and only sends the lock commands to firmware v1.2.0 or later. Nothing else is sent to older firmware. If no version arrives (ESPHome asks up to three times), no lock command is sent either: an EmonTx locked before the reboot then stays locked until it restarts or receives `emonunlock` (see [emontx.send_command](#actions)).
+  - `true`: always send the lock commands. Only use this with firmware v1.2.0 or later.
+  - `false`: never send them.
+- **on_json** (*Optional*): An automation that will be triggered whenever new JSON data is received from the EmonTx. Within this trigger, the `raw_json` variable (`StringRef`) contains the received JSON data as a string. A parsed JSON object is also available as the `json` variable (`JsonObject`), which can be used to access and manipulate specific fields in the JSON data.
+- **on_data** (*Optional*): An automation that will be triggered for every serial line received from the EmonTx (both plain text and JSON). Within this trigger, the `data` variable (`StringRef`) contains the received line. This is useful for debugging, logging all serial output, or handling configuration responses from the EmonTx.
+
+`raw_json` and `data` can be used like a string: compare them directly (for example `data == "ok"`), join them with
+`+`, return them from a lambda, and use `.c_str()` to log them. Use `.str()` if you need a `std::string`.
+
+> [!NOTE]
+> `on_json` and `on_data` may not contain deferring actions (`delay`, `wait_until`, `script.wait`, ...) - the received
+> data is only valid while the automation runs. Config validation rejects such an automation with an error. Copy
+> any value you need into a global first, then defer from a separate script or automation.
 
 ## Actions
 
@@ -84,6 +96,71 @@ button:
 
 - **id** (*Required*, [ID](/guides/configuration-types#id)): The ID of the EmonTx hub.
 - **command** (*Required*, string, [templatable](/automations/actions#all-actions)): The command string to send.
+
+### `emontx.pause` / `emontx.resume` Actions
+
+Suspend or resume processing of the UART by the EmonTx hub. While paused, the hub does not read any
+bytes from the UART and `emontx.send_command` is ignored, so another component sharing the same UART
+can take exclusive ownership of it, for example a [Serial Proxy](/components/serial_proxy/) used to
+flash or debug the EmonTx from a computer.
+
+Sensors are not updated and `on_json` / `on_data` are not triggered while paused. On resume, the
+line that was interrupted by the pause is discarded, so only complete lines are processed.
+
+```yaml
+uart:
+  id: emontx_uart
+  rx_pin: GPIOXX
+  tx_pin: GPIOXX
+  baud_rate: 115200
+  rx_buffer_size: 2048
+  tx_buffer_size: 2048  # ESP32 only: at least the largest block the flasher writes at once
+
+emontx:
+  id: myemontx
+  uart_id: emontx_uart
+
+serial_proxy:
+  - id: emontx_proxy
+    uart_id: emontx_uart
+    name: EmonTx
+    port_type: TTL
+
+switch:
+  - platform: template
+    name: "Pause EmonTx"
+    lambda: return id(myemontx).is_paused();
+    turn_on_action:
+      - emontx.pause: myemontx
+    turn_off_action:
+      - emontx.resume: myemontx
+```
+
+Turn the switch on before connecting to the serial proxy, and off again once you have disconnected. Writes
+larger than the UART's transmit buffer are cut short, so size `tx_buffer_size` as described for the
+[Serial Proxy](/components/serial_proxy/).
+
+#### Configuration Variables
+
+- **id** (*Required*, [ID](/guides/configuration-types/#id)): The ID of the EmonTx hub.
+
+## Conditions
+
+### `emontx.is_paused` Condition
+
+Check whether the EmonTx hub is currently paused.
+
+```yaml
+- if:
+    condition:
+      emontx.is_paused: myemontx
+    then:
+      - logger.log: "EmonTx is paused"
+```
+
+#### Configuration Variables
+
+- **id** (*Required*, [ID](/guides/configuration-types/#id)): The ID of the EmonTx hub.
 
 ## Quick Start
 
@@ -118,7 +195,7 @@ This will create three sensors in Home Assistant tracking voltage, power, and en
 The EmonTx component provides several sensors that can be used to monitor various parameters:
 
 - **Power**: Calculates the power consumption based on the voltage and current readings.
-- **Energy**: Accumulates the energy consumption over time.
+- **Energy**: Accumulates the net energy over time. The counter is signed: it decreases when power flows in the reverse direction (e.g. solar export).
 - **Voltage**: Measures the voltage of the mains supply.
 - **Current**: Measures the current flowing through the connected CT clamps.
 - **Power Factor**: Calculates the power factor based on the voltage and current readings.
@@ -152,7 +229,7 @@ Energy sensors have the following default configuration:
 
 - Unit of Measurement: Wh (Watt-hours)
 - Device Class: energy
-- State Class: total_increasing
+- State Class: total
 - Accuracy: 0 decimal places
 
 #### Voltage (V)
@@ -335,6 +412,28 @@ sensor:
     tag_name: "pulse"
     name: "Pulse"
 ```
+
+## Text Sensor
+
+The `version` text sensor reports the firmware version of the EmonTx, for example `v1.2.0`. ESPHome asks
+the EmonTx for it with the `v` command once it has booted, and again whenever the EmonTx restarts (seen
+when the `MSG` counter in its data goes back down), as it does after a firmware update. It also asks after
+`emontx.resume`, since the firmware may have been changed while the UART was paused. The `v` command is
+sent when this text sensor is configured or when [lock_on_reboot](#configuration-variables) is `auto`, the
+default.
+
+```yaml
+# Example configuration entry
+text_sensor:
+  - platform: emontx
+    version:
+      name: "EmonTx Firmware Version"
+```
+
+### Configuration Variables
+
+- **version** (*Optional*): The firmware version of the EmonTx. All options from
+  [Text Sensor](/components/text_sensor/#config-text_sensor).
 
 ## Data Forwarding with on_json
 

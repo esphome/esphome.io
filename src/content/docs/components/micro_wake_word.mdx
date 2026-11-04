@@ -26,7 +26,20 @@ micro_wake_word:
 
 - **microphone** (*Optional*, [Microphone Source Configuration](/components/microphone#config-microphone-source)): The [microphone](/components/microphone/) settings to use for audio input.
 - **stop_after_detection** (*Optional*, boolean): Whether to stop the component after detecting a wake word. Defaults to `true`.
+- **task_core** (*Optional*, integer): CPU core for the inference task: `0`, `1`, or `-1` for no explicit
+  affinity. Defaults to `-1`. Core `1` requires a dual-core ESP32 variant and is unavailable when
+  `CONFIG_FREERTOS_UNICORE` is enabled through [sdkconfig_options](/components/esp32/#framework).
+  This advanced option can separate inference from other CPU-intensive audio tasks. It does not change
+  the task priority, stack size or detection settings. Leave it at the default unless you have measured
+  contention in your configuration.
 - **task_stack_in_psram** (*Optional*, boolean): If `true`, allocate the inference task stack in PSRAM instead of internal RAM. Requires the [PSRAM](/components/psram/) component. Defaults to `false`.
+- **ring_buffer_duration** (*Optional*, Time): Duration of microphone audio buffered for wake word inference.
+  Accepts `120ms` to `1s` and defaults to `120ms`. A longer buffer can absorb temporary delays in the inference
+  task, but uses more RAM and does not make inference faster. At the required 16 kHz, mono, 16-bit input, each
+  millisecond holds 32 bytes: the default `120ms` stores 3,840 bytes, while `800ms` stores 25,600 bytes.
+  These figures exclude the small allocation overhead.
+- **prefer_internal_ram** (*Optional*, boolean): If `true`, try to place each active model's tensor arena and weights
+  in internal RAM. See [Memory Usage](#memory-usage) for the RAM tradeoff. Defaults to `false`.
 - **models** (*Optional*, list): The models to use. Only the first model is enabled by default on the first boot. Each model's enabled state is then saved/restored to/from the flash.
   Defaults to an empty list, which builds the firmware without any wake word models.
 
@@ -74,6 +87,20 @@ micro_wake_word:
   - **sliding_window_size** (*Optional*, int): The size of the sliding window average for voice activity detection. The average probability is compared to `probability_cutoff` to determine if voice activity is detected.
 
 The `probability_cutoff` and `sliding_window_size` are provided by the JSON file but can be overridden in YAML. A default VAD model is provided with the `vad` configuration variables, but a different model can be overridden in YAML.
+
+## Memory Usage
+
+By default, each active model's tensor arena is allocated in PSRAM when available, otherwise in internal RAM.
+Models listed under `models` are built into the firmware, including those fetched from a URL at build time, and
+their weights are read from flash. Models added while the device is running keep their original weights in PSRAM
+when available, otherwise in internal RAM.
+
+Set `prefer_internal_ram: true` to try to place each active model's tensor arena and weights in internal RAM. This
+includes models added while the device is running. A model whose weights are already in internal RAM is not
+copied again. This can reduce inference time on some ESP32 devices, but uses more internal RAM. If an internal
+allocation fails, ESPHome logs a warning and falls back to the default placement above. When a model is disabled,
+ESPHome releases its tensor arena and any internal RAM copy of its weights. A model added while the device is
+running keeps its original data in its original storage, so the model can be enabled again.
 
 ## Actions
 

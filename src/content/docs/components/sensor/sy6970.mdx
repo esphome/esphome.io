@@ -36,6 +36,7 @@ sy6970:
   precharge_current: 128
   charge_enabled: true
   enable_adc: true
+  i2c_watchdog_timeout: 40S
   update_interval: 1s
 ```
 
@@ -46,12 +47,49 @@ sy6970:
 - **enable_status_led** (*Optional*, boolean): Enable or disable the status LED on the IC. Defaults to `true`.
 - **input_current_limit** (*Optional*, int): Input current in milliamps. Accepts values between 100 and 3200. Defaults to `500`.
 - **charge_voltage** (*Optional*, int): Charge voltage in millivolts. Accepts values between 3840 and 4608. Defaults to `4208`.
-- **charge_current**  (*Optional*, int): Charge current in milliamps. Accepts values between 0 and 5056. Defaults to `2048`.
-- **precharge_current**  (*Optional*, int): Pre-charge current in milliamps. Accepts values between 64 and 1024. Defaults to `128`.
+- **charge_current** (*Optional*, int): Charge current in milliamps. Accepts values between 0 and 5056. Defaults to `2048`.
+- **precharge_current** (*Optional*, int): Pre-charge current in milliamps. Accepts values between 64 and 1024. Defaults to `128`.
 - **charge_enabled** (*Optional*, boolean): Enable or disable charging. Defaults to `true`.
 - **enable_adc** (*Optional*, boolean): Enable or disable the ADC. Defaults to `true`.
+- **i2c_watchdog_timeout** (*Optional*, enum): The timeout of the IC's I²C watchdog. One of `DISABLED`, `40S`,
+  `80S` or `160S`. Defaults to `40S`. See [Watchdog](#watchdog).
 - All other options from [I²C Device](/components/i2c).
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the sensor. Defaults to `5s`.
+
+## Watchdog
+
+The SY6970 has an I²C watchdog. If the host does not reset it within the timeout, the IC reverts several
+registers to their power-on defaults, including `charge_enabled` and `enable_status_led`. Charging and the status
+LED then switch back on by themselves.
+
+While `i2c_watchdog_timeout` is not `DISABLED`, ESPHome resets the watchdog every 10 seconds, whatever the
+timeout and independent of `update_interval`, so any `update_interval` - including `never` - is valid and a single
+missed reset does not let the watchdog expire. If the IC cannot be reached over I²C, the watchdog is not reset and
+the IC returns to its defaults after the timeout. Once the IC has reverted, your configured settings are not
+re-applied until the next reboot.
+
+Set `i2c_watchdog_timeout: DISABLED` to turn the watchdog off.
+
+### Deep Sleep
+
+Nothing runs on the ESP while it is in [deep sleep](/components/deep_sleep/), including the watchdog reset. If
+the ESP sleeps for about as long as `i2c_watchdog_timeout` or longer, the IC's watchdog fires mid-sleep and
+reverts `charge_enabled` and `enable_status_led` before the device wakes up to reconfigure it.
+
+Disable the watchdog before sleeping with an [`on_shutdown`](/components/esphome/#esphome-on_shutdown) automation,
+which runs both for the [`deep_sleep.enter` action](/components/deep_sleep/#deep_sleep-enter-action) and for sleep
+entered automatically after `run_duration`. `setup()` re-arms the configured `i2c_watchdog_timeout` on wake, since
+waking from deep sleep restarts the ESP:
+
+```yaml
+esphome:
+  on_shutdown:
+    - lambda: 'id(pmu).set_i2c_watchdog_timeout(sy6970::I2C_WATCHDOG_DISABLED);'
+```
+
+Without that, keep `sleep_duration` at least 10 seconds plus the boot time below the timeout, since the last reset
+can be up to 10 seconds old when the ESP goes to sleep, or set `i2c_watchdog_timeout: DISABLED` for the whole
+configuration.
 
 ## Sensor
 
@@ -252,6 +290,11 @@ automation:
 - `set_charge_enabled(bool enabled)` - Set battery charging enabled/disabled
 - `set_led_enabled(bool enabled)` - Set status LED to enabled/disabled
 - `set_enable_adc_measure(bool enabled)` - Enable ADC measurements
+- `set_i2c_watchdog_timeout(I2CWatchdogTimeout timeout)` - Change the I²C watchdog timeout at runtime
+  (`sy6970::I2C_WATCHDOG_DISABLED`, `I2C_WATCHDOG_40S`, `I2C_WATCHDOG_80S` or `I2C_WATCHDOG_160S`). Starts or stops
+  the automatic watchdog reset to match.
+- `reset_i2c_watchdog()` - Reset the I²C watchdog timer. Called automatically every 10 seconds while the watchdog
+  is enabled, independent of `update_interval`. Returns `true` if the reset was written, `false` otherwise.
 
 ## Technical Details
 
