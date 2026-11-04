@@ -1,0 +1,92 @@
+---
+title: "TMCM-1240"
+description: "Control TMCM-1240 CANopen stepper modules with current settings and StallGuard diagnostics."
+---
+
+The `tmcm1240` component extends [CiA 402 drive control](/components/cia402/) for the TMCM-1240 with CANopen firmware.
+It requires an existing [CANopen client](/components/canopen/). Create one `tmcm1240` instance for each motor;
+do not also create a `cia402` instance for the same node.
+
+```yaml
+tmcm1240:
+  node_id: 32
+  profile_velocity: 1000
+  acceleration: 2000
+  deceleration: 2000
+  run_current: 0.385
+  standby_current: 0.1925
+  stallguard_threshold: 8
+  stallguard_min_velocity: 800
+```
+
+## Configuration Variables
+
+All [CiA 402 configuration options](/components/cia402/#configuration-variables), actions and result callbacks apply.
+The following additional options are required:
+
+- **run_current** (**Required**, float): RMS current per motor phase in amperes, from `0.072` to `2.0`.
+- **standby_current** (**Required**, float): Standstill RMS phase current. Same range as `run_current` and must not exceed it.
+- **stallguard_threshold** (**Required**, integer): StallGuard sensitivity, from -63 to 63. Tune it for the actual motor,
+  load, current and speed. More positive values reduce sensitivity.
+- **stallguard_min_velocity** (**Required**, integer): Minimum speed for stop-on-stall, in drive velocity units.
+
+Velocity values are positive integers up to 2147483647. Positions are microstep counts when the
+drive uses its default position scaling. Velocity and acceleration use the drive's configured units. Convert physical
+distances using the configured microsteps, motor steps per revolution, and screw pitch. The example values are
+illustrative; tune them for the mechanism.
+
+Current settings are rounded to the module's nearest current step. With current register `r`, the manual specifies
+`CS = floor(r / 8)` and RMS current `(CS + 1) × 3.250 / (32 × sqrt(2))`. For example, the requested `0.385 A`
+maps to register `32`, and `0.1925 A` maps to register `16`.
+
+## Applying Settings
+
+Assign an ID, such as `motor`, to the component and use:
+
+```yaml
+button:
+  - platform: template
+    name: "Apply Motor Settings"
+    on_press:
+      - tmcm1240.apply_configuration: motor
+```
+
+This action requires a stationary drive and an operational heartbeat. It sets run and standby current, disables
+StealthChop and CoolStep for repeatable StallGuard operation, selects unfiltered StallGuard, and programs the
+sensitivity and minimum velocity. Stop-on-stall is configured to stop while remaining operational.
+Settings are volatile; the component does not write the nonvolatile parameter store.
+
+Profile moves also set both sections of the six-point acceleration and deceleration ramps. The component does not
+enable or move the motor at boot. Start the node with `canopen.nmt`, configure it, and explicitly enable it with
+`cia402.enable` before issuing a move command. Use `on_result` to sequence actions.
+
+## Diagnostic Sensors
+
+```yaml
+sensor:
+  - platform: tmcm1240
+    name: "Motor Load"
+    type: STALLGUARD_LOAD
+```
+
+- **tmcm1240_id** (*Optional*, ID): Motor to query; required when several motors exist.
+- **type** (**Required**, string): One of the types below.
+- **update_interval** (*Optional*, Time): Defaults to `1s`.
+- All other options from [Sensor](/components/sensor/).
+
+| Type | Object | Meaning |
+| --- | --- | --- |
+| `STALLGUARD_LOAD` | `0x2101:0` | Load indicator, 0 to 1023. |
+| `DRIVER_ERROR_FLAGS` | `0x2102:0` | Raw driver flags; bit 2 indicates open phase A, bit 3 open phase B. |
+| `STALLGUARD_THRESHOLD` | `0x209E:0` | Signed sensitivity readback. |
+| `STALLGUARD_MIN_VELOCITY` | `0x20A4:0` | Stop-on-stall minimum velocity readback. |
+
+Failed or incorrectly sized responses publish `NaN` and set the sensor warning until its next valid response.
+Use [CANopen numeric sensors](/components/canopen/#sensor-configuration-variables) for position, velocity, statusword,
+digital inputs, and other object dictionary entries. Digital inputs at `0x60FD:0` use bit 0 for the negative limit,
+bit 1 for the positive limit and bit 2 for the home switch.
+
+## Reference
+
+Register definitions follow the
+[TMCM-1240 CANopen firmware manual](https://www.analog.com/media/en/dsp-documentation/software-manuals/TMCM-1240-CANopen_firmware_manual_fw3.25_rev1.04.pdf).
