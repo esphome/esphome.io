@@ -27,7 +27,7 @@ submit a feature request (see FAQ).
 | Emmeti | `emmeti`                           | yes |
 | [Friedrich](#friedrich)                   | `friedrich`                        | yes               |
 | Fujitsu General | `fujitsu_general`                  | yes |
-| [GREE](#gree_ir) | `gree`                             | |
+| [GREE](#gree_ir) | `gree`                             | yes |
 | [Haier Tundra](#haier_tundra) | `haier_tundra` | yes |
 | Hitachi | `hitachi_ac344`, `hitachi_ac424` | yes |
 | [Islandaire](#islandaire) | `islandaire`                       | yes |
@@ -36,6 +36,7 @@ submit a feature request (see FAQ).
 | [Mistral](#mistral_ir) | `mistral_ir`                       | yes |
 | [Mitsubishi](#mitsubishi) | `mitsubishi`                       | yes |
 | Noblex | `noblex`                           | yes |
+| [Panasonic](#panasonic_ir) | `panasonic_ir` | yes |
 | [Pioneer mini-split (Parker Davis)](#pd_pioneer_ir) | `pd_pioneer_ir`                    | yes |
 | [Remko, Fischer ClimaButler, TROTEC, Novamatic, Rexair, FREECOM](#remko_ar715) | `remko_ar715` | |
 | [Samsung](#samsung) | `samsung`                          | yes |
@@ -275,6 +276,7 @@ climate:
   - `yaa`
   - `yac`
   - `yac1fb9`
+  - `yb1fa`
   - `yx1ff`
   - `yag`
   - `yaw1f`: the `yag` byte layout with the frame timing and follow-up message of YAW1F remotes. Try it when a
@@ -296,13 +298,75 @@ climate:
 
 Models `yx1ff` and `yac1fb9` also offer the `sleep` preset.
 
-Models `yan`, `yaa`, `yac` and `yac1fb9` support a couple of additional features which can be controlled with switches:
+All GREE models can receive commands from the original remote and update the climate state. The receiver validates the
+GREE transport and checksum, then decodes power, operating mode, target temperature from 16 to 30 °C, fan speed, and
+the swing axes supported by the selected model. Timer and other auxiliary fields do not change the climate state.
 
-- **gree_id** (**Required**, [ID](/guides/configuration-types#id)): Specify the ID of the `gree` climate to which these swicthes should belong.
-- **light** (*Optional*, [Switch](/components/switch#config-switch)): To turn off indoor unit display/LED at night for complete room darkness.
-- **turbo** (*Optional*, [Switch](/components/switch#config-switch)): For maximum fan speed and fastest results.
-- **health** (*Optional*, [Switch](/components/switch#config-switch)): Removal of dust and germs from the environment by ionizing the air flowing through the blades.
-- **xfan** (*Optional*, [Switch](/components/switch#config-switch)): Prevention of excess moisture in the machine that cause mold, mildew, and unpleasant odors. Indoor fan will keep running for short period after turning turn off the AC, to dry the blades.
+The `generic`, `yan`, `yaa`, `yac`, `yac1fb9`, `yag`, and `yaw1f` models use the common GREE state fields while
+allowing OEM-specific values in timer, display-temperature, I-Feel, WiFi, vane-position, and otherwise unused fields.
+This is useful for GREE-compatible units sold under other brands such as Tadiran or Tosot.
+
+The `yb1fa` and `yx1ff` models have stricter model-specific validation because their captured frame formats and
+feature interactions are known. Both expose only vertical swing control. The `yb1fa` model maps the three numbered
+fan speeds to low, medium, and high. The `yx1ff` model maps them to quiet, low, and medium, uses the Turbo bit for high,
+and also decodes the sleep preset.
+
+A GREE command has an inter-block space of approximately 20 ms. Set `remote_receiver.idle` to a value longer than
+that space so the receiver does not split one command into two captures. Use `25ms` to `30ms`; the default `10ms` is
+too short for this protocol. See [Remote Receiver](/components/remote_receiver/) and
+[Remote Transmitter](/components/remote_transmitter/) for the other settings.
+
+```yaml
+remote_receiver:
+  id: ir_receiver
+  pin: GPIOXX
+  idle: 30ms
+
+remote_transmitter:
+  id: ir_transmitter
+  pin: GPIOXX
+  carrier_duty_percent: 50%
+
+climate:
+  - platform: gree
+    name: "AC"
+    model: yx1ff
+    transmitter_id: ir_transmitter
+    receiver_id: ir_receiver
+```
+
+The receiver updates only the state encoded by the remote. If `sensor` is configured, its current temperature reading
+is kept unchanged.
+
+The following additional features can be controlled with switches. Availability depends on the selected GREE model:
+
+| Model | `light` | `turbo` | `health` | `xfan` |
+| --- | --- | --- | --- | --- |
+| `yan`, `yaa`, `yac`, `yac1fb9` | yes | yes | yes | yes |
+| `yb1fa` | yes | yes | no | yes |
+| `yx1ff` | yes | no | no | no |
+
+The `generic`, `yag`, and `yaw1f` models have no feature switches; configuring one is a validation error.
+
+For models with supported GREE feature switches, received feature bits update the configured switches and are preserved
+when a later climate or feature change transmits a complete GREE state frame. On `yan`, `yaa`, `yac`, and `yac1fb9`,
+switch states are restored at startup.
+
+On `yb1fa` and `yx1ff`, feature switches do not restore a saved state or transmit IR during startup. They initially
+publish the protocol default state and are synchronized by the first valid frame received from the physical remote.
+
+On `yb1fa`, Turbo is represented as an effective high fan speed. Enabling the Turbo switch also updates the climate fan
+state to high. Selecting any fan mode through the climate entity disables Turbo; disabling only the Turbo switch leaves
+the regular high fan speed selected. The `yx1ff` Turbo bit is part of high fan-speed encoding and is therefore not
+available as an independent switch.
+
+- **gree_id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the `gree` climate to which the switches
+  belong.
+- **light** (*Optional*, [Switch](/components/switch/#config-switch)): Turns the indoor-unit display/LED on or off.
+- **turbo** (*Optional*, [Switch](/components/switch/#config-switch)): Enables maximum fan speed for faster results.
+- **health** (*Optional*, [Switch](/components/switch/#config-switch)): Enables the air ionization feature.
+- **xfan** (*Optional*, [Switch](/components/switch/#config-switch)): Keeps the indoor fan running briefly after the
+  climate device is turned off to dry the evaporator.
 
 ```yaml
 # Example configuration entry for switches of the climate
@@ -503,6 +567,101 @@ climate:
     horizontal_default: "left"
     vertical_default: "down"
 ```
+
+### `panasonic_ir`
+
+The `panasonic_ir` platform controls Panasonic air conditioners that use the 216 bit Panasonic IR protocol,
+called `PANASONIC_AC` by [IRremoteESP8266](https://github.com/crankyoldgit/IRremoteESP8266). The remote sends the whole
+state with every key press. The bytes the unit expects differ a little between model families, so set `model` to the
+one that matches your unit or remote.
+
+Supported modes are Off, Heat/Cool (the unit's auto mode), Cool, Heat, Dry and Fan Only. The target temperature is
+16 to 30 °C in steps of 1 °C. Fan modes are Auto, Low, Medium and High, plus the custom fan modes `Minimum` and
+`Maximum`. Swing modes are Off and Vertical. Vertical sets the vane to automatic. Off sends a fixed vane position, see
+the vane select below. Timers, the clock, the quiet and powerful buttons, nanoe and horizontal swing are not
+supported.
+
+- **model** (*Optional*, string): The model family of the unit. Defaults to `JKE`. The families and the units and
+  remotes they cover are the ones listed by IRremoteESP8266:
+
+  - `DKE`: DKE, DKW and PKR series; remotes A75C2616-1, A75C3704 and PN1122V
+  - `JKE`: JKE series; remote A75C3747
+  - `LKE`: LKE series
+  - `NKE`: NKE series
+  - `CKP`: CKP series, such as the CS-ME10CKPG, CS-ME12CKPG and CS-ME14CKPG; remote A75C2311. These units have no
+    separate on and off commands, see the note below
+  - `RKR`: RKR series, such as the CS-Z9RKR and CS-Z24RKR; remote A75C4762
+  - `PKE`: The remote of the CS-NE9PKE and CU-NE9PKE heat pump. Its frames are the same as the `JKE` ones, apart from
+    one extra bit in the byte that holds the power and mode. This is the only model tested on a real unit.
+
+> [!NOTE]
+> The `CKP` units have no separate commands for turning on and off. The power key of the remote toggles the unit, so
+> the climate keeps track of the power state and only sends a toggle when the state changes. If the unit is switched
+> with its remote and no receiver is configured, ESPHome loses track and the power state ends up inverted. After a
+> restart, the unit is taken to be on or off as the restored state says.
+
+The `away` preset is the frost protection mode of the remote, which is labelled 8/10°C on some remotes. It keeps the
+room above freezing by heating at a low temperature with the fan at maximum. On the remote, this mode only offers
+8 °C and 10 °C as the temperature. Selecting the preset always sends 10 °C in heat mode with the fan at maximum and
+the vane on auto, and the climate shows that state. It does not change the target temperature. Changing the mode,
+target temperature, fan mode, swing mode or vane position ends the preset. If the remote switches to
+frost protection at 8 °C, that is understood when received and the preset stays on, but ESPHome can only send 10 °C.
+The frames are as captured from a CS-NE9PKE remote, and other models may not have this function.
+
+When `receiver_id` is set the climate follows the original remote, see [Using a Receiver](#ir-receiver_id). A frame has
+two sections with a 10 ms gap between them. Depending on the `idle` time of the receiver, a frame arrives whole or as
+two captures, and both work. The short frames that the quiet, powerful and nanoe buttons send are ignored.
+
+> [!IMPORTANT]
+> On an ESP32 the receiver stops capturing when its RMT memory is full, and a frame that is cut short is ignored. A
+> Panasonic frame is 220 symbols (66 for the first section, 154 for the second), but the default is 192. On the
+> [Remote Receiver](/components/remote_receiver/), set either:
+>
+> - `rmt_symbols` and `receive_symbols` to at least `220`, which is `256` on the ESP32, or
+> - `idle: 5ms`, which splits the frame at the 10 ms gap so that only the 154 symbol second section is needed.
+>
+> `idle: 5ms` applies to the whole receiver and cuts any signal with a pause over 5 ms, such as the 9 ms header mark of
+> NEC. Use the first option if the receiver must decode other protocols.
+>
+> This was verified on an ESP32 only. The ESP32-C3, C5, C6 and H2 have 96 symbols of RMT memory (see
+> [ESP32 RMT Configuration Variables](/components/remote_receiver/#esp32-rmt-configuration-variables)), which is too
+> few for either option. The ESP32-S3 and ESP32-P4 have 192, which is enough for the second section but not for a whole
+> frame, unless `use_dma` is enabled. Then `rmt_symbols` is the size of a DMA buffer and can be set higher. The
+> ESP32-S2 has 256 symbols shared by every receiver and transmitter, so a whole frame takes all of them, while
+> `idle: 5ms` needs only the default 192.
+
+```yaml
+# Example configuration entry
+climate:
+  - platform: panasonic_ir
+    name: "Panasonic AC"
+```
+
+```yaml
+# Example configuration entry for a CS-NE9PKE, following its remote
+climate:
+  - platform: panasonic_ir
+    id: panasonic_ac
+    name: "Panasonic AC"
+    model: PKE
+    receiver_id: rcvr
+
+select:
+  - platform: panasonic_ir
+    panasonic_ir_id: panasonic_ac
+    vane_position:
+      name: "Panasonic AC vane position"
+```
+
+The `panasonic_ir` select platform adds a [Select](/components/select/) for the vertical vane:
+
+- **panasonic_ir_id** (*Optional*, [ID](/guides/configuration-types#id)): The `panasonic_ir` climate to control.
+  Only needed with more than one.
+- **vane_position** (**Required**): The options are `Auto`, then `1` (highest) to `5` (lowest). Setting a position
+  also sets the swing mode to Off, and `Auto` sets it to Vertical. When the remote sets the vane, the select follows it.
+  Without this select, swing Off sends the lowest position in Heat mode and the highest in the other modes. The chosen
+  position is not kept after a restart. Horizontal vanes are not controlled. All options from
+  [Select](/components/select/#config-select) are available.
 
 ### `pd_pioneer_ir`
 
@@ -882,6 +1041,7 @@ Additional configuration must be specified for this platform:
 - <APIRef text="midea_ir.h" path="midea_ir/midea_ir.h" />
 - <APIRef text="mistral_ir.h" path="mistral_ir/mistral_ir.h" />
 - <APIRef text="mitsubishi.h" path="mitsubishi/mitsubishi.h" />
+- <APIRef text="panasonic_ir.h" path="panasonic_ir/panasonic_ir.h" />
 - <APIRef text="pd_pioneer_ir.h" path="pd_pioneer_ir/pd_pioneer_ir.h" />
 - <APIRef text="remko_ar715.h" path="remko_ar715/remko_ar715.h" />
 - <APIRef text="siemens_ira211.h" path="siemens_ira211/siemens_ira211.h" />

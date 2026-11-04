@@ -48,130 +48,126 @@ function githubUrlsFor(type: ProjectType): (string | undefined)[] {
 
 <div class="question-prompt">I want to create a:</div>
 <div class="types not-content">
-  {
-    PROJECT_TYPES.map((type) => (
-      <label>
-        <input type="radio" name="type" value={type.id} checked={type === defaultType} />
-        <div class="name" set:html={type.name} />
-        <div class="description" set:html={type.description} />
-      </label>
-    ))
-  }
+  {PROJECT_TYPES.map((type) => (
+    <label>
+      <input type="radio" name="type" value={type.id} checked={type === defaultType} />
+      <div class="name" set:html={type.name} />
+      <div class="description" set:html={type.description} />
+    </label>
+  ))}
 </div>
 
-{
-  PROJECT_TYPES.map((type) => (
-    <div
-      class:list={["project-type", "not-content", `type-${type.id}`, { "projects-hidden": type !== defaultType }]}
-      data-manifest-root={type.manifestRoot}
-    >
-      <div class="question-prompt">{type.devicePrompt}</div>
-      <div class="radios not-content">
-        {type.devices.map((device) => (
-          <label class:list={[{ diy: device.diy }]}>
-            <input
-              type="radio"
-              name={`${type.id}-device`}
-              class="device-option"
-              value={device.id}
-              data-manifest-root={device.manifestRoot}
-              checked={isDefaultDevice(type, device)}
-            />
-            <img src={device.image} alt={device.imageAlt} />
-          </label>
-        ))}
-      </div>
-
-      {/* Variant sub-selectors sit above the install button so the manifest is picked first. */}
-      {type.devices
-        .filter((device) => device.variants)
-        .map((device) => (
-          <div class="project-info not-content projects-hidden" data-device={device.id}>
-            <div class="question-prompt">Select your variant:</div>
-            <div class="types not-content">
-              {device.variants!.map((variant, index) => (
-                <label>
-                  <input
-                    type="radio"
-                    name={`${type.id}-${device.id}-variant`}
-                    value={variant.value}
-                    checked={index === 0}
-                  />
-                  <div class="name">{variant.name}</div>
-                </label>
-              ))}
-            </div>
-          </div>
-        ))}
-
-      {type.installPlacement !== "device" && (
-        <Fragment>
-          <div class="question-prompt">Start the installation:</div>
-          <esp-web-install-button />
-        </Fragment>
-      )}
-
+{PROJECT_TYPES.map((type) => (
+  <div
+    class:list={["project-type", "not-content", `type-${type.id}`, { "projects-hidden": type !== defaultType }]}
+    data-manifest-root={type.manifestRoot}
+  >
+    <div class="question-prompt">{type.devicePrompt}</div>
+    <div class="radios not-content">
       {type.devices.map((device) => (
+        <label class:list={[{ diy: device.diy }]}>
+          <input
+            type="radio"
+            name={`${type.id}-device`}
+            class="device-option"
+            value={device.id}
+            data-manifest-root={device.manifestRoot}
+            checked={isDefaultDevice(type, device)}
+          />
+          <img src={device.image} alt={device.imageAlt} />
+        </label>
+      ))}
+    </div>
+
+    {/* Variant sub-selectors sit above the install button so the manifest is picked first. */}
+    {type.devices
+      .filter((device) => device.variants)
+      .map((device) => (
         <div class="project-info not-content projects-hidden" data-device={device.id}>
-          {device.title && <h3>{device.title}</h3>}
-          {device.body?.map((paragraph) => (
-            <p set:html={paragraph} />
-          ))}
-          {device.links && (
-            <Fragment>
-              <p set:html={device.linksLabel ?? "Buy"} />
-              <ul>
-                {device.links.map((link) => (
-                  <li>
-                    <a href={link.url}>{link.label}</a>
-                  </li>
-                ))}
-              </ul>
-            </Fragment>
-          )}
-          {device.manifest && (
-            <Fragment>
-              <div class="question-prompt">Start the installation:</div>
-              <esp-web-install-button manifest={device.manifest} />
-            </Fragment>
-          )}
+          <div class="question-prompt">Select your variant:</div>
+          <div class="types not-content">
+            {device.variants!.map((variant, index) => (
+              <label>
+                <input
+                  type="radio"
+                  name={`${type.id}-${device.id}-variant`}
+                  value={variant.value}
+                  checked={index === 0}
+                />
+                <div class="name">{variant.name}</div>
+              </label>
+            ))}
+          </div>
         </div>
       ))}
 
-      {type.advanced && (
-        <Fragment>
-          <h3>For advanced users</h3>
-          <ul>
+    {type.installPlacement !== "device" && (
+      <Fragment>
+        <div class="question-prompt">Start the installation:</div>
+        <esp-web-install-button />
+      </Fragment>
+    )}
+
+    {type.devices.map((device) => (
+      <div class="project-info not-content projects-hidden" data-device={device.id}>
+        {device.title && <h3>{device.title}</h3>}
+        {device.body?.map((paragraph) => (
+          <p set:html={paragraph} />
+        ))}
+        {device.links && (
+          <Fragment>
+            <p set:html={device.linksLabel ?? "Buy"} />
+            <ul>
+              {device.links.map((link) => (
+                <li>
+                  <a href={link.url}>{link.label}</a>
+                </li>
+              ))}
+            </ul>
+          </Fragment>
+        )}
+        {device.manifest && (
+          <Fragment>
+            <div class="question-prompt">Start the installation:</div>
+            <esp-web-install-button manifest={device.manifest} />
+          </Fragment>
+        )}
+      </div>
+    ))}
+
+    {type.advanced && (
+      <Fragment>
+        <h3>For advanced users</h3>
+        <ul>
+          <li>
+            The device is adoptable in <a href={DASHBOARD_ADOPT_URL}>the ESPHome dashboard</a>
+          </li>
+          {githubUrlsFor(type).length > 1
+            ? type.devices.map((device) => {
+                const githubUrl = githubUrlFor(type, device);
+                return (
+                  githubUrl && (
+                    <li class="projects-hidden" data-device={device.id}>
+                      The YAML configuration is on <a href={githubUrl}>GitHub</a>
+                    </li>
+                  )
+                );
+              })
+            : githubUrlsFor(type)[0] && (
+                <li>
+                  The YAML configuration is on <a href={githubUrlsFor(type)[0]}>GitHub</a>
+                </li>
+              )}
+          {type.advanced.diyToggle && (
             <li>
-              The device is adoptable in <a href={DASHBOARD_ADOPT_URL}>the ESPHome dashboard</a>
+              <a href={`?type=${type.id}&diy`}>Show DIY devices</a> that require extra setup
             </li>
-            {githubUrlsFor(type).length > 1
-              ? type.devices.map((device) => {
-                  const githubUrl = githubUrlFor(type, device);
-                  return (
-                    githubUrl && (
-                      <li class="projects-hidden" data-device={device.id}>
-                        The YAML configuration is on <a href={githubUrl}>GitHub</a>
-                      </li>
-                    )
-                  );
-                })
-              : githubUrlsFor(type)[0] && (
-                  <li>
-                    The YAML configuration is on <a href={githubUrlsFor(type)[0]}>GitHub</a>
-                  </li>
-                )}
-            {type.advanced.diyToggle && (
-              <li>
-                <a href={`?type=${type.id}&diy`}>Show DIY devices</a> that require extra setup
-              </li>
-            )}
-          </ul>
-        </Fragment>
-      )}
-    </div>
-  ))
-}
+          )}
+        </ul>
+      </Fragment>
+    )}
+  </div>
+))}
 
 <script is:inline>
   // Handle selecting a project type

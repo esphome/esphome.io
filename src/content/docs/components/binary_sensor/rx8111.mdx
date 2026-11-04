@@ -1,0 +1,70 @@
+---
+title: "RX8111 Binary Sensor"
+description: "Monitor latched flags, backup voltage status, and the EVIN input of an Epson RX8111CE real-time clock."
+---
+
+The `rx8111` binary sensor platform reports the latched flags and live status of an
+[RX8111 real-time clock](/components/time/rx8111/). Configure that time component and its
+[I²C bus](/components/i2c/) first.
+
+```yaml
+# Example configuration entry
+binary_sensor:
+  - platform: rx8111
+    vlf:
+      name: "RTC Voltage Low Flag"
+```
+
+## Configuration Variables
+
+- **rx8111_id** (*Optional*, [ID](/guides/configuration-types/#id)): The RX8111 time component. Required when
+  more than one RX8111 is configured.
+- **vlf** (*Optional*): The latched voltage-low flag (`FLAG.VLF`). On means the RTC reports low-voltage history
+  and its time is not trusted. Defaults to the `problem` device class.
+- **alarm_flag** (*Optional*): The latched alarm flag (`FLAG.AF`). On means an alarm match has been recorded.
+- **timer_flag** (*Optional*): The latched timer flag (`FLAG.TF`). On means a timer expiration has been recorded.
+- **xst** (*Optional*): The latched oscillator-stop flag (`FLAG.XST`). On means an oscillator stop was detected,
+  not that the oscillator is healthy. Defaults to the `problem` device class.
+- **event_flag** (*Optional*): The latched EVIN event flag (`FLAG.EVF`). On means an event has been recorded.
+- **battery_low** (*Optional*): The live backup-voltage status (`STATUS.VLOW`). On means the backup voltage at
+  `VBAT` is below the chip's detection threshold. This is not a battery percentage. Defaults to the `battery`
+  device class. Detection must already be enabled using `EVLOW` in register `0x35`; this component leaves that
+  setting unchanged and does not provide a YAML option to enable it. An off state does not establish battery
+  health when detection is disabled.
+- **evin** (*Optional*): The sampled physical EVIN input level (`STATUS.EVIN`). On means high and off means low,
+  independently of the configured event polarity. Short pulses between polls can be missed.
+
+All seven sensor options are optional, but at least one must be configured. Put all sensors for one clock in a
+single `rx8111` binary sensor platform block. Multiple clocks can each have their own block and `rx8111_id`.
+Each sensor accepts all options from [Binary Sensor](/components/binary_sensor/#config-binary_sensor) and
+defaults to the `diagnostic` entity category.
+
+## Polling and Flag Handling
+
+Status is read at startup and using the time component's `event_poll_interval` (default `1s`, minimum `500ms`),
+even when `update_interval: never` disables periodic calendar synchronization. There is no separate binary-sensor
+update interval. A failed register read preserves the previous states for that register's sensors; an initial
+failed read leaves them unknown. A failed FLAG read does not prevent live STATUS sensors from updating, and a
+failed STATUS read does not prevent FLAG sensors from updating.
+
+These sensors report raw flags independently of whether the corresponding alarm, timer, or event callback is
+enabled. Reading or publishing a flag does not clear it. Use the time component's
+[alarm actions](/components/time/rx8111/#alarm-actions), [timer actions](/components/time/rx8111/#timer-actions),
+or [`rx8111.clear_event_flag` action](/components/time/rx8111/#rx8111-clear_event_flag-action) to acknowledge the
+corresponding flag. A successful `rx8111.write_time` clears the time-invalid flags, including VLF and XST.
+Cleared states are reported on the next status read.
+
+Binary-sensor automations run before the corresponding time-component event callbacks. Clearing a flag from a
+synchronous binary-sensor automation can suppress the matching `on_alarm`, `on_timer`, or `on_event` callback in
+that poll. If both are needed, acknowledge the flag only after the required handling is complete.
+
+Adding these sensors does not enable or reconfigure alarms, the timer, EVIN event detection, timestamp capture,
+backup switching, or charging. Configure those features on the time component or
+[timestamp text sensor](/components/text_sensor/rx8111/) separately. Binary status sensors and the timestamp
+text sensor can be used together on the same clock.
+
+## See Also
+
+- [RX8111 Time Source](/components/time/rx8111/)
+- [RX8111 Event Timestamp](/components/text_sensor/rx8111/)
+- [Binary Sensor Component](/components/binary_sensor/)

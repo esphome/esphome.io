@@ -22,6 +22,7 @@ import lvglCookAnimimgBattImg from './images/lvgl_cook_animimg_batt.gif';
 import lvglCookClockImg from './images/lvgl_cook_clock.png';
 import lvglCookKeypadImg from './images/lvgl_cook_keypad.png';
 import lvglCookWeatherImg from './images/lvgl_cook_weather.png';
+import lvglCookOtaProgressImg from './images/lvgl_cook_ota_progress.gif';
 
 <span id="lvgl-cookbook"></span>
 
@@ -2349,6 +2350,81 @@ touchscreen:
 ```
 
 You can combine it with the previous example to turn off the backlight, so the users don't actually notice this.
+
+## OTA progress bar
+
+The main loop is blocked while an [OTA update](/components/ota/) is in progress, so LVGL does not redraw the screen on
+its own. To show progress, update the widgets from the [OTA automations](/components/ota/#ota-automations) and then call
+`id(lvgl_id).loop()` to have LVGL render the changes immediately.
+
+The example below shows a hidden box containing a label and a `bar`. The box is shown when the update starts, and the
+bar and label are updated on each `on_progress` trigger.
+
+<Image src={lvglCookOtaProgressImg} layout="constrained" alt="OTA progress bar" />
+
+```yaml
+ota:
+  - platform: esphome
+    on_begin:
+      - lvgl.widget.show: ota_box
+      - lvgl.label.update:
+          id: ota_label
+          text: "Updating..."
+      - lvgl.bar.update:
+          id: ota_bar
+          value: 0
+      - lambda: id(lvgl_id).loop();
+    on_progress:
+      - lvgl.bar.update:
+          id: ota_bar
+          value: !lambda return x;
+      - lvgl.label.update:
+          id: ota_label
+          text:
+            format: "Updating... %.0f%%"
+            args: [x]
+      - lambda: id(lvgl_id).loop();
+    on_end:
+      - lvgl.bar.update:
+          id: ota_bar
+          value: 100
+      - lvgl.label.update:
+          id: ota_label
+          text: "Update complete, rebooting"
+      - lambda: id(lvgl_id).loop();
+    on_error:
+      - lvgl.label.update:
+          id: ota_label
+          text:
+            format: "Update failed (error %u)"
+            args: [x]
+      - lambda: id(lvgl_id).loop();
+
+lvgl:
+  id: lvgl_id
+  widgets:
+    - obj:
+        id: ota_box
+        hidden: true
+        align: center
+        width: 90%
+        height: 120
+        widgets:
+          - label:
+              id: ota_label
+              align: top_mid
+              text: "Updating..."
+          - bar:
+              id: ota_bar
+              align: bottom_mid
+              width: 100%
+              height: 24
+              min_value: 0
+              max_value: 100
+              value: 0
+```
+
+The `esphome` OTA platform triggers `on_progress` at most once per second, so the bar advances in steps.
 
 ## See Also
 
