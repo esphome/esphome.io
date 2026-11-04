@@ -1385,17 +1385,14 @@ This [action](/automations/actions#all-actions) sends a Toto infrared remote cod
 ```yaml
 on_...:
   - remote_transmitter.transmit_toto:
-      command: 0xED  # Set water and seat temperature
-      rc_code_1: 0x0 # Water heater off
-      rc_code_2: 0x0 # Seat heater off
+      code: 0x1200  # Close lid
       # Repeats 3 times at a 36ms interval by default
 ```
 
 #### Configuration variables
 
-- **command** (**Required**, int, [templatable](/automations/templates)): The 1-byte Toto command code to send. Range is 0 to 0xFF.
-- **rc_code_1** (*Optional*, int, [templatable](/automations/templates)): The first 4-bit Toto code (usually a command parameter) to send. Range is 0 to 0xF.
-- **rc_code_2** (*Optional*, int, [templatable](/automations/templates)): The second 4-bit Toto code (usually a command parameter) to send. Range is 0 to 0xF.
+- **code** (**Required**, int, [templatable](/automations/templates/)): The 2-byte Toto command code to send.
+  Range is 0 to 0xFFFF.
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
 > [!NOTE]
