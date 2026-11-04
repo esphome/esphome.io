@@ -278,8 +278,8 @@ detected model are ignored with an error in the log.
 The measurement can be controlled and maintenance functions triggered from automations. On the SEN6x family,
 fan cleaning, the SHT heater and the forced CO₂ recalibration only work while the measurement is stopped, and
 the device needs wait time after each command (1400 ms after stop, 10 s after fan cleaning, 20 s after the
-heater, 500 ms after a forced CO₂ recalibration). Commands sent too early are ignored with a "Device busy"
-warning.
+heater, and until a forced CO₂ recalibration's result has been read, about 500 ms). Commands sent too early are
+ignored with a "Device busy" warning.
 
 ### `sen6x.start_measurement` Action
 
@@ -316,14 +316,17 @@ button:
 ### `sen6x.perform_forced_co2_recalibration` Action
 
 Recalibrates the CO₂ sensor to a known reference concentration (forced recalibration, FRC). Only available with
-SEN63C, SEN66 or SEN69C, and only accepted in idle mode. Before triggering it, keep the sensor measuring for at
-least 3 minutes in air with a stable, known CO₂ concentration, such as fresh outdoor air at about 420 ppm. The
-device keeps the correction across restarts. The applied correction is logged, and a recalibration the device
-rejects is logged as a warning.
+SEN63C, SEN66 or SEN69C with the `co2` sensor configured, and only accepted in idle mode. Before triggering it,
+keep the sensor measuring for at least 3 minutes in air with a stable, known CO₂ concentration, such as clean
+outdoor air away from buildings and traffic, which is close to the
+[global background](https://gml.noaa.gov/ccgg/trends/global.html). The device keeps the correction across
+restarts. The applied correction is logged, and a recalibration the device rejects is logged as a warning.
 
 - **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the sen6x sensor.
-- **value** (**Required**, int, [templatable](/automations/templates)): The reference CO₂ concentration in ppm.
-  Allowed values are in range 0..40000.
+- **value** (**Required**, float, [templatable](/automations/templates/)): The reference CO₂ concentration in
+  ppm, in range 0..40000. A lambda can return a sensor state directly. A value that is out of range or not a
+  number, such as the state of a sensor that has not reported yet, is rejected with a warning and nothing is
+  sent to the device.
 
 ```yaml
 # Example: forced CO2 recalibration in fresh outdoor air
@@ -335,7 +338,8 @@ button:
       - delay: 2s
       - sen6x.perform_forced_co2_recalibration:
           id: my_sen6x
-          value: 420
+          # Global background, see https://gml.noaa.gov/ccgg/trends/global.html
+          value: 430
       - delay: 1s
       - sen6x.start_measurement: my_sen6x
 ```
