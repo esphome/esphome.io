@@ -125,7 +125,8 @@ Multiple remote receivers can be configured as a list of dict definitions within
 - **rmt_symbols** (*Optional*, int): When `use_dma` is enabled, this sets the size of the driver's internal DMA
   buffer. When DMA is disabled, it specifies how much RMT memory is allocated to the component. RMT memory is shared
   across all components and should be allocated in multiples of the block size. On the `ESP32` and `ESP32-S2`
-  variants, RMT memory is shared between RX and TX components. On other variants, RX and TX have dedicated RMT memory.
+  variants, RMT memory is shared between RX and TX components. On other variants, RX and TX have their own RMT
+  memory, but a TX component can also use RX memory that no RX component uses.
 
 | ESP32 Variant | Available Memory | Block Size |
 | ------------- | ---------------- | ---------- |
@@ -134,9 +135,34 @@ Multiple remote receivers can be configured as a list of dict definitions within
 | ESP32-C5      | 96 symbols       | 48 symbols |
 | ESP32-C6      | 96 symbols       | 48 symbols |
 | ESP32-H2      | 96 symbols       | 48 symbols |
+| ESP32-H21     | 96 symbols       | 48 symbols |
+| ESP32-H4      | 96 symbols       | 48 symbols |
 | ESP32-P4      | 192 symbols      | 48 symbols |
 | ESP32-S2      | 256 symbols      | 64 symbols |
 | ESP32-S3      | 192 symbols      | 48 symbols |
+| ESP32-S31     | 192 symbols      | 48 symbols |
+
+Each component uses its own RMT channel: `remote_receiver` uses an RX channel, `remote_transmitter` and
+`esp32_rmt_led_strip` use a TX channel. A channel uses at least one block of memory, so the number of channels is the
+available memory divided by the block size, for example 8 on the `ESP32` and 2 on the `ESP32-C3`. On the `ESP32` and
+`ESP32-S2`, RX and TX components share these channels. On other variants, RX and TX each have this many channels.
+
+ESPHome checks all `esp32_rmt_led_strip`, `remote_transmitter` and `remote_receiver` components together. Validation
+fails if:
+
+- they need more channels than are available
+- more than one RX or more than one TX component sets `use_dma`, since only one channel per direction supports DMA
+- `rmt_symbols` is an odd number or smaller than one block
+- without `use_dma`, `rmt_symbols` is larger than one channel can use. On the `ESP32` and `ESP32-S2` that is all the RMT
+  memory; on other variants it is the RX memory for an RX component, or the TX and RX memory together for a TX component
+
+A component with `use_dma` uses one block. When it compiles, ESPHome also works out which memory each channel gets when
+the components are set up: by `setup_priority`, then in the order of the configuration. A component that refers to
+another component by ID, such as a `power_supply`, can be set up after the ones that follow it. If a channel does not
+fit, ESPHome logs a warning that suggests an `rmt_symbols` value that fits, or a `setup_priority` that sets up the
+smaller ones first. `esphome config` does not show this warning. The order matters because a TX channel can extend into
+memory that the next one would need: on an `ESP32-S3`, a 48 symbol strip followed by a 288 symbol strip fits, but not
+the other way round.
 
 - **receive_symbols** (*Optional*, int): Maximum receive length in symbols. On some variants the maximum receive is
   limited to `rmt_symbols`. Defaults to `192` on every variant; the receive slot size follows this value, while the
