@@ -71,6 +71,7 @@ Models listed under **Aliases** use identical driver settings, so either name ca
 | `Waveshare-7.5in-bV2-BWR`     |                               | Waveshare           | 7.5" V2 3-color (800x480, UC8179)                                                                                                              | [Product page](https://www.waveshare.com/7.5inch-e-paper-hat-b.htm)                                        |
 | `Waveshare-7.5in-H`           |                               | Waveshare           |                                                                                                                                                | [Product page](https://www.waveshare.com/7.5inch-e-paper-hat-h.htm)                                        |
 | `Waveshare-7.5in-V2`          |                               | Waveshare           | 7.5" V2 mono (800x480, UC8179), supports fast and partial refresh via `full_update_every`                                                      | [Product page](https://www.waveshare.com/7.5inch-e-paper-hat.htm)                                          |
+| `Waveshare-7.5in-V2-4gray`    |                               | Waveshare           | 7.5" V2 (800x480, UC8179) in four gray levels, black and white partial refresh via `full_update_every`                                         | [Product page](https://www.waveshare.com/7.5inch-e-paper-hat.htm)                                          |
 | `WeAct-2.13in-3c`             |                               | WeAct               | 2.13" 3-color e-paper (250x122, SSD1683)                                                                                                       |                                                                                                            |
 | `WeAct-2.9in-3c`              |                               | WeAct               | 2.9" 3-color e-paper (128x296, SSD1683)                                                                                                        |                                                                                                            |
 | `WeAct-4.2in-3c`              |                               | WeAct               | 4.2" 3-color e-paper (400x300, SSD1683)                                                                                                        |                                                                                                            |
@@ -112,7 +113,8 @@ but can be overridden if needed.
   > [!NOTE]
   > Some displays use inverted busy pin polarity (LOW = busy, HIGH = idle). For these models, set `inverted: true`
   > on the busy pin. This applies to: `UC8151`, `Waveshare-1.54in-G`, `Waveshare-2.13in-bv3`, `Waveshare-2.13in-G`,
-  > `Waveshare-2.13in-G-V1`, `Waveshare-7.5in-H`, `Waveshare-7.5in-V2`, `inkplate6color`.
+  > `Waveshare-2.13in-G-V1`, `Waveshare-7.5in-H`, `Waveshare-7.5in-V2`, `Waveshare-7.5in-V2-4gray`,
+  > `inkplate6color`.
 
 - **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The RESET pin, if used. Required for the SSD1681-based models (`SSD1681`, `Waveshare-1.54in-v2`, `GooDisplay-GDEY0154D67-1.54`), whose panels only wake from deep sleep on a hardware reset, and for `GooDisplay-GDEY029Z95-2.9`.
   Make sure you pull this pin high (by connecting it to 3.3V with a resistor) if not connected to a GPIO pin.
@@ -206,6 +208,39 @@ display:
     lambda: |-
       it.filled_circle(it.get_width() / 2, it.get_height() / 2, 50, Color::BLACK);
 ```
+
+### Four-Level Grayscale (Waveshare 7.5" V2)
+
+The `Waveshare-7.5in-V2-4gray` model drives the 7.5" V2 panel in four gray levels. A full update uses the controller's
+four-level waveform and takes about 2 seconds, with the usual flash. Set `full_update_every` greater than `1` for black
+and white partial updates in between, which take about half a second and do not flash. A partial update only drives
+pixels that change between light (white or light gray) and dark (dark gray or black), so pixels that do not change keep
+their gray level. A change between white and light gray, or between dark gray and black, is not shown, and newly drawn
+grays show as black or white until the next full update.
+
+Request a full update at any time with [`epaper_spi.full_update_next`](#epaper_spi-full_update_next-action), for
+example after changing to another page:
+
+```yaml
+display:
+  - platform: epaper_spi
+    id: epaper
+    model: Waveshare-7.5in-V2-4gray
+    cs_pin: GPIOXX
+    dc_pin: GPIOXX
+    reset_pin: GPIOXX
+    busy_pin:
+      number: GPIOXX
+      inverted: true
+    update_interval: 60s
+    full_update_every: 30
+    lambda: |-
+      it.filled_rectangle(0, 0, 100, 100, Color(85, 85, 85));      // dark gray
+      it.filled_rectangle(100, 0, 100, 100, Color(170, 170, 170));  // light gray
+```
+
+> [!NOTE]
+> With custom `dimensions`, the width must be a multiple of 8.
 
 ### Partial refresh example (1.54" SSD1681 panels)
 
