@@ -589,8 +589,6 @@ class ReleaseNotesGenerator:
 
     def fetch_pr(self, pr_number: int) -> PullRequest:
         """Fetch PR metadata from GitHub"""
-        print(f"Fetching PR #{pr_number}...", end=" ")
-
         data = self.run_gh(
             "pr",
             "view",
@@ -601,7 +599,6 @@ class ReleaseNotesGenerator:
             "number,title,body,author,labels,url,state,mergedAt",
         )
 
-        print("✓")
         return PullRequest.from_json(data)
 
     def cache_pr(self, pr: PullRequest) -> None:
@@ -632,22 +629,50 @@ class ReleaseNotesGenerator:
     def fetch_and_cache_prs(self, pr_numbers: list[int]) -> list[PullRequest]:
         """Fetch PRs and cache them locally"""
         prs = []
+        total = len(pr_numbers)
+        fetched = 0
+        interactive = sys.stdout.isatty()
 
-        for pr_number in pr_numbers:
+        for index, pr_number in enumerate(pr_numbers, start=1):
             # Check cache first unless force update
             if not self.force_update:
                 cached_pr = self.load_cached_pr(pr_number)
                 if cached_pr:
-                    print(f"Using cached PR #{pr_number}")
                     prs.append(cached_pr)
+                    self._print_progress(
+                        index, total, f"Using cached PR #{pr_number}", interactive
+                    )
                     continue
 
             # Fetch from GitHub
+            self._print_progress(
+                index, total, f"Fetching PR #{pr_number}...", interactive
+            )
             pr = self.fetch_pr(pr_number)
             self.cache_pr(pr)
             prs.append(pr)
+            fetched += 1
 
+        if interactive and total:
+            print()
+        print(
+            f"Loaded {total} PRs ({fetched} fetched from GitHub, "
+            f"{total - fetched} from cache)"
+        )
         return prs
+
+    @staticmethod
+    def _print_progress(
+        index: int, total: int, message: str, interactive: bool
+    ) -> None:
+        """Print a progress line, redrawn in place when stdout is a terminal"""
+        width = len(str(total))
+        line = f"[{index:>{width}}/{total} {index * 100 // total:>3}%] {message}"
+        if interactive:
+            # Clear the rest of the line so a shorter message leaves no remnants
+            print(f"\r{line}\033[K", end="", flush=True)
+        else:
+            print(line)
 
     def load_prs_by_numbers(self, pr_numbers: list[int]) -> list[PullRequest]:
         """Load specific PRs from shared cache by their numbers"""
