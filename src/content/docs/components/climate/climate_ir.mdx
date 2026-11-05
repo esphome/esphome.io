@@ -26,7 +26,7 @@ submit a feature request (see FAQ).
 | [Delonghi](#delonghi_ir) | `delonghi`                         | yes |
 | Emmeti | `emmeti`                           | yes |
 | [Friedrich](#friedrich)                   | `friedrich`                        | yes               |
-| Fujitsu General | `fujitsu_general`                  | yes |
+| [Fujitsu General](#fujitsu_general) | `fujitsu_general`                  | yes |
 | [GREE](#gree_ir) | `gree`                             | yes |
 | [Haier Tundra](#haier_tundra) | `haier_tundra` | yes |
 | Hitachi | `hitachi_ac344`, `hitachi_ac424` | yes |
@@ -264,6 +264,40 @@ climate:
   - platform: friedrich
     name: "AC"
 ```
+
+### `fujitsu_general`
+
+The Fujitsu General remote has buttons that send a command on their own and change no
+climate state: stepping the vertical or horizontal vane one position, and toggling economy
+mode. The `fujitsu_general` button platform sends these commands through the climate's
+transmitter.
+
+```yaml
+# Example configuration entry
+climate:
+  - platform: fujitsu_general
+    id: living_room_ac
+    name: "Living Room AC"
+
+button:
+  - platform: fujitsu_general
+    fujitsu_general_id: living_room_ac
+    step_vertical:
+      name: "Step Vertical Vane"
+    step_horizontal:
+      name: "Step Horizontal Vane"
+    economy:
+      name: "Toggle Economy Mode"
+```
+
+- **fujitsu_general_id** (**Required**, [ID](/guides/configuration-types/#id)): The `fujitsu_general` climate
+  whose transmitter sends the command.
+- **step_vertical** (*Optional*): A button that steps the vertical vane. All options from
+  [Button](/components/button/).
+- **step_horizontal** (*Optional*): A button that steps the horizontal vane. All options from
+  [Button](/components/button/).
+- **economy** (*Optional*): A button that toggles economy mode. All options from
+  [Button](/components/button/).
 
 <span id="gree_ir"></span>
 
