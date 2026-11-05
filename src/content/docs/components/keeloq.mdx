@@ -1,0 +1,138 @@
+---
+title: "KeeLoq Remote"
+description: "Instructions for sending KeeLoq rolling codes from a key and a stored counter."
+---
+
+The `keeloq` component acts as a KeeLoq remote control: it computes the encrypted hopping code from a
+manufacturer key, a serial number and a counter, and sends it through a
+[Remote Transmitter](/components/remote_transmitter/). The kind of receiver is set with **type**, see
+[Jarolift](#jarolift). For codes that are already encrypted, use
+[`remote_transmitter.transmit_keeloq`](/components/remote_transmitter/#remote_transmitter-transmit_keeloq) instead.
+
+> [!WARNING]
+> The manufacturer key is secret: keep it in `secrets.yaml`. Anyone with the key and a serial number can control the
+> receivers that learned it.
+
+## Configuration
+
+```yaml
+# Example configuration entry
+keeloq:
+  - id: shutter_remote
+    type: jarolift
+    manufacturer_key: !secret jarolift_manufacturer_key
+    serial: 0x1234500
+```
+
+## Configuration Variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of this remote, used by the actions.
+- **type** (**Required**, enum): The kind of receiver, see [Jarolift](#jarolift). One of `jarolift`.
+- **manufacturer_key** (**Required**, int): The 64-bit manufacturer key. A key given as two 32-bit halves is written
+  MSB first: `0x<MSB><LSB>`.
+- **serial** (**Required**, int): The 28-bit serial number this remote sends. The receiver learns it with
+  [`keeloq.learn`](#keeloq-learn-action).
+
+## Counter
+
+The remote writes its 16-bit counter to flash once every 8 frames. After a reboot the counter jumps ahead by at most
+8, which receivers accept, and no counter is used twice. A firmware update keeps the counter; a new **type** or
+**serial** starts a new one. After a flash erase, set it with `keeloq.set_counter` or pair again.
+
+## Actions
+
+### `keeloq.send` Action
+
+This [action](/automations/actions#all-actions) sends the next frame of the remote.
+
+```yaml
+on_...:
+  - keeloq.send:
+      id: shutter_remote
+      command: up
+      channels: [1, 2, 3, 4]
+```
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the remote. Needed when more than one remote
+  is configured.
+- **command** (**Required**, string or int, [templatable](/automations/templates)): The 4-bit button code, `0` to
+  `0xF`, or a command name of the type, see [Jarolift Commands](#jarolift-commands).
+- **channels** (**Required** for `jarolift`, list or int, [templatable](/automations/templates)): The channels to
+  send to, see [Jarolift Channels](#jarolift-channels).
+- **repeat** (*Optional*): **times** and **wait_time** as in
+  [Remote Transmitter Actions](/components/remote_transmitter/#remote_transmitter-transmit_action); **wait_time**
+  defaults to `25ms`. Without **repeat**, the frame is sent as often as the type sends a press (see
+  [Jarolift Commands](#jarolift-commands)), without a pause.
+- All other options from
+  [Remote Transmitter Actions](/components/remote_transmitter/#remote_transmitter-transmit_action).
+
+### `keeloq.learn` Action
+
+This [action](/automations/actions#all-actions) pairs the remote with a receiver in learn mode. The steps on the
+receiver depend on the type, see [Pairing a Jarolift Motor](#pairing-a-jarolift-motor).
+
+```yaml
+on_...:
+  - keeloq.learn:
+      id: shutter_remote
+      channels: [1]
+```
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the remote. Needed when more than one remote
+  is configured.
+- **channels** (**Required** for `jarolift`, list or int, [templatable](/automations/templates)): The channels to
+  pair, see [Jarolift Channels](#jarolift-channels).
+- **legacy** (*Optional*, boolean, [templatable](/automations/templates)): Only for `jarolift`: pairs a motor made
+  before 2010, see [Pairing a Jarolift Motor](#pairing-a-jarolift-motor). Defaults to `false`.
+- **transmitter_id** (*Optional*, [ID](/guides/configuration-types/#id)): The remote transmitter to send with.
+
+### `keeloq.set_counter` Action
+
+This [action](/automations/actions#all-actions) sets the counter of the next frame and stores it at once.
+
+```yaml
+on_...:
+  - keeloq.set_counter:
+      id: shutter_remote
+      counter: 0x1000
+```
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the remote. Needed when more than one remote
+  is configured.
+- **counter** (**Required**, int, [templatable](/automations/templates)): The counter of the next frame, `0` to
+  `0xFFFF`.
+
+## Jarolift
+
+`type: jarolift` is for Jarolift TDEF shutter motors.
+
+### Jarolift Channels
+
+**channels** takes a list such as `[1, 2, 3, 4]` of channels `1` to `16`, or the 16-bit mask they make (bit 0 is
+channel 1, so `0x000F` is channels 1 to 4). An empty list or the mask `0` is rejected. A lambda returns the mask.
+
+### Jarolift Commands
+
+| Name | Code | Sent |
+|---|---|---|
+| `up` | `0x8` | 2× |
+| `down` | `0x2` | 2× |
+| `stop` | `0x4` | 2× |
+| `learn` | `0xA`, up and down together | 2× |
+| `shade` | `0x4`, stop held: moves to the shade position | 20× |
+
+Without **repeat**, a name is sent as the table shows and a button code without a name 2×. `learn` sends only the
+code `0xA`; to pair a motor, use [`keeloq.learn`](#keeloq-learn-action).
+
+### Pairing a Jarolift Motor
+
+Put the motor into learn mode as its manual describes, then run [`keeloq.learn`](#keeloq-learn-action) with the
+channels to pair while the motor is still in learn mode. The motor vibrates when it has learned the serial; a hand
+remote paired before keeps working. A motor made before 2010 may need **legacy** set to `true`: try it if the motor
+does not vibrate.
+
+## See Also
+
+- [Remote Transmitter](/components/remote_transmitter/)
+- [Remote Receiver](/components/remote_receiver/)
+- [CC1101](/components/cc1101/)
