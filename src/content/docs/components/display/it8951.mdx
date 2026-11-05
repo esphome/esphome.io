@@ -103,7 +103,7 @@ dimensions, VCOM) is preset but can be overridden.
 
   | Mode    | Description                                                                             |
   | ------- | --------------------------------------------------------------------------------------- |
-  | `INIT`  | Full erase to white. Use after power-on or when display state is unknown.               |
+  | `INIT`  | Several full flashes. Use after power-on or when display state is unknown.              |
   | `DU`    | Direct update. Fast, non-flash. Black/white transitions only. Also available as `fast`. |
   | `GC16`  | Grayscale clearing. Full 16-level grayscale, highest quality. Also available as `full`. |
   | `GL16`  | Grayscale light. 16 levels with reduced flash, good for anti-aliased text on white.     |
@@ -155,6 +155,20 @@ dimensions, VCOM) is preset but can be overridden.
   white. Pure black and pure white stay solid. Set to `false` for a hard 50%
   black/white threshold (crisper, stipple-free text at the cost of pale fills
   disappearing).
+- **direct_draw** (_Optional_, boolean): When `true`, the driver keeps no
+  framebuffer on the ESP. Each area that [LVGL](/components/lvgl/) draws is
+  converted and written straight into the controller's image memory. This saves
+  the framebuffer RAM (about 1.25 MiB on a 1872×1404 panel). Defaults to
+  `false`. Requirements:
+  - LVGL must draw on this display, with `update_when_display_idle: true`.
+  - `lambda`, `pages` and `show_test_card` cannot be used, because they draw
+    pixel by pixel and need a framebuffer.
+  - The panel width must be a multiple of 4 (grayscale) or 16 (monochrome).
+    Every model preset meets this.
+
+  Rotation is done by the driver while it writes each area, so LVGL needs no
+  rotation buffer. See [Composing a screen before showing it](#composing-a-screen-before-showing-it).
+
 - **reset_duration** (_Optional_, [Time](/guides/configuration-types#time)):
   Duration of the hardware reset pulse. Defaults to `10ms`. Maximum `500ms`.
 - **lambda** (_Optional_,
@@ -192,6 +206,113 @@ on_...:
 - **mode** (_Optional_, string): The waveform mode for this update. If omitted,
   uses the configured `update_mode` or defaults to `GC16`. Supports
   [templating](/automations/templates).
+
+### `it8951.pause` Action
+
+Stop showing new content on the panel. Drawing goes on: new pixels are still
+written into the controller's image memory, but no waveform runs, so the panel
+keeps showing the previous screen. Update requests made while paused are
+remembered and run on `it8951.resume`.
+
+```yaml
+on_...:
+  then:
+    - it8951.pause: my_display
+```
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The display to pause.
+
+### `it8951.resume` Action
+
+End the pause and show everything that changed while paused, in one waveform.
+Nothing happens on the panel if no update was requested while paused.
+
+```yaml
+on_...:
+  then:
+    - it8951.resume:
+        id: my_display
+        mode: GC16
+```
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The display to resume.
+- **mode** (_Optional_, string): The waveform to use, in place of the one the
+  update requests asked for. Any value accepted by `update_mode`. Supports
+  [templating](/automations/templates).
+
+### `it8951.refresh` Action
+
+Show the whole screen and end any pause. With `direct_draw: true` nothing is
+drawn or sent to the controller: the panel shows what is already in the
+controller's image memory. Without it, the framebuffer is sent again first.
+If the display is busy, the refresh runs once the current update is done.
+
+```yaml
+on_...:
+  then:
+    - it8951.refresh:
+        id: my_display
+        mode: DU
+```
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The display to refresh.
+- **mode** (_Optional_, string): The waveform to use. Any value accepted by
+  `update_mode`, or `BLANK`. Supports [templating](/automations/templates).
+
+`BLANK` turns the whole panel white and leaves image memory as it is. It does
+not end a pause and does not cancel an update that is waiting. It takes about as
+long as a full `GC16`. A screen that was composed beforehand can then be shown
+with a fast `DU`, with no grey ghost of the old screen. `INIT` is not a
+replacement: what it leaves on the panel depends on image memory, so over a
+composed screen it does not give clean white. `BLANK` can only be used with
+`it8951.refresh`.
+
+## Composing a screen before showing it
+
+With `direct_draw: true`, the next screen can be drawn into the controller's
+image memory while the current screen stays on the panel, then shown in one
+go. The panel only changes when a waveform runs, so drawing while paused is not
+visible.
+
+While paused, image memory holds part of the old screen and part of the new one.
+Do not show it until the new screen is complete. The large panels have no room
+in controller memory for a second screen.
+
+The example below draws the dashboard while a photo is shown, then shows the
+dashboard when someone approaches. `BLANK` and `DU` together take about 2
+seconds on a 1872×1404 panel, about 1 second each. A `GC16` straight from the
+photo to the dashboard takes as long but leaves a grey ghost of the photo.
+
+```yaml
+display:
+  - platform: it8951
+    id: epaper
+    model: seeed-reterminal-e1003
+    direct_draw: true
+
+lvgl:
+  displays: [epaper]
+  update_when_display_idle: true
+
+script:
+  # Draw the dashboard into image memory. The panel keeps showing the photo.
+  - id: prepare_dashboard
+    then:
+      - wait_until:
+          component.is_idle: epaper
+      - it8951.pause: epaper
+      - lvgl.page.show: dashboard
+      - lambda: lv_refr_now(nullptr);
+  # Show it: turn the panel white, then show image memory with a fast waveform.
+  - id: wake_dashboard
+    then:
+      - it8951.refresh:
+          id: epaper
+          mode: BLANK
+      - it8951.refresh:
+          id: epaper
+          mode: DU
+```
 
 ## Full configuration examples
 
