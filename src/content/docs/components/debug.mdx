@@ -101,13 +101,18 @@ sensor:
 ## Zephyr
 
 The component enables debugging features for ESPHome devices running on the Zephyr RTOS.
-It helps with low-level firmware debugging using **SWD (Serial Wire Debug)**. It enables:
+It adds low-level debugging aids over **SWD (Serial Wire Debug)** and runtime diagnostics in the normal log output:
 
 - **Thread Awareness in GDB**  
 Injects Zephyr thread metadata so that all active threads can be inspected via GDB when connected over SWD.
 
 - **Real-Time Logging over RTT**  
 Enables logging output over **SEGGER RTT** (Real Time Transfer), allowing non-intrusive debug logs through SWD.
+
+- **Thread CPU Usage**  
+With the [logger](/components/logger/) `level` set to `VERBOSE` or above at build time, every `update_interval` logs
+each thread's priority, state and share of the CPU time since boot, together with its peak and average time slice in
+microseconds. The statistics are compiled in by that level; changing the level at runtime does not turn them on.
 
 ## See Also
 

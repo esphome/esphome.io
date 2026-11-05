@@ -104,8 +104,12 @@ if (!urls) {
           aria-label="Home Assistant flavor"
           data-segmented="ha-flavor"
         >
-          <button type="button" data-flavor="os" aria-pressed="true"> Home Assistant OS </button>
-          <button type="button" data-flavor="container" aria-pressed="false"> Home Assistant Container </button>
+          <button type="button" data-flavor="os" aria-pressed="true">
+            Home Assistant OS
+          </button>
+          <button type="button" data-flavor="container" aria-pressed="false">
+            Home Assistant Container
+          </button>
         </div>
       </div>
 
@@ -126,9 +130,9 @@ if (!urls) {
           </a>
         </div>
         <p>
-          Clicking the button above opens the ESPHome Device Builder app inside your Home Assistant instance — click <strong
-            >Install</strong
-          >, then&nbsp;
+          Clicking the button above opens the ESPHome Device Builder app inside your Home Assistant instance —
+          click&nbsp;
+          <strong>Install</strong>, then&nbsp;
           <strong>Start</strong>, then <strong>Open Web UI</strong>.
         </p>
 
@@ -136,8 +140,7 @@ if (!urls) {
         <p>If the button doesn't work, you can install the app by hand:</p>
         <ol class="install-selector__steps">
           <li>
-            In Home Assistant, go to <strong>Settings</strong> → <strong>Apps</strong>
-            → <strong>Install App</strong>.
+            In Home Assistant, go to <strong>Settings</strong> → <strong>Apps</strong>→ <strong>Install App</strong>.
           </li>
           <li>
             Find <strong>ESPHome Device Builder</strong> in the list and click it.
@@ -148,8 +151,8 @@ if (!urls) {
           </li>
         </ol>
         <p class="install-selector__hint">
-          If the app isn't listed, the ESPHome repository hasn't been registered. Click the <strong>⋮</strong> menu (top-right)
-          → <strong>Repositories</strong>, paste&nbsp;
+          If the app isn't listed, the ESPHome repository hasn't been registered. Click the <strong>⋮</strong> menu
+          (top-right) → <strong>Repositories</strong>, paste&nbsp;
           <code>https://github.com/esphome/home-assistant-addon</code>, click&nbsp;
           <strong>Add</strong>, then close the dialog and look again.
         </p>
@@ -162,23 +165,33 @@ if (!urls) {
         </p>
         <Code code={'docker run --rm --net=host -v "${PWD}":/config -it ghcr.io/esphome/esphome'} lang="bash" />
         <p>
-          Once it's running, open <a href="http://localhost:6052"><code>http://localhost:6052</code></a> in your browser.&nbsp;
-          <code>--net=host</code> lets the dashboard use mDNS, which it needs to discover devices and to resolve their&nbsp;
+          Once it's running, open&nbsp;
+          <a href="http://localhost:6052">
+            <code>http://localhost:6052</code>
+          </a>
+          &nbsp;in your browser.&nbsp;
+          <code>--net=host</code> lets the dashboard use mDNS, which it needs to discover devices and to resolve
+          their&nbsp;
           <code>.local</code> names. On Docker Desktop (where host networking is unavailable) substitute&nbsp;
           <code>-p 6052:6052</code>; the dashboard still runs, but without mDNS it can only reach devices you give a
           fixed address.
         </p>
         <p>
-          See <a href="/install/docker/">Running ESPHome in Docker</a> for image tags, a Compose file, and other options.
+          See <a href="/install/docker/">Running ESPHome in Docker</a> for image tags, a Compose file, and other
+          options.
         </p>
       </div>
     </TabItem>
 
     <TabItem label="Windows">
       <p class="install-selector__sub">Works on Windows 10 and Windows 11.</p>
-      <LinkButton data-download="windows" href={urls.windows}> Download installer (.exe) </LinkButton>
+      <LinkButton data-download="windows" href={urls.windows}>
+        Download installer (.exe)
+      </LinkButton>
       <ol class="install-selector__steps">
-        <li>Open the downloaded <code>.exe</code> file.</li>
+        <li>
+          Open the downloaded <code>.exe</code> file.
+        </li>
         <li>
           If Windows asks <em>"Do you want to allow this app to make changes?"</em>, choose <strong>Yes</strong>.
         </li>
@@ -197,8 +210,12 @@ if (!urls) {
       <p class="install-selector__sub">macOS 10.15 Catalina or newer.</p>
       <div class="install-selector__row">
         <div class="install-selector__segmented" role="group" aria-label="Mac architecture" data-segmented="mac-arch">
-          <button type="button" data-arch="arm64" aria-pressed="true"> Apple Silicon </button>
-          <button type="button" data-arch="x64" aria-pressed="false"> Intel </button>
+          <button type="button" data-arch="arm64" aria-pressed="true">
+            Apple Silicon
+          </button>
+          <button type="button" data-arch="x64" aria-pressed="false">
+            Intel
+          </button>
         </div>
       </div>
       <div class="install-selector__warning" data-mac-intel-warning role="status" hidden>
@@ -209,24 +226,30 @@ if (!urls) {
         </p>
         <ul>
           <li>
-            <strong>Home Assistant OS:</strong> the Home Assistant app runs ESPHome on your Home Assistant server, not the
-            Mac.
+            <strong>Home Assistant OS:</strong> the Home Assistant app runs ESPHome on your Home Assistant server, not
+            the Mac.
           </li>
           <li>
-            <strong>Home Assistant Container:</strong> run ESPHome alongside it in <a href="/install/docker/">Docker</a
-            >, which runs Linux and is not affected.
+            <strong>Home Assistant Container:</strong> run ESPHome alongside it in <a href="/install/docker/">Docker</a>
+            , which runs Linux and is not affected.
           </li>
           <li>
-            <strong>Build server:</strong> Docker on an Intel Mac can take builds from another dashboard; <a
-              href="https://github.com/esphome/device-builder#send-builds-to-another-dashboard">pair it</a
-            > by hostname.
+            <strong>Build server:</strong> Docker on an Intel Mac can take builds from another dashboard;&nbsp;
+            <a href="https://github.com/esphome/device-builder#send-builds-to-another-dashboard">pair it</a> by
+            hostname.
           </li>
-          <li><strong>Apple Silicon Mac:</strong> pick Apple Silicon above.</li>
+          <li>
+            <strong>Apple Silicon Mac:</strong> pick Apple Silicon above.
+          </li>
         </ul>
       </div>
-      <LinkButton data-download="mac" href={urls["mac-arm64"]}> Download disk image (.dmg) </LinkButton>
+      <LinkButton data-download="mac" href={urls["mac-arm64"]}>
+        Download disk image (.dmg)
+      </LinkButton>
       <ol class="install-selector__steps">
-        <li>Open the downloaded <code>.dmg</code> file.</li>
+        <li>
+          Open the downloaded <code>.dmg</code> file.
+        </li>
         <li>
           Drag <strong>ESPHome Device Builder</strong> into the <strong>Applications</strong> folder.
         </li>
@@ -240,9 +263,8 @@ if (!urls) {
         </li>
       </ol>
       <p class="install-selector__hint">
-        Not sure which Mac you have? Click the Apple menu → <strong>About This Mac</strong>. If you see <em
-          >Apple M1/M2/M3/M4</em
-        >, pick Apple Silicon. If you see <em>Intel</em>, pick Intel.
+        Not sure which Mac you have? Click the Apple menu → <strong>About This Mac</strong>. If you see&nbsp;
+        <em>Apple M1/M2/M3/M4</em>, pick Apple Silicon. If you see <em>Intel</em>, pick Intel.
       </p>
     </TabItem>
 
@@ -255,10 +277,18 @@ if (!urls) {
           aria-label="Linux package format"
           data-segmented="linux-format"
         >
-          <button type="button" data-format="deb" aria-pressed="true"> Debian / Ubuntu </button>
-          <button type="button" data-format="rpm" aria-pressed="false"> Fedora / openSUSE </button>
-          <button type="button" data-format="aur" aria-pressed="false"> Arch (AUR) </button>
-          <button type="button" data-format="appimage" aria-pressed="false"> AppImage </button>
+          <button type="button" data-format="deb" aria-pressed="true">
+            Debian / Ubuntu
+          </button>
+          <button type="button" data-format="rpm" aria-pressed="false">
+            Fedora / openSUSE
+          </button>
+          <button type="button" data-format="aur" aria-pressed="false">
+            Arch (AUR)
+          </button>
+          <button type="button" data-format="appimage" aria-pressed="false">
+            AppImage
+          </button>
         </div>
         <div
           class="install-selector__segmented"
@@ -267,8 +297,12 @@ if (!urls) {
           data-segmented="linux-arch"
           data-linux-arch-row
         >
-          <button type="button" data-arch="x64" aria-pressed="true"> x86_64 </button>
-          <button type="button" data-arch="arm64" aria-pressed="false"> arm64 </button>
+          <button type="button" data-arch="x64" aria-pressed="true">
+            x86_64
+          </button>
+          <button type="button" data-arch="arm64" aria-pressed="false">
+            arm64
+          </button>
         </div>
       </div>
       <LinkButton data-download="linux" href={urls["deb-x64"]}>
@@ -296,17 +330,22 @@ if (!urls) {
 
       <p class="install-selector__hint">
         If serial devices don't show up, add your user to the&nbsp;
-        <code><span data-linux-group>dialout</span></code> group and log out and back in: <code
-          >sudo usermod -a -G <span data-linux-group>dialout</span> $USER</code
-        >.
+        <code>
+          <span data-linux-group>dialout</span>
+        </code>
+        &nbsp;group and log out and back in:&nbsp;
+        <code>
+          sudo usermod -a -G <span data-linux-group>dialout</span> $USER
+        </code>
+        .
       </p>
     </TabItem>
 
     <TabItem label="pip">
       <p class="install-selector__sub">Any operating system with Python 3.12 or newer.</p>
       <p>
-        Installing with <code>pip</code> gives you the same tools without the desktop app wrapping them. The web UI and the
-        command-line tool are separate packages, so pick whichever suits you.
+        Installing with <code>pip</code> gives you the same tools without the desktop app wrapping them. The web UI and
+        the command-line tool are separate packages, so pick whichever suits you.
       </p>
 
       <h3>Device Builder (Web UI)</h3>
@@ -316,9 +355,12 @@ if (!urls) {
       </p>
       <Code code={'pip install "esphome-device-builder[esphome]"\nesphome-device-builder config'} lang="bash" />
       <p>
-        Here <code>config</code> is not a subcommand: it is the directory your configurations are stored in, so replace it
-        with whichever path you want to use. The dashboard is then available at&nbsp;
-        <a href="http://localhost:6052"><code>http://localhost:6052</code></a>.
+        Here <code>config</code> is not a subcommand: it is the directory your configurations are stored in, so replace
+        it with whichever path you want to use. The dashboard is then available at&nbsp;
+        <a href="http://localhost:6052">
+          <code>http://localhost:6052</code>
+        </a>
+        .
       </p>
 
       <h3>Command Line Only</h3>
@@ -331,8 +373,8 @@ if (!urls) {
       </p>
 
       <p class="install-selector__hint">
-        Install into a <a href="https://docs.python.org/3/library/venv.html">virtual environment</a> if you can. Many Linux
-        distributions now refuse to <code>pip install</code> into the system Python and will fail with&nbsp;
+        Install into a <a href="https://docs.python.org/3/library/venv.html">virtual environment</a> if you can. Many
+        Linux distributions now refuse to <code>pip install</code> into the system Python and will fail with&nbsp;
         <code>externally-managed-environment</code>.
       </p>
     </TabItem>
