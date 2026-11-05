@@ -1,12 +1,13 @@
 ---
-description: "Instructions for setting up the TI BQ25820 single-cell battery charger with MPPT"
+description: "Instructions for setting up the TI BQ25820 1- to 14-cell battery charger with MPPT"
 title: "BQ25820"
 ---
 
-The TI BQ25820 is a (single-cell) lithium-ion battery charger with an integrated MPPT (maximum power point
-tracking) input, which allows a solar panel to charge the battery directly at high efficiency. It supports
-charge currents of up to 20A, input voltages of up to 65V, and a reverse mode in which the battery powers
-the system. The chip is configured and monitored over [I²C](/components/i2c/) at address `0x6B`.
+The TI BQ25820 is a battery charger for 1 to 14 lithium-ion cells in series, with an integrated MPPT (maximum
+power point tracking) input, which allows a solar panel to charge the battery directly at high efficiency. It
+supports charge currents of up to 20A, an input operating range of 4.4V to 70V (the input voltage regulation
+point is programmable up to 65V), and a reverse mode in which the battery powers the system. The chip is
+configured and monitored over [I²C](/components/i2c/) at address `0x6B`.
 
 > [!WARNING]
 > Please note that the BQ25820 does **not** act as a multi-cell manager, charge balancer, or primary battery
@@ -57,7 +58,8 @@ may be defined if the device has more than one BQ25820.
 
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval between
   polling the chip. Defaults to `60s`; set a shorter interval (for example `1s`) for more granular battery
-  data. With the `watchdog` enabled, it must be shorter than the watchdog period.
+  data. With the `watchdog` enabled, it must be shorter than the watchdog period. It cannot be `never`,
+  since the poll writes the configuration again after a charger reset.
 
 - **charge_current** (*Optional*, Current): The battery charge current. With the reference `5mΩ`
   battery sense resistor this is `400mA` to `20A` in steps of 50mA; the range and step scale with
@@ -103,8 +105,8 @@ may be defined if the device has more than one BQ25820.
 
 - **charge_enabled** (*Optional*, Boolean): Enable the charger. Defaults to `true`.
 
-- **hiz_enabled** (*Optional*, Boolean): Enable the HIZ (high impedance) battery disconnect.
-  Defaults to `false`.
+- **hiz_enabled** (*Optional*, Boolean): Enable HIZ (high impedance) mode, which disconnects the input
+  source; the battery then powers the system. Defaults to `false`.
 
 - **charge_timer** (*Optional*, Enum): The charge safety timer, one of `5h`, `8h`, `12h` or `24h`.
   If the battery is still charging after this time, charging stops and the `charge_safety_timer`
@@ -133,8 +135,8 @@ may be defined if the device has more than one BQ25820.
 - **ts_t2** (*Optional*, Enum): One of `5C`, `10C`, `15C` or `20C`. Below this temperature, the
   charge current is limited to the precharge current. Defaults to `10C`.
 
-- **ts_t3** (*Optional*, Enum): One of `40C`, `45C`, `50C` or `55C`. Above this temperature, the
-  charger switches to top-off charging. Defaults to `45C`.
+- **ts_t3** (*Optional*, Enum): One of `40C`, `45C`, `50C` or `55C`. Above this temperature (the warm
+  region), charging continues at the charge current with a reduced charge voltage. Defaults to `45C`.
 
 - **ts_t5** (*Optional*, Enum): One of `50C`, `55C`, `60C` or `65C`. Above this temperature, charging
   is disabled. Defaults to `50C`.
@@ -306,7 +308,7 @@ bq25820:
   precharge_current: 1A
   reverse_system_voltage: 3.3V
   charge_enabled: true
-  hiz_enabled: false         # HIZ battery disconnect
+  hiz_enabled: false         # HIZ: disconnect the input source
   charge_timer: 12h          # charge safety timer
   topoff_timer: disabled
   ideal_diode: false
