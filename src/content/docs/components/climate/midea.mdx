@@ -23,6 +23,8 @@ The `midea` component creates a Midea air conditioner climate device.
 
 The Midea air conditioner requires the UART to be configured with `baud_rate: 9600`. The hardware requires **5V logic levels** and does not appear to work with 3.3V logic levels. Use a logic level shifter if building your own dongle.
 
+When powering the module from the indoor unit's internal USB port, this rail is shared with the unit's own display board on some models and WiFi transmit current spikes can sag it enough to cause display flicker or dropout. A 470-1000µF, 16V (or higher) electrolytic capacitor across 5V/GND at the module's power input, placed as close to the module as possible, resolves this on affected units.
+
 ```yaml
 # Example configuration entry
 # Main settings
