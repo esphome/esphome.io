@@ -17,10 +17,11 @@ nrf52:
 ## Configuration variables
 
 - **board** (*Required*, string): The board type. Valid options are `adafruit_feather_nrf52840`,
-  `adafruit_itsybitsy`, `xiao_ble`, `nrf52840dongle`, `nrf54lm20dk` (experimental). Other boards should work with
+  `adafruit_itsybitsy`, `xiao_ble`, `nrf52840dongle`, `nrf54lm20dk` (experimental),
+  `nrf54l15dk/nrf54l15/cpuapp` (experimental). Other boards should work with
   those configuration as well. `adafruit_itsybitsy` was called `adafruit_itsybitsy_nrf52840` in older Zephyr
   versions.
-  ESPHome takes the chip (nRF52840 or nRF54LM20) from the board name; the chip decides which
+  ESPHome takes the chip (nRF52840, nRF54LM20 or nRF54L15) from the board name; the chip decides which
   [pins](#gpio-pin-numbering) are valid. `nrf54lm20dk` is a short name for the Zephyr board
   `nrf54lm20dk/nrf54lm20a/cpuapp`; both names are accepted.
 - **bootloader** (*Optional*, string): Bootloader type. Valid options are `mcuboot`, `adafruit`, `adafruit_nrf52_sd132`, `adafruit_nrf52_sd140_v6`, `adafruit_nrf52_sd140_v7`, `nrf`. Default value depends on board type.
@@ -152,6 +153,7 @@ nrf52:
 - Only the `sdk-nrf` toolchain (the default) can build for the nRF54LM20; `toolchain: platformio` is rejected.
 - Flash the board through the on-board J-Link debugger: connect the **IMCU** USB port and follow
   [Flashing with a SEGGER J-Link](#flashing-with-a-segger-j-link).
+- Logs go to UART0 by default, which is the J-Link virtual COM port on the **IMCU** USB port.
 - The hardware watchdog is turned on automatically.
 
 The buttons on the DK pull their pin to ground when pressed, so set `inverted: true` and turn on the pull-up.
@@ -174,6 +176,23 @@ output:
     id: led0
 ```
 
+## Nordic nRF54L15 DK
+
+> [!WARNING]
+> Support for the nRF54L15 is experimental.
+
+The nRF54L15 DK (PCA10156) is supported with `board: nrf54l15dk/nrf54l15/cpuapp`.
+
+```yaml
+nrf52:
+  board: nrf54l15dk/nrf54l15/cpuapp
+```
+
+- The nRF54L15 has no USB device. Logs go to UART0, which is the J-Link virtual COM port; `USB_CDC` is rejected.
+- Flash the board through the on-board J-Link debugger, see
+  [Flashing with a SEGGER J-Link](#flashing-with-a-segger-j-link).
+- The hardware watchdog is turned on automatically.
+
 ## GPIO Pin Numbering
 
 There are two ways to reference GPIO pins:
@@ -188,6 +207,7 @@ Which pins exist depends on the chip:
 | --------- | ----------------------------------------------- |
 | nRF52840  | `P0.00`–`P0.31`, `P1.00`–`P1.15`                |
 | nRF54LM20 | `P0.00`–`P0.09`, `P1.00`–`P1.31`, `P2.00`–`P2.10`, `P3.00`–`P3.12` |
+| nRF54L15  | `P0.00`–`P0.06`, `P1.00`–`P1.16`, `P2.00`–`P2.10`                |
 
 ## DFU (Device Firmware Update)
 
