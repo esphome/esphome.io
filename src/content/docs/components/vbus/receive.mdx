@@ -1,0 +1,124 @@
+---
+title: "VBus Receive Guide"
+description: "Advanced VBus reception: identify controllers, decode packets and inspect received traffic."
+---
+
+Start with the [receive-only configuration](/components/vbus/#receive-only) for a supported model.
+This guide covers custom packets and optional diagnostics. Everything on this page receives traffic without sending
+requests.
+
+## Identify A Controller
+
+Use `VERBOSE` logging temporarily and look for the source address before `->` in VBus packet messages.
+Compare it with the protocol address in the [model guides](/components/vbus/#supported-models).
+An address match helps identify the RX decoder; controller-specific settings still require a qualified profile.
+Return to your normal log level after identification.
+
+## `custom` VBus sensors
+
+Devices on a VBus are identified with a source address. There can be multiple devices on the same bus,
+each device type has a different address.
+
+```yaml
+sensor:
+  - platform: vbus
+    model: custom
+    dest: 0x10
+    source: 0x1234
+    command: 0x100
+    sensors:
+      - id: temp1
+        name: Temp 1
+        lambda: |-
+          if (x.size() < 2) return NAN;
+          return static_cast<int16_t>((x[1] << 8) | x[0]) * 0.1f;
+```
+
+### Configuration variables
+
+- **dest** (*Optional*): The `DFA` value corresponding to your device (see below).
+- **source** (*Optional*): The address corresponding to `your device model` (see below).
+- **command** (*Optional*): The `command` corresponding to your device (see below).
+- **sensors** (*Optional*): A list of [Sensor](/components/sensor) definitions that include a `lambda` to do the
+  decoding and return a `float` value.
+
+- **lambda** (**Required**, [lambda](/automations/templates#config-lambda)): Code to parse a value from the incoming
+  data packets and return it.
+  The data packet is in a `std::vector<uint8_t>` called `x`.
+
+## `custom` VBus binary sensors
+
+### Configuration variables
+
+- **dest** (*Optional*): The `DFA` value corresponding to your device (see below).
+- **source** (*Optional*): The address corresponding to `your device model` (see below).
+- **command** (*Optional*): The `command` corresponding to your device (see below).
+- **binary_sensors** (*Optional*): A list of [Binary Sensor](/components/binary_sensor#config-binary_sensor) definitions
+  that include a `lambda` to do the decoding and return a `bool` value.
+
+- **lambda** (**Required**, [lambda](/automations/templates#config-lambda)): Code to parse a value from the incoming
+  data packets and return it.
+  The data packet is in a `std::vector<uint8_t>` called `x`.
+
+To determine the correct values for the parameters above, visit [packet definitions
+list](http://danielwippermann.github.io/resol-vbus/#/vsf). In the search field of the **Packets** table, enter the name
+of your device.
+
+To extract the values with a [lambda](/automations/templates#config-lambda), look in the packet structure by clicking
+the **Bytes** link in the table. Each value is placed at an `offset` within the packet.
+For `float` values, let's look at the temperature example: the value is stored as a `16`  -bit value in `2` bytes
+little-endian format. Since it's always the second byte containing the upper byte, it needs to be shifted by `8` bits
+(multiplied by `256`  ) (e.g. `0x34, 0x12 -> 0x1234`  ). The result needs to be multiplied by the factor, which is
+`0.1`, to obtain the correct values: `static_cast<int16_t>((x[1] << 8) | x[0]) * 0.1f`. The number within the square
+brackets is the `[offset]`.
+For `binary` values, multiple binary values are stored within a single numeric value encoded with a bitmask. To extract
+the binary value all you have to do is to apply *bitwise AND* operator `&` between the value at the corresponding offset
+and the `mask` shown in the table.
+
+Check payload length before indexing it, and use the signedness and scale from the packet definition. Numeric
+examples below return `NAN` for a short payload; the binary example returns `false`.
+
+For example to decode some sensors of `DeltaSol BS Plus` via lambdas:
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: vbus
+    model: custom
+    dest: 0x10
+    source: 0x4221
+    command: 0x100
+    sensors:
+      - id: scheme
+        name: Arrangement scheme
+        icon: mdi:pipe-wrench
+        accuracy_decimals: 0
+        entity_category: diagnostic
+        lambda: |-
+          if (x.size() < 15) return NAN;
+          return x[14];  // Configured arrangement scheme
+      - id: temp2
+        name: Temperature DHW
+        state_class: measurement
+        unit_of_measurement: "°C"
+        lambda: |-
+          if (x.size() < 4) return NAN;
+          return static_cast<int16_t>((x[3] << 8) | x[2]) * 0.1f;  // Temperature 2
+
+binary_sensor:
+  - platform: vbus
+    model: custom
+    dest: 0x10
+    source: 0x4221
+    command: 0x100
+    binary_sensors:
+      - name: Heat Quantity Measurement On
+        id: bin_hqm
+        icon: mdi:counter
+        lambda: return x.size() > 15 && (x[15] & 0x20);
+```
+
+## See Also
+
+- [VBus Component](/components/vbus/)
+- [Sensor Filters](/components/sensor/#sensor-filters)
