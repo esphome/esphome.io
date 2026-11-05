@@ -18,12 +18,12 @@ nrf52:
 
 - **board** (*Required*, string): The board type. Valid options are `adafruit_feather_nrf52840`,
   `adafruit_itsybitsy`, `xiao_ble`, `nrf52840dongle`, `nrf54lm20dk` (experimental),
-  `nrf54l15dk/nrf54l15/cpuapp` (experimental). Other boards should work with
+  `nrf54l15dk` (experimental). Other boards should work with
   those configuration as well. `adafruit_itsybitsy` was called `adafruit_itsybitsy_nrf52840` in older Zephyr
   versions.
   ESPHome takes the chip (nRF52840, nRF54LM20 or nRF54L15) from the board name; the chip decides which
-  [pins](#gpio-pin-numbering) are valid. `nrf54lm20dk` is a short name for the Zephyr board
-  `nrf54lm20dk/nrf54lm20a/cpuapp`; both names are accepted.
+  [pins](#gpio-pin-numbering) are valid. `nrf54lm20dk` and `nrf54l15dk` are short names for the
+  Zephyr boards `nrf54lm20dk/nrf54lm20a/cpuapp` and `nrf54l15dk/nrf54l15/cpuapp`; both forms are accepted.
 - **bootloader** (*Optional*, string): Bootloader type. Valid options are `mcuboot`, `adafruit`, `adafruit_nrf52_sd132`, `adafruit_nrf52_sd140_v6`, `adafruit_nrf52_sd140_v7`, `nrf`. Default value depends on board type.
 - **dcdc** (*Optional*, boolean): Enable DC/DC converter for REG1 stage. Defaults follow board settings from Zephyr.
 External LC filters must be connected to the DC/DC regulator pins if it is being used.
@@ -181,11 +181,11 @@ output:
 > [!WARNING]
 > Support for the nRF54L15 is experimental.
 
-The nRF54L15 DK (PCA10156) is supported with `board: nrf54l15dk/nrf54l15/cpuapp`.
+The nRF54L15 DK (PCA10156) is supported with `board: nrf54l15dk`.
 
 ```yaml
 nrf52:
-  board: nrf54l15dk/nrf54l15/cpuapp
+  board: nrf54l15dk
 ```
 
 - The nRF54L15 has no USB device. Logs go to UART0, which is the J-Link virtual COM port; `USB_CDC` is rejected.
