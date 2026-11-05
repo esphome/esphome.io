@@ -1,0 +1,149 @@
+---
+description: "Instructions for setting up HT16K33 based 7-segment character displays."
+title: "HT16K33 Character Display"
+---
+
+import Figure from '@components/Figure.astro';
+import ht16k33SegmentsImg from './images/ht16k33-7-segment.png';
+import APIRef from '@components/APIRef.astro';
+
+The `ht16k33_char` display platform drives character displays built around the Holtek HT16K33 LED driver over
+[I²C](/components/i2c/). The chip can drive any array of LEDs, but this platform only knows displays whose segments
+are wired as characters.
+
+The platform is based on the
+[ht16k33_alpha](https://github.com/ssieb/esphome_components/tree/master/components/ht16k33_alpha) external
+component by ssieb, generalized so other boards can be added.
+
+## Supported Displays
+
+| Display                                                                 | `device`               |
+| ----------------------------------------------------------------------- | ---------------------- |
+| [Adafruit 0.56" 4-Digit 7-Segment](https://www.adafruit.com/product/878) | `ADAFRUIT_7_SEG_.56IN` |
+
+The only thing that differs between boards is how the LEDs are wired to the driver, so another board wired like a
+supported one works with that `device` setting.
+
+```yaml
+# Example configuration entry
+display:
+  - platform: ht16k33_char
+    device: ADAFRUIT_7_SEG_.56IN
+    address: 0x70
+    lambda: |-
+      it.print("12:34");
+```
+
+## Configuration Variables
+
+- **device** (**Required**, string): The display board, one of the values in [Supported Displays](#supported-displays).
+- **address** (*Optional*, int): The I²C address of the display. With several displays, the address of the first
+  one. Defaults to `0x70`.
+- **secondary_displays** (*Optional*, list): Further displays on the same bus that continue the message after the
+  first one, in the order they are placed. Each entry takes an **address** (**Required**, int). Up to seven.
+- **intensity** (*Optional*, int): The brightness of the displays, from 0 (dimmest) to 15 (brightest). Defaults
+  to `15`.
+- **max_buffer_length** (*Optional*, int): The longest message, in bytes, that the lambda can print. Must hold every
+  character of the message, including the decimal points and colons, and a multi-byte character such as `°` takes
+  two bytes. From 4 to 64. Defaults to `8`.
+- **add_characters** (*Optional*, mapping): Characters to add to the font, or to redraw differently. See
+  [Adding or Changing Characters](#adding-or-changing-characters).
+- **lambda** (*Optional*, [lambda](/automations/templates/#config-lambda)): The lambda to use for rendering the
+  content on the display. See [Rendering Lambda](#rendering-lambda) for more information.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval to re-draw the screen.
+  Defaults to `10s`.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation.
+- **i2c_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the [I²C Component](/components/i2c/), only
+  needed with more than one bus.
+
+## Rendering Lambda
+
+The lambda is passed a variable called `it`, the `ht16k33_char` display itself. It prints into a message buffer
+that is drawn to the displays after the lambda returns. Text is placed by byte position, where `0` is the first
+digit of the first display; a `.`, a `:` and each byte of a multi-byte character count as one position, so the
+position is not the digit number. The buffer starts out empty on every update.
+
+- `it.print(pos, str)`: Writes `str` into the buffer at `pos`, over whatever was there. Returns the number of
+  bytes written, which is less than the length of `str` when the buffer is full.
+- `it.print(str)`: Writes `str` at the start of the buffer.
+- `it.printf(pos, format, ...)` and `it.printf(format, ...)`: Format like `printf` and write the result.
+- `it.strftime(pos, format, time)` and `it.strftime(format, time)`: Format the [`ESPTime`](/components/time/)
+  with `strftime` and write the result.
+- `it.clock_display(pos, show_leading_zero, use_ampm, time)`: Writes the time as `HH:MM`, or `H:MM` with a blank
+  first digit when `show_leading_zero` is `false`, in 12-hour form when `use_ampm` is `true`.
+- `it.clear()`: Empties the buffer. The lambda never needs it, since the buffer is emptied before every update.
+  It is for printing from automations with `id(my_display).print(...)` on a display without a lambda: what they
+  print stays until the next update draws it, so clear first when the new message is shorter than the old one.
+
+Other things the lambda can do:
+
+- `it.set_intensity(value)`: Sets the brightness from 0 to 15.
+- `it.set_blink(rate)`: Makes the chip blink the displays on its own: `0` steady, `1` twice a second, `2` once a
+  second, `3` once every two seconds.
+- `it.display_off(turn_off)`: Turns the displays off with `true` and back on with `false`. Turning them on again
+  also stops blinking.
+- `it.display_standby(standby)`: Stops the chip's oscillator with `true`, its lowest power state, and starts it
+  again with `false`.
+- `it.blank()`: Clears the display memory of every chip. The message buffer is untouched, so the next update draws
+  it again.
+
+A character that is not in the font shows as a blank digit. The decimal point and the colon do not take a digit of
+their own: a `.` lights the decimal point of the digit before it, and a `:` lights the colon, which on this board
+sits between the second and third digit. Where they cannot light, such as a `.` before the first digit, they are
+skipped.
+
+```yaml
+# A clock with a temperature on a second display
+display:
+  - platform: ht16k33_char
+    device: ADAFRUIT_7_SEG_.56IN
+    secondary_displays:
+      - address: 0x71
+    max_buffer_length: 16
+    add_characters:
+      "°": 0x63
+    update_interval: 1s
+    lambda: |-
+      it.clock_display(0, false, false, id(my_time).now());
+      it.printf(5, "%4.1f°", id(outdoor).state);
+```
+
+Please see [Formatted Text](/components/display/#display-printf) for a quick introduction into the `printf`
+formatting rules and [Displaying Time](/components/display/#display-strftime) for the `strftime` time formatting.
+
+## Font
+
+The 7-segment font has the digits `0` to `9`, a space, `-`, `_` and the letters that read well on seven segments:
+`A`, `b`, `C`, `c`, `d`, `E`, `F`, `G`, `H`, `h`, `I`, `J`, `L`, `N`, `O`, `o`, `P`, `r`, `S`, `t`, `U`, `u` and
+`Y`.
+
+## Adding or Changing Characters
+
+`add_characters` maps a single character to the segments that draw it. A character already in the font is drawn the
+new way, and mapping it to `0` blanks it; any other character, including multi-byte ones such as `°`, is added.
+`.` and `:` always light the decimal point and colon and cannot be redefined. Each segment is one bit of the value,
+with bit 0 the least significant:
+
+<Figure
+  src={ht16k33SegmentsImg}
+  caption="The segment names."
+  layout="constrained"
+  alt="Segments A top, B upper right, C lower right, D bottom, E lower left, F upper left, G middle, DP lower right."
+  style="width: 40%; height: auto; margin: 0 auto; display: block;"
+/>
+
+| Bit     | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7             |
+| ------- | - | - | - | - | - | - | - | ------------- |
+| Segment | A | B | C | D | E | F | G | decimal point |
+
+```yaml
+add_characters:
+  "°": 0x63
+  "E": 0b1010000  # draw E as r
+  "Y": 0  # never draw Y
+```
+
+## See Also
+
+- [Display Component](/components/display/)
+- <APIRef text="ht16k33_char.h" path="ht16k33_char/ht16k33_char.h" />

@@ -30,69 +30,61 @@ const regions = [...regionMap.entries()];
       <div class="product-name" id="buy-dialog-title" set:html={productData.name} />
       <button class="close" type="button" aria-label="Close" data-buy-close>
         <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
-          <path
-            d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"
-          ></path>
+          <path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"></path>
         </svg>
       </button>
     </div>
 
-    {
-      productData.new && (
-        <div class="alert">
-          <strong>New product!</strong> Stock may be limited, and please be patient while our distributors' product
-          pages go live.
-        </div>
-      )
-    }
+    {productData.new && (
+      <div class="alert">
+        <strong>New product!</strong> Stock may be limited, and please be patient while our distributors' product pages
+        go live.
+      </div>
+    )}
 
     <div class="ha-buy-dialog-content">
       <div class="ha-buy-dialog-sidebar">
         <div class="ha-buy-dialog-sidebar-label">Shipping to</div>
         <div class="ha-buy-dialog-sidebar-tabs" role="tablist">
-          {
-            regions.map(([region], i) => (
-              <div
-                class:list={["ha-buy-dialog-sidebar-tab", i === 0 && "active"]}
-                data-tab={`#${slugify(region)}`}
-                role="tab"
-                id={`tab-${slugify(region)}`}
-                aria-controls={slugify(region)}
-                aria-selected={i === 0}
-                tabindex={i === 0 ? 0 : -1}
-              >
-                {region}
-              </div>
-            ))
-          }
+          {regions.map(([region], i) => (
+            <div
+              class:list={["ha-buy-dialog-sidebar-tab", i === 0 && "active"]}
+              data-tab={`#${slugify(region)}`}
+              role="tab"
+              id={`tab-${slugify(region)}`}
+              aria-controls={slugify(region)}
+              aria-selected={i === 0}
+              tabindex={i === 0 ? 0 : -1}
+            >
+              {region}
+            </div>
+          ))}
         </div>
       </div>
 
       <div class="ha-buy-dialog-tab-content-wrapper">
-        {
-          regions.map(([region, distributors], i) => (
-            <div
-              class:list={["ha-buy-dialog-tab-content", i === 0 && "active"]}
-              id={slugify(region)}
-              role="tabpanel"
-              aria-labelledby={`tab-${slugify(region)}`}
-            >
-              <div class="ha-buy-dialog-distributor-items">
-                {distributors.map((d) => (
-                  <a href={d.url} target="_blank" rel="noopener noreferrer" class="ha-buy-dialog-distributor-item">
-                    {d.logo ? (
-                      <img src={d.logo} alt={`${d.name} logo`} class="ha-buy-dialog-distributor-logo" />
-                    ) : (
-                      <span class="ha-buy-dialog-distributor-name">{d.name}</span>
-                    )}
-                    {d.shipFrom && <span>Ships from {d.shipFrom}</span>}
-                    {d.note && <span class="ha-buy-dialog-distributor-note">{d.note}</span>}
-                  </a>
-                ))}
-              </div>
+        {regions.map(([region, distributors], i) => (
+          <div
+            class:list={["ha-buy-dialog-tab-content", i === 0 && "active"]}
+            id={slugify(region)}
+            role="tabpanel"
+            aria-labelledby={`tab-${slugify(region)}`}
+          >
+            <div class="ha-buy-dialog-distributor-items">
+              {distributors.map((d) => (
+                <a href={d.url} target="_blank" rel="noopener noreferrer" class="ha-buy-dialog-distributor-item">
+                  {d.logo ? (
+                    <img src={d.logo} alt={`${d.name} logo`} class="ha-buy-dialog-distributor-logo" />
+                  ) : (
+                    <span class="ha-buy-dialog-distributor-name">{d.name}</span>
+                  )}
+                  {d.shipFrom && <span>Ships from {d.shipFrom}</span>}
+                  {d.note && <span class="ha-buy-dialog-distributor-note">{d.note}</span>}
+                </a>
+              ))}
             </div>
-          ))
-        }
+          </div>
+        ))}
       </div>
     </div>
   </div>

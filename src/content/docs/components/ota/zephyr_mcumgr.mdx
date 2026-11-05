@@ -58,8 +58,34 @@ ota:
 
 ### Configuration variables
 
-- **ble** (*Optional*, boolean): Enable Bluetooth Low Energy transport for MCUmgr OTA. Default `false`.
+- **ble** (*Optional*, boolean): Enable Bluetooth Low Energy transport for MCUmgr OTA. Default `false` once
+  `transport` is set; leaving out `transport` enables BLE.
+- **udp** (*Optional*, boolean): Enable the SMP over UDP transport, so the device can be updated over an IPv6 network
+  such as [Thread](/components/openthread/). It also listens on IPv4 when the [network](/components/network/)
+  component enables IPv4. Default `false`.
 - **hardware_uart** (*Optional*, enum): Select a hardware UART interface to use for MCUmgr OTA communication. This is used when updating devices over a serial interface rather than BLE. Options: `CDC`, `CDC1`, `UART0`, `UART1`.
+
+### Updating Over the Network
+
+With `udp: true` the device runs the MCUmgr server on UDP port 1337 and can be updated by IP address, hostname or
+mDNS (`.local`) name:
+
+```yaml
+# Example configuration entry
+ota:
+  - platform: zephyr_mcumgr
+    transport:
+      udp: true
+```
+
+The UDP transport adds about 5 KB of RAM: a listener thread with its receive buffer, two packet buffers, and the
+Zephyr connection manager thread it needs.
+
+> [!WARNING]
+> The UDP endpoint has no authentication or encryption. Any host that can reach the device, including hosts on your
+> LAN behind a Thread border router, can upload firmware to it or reset it without knowing the Thread network key.
+> Enable `udp` only on networks where every host is trusted, or block UDP port 1337 to the device on the border
+> router or firewall.
 
 ## Usage
 
@@ -87,17 +113,36 @@ Or connect to a specific serial:
 esphome upload nrf52_device.yaml --device /dev/ttyACM0
 ```
 
+To update over the network when `udp` is enabled, pass the device's hostname, mDNS name or IP address:
+
+```bash
+esphome upload nrf52_device.yaml --device my-device.local
+```
+
 > [!WARNING]
 > The image slots end below the partition of the [Zephyr Coredump](/components/zephyr_coredump/) component,
 > so enabling or disabling that component moves them. Flash the device over USB once after such a change.
 > An OTA update alone leaves the installed MCUboot with the old slot layout, and later OTA updates would
 > silently fail.
 
+## Troubleshooting
+
+- **The build fails because the image is too large for MCUboot:** MCUboot keeps part of each image slot for its own
+  bookkeeping, so the largest image it can swap in is a little smaller than the slot. The build checks the image
+  against that limit and says how many bytes to remove, for example by leaving out components or lowering the
+  [logger](/components/logger/) level.
+- **An upload is refused because an earlier update is still pending:** the device holds an update it has not
+  applied yet, for example because it was never restarted. Restart the device to apply it. If it then still runs the
+  old firmware, the pending image could not be swapped in, and the device must be flashed once over USB.
+- **Over the network, the upload reports that the device did not answer after the reset:** swapping the image and
+  rejoining the network can take a minute or more. Check that the device runs the new firmware once it is back.
+
 ## See Also
 
 - [Over-the-Air Updates](/components/ota/)
 - [ESPHome OTA Updates](/components/ota/esphome/)
 - [Adafruit BLE OTA](/components/ota/adafruit_ble/)
+- [OpenThread](/components/openthread/)
 - [Safe Mode](/components/safe_mode/)
 - [nRF52](/components/nrf52/)
 - [Zephyr Coredump](/components/zephyr_coredump/)
