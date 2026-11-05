@@ -115,7 +115,61 @@ climate:
     reached a state of equilibrium, so it advantageous to use a higher number of output samples
     like 10-30 samples. Defaults to `1` which is no sampling/averaging.
 
+- **preset** (*Optional*, list): Named setpoints that can be selected from the frontend or with
+  `climate.control`. See [Presets](#presets).
+
+  - **name** (**Required**, string): One of the standard presets (`HOME`, `AWAY`, `BOOST`,
+    `COMFORT`, `ECO`, `SLEEP`, `ACTIVITY`, case-insensitive) or any other name for a custom preset.
+    Custom names are case-sensitive, but two presets may not differ only in case. `NONE` is
+    reserved.
+  - **default_target_temperature** (**Required**, float): The target temperature applied when the
+    preset is selected.
+
+- **default_preset** (*Optional*, string): The preset applied when the controller starts without a
+  saved state. Must be one of the names in `preset`, matched like the names themselves. If omitted,
+  the controller starts at `default_target_temperature` with no preset. A controller that already
+  has a saved state, for example after adding presets to an existing configuration, keeps it and
+  does not apply `default_preset`.
+
+- **on_boot_restore_from** (*Optional*, string): Where the controller takes its state from when it
+  starts. One of:
+
+  - `MEMORY` (default): Restore the last mode, target temperature and preset. If nothing was saved,
+    apply `default_preset`.
+  - `DEFAULT_PRESET`: Always apply `default_preset` and ignore the saved state, including the mode:
+    the controller starts in heat, cool or heat/cool mode as without a saved state. Requires
+    `default_preset`.
+
+- **preset_change** (*Optional*, [Action](/automations/actions#all-actions)): Actions to run after
+  selecting a preset changes the active preset or the target temperature. Also run when
+  `default_preset` is applied at boot, but not when a saved state is restored.
+
 - All other options from [Climate](/components/climate#config-climate).
+
+<span id="presets"></span>
+
+## Presets
+
+```yaml
+climate:
+  - platform: pid
+    # ...
+    preset:
+      - name: HOME
+        default_target_temperature: 22°C
+      - name: SLEEP
+        default_target_temperature: 19°C
+      - name: Frost protection
+        default_target_temperature: 7°C
+    default_preset: HOME
+    preset_change:
+      - logger.log: Preset changed
+```
+
+Selecting a preset sets the target temperature. Changing the target temperature afterwards keeps
+the preset selected; selecting the preset again restores its target temperature. The active preset
+and target temperature are restored after a reboot, unless `on_boot_restore_from` is
+`DEFAULT_PRESET`.
 
 <span id="pid-setup"></span>
 
