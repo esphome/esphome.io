@@ -59,9 +59,14 @@ with the J-Link tools. This needs the `sdk-nrf` toolchain (the default); it does
 `toolchain: platformio`.
 
 1. Install the [J-Link Software and Documentation Pack](https://www.segger.com/downloads/jlink/) from SEGGER.
-   ESPHome finds it on the `PATH`, in its default install folder (`/opt/SEGGER`, `/Applications/SEGGER`, or
-   `C:\Program Files\SEGGER`), or, on Windows, through the registry. When several versions are installed,
-   the newest one is used.
+   ESPHome uses the first J-Link it finds that has its library next to it, in this order:
+   - Linux and macOS: `JLinkExe` on the `PATH`, then the default install folder (`/opt/SEGGER` or
+     `/Applications/SEGGER`): its unversioned `JLink` folder, then the newest `JLink_V*` folder.
+   - Windows: the install path from the registry, then `C:\Program Files\SEGGER` and
+     `C:\Program Files (x86)\SEGGER` in the same folder order. The `PATH` is not searched, since the Java
+     `jlink.exe` has the same name.
+
+   So a J-Link on the `PATH` or in the registry is used even when a newer one is installed in the default folder.
 1. Connect the board to the PC through its debugger USB port.
 1. Run `esphome upload yourfile.yaml --device JLINK`.
 
