@@ -117,25 +117,7 @@ Selecting the incorrect driver will show horizontal lines on the display.
 > The `LILYGO-T-DISPLAY-P4-AMOLED` model is for the T-Display-P4 fitted with the 4.1-inch AMOLED panel. The panel reset
 > is on the board's XL9535 I/O expander, so the configuration must include an [XL9535](/components/xl9535/) at address
 > `0x20` on the I²C bus using GPIO7 (SDA) and GPIO8 (SCL). The display also needs [LDO](/components/esp_ldo/) channel 3
-> set to 2.5V:
->
-> ```yaml
-> i2c:
->   sda: GPIO7
->   scl: GPIO8
->
-> xl9535:
->   - id: xl9535_hub
->     address: 0x20
->
-> esp_ldo:
->   - channel: 3
->     voltage: 2.5V
->
-> display:
->   - platform: mipi_dsi
->     model: LILYGO-T-DISPLAY-P4-AMOLED
-> ```
+> set to 2.5V.
 >
 > The touchscreen uses the `gt9895` touchscreen platform.
 
