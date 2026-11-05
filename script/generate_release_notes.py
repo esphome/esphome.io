@@ -672,7 +672,8 @@ class ReleaseNotesGenerator:
             # Clear the rest of the line so a shorter message leaves no remnants
             print(f"\r{line}\033[K", end="", flush=True)
         else:
-            print(line)
+            # Flush so progress shows through a pipe such as tee
+            print(line, flush=True)
 
     def load_prs_by_numbers(self, pr_numbers: list[int]) -> list[PullRequest]:
         """Load specific PRs from shared cache by their numbers"""
