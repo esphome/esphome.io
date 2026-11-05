@@ -16,7 +16,8 @@ downloaded, decoded and drawn at runtime.
 >   - 8-bit / indexed
 >   - 24-bit / RGB
 >
-> - JPEG images, currently only baseline images (no progressive support)
+> - JPEG images: baseline, progressive (see [Progressive JPEG Images](#progressive-jpeg-images)) and 8-bit extended
+>   sequential
 >
 > - PNG images
 >
@@ -95,6 +96,18 @@ Advanced options:
   image until the new one is complete. If the download fails, the current image stays. This uses twice the memory for
   the image. Defaults to `false`. Without it, a new image of the same size is drawn over the current one as it loads,
   and the placeholder is shown while one of a different size loads.
+
+## Progressive JPEG Images
+
+A progressive JPEG image is drawn only after it is fully decoded.
+Decoding progressive images requires additional memory for internal tables.
+That memory is freed once the image is drawn, and `buffer_size` does not need to account for it.
+
+The extra memory is about 3 bytes per pixel of the original image,
+so a 1920x1080 photo needs about 6 MB extra.
+
+If that memory isn't available, the image is drawn as blocks of 8x8 pixels,
+each in a single colour, if possible, otherwise it will fail to load.
 
 ## Automations
 

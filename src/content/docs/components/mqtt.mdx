@@ -151,6 +151,10 @@ mqtt:
 - **reboot_timeout** (*Optional*, [Time](/guides/configuration-types#time)): The amount of time to wait before rebooting when no
   MQTT connection exists. Can be disabled by setting this to `0s`. Defaults to `15min`.
 
+- **max_payload_size** (*Optional*, int): The largest incoming message in bytes, from 512 to 1048576; a unit such as
+  `16kB` also works. Longer messages are dropped with a warning in the log. Defaults to `32768` on ESP32, `16384` on
+  BK72xx, RTL87xx and LN882x, and `8192` on ESP8266.
+
 - **keepalive** (*Optional*, [Time](/guides/configuration-types#time)): The time
   to keep the MQTT socket alive, decreasing this can help with overall stability due to more
   WiFi traffic with more pings. Defaults to 15 seconds.
