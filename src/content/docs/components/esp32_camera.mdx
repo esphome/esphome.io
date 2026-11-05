@@ -180,6 +180,35 @@ White Balance Setting:
   - `office`  : White balance office mode
   - `home`  : White balance home mode
 
+Single Image Settings:
+
+- **capture_delay** (*Optional*, [Time](/guides/configuration-types/#time)): Wait this long before a
+  single image and drop frames that started before the wait ended, so a light switched on in
+  **on_capture_start** and the auto exposure can settle. `0s` to `3s`, defaults to `0s`.
+  With `idle_framerate: 0 fps` the first frame after an idle period is badly exposed, `500ms` to `2s`
+  fixes that on an OV2640.
+
+- **on_capture_start** (*Optional*, [Automation](/automations/)): Runs when a single image capture
+  begins, for example to switch on a flash LED. Use actions that finish right away.
+
+- **on_capture_end** (*Optional*, [Automation](/automations/)): Runs after the image was captured, also
+  when a stream cancels the capture and on shutdown. If no frame that started after the delay arrived
+  4 seconds after **on_capture_start**, it runs as well and the next frame is used as is. The 4 seconds
+  include **capture_delay**, so with `3s` about one second is left. A `light` may stay on after
+  shutdown, an `output` does not.
+
+Only single images use these: Home Assistant snapshots (picture cards refresh every 10 seconds) and the
+snapshot mode of `esp32_camera_web_server`. Streams (the Home Assistant more-info dialog, the web server
+stream mode, `rtsp_server` clients) and **idle_framerate** captures skip them. While a stream runs,
+single images skip them as well and come straight from the stream. Otherwise each single image runs
+the whole cycle, so a picture card that refreshes every 10 seconds also switches the light every 10
+seconds.
+
+> [!NOTE]
+> With `aec_mode: auto` the sensor makes up for a weaker light, so the light level hardly changes the
+> image. When the flash is the only light, set `aec_mode: manual` and tune **aec_value** and the
+> light level together.
+
 Automations:
 
 - **on_stream_start** (*Optional*, [Automation](/automations)): An automation to perform
@@ -205,8 +234,8 @@ Window Setting:
   - **height** (**Required**, int): Height of the window in pixels, `1` or more.
 
 > [!NOTE]
-> Camera uses PWM timer #1. If you need PWM (via the `ledc` platform) you need to manually specify
-> a channel there (with the `channel: 2`  parameter)
+> The camera clock uses LEDC timer 0. Set `channel: 2` on a `ledc` output, for example a flash LED.
+> A frequency such as `5kHz` avoids dark bands from the default 1 kHz.
 
 ## Reading Out a Window
 
@@ -299,6 +328,61 @@ esp32_camera:
   # Image settings
   name: My Camera
   # ...
+```
+
+**Ai-Thinker Camera with flash LED**:
+
+The flash LED of this board sits on GPIO4. Any other GPIO works the same way through the pin of the
+output. The LED gets hot and draws a lot of current, so keep the level below full power.
+
+```yaml
+# Example configuration entry
+output:
+  - platform: ledc
+    id: flash_led
+    pin: GPIO4
+    channel: 2
+    frequency: 5kHz
+
+esp32_camera:
+  # Pins as in the Ai-Thinker example above
+  # ...
+  name: Meter Camera
+  resolution: 1600x1200
+  jpeg_quality: 10
+  idle_framerate: 0 fps
+  aec_mode: manual
+  aec_value: 300
+  capture_delay: 2s
+  on_capture_start:
+    - output.set_level:
+        id: flash_led
+        level: 50%
+  on_capture_end:
+    - output.turn_off: flash_led
+```
+
+**Camera with an LED ring**:
+
+```yaml
+# Example configuration entry
+light:
+  - platform: esp32_rmt_led_strip
+    id: led_ring
+    # ...
+
+esp32_camera:
+  # ...
+  capture_delay: 1s
+  on_capture_start:
+    - light.turn_on:
+        id: led_ring
+        brightness: 60%
+        transition_length: 0s
+  on_capture_end:
+    - light.turn_off:
+        id: led_ring
+        transition_length: 0s
 ```
 
 **M5Stack Camera**:
