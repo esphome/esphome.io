@@ -1,0 +1,160 @@
+---
+title: "VBus Component"
+description: "Receive telemetry from solar thermal controllers using the VBus protocol."
+---
+
+import { Image } from 'astro:assets';
+import resolVbusAdapterSchematicImg from '../images/resol_vbus_adapter_schematic.png';
+import vbusSerialOptocouplerImg from '../images/vbus_serial_optocoupler.png';
+
+The `vbus` component connects ESPHome to solar thermal controllers made by RESOL and sold under names such as
+Viessmann, Kioto and Wagner. Choose a built-in decoder for the measurements the controller broadcasts, or decode a
+documented custom packet.
+
+<Image
+  src="/images/resol_deltasol_bs_plus.jpg"
+  width={207}
+  height={300}
+  layout="constrained"
+  alt="RESOL DeltaSol BS Plus solar controller"
+/>
+
+## Choose Your Configuration
+
+| What You Want To Do | Start Here |
+| --- | --- |
+| Receive temperatures, pump states and energy | [Receive only](#receive-only) |
+| Find the entities supported by your controller | [Supported models](#supported-models) |
+
+## Hardware Connection
+
+The device must be connected via a [UART bus](/components/uart/) supporting the receiving line only. The UART bus
+must be configured at the same speed of the module which is by default 9600bps. The controller outputs data every
+second.
+
+To connect to this and read data from the bus a level shifting is needed as the voltage is around 8V (direct connection
+would damage the MCU). For our read-only purposes it's
+sufficient to adapt the level appropriately to 3.3V using a circuit like below:
+
+<Image src={resolVbusAdapterSchematicImg} layout="constrained" alt="VBus receiver circuit" />
+
+An electrically isolated version using an opto-coupler:
+
+<Image src={vbusSerialOptocouplerImg} layout="constrained" alt="VBus receiver with optocoupler isolation" />
+
+Another approach, with PCB design ready to be manufactured [can be found
+here](https://github.com/FatBeard/vbus-arduino-library/tree/master/pcb).
+
+> [!WARNING]
+> Do not connect the GND pin of your module with the ground of Resol unit as that may damage the output port of it.
+> The output of the device is symmetric, meaning that the signal is not referenced to the ground, but rather it's a
+> differential signal between the two wires. However, the MCU references the signal against the ground, so the two
+> grounds are not supposed to be connected to each other as can be seen in the circuit depicted above.
+
+## Receive Only
+
+### Basic Use
+
+Configure a [UART bus](/components/uart/) for 9600 baud, 8 data bits, no parity and one stop bit, with an RX pin.
+The examples use `resol` as the UART ID. Choose your controller's `model` from [Supported Models](#supported-models).
+This example receives a temperature and a probe-fault indication from a DeltaSol BS Plus:
+
+```yaml
+vbus:
+  uart_id: resol
+
+sensor:
+  - platform: vbus
+    model: deltasol_bs_plus
+    temperature_1:
+      name: Solar Temperature 1
+
+binary_sensor:
+  - platform: vbus
+    model: deltasol_bs_plus
+    sensor1_error:
+      name: Solar Sensor 1 Fault
+```
+
+RX uses broadcasts already sent by the controller. It does not request bus access or change settings.
+Sensor numbers refer to the controller terminals; their physical purpose depends on the hydraulic scheme.
+Use the controller manual to choose names that match your installation.
+
+### Advanced Use
+
+See the [receive guide](/components/vbus/receive/) for custom decoding, P2 receive automations.
+
+#### `custom` VBus Sensors
+
+Use [custom numeric sensors](/components/vbus/receive/#custom-vbus-sensors) for a documented packet without a built-in
+decoder.
+
+#### `custom` VBus Binary Sensors
+
+Use [custom binary sensors](/components/vbus/receive/#custom-vbus-binary-sensors) to decode documented status bits.
+
+## Supported Models
+
+Every model below has an RX decoder.
+Open a model guide for the supported measurements and status fields.
+
+| Controller | RX Model |
+| --- | --- |
+| [DeltaSol BS Plus](/components/vbus/deltasol_bs_plus/) | `deltasol_bs_plus` |
+| [DeltaSol BS 2009](/components/vbus/deltasol_bs_2009/) | `deltasol_bs_2009` |
+| [DeltaSol BS/2](/components/vbus/deltasol_bs2/) | `deltasol_bs2` |
+| [DeltaSol C](/components/vbus/deltasol_c/) | `deltasol_c` |
+| [DeltaSol CS2](/components/vbus/deltasol_cs2/) | `deltasol_cs2` |
+| [DeltaSol CS4](/components/vbus/deltasol_cs4/) | `deltasol_cs4` |
+| [DeltaSol CS Plus](/components/vbus/deltasol_cs_plus/) | `deltasol_cs_plus` |
+
+The Dux H3214 uses the [BS 2009 decoder](/components/vbus/deltasol_bs_2009/); its pump 2 is unsupported.
+Citrin Solar CS 1.3 uses the [CS4 decoder](/components/vbus/deltasol_cs4/).
+A matching VBus source address identifies a decoder; it does not qualify setting writes for another firmware.
+
+## Component
+
+
+> [!WARNING]
+> If you are using the [Logger](/components/logger/) make sure you are not using the same pins for it or otherwise
+disable the UART
+> logging with the `baud_rate: 0` option.
+
+### Configuration Variables
+
+- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the UART hub used to
+  connect to the device.
+- **on_datagram** (*Optional*, [Automation](/automations/)): An automation to run when a valid VBus P2 datagram is
+  received.
+
+> [!NOTE]
+> Functionality of the sensors depends on the type of the device and the scheme arrangement of the hydraulic
+> system it controls. The actual arrangement number set up can be determined from the settings of the device. Please
+> check the user manual and assess your arrangement to determine the functionality of each sensor and name them
+> accordingly.
+
+## Sensor
+
+### Configuration Variables
+
+- **model** (**Required**, string): The RX model listed above. Each model guide lists its available sensor keys.
+- Every listed sensor is optional and supports the normal [Sensor](/components/sensor/) options.
+
+Broadcasts may arrive every second. To reduce unchanged state updates or database load, use the standard
+[sensor filters](/components/sensor/#sensor-filters), such as `delta` or `throttle`, according to the measurement.
+
+## Binary Sensor
+
+### Configuration Variables
+
+- **model** (**Required**, string): The RX model listed above. Each model guide lists its supported status and fault
+  keys.
+- Every listed binary sensor is optional and supports the normal [Binary Sensor](/components/binary_sensor/) options.
+
+## See Also
+
+- [UART Bus](/components/uart/)
+- [Binary Sensor Component](/components/binary_sensor/)
+- [Sensor Component](/components/sensor/)
+- [Resol manuals](https://www.resol.de/en/dokumente)
+- [VBus protocol](https://danielwippermann.github.io/resol-vbus)

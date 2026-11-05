@@ -46,6 +46,11 @@ ld2410:
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this [Ld2410](/components/sensor/ld2410/) component if you need multiple
   components.
 
+- **background_correction_duration** (*Optional*, [Time](/guides/configuration-types#time)): The window the module
+  spends measuring the background noise floor when the [`background_correction`](#ld2410-background-correction) button
+  is pressed. Value between `10s` and `120s` inclusive. Defaults to `10s`. Requires module firmware V2.44 or later
+  and the `background_correction` button.
+
 ## Binary Sensor
 
 The `ld2410` binary sensors allow you to quickly determine various states reported by the sensor.
@@ -61,6 +66,8 @@ binary_sensor:
       name: Still Target
     out_pin_presence_status:
       name: Out pin presence status
+    calibration:
+      name: Calibration running
 ```
 
 ### Configuration variables
@@ -79,12 +86,19 @@ binary_sensor:
   [light function](#ld2410-light-function) configuration. Might need to update to the latest firmware to use this.
   All options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
 
+- **calibration** (*Optional*): On while ESPHome runs the [`background_correction`](#ld2410-background-correction)
+  routine: from the start command until the module reports completion or the run's deadline passes, so it follows
+  ESPHome's run rather than a state confirmed by the module. Off at boot. Requires the `background_correction` button.
+  Defaults to `device_class: running`.
+  All options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
+
 - **ld2410_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for the [Ld2410](/components/sensor/ld2410/) component if you are
   using multiple components.
 
 > [!NOTE]
-> By default, each of the [Binary Sensor](/components/binary_sensor/) components above includes the
-> following [filter](/components/binary_sensor#binary-sensor-filters) by default to prevent flooding Home Assistant with state updates:
+> By default, each of the [Binary Sensor](/components/binary_sensor/) components above except `calibration` includes the
+> following [filter](/components/binary_sensor#binary-sensor-filters) by default to prevent flooding Home Assistant
+> with state updates:
 >
 > ```yaml
 > - settle: 1000ms
@@ -366,6 +380,8 @@ button:
       name: Restart
     query_params:
       name: Query params
+    background_correction:
+      name: Calibrate radar
 ```
 
 ### Configuration variables
@@ -377,6 +393,14 @@ button:
   All options from [Button](/components/button#config-button).
 
 - **query_params** (*Optional*): Refresh all sensors values of the device.
+  All options from [Button](/components/button#config-button).
+
+- <span id="ld2410-background-correction"></span>**background_correction** (*Optional*): Triggers the module's native
+  automatic background-noise correction routine. The module measures the noise floor for the configured
+  [`background_correction_duration`](#ld2410-component) and rewrites all gate thresholds. People **must** be absent
+  while it runs; leave other clutter such as fans or HVAC in place. The optional
+  [`calibration`](#binary-sensor) binary sensor is on while ESPHome runs the routine, and the gate
+  [thresholds](#number) refresh when it ends. Requires module firmware V2.44 or later.
   All options from [Button](/components/button#config-button).
 
 - **ld2410_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for the [Ld2410](/components/sensor/ld2410/) component if you are
@@ -393,6 +417,8 @@ text_sensor:
       name: Firmware version
     mac_address:
       name: MAC address
+    calibration_result:
+      name: Calibration result
 ```
 
 ### Configuration variables
@@ -401,6 +427,17 @@ text_sensor:
   All options from [Text Sensor](/components/text_sensor#config-text_sensor).
 
 - **mac_address** (*Optional*): The bluetooth mac address. Will be set to `unknown` when bluetooth is off.
+  All options from [Text Sensor](/components/text_sensor#config-text_sensor).
+
+- **calibration_result** (*Optional*): The outcome of the last
+  [`background_correction`](#ld2410-background-correction) run. `Running` while it runs, then one of:
+  - `Success`: the module reported a pass.
+  - `Failed`: the module reported a fail, usually because a person was in range.
+  - `Unconfirmed`: the routine finished, but the module reported neither pass nor fail.
+  - `Refused`: the module rejected the start command, or its firmware is older than V2.44.
+  - `Timed out`: the module did not report completion in time.
+
+  Has no state until the first run after boot. Requires the `background_correction` button.
   All options from [Text Sensor](/components/text_sensor#config-text_sensor).
 
 - **ld2410_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for the [Ld2410](/components/sensor/ld2410/) component if you are
@@ -494,6 +531,10 @@ binary_sensor:
 ```
 
 ## Calibration Process
+
+> [!TIP]
+> On module firmware V2.44 or later, the [`background_correction`](#ld2410-background-correction) button calibrates
+> the thresholds automatically. Use the manual steps below on older firmware, or to fine-tune afterwards.
 
 In order to calibrate your `ld2410` sensor perform the following:
 
