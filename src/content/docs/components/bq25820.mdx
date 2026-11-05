@@ -20,7 +20,7 @@ support on their [TI Forums](https://e2e.ti.com/search?category=forum&q=BQSTUDIO
 firmware profile (file) to take advantage of their bqStudio software, and begin bench-testing with the TI
 [BQ25820EVM](https://www.ti.com/tool/BQ25820EVM), or your own circuit design.
 
-ESPHome exposes the chip's...
+ESPHome exposes the chip's:
 
 - Voltage and current measurements as [sensors](/components/sensor/),
 - Battery charge, fault and power state as [binary sensors](/components/binary_sensor/),
@@ -29,7 +29,7 @@ ESPHome exposes the chip's...
 The charge current, input limits, MPPT behaviour, charge safety timers and battery temperature thresholds
 are all configurable.
 
-In order to communicate with the BQ25820, you need to have a [I²C](/components/i2c/) component (and its
+In order to communicate with the BQ25820, you need to have an [I²C](/components/i2c/) component (and its
 requisite GPIO pins) defined in your configuration.
 
 ```yaml
@@ -146,7 +146,6 @@ the sense resistors configured above.
 ```yaml
 sensor:
   - platform: bq25820
-    bq25820_id: bq25820_charger
     vbat:
       name: "Battery Voltage"
     ibat:
@@ -193,7 +192,6 @@ The charge, fault and power state of the chip is exposed as binary sensors.
 ```yaml
 binary_sensor:
   - platform: bq25820
-    bq25820_id: bq25820_charger
     charging:
       name: "Charging"
     charged:
@@ -251,7 +249,6 @@ Decoded status strings for the charge cycle and the battery temperature.
 ```yaml
 text_sensor:
   - platform: bq25820
-    bq25820_id: bq25820_charger
     charge_status:
       name: "Charge Status"
 ```
