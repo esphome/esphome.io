@@ -1,0 +1,359 @@
+---
+title: "Fendt Caravan"
+description: "Integrate Fendt caravan systems via Bluetooth Low Energy (BLE) with support for Main Control Unit, Alde Heating, Lighting, and Fridge units."
+---
+
+import Figure from '@components/Figure.astro';
+
+<Figure
+  src="/images/badge:Fendt_Caravan"
+  alt="Fendt Caravan component badge"
+  caption="Fendt Caravan component"
+  layout="constrained"
+  width={200}
+  height={100}
+/>
+
+## Configuration
+
+The **Fendt Caravan** component provides integration with Fendt caravan systems via Bluetooth Low Energy (BLE). It supports multiple sub-devices (Main Control Unit, Alde Heating Unit, Lighting Unit, Fridge Unit) and exposes their sensors, switches, binary sensors, climate controls, selects, lights, and text sensors to ESPHome.
+
+### Requirements
+
+- ESP32 (BLE support required)
+- ESPHome release that includes the Fendt Caravan component
+- A Fendt caravan with BLE-enabled control units
+
+### Dependencies
+
+This component requires:
+- [`ble_client`](/components/ble_client/) - For BLE communication
+- [`esp32_ble_tracker`](/components/esp32_ble_tracker/) - For BLE device discovery
+
+### Main Component Configuration
+
+```yaml
+fendt_caravan:
+  id: my_caravan
+  ble_client_id: my_ble_client
+  main_control_unit:
+    id: fendt_caravan_mcu
+    update_interval: 60s
+  alde_unit:
+    id: fendt_caravan_alde
+    update_interval: 60s
+  lighting_unit:
+    id: fendt_caravan_lighting
+    update_interval: 60s
+  fridge_unit:
+    id: fendt_caravan_fridge
+    update_interval: 60s
+```
+
+### BLE Client Setup
+
+```yaml
+esp32_ble_tracker:
+
+ble_client:
+  - mac_address: XX:XX:XX:XX:XX:XX  # Replace with your caravan's BLE MAC address
+    id: my_ble_client
+    auto_connect: true
+```
+
+## Sub-Devices
+
+### Main Control Unit (Required)
+
+The main control unit is mandatory and provides core caravan status information.
+
+#### Configuration Variables
+
+- **main_control_unit** (**Required**, ID): The ID of the main control unit hub.
+- **update_interval** (*Optional*, Time): The interval to poll the device. Defaults to `60s`.
+
+#### Available Entities
+
+- **temp_in** (**Required**, Sensor): Inside temperature in °C.
+- **temp_out** (**Required**, Sensor): Outside temperature in °C.
+- **water_level** (**Required**, Sensor): Fresh water tank level in %.
+- **main_switch** (**Required**, Switch): Main power switch.
+- **all_lights** (**Required**, Switch): All lights master switch.
+- **floor_heater** (**Required**, Switch): Floor heating switch.
+- **power_status** (**Required**, Binary Sensor): Main power status.
+- **software_version** (**Required**, Text Sensor): MCU firmware version.
+
+### Alde Heating Unit (Optional)
+
+Controls the Alde heating system (water heater, gas/electric heating).
+
+#### Configuration Variables
+
+- **alde_unit** (**Required**, ID): The ID of the Alde unit hub.
+- **update_interval** (*Optional*, Time): The interval to poll the device. Defaults to `60s`.
+
+#### Available Entities
+
+- **alde_heater** (**Required**, Switch): Main heater switch.
+- **alde_heater_gas** (**Required**, Switch): Gas heating mode.
+- **alde_water_heater** (**Required**, Switch): Water heater switch.
+- **alde_water_heater_boost** (**Required**, Switch): Water heater boost mode.
+- **alde_status** (**Required**, Binary Sensor): Alde system status.
+- **alde** (**Required**, Climate): Climate control for Alde system.
+- **alde_heater_electricity** (**Required**, Select): Electric power level selection.
+
+#### Climate Configuration Example
+
+```yaml
+climate:
+  - platform: fendt_caravan
+    parent_id: fendt_caravan_alde
+    type: alde
+    name: Alde Climate
+    id: alde_climate
+    heater_switch: alde_heater_switch
+    sensor: temp_in
+```
+
+### Lighting Unit (Optional)
+
+Controls the caravan's lighting system (switch and dimmable lights).
+
+#### Configuration Variables
+
+- **lighting_unit** (**Required**, ID): The ID of the lighting unit hub.
+- **update_interval** (*Optional*, Time): The interval to poll the device. Defaults to `60s`.
+
+#### Available Lights
+
+| Variable Name | Light Type | Description |
+|---------------|------------|-------------|
+| `LIGHT_SW0` | `switch` | Living Room (Bottom) |
+| `LIGHT_SW1` | `switch` | Awning Light |
+| `LIGHT_SW2` | `switch` | Bed Room (Bottom) |
+| `LIGHT_DIM0` | `dimmable` | Ceiling |
+| `LIGHT_DIM1` | `dimmable` | Living Room (Top) |
+| `LIGHT_DIM2` | `dimmable` | Ambience Awning Light (Top) |
+| `LIGHT_DIM4` | `dimmable` | Bed Room (Top) |
+
+#### Light Configuration Example
+
+```yaml
+light:
+  - platform: fendt_caravan
+    name: Living Room (Bottom)
+    parent_id: fendt_caravan_lighting
+    id: light_sw0
+    variable_name: LIGHT_SW0
+    light_type: switch
+
+  - platform: fendt_caravan
+    name: Ceiling
+    parent_id: fendt_caravan_lighting
+    id: light_dim0
+    variable_name: LIGHT_DIM0
+    light_type: dimmable
+```
+
+#### Light Types
+
+- `switch` - On/Off only
+- `dimmable` - Brightness control (0-100%)
+
+### Fridge Unit (Optional)
+
+Controls and monitors the caravan's refrigerator.
+
+#### Configuration Variables
+
+- **fridge_unit** (**Required**, ID): The ID of the fridge unit hub.
+- **update_interval** (*Optional*, Time): The interval to poll the device. Defaults to `60s`.
+
+#### Available Entities
+
+- **fridge_status** (**Required**, Switch): Fridge on/off.
+- **fridge_status** (**Required**, Binary Sensor): Fridge running status.
+- **fridge_power_source** (**Required**, Text Sensor): Current power source (Gas/AC/DC).
+- **fridge_type** (**Required**, Text Sensor): Fridge model/type.
+- **fridge_mode** (**Required**, Select): Operating mode selection.
+- **fridge_temperature** (**Required**, Select): Temperature setting selection.
+
+## Minimal Example Configuration
+
+```yaml
+esp32_ble_tracker:
+
+ble_client:
+  - mac_address: XX:XX:XX:XX:XX:XX
+    id: my_ble_client
+    auto_connect: true
+
+fendt_caravan:
+  id: my_caravan
+  ble_client_id: my_ble_client
+  main_control_unit:
+    id: fendt_caravan_mcu
+  alde_unit:
+    id: fendt_caravan_alde
+  lighting_unit:
+    id: fendt_caravan_lighting
+  fridge_unit:
+    id: fendt_caravan_fridge
+
+sensor:
+  - platform: fendt_caravan
+    parent_id: fendt_caravan_mcu
+    type: temp_in
+    name: Temperature In
+    id: temp_in
+
+switch:
+  - platform: fendt_caravan
+    parent_id: fendt_caravan_mcu
+    type: main_switch
+    name: Main Switch
+
+  - platform: fendt_caravan
+    parent_id: fendt_caravan_alde
+    type: alde_heater
+    name: Alde Heater Switch
+    id: alde_heater_switch
+
+binary_sensor:
+  - platform: fendt_caravan
+    parent_id: fendt_caravan_mcu
+    type: power_status
+    name: Power Status
+
+text_sensor:
+  - platform: fendt_caravan
+    parent_id: fendt_caravan_mcu
+    type: software_version
+    name: Software Version
+
+climate:
+  - platform: fendt_caravan
+    parent_id: fendt_caravan_alde
+    type: alde
+    name: Alde Climate
+    id: alde_climate
+    heater_switch: alde_heater_switch
+    sensor: temp_in
+
+select:
+  - platform: fendt_caravan
+    parent_id: fendt_caravan_alde
+    type: alde_heater_electricity
+    name: Heater Electric Power
+    id: heater_electric_power
+
+light:
+  - platform: fendt_caravan
+    name: Living Room (Bottom)
+    parent_id: fendt_caravan_lighting
+    id: light_sw0
+    variable_name: LIGHT_SW0
+    light_type: switch
+```
+
+## Entity Reference
+
+### Sensor Types (Main Control Unit)
+
+- `temp_in` - Inside temperature (°C)
+- `temp_out` - Outside temperature (°C)
+- `water_level` - Fresh water level (%)
+
+### Switch Types
+
+**Main Control Unit:**
+- `main_switch` - Main power
+- `all_lights` - All lights master
+- `floor_heater` - Floor heating
+
+**Alde Unit:**
+- `alde_heater` - Main heater
+- `alde_heater_gas` - Gas mode
+- `alde_water_heater` - Water heater
+- `alde_water_heater_boost` - Boost mode
+
+**Fridge Unit:**
+- `fridge_status` - Fridge on/off
+
+### Binary Sensor Types
+
+- `power_status` (MCU) - Main power status
+- `alde_status` (Alde) - Alde system status
+- `fridge_status` (Fridge) - Fridge running status
+
+### Text Sensor Types
+
+- `software_version` (MCU) - Firmware version
+- `fridge_power_source` (Fridge) - Power source (Gas/AC/DC)
+- `fridge_type` (Fridge) - Fridge model
+
+### Climate Types
+
+- `alde` (Alde) - Alde heating climate control
+
+### Select Types
+
+- `alde_heater_electricity` (Alde) - Electric power level
+- `fridge_mode` (Fridge) - Operating mode
+- `fridge_temperature` (Fridge) - Temperature setting
+
+### Light Types
+
+- `switch` - Simple on/off lights
+- `dimmable` - Brightness controllable lights
+
+#### Required Light Parameters
+
+- `parent_id` - ID of the lighting unit hub
+- `variable_name` - Device variable name (e.g., `LIGHT_SW0`, `LIGHT_DIM0`)
+- `light_type` - Either `switch` or `dimmable`
+
+> [!NOTE]
+> **MAC Address**: Replace `XX:XX:XX:XX:XX:XX` with your caravan's actual BLE MAC address.
+
+> [!TIP]
+> **Update Interval**: Default is 60s for all units. Adjust based on your needs (minimum ~10s).
+
+> [!NOTE]
+> **Restore Modes**: Switches support `ALWAYS_OFF`, `RESTORE_DEFAULT_OFF`, `RESTORE_DEFAULT_ON`.
+
+> [!NOTE]
+> **Multiple Configurations**: `MULTI_CONF = True` allows multiple Fendt Caravan instances.
+
+> [!NOTE]
+> **Platform**: Only supports ESP32 (BLE requirement).
+
+## Troubleshooting
+
+> [!WARNING]
+> **Connection Issues**: Ensure the BLE MAC address is correct and the caravan is in range.
+
+> [!WARNING]
+> **Entity Not Updating**: Check `update_interval` and BLE signal strength.
+
+> [!WARNING]
+> **Climate Not Working**: Ensure `heater_switch` and `sensor` references are correct IDs.
+
+> [!WARNING]
+> **Lights Not Responding**: Verify `variable_name` matches the device's internal variable names.
+
+## See Also
+
+- [BLE Client](/components/ble_client/)
+- [ESP32 BLE Tracker](/components/esp32_ble_tracker/)
+- [Climate Component](/components/climate/)
+- [Light Component](/components/light/)
+- [Select Component](/components/select/)
+- [Sensor Component](/components/sensor/)
+- [Switch Component](/components/switch/)
+- [Text Sensor Component](/components/text_sensor/)
+- [Binary Sensor Component](/components/binary_sensor/)
+
+## License
+
+This component is part of ESPHome and licensed under the same terms.
