@@ -33,18 +33,18 @@ bridge:
 
 ## Configuration Variables
 
-- **uart_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the UART bus to bridge to the USB
+- **uart_id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the UART bus to bridge to the USB
   CDC-ACM interface.
-- **usb_cdc_acm_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the USB CDC-ACM interface
+- **usb_cdc_acm_id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the USB CDC-ACM interface
   to use for the USB side of the bridge.
-- **dtr_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): GPIO pin that mirrors the host's DTR (Data Terminal
+- **dtr_pin** (*Optional*, [Pin](/guides/configuration-types/#pin)): GPIO pin that mirrors the host's DTR (Data Terminal
   Ready) line state. This is typically asserted when the host opens the serial port and is commonly used to drive the
   reset line of an attached device. The pin carries the logical line state (asserted/deasserted); for a conventional
   active-low interface (`DTR#`), set `inverted: true` on the pin (see [Control Signals](#control-signals)).
-- **rts_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): GPIO pin that mirrors the host's RTS (Request to
+- **rts_pin** (*Optional*, [Pin](/guides/configuration-types/#pin)): GPIO pin that mirrors the host's RTS (Request to
   Send) line state. Combined with `dtr_pin`, this is commonly used to drive the bootloader/reset sequence of an
   attached device. As with `dtr_pin`, set `inverted: true` for a conventional active-low interface (`RTS#`).
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this component.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID for this component.
 
 > [!NOTE]
 > A bridge requires exclusive use of both its UART and its USB CDC-ACM interface. Configurations where another
