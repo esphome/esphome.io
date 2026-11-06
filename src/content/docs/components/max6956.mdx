@@ -17,7 +17,7 @@ and can therefore be used with many of ESPHome's components such as the GPIO bin
 Pins can also be individualy configured as led driver and used with Light components. Current value can be set globaly or for each pin, through 16 possible levels. Driving RGB
 led requires 3 pins.
 
-Any option accepting a [Pin Schema](/guides/configuration-types#pin-schema) can theoretically be used.
+Any option accepting a [Pin Schema](/guides/configuration-types/#pin-schema) can theoretically be used.
 
 ## Component/Hub
 
@@ -41,7 +41,7 @@ max6956:
 
 ### Configuration variables
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The id to use for this `max6956` component.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The id to use for this `max6956` component.
 - **address** (*Optional*, int): The I²C address of the driver.
   Defaults to `0x40`.
 
@@ -53,6 +53,18 @@ max6956:
 
 - **brightness_mode** (*Optional*): Define if the current to be sink will be confgured globaly or per pin configured as led driver.
   Defaults to `global`
+
+### Pin configuration variables
+
+- **max6956** (**Required**, [ID](/guides/configuration-types/#id)): The id of the `max6956` component of the pin.
+  Instead of an id, an `address:` can be given to select the hub by its I²C address; see
+  [Selecting an I2C Expander by Address](/guides/configuration-types/#selecting-an-i2c-expander-by-address).
+- **number** (**Required**, int): The pin number.
+- **inverted** (*Optional*, boolean): If all read and written values
+  should be treated as inverted. Defaults to `false`.
+- **mode** (*Optional*, string or mapping): A pin mode to set for the pin. Supports the mapping keys
+  `input`, `pullup` and `output`, or the shorthands `INPUT`, `INPUT_PULLUP` and `OUTPUT`; see
+  [Pin Schema](/guides/configuration-types/#pin-schema).
 
 ## Binary Sensor Example
 

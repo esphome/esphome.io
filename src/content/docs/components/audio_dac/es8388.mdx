@@ -27,11 +27,83 @@ audio_dac:
 
 - **address** (*Optional*, int): The I²C address of the driver. Defaults to `0x10`.
 - **i2c_id** (*Optional*): The ID of the [I²C bus](/components/i2c) the ES8388 is connected to.
-- All other options from [Audio DAC](/components/audio_dac#config-audio_dac).
+- **volume_min_db** (*Optional*, float): The DAC attenuation at volume 0, from `-96dB` to `0dB`. Defaults to `-96dB`.
+- **volume_max_db** (*Optional*, float): The DAC attenuation at volume 1, from `-96dB` to `0dB`. Must be higher than
+  `volume_min_db`. Defaults to `0dB`. The volume maps linearly in dB between the two. With a small speaker that is
+  barely heard at low volumes, raise `volume_min_db` (for example to `-50dB`) so the whole volume range can be used.
+- **mic_gain** (*Optional*, enum): The ADC PGA gain applied to both channels at startup, in dB.
+  One of `0DB`, `3DB`, `6DB`, `9DB`, `12DB`, `15DB`, `18DB`, `21DB`, `24DB`. Defaults to `0DB`.
+  Set this if you record from a microphone and the input level is too low for speech
+  recognition. On some boards the default is too quiet to transcribe; see
+  [Microphone recording level](#microphone-recording-level).
+- All other options from [Audio DAC](/components/audio_dac/#config-audio_dac).
+
+> [!NOTE]
+> The default is `0DB` for backwards compatibility: a higher default would raise the input level
+> for every existing configuration. The [ES8311](/components/audio_dac/es8311/) component, by
+> contrast, defaults to `42DB`.
+
+## Microphone Recording Level
+
+The ES8388 ADC PGA gain is set by register `0x09`, where bits 7:4 hold the left channel gain
+(`MicAmpL`) and bits 3:0 the right channel gain (`MicAmpR`). See the
+[datasheet](http://www.everest-semi.com/pdf/ES8388%20DS.pdf), register 9. Each nibble is the gain
+in 3 dB steps, where `0111` is +21 dB. So `0x77` is +21 dB on both channels and `0x00` is 0 dB on
+both channels.
+
+`mic_gain` selects this value. For example, `mic_gain: 21DB` writes `0x77`:
+
+```yaml
+audio_dac:
+  - platform: es8388
+    id: es8388_dac
+    mic_gain: 21DB
+```
+
+The configured value is logged at startup:
+
+```text
+[C][es8388:xxx]: ES8388 Audio Codec:
+[C][es8388:xxx]:   Mic gain: 21 dB
+```
+
+### Why This Option Exists
+
+The ES8388's ADC PGA gain defaults to 0 dB. On some boards, such as the ESP32-A1S Audio Kit
+V2.2, that is too quiet for speech-to-text to work, and a higher gain is needed. `mic_gain`
+exposes that gain directly, and the `0DB` default is unchanged, so this option does nothing unless
+you set it.
+
+If you are unsure what value your board needs, start from the default (`0DB`) and raise `mic_gain`
+until recording works.
+
+> [!NOTE]
+> `mic_gain` raises the input *level*, not the signal-to-noise ratio: it is an analog gain in front
+> of the ADC, so any noise already present at the microphone is amplified with the signal. It
+> helps where the problem is a recording level too low to transcribe.
+
+> [!NOTE]
+> Adjusting `mic_gain` only changes the analog PGA in front of the ADC. Other microphone-level
+> settings such as [automatic level control (ALC) and the noise gate](#noise-gate-and-alc)
+> are separate and still apply.
+
+## Noise Gate and ALC
+
+The ES8388 also has an automatic level control (ALC) block and a noise gate. Both are separate
+from `mic_gain` and are configured by the component with fixed values based on the ES8388 User
+Guide's voice-recording recommendations:
+
+- Register `0x12` (`ADCCONTROL10`) = `0xE2` enables the ALC on both channels, with a maximum gain
+  of +17.5 dB and a minimum gain of 0 dB.
+- Register `0x16` (`ADCCONTROL14`) = `0xC3` enables the noise gate at −40.5 dBFS with the
+  "mute ADC output" option.
+
+These values are not configurable through this component. The ALC is intended to keep the
+recording level roughly constant, so it may interact with `mic_gain`.
 
 ## Select
 
-The `es8388` select allows you to control the `dac output` and the `adc input_mic` of your [Es8388](/components/audio_dac/es8388/).
+The `es8388` select controls the DAC output and ADC input routing of your [ES8388](/components/audio_dac/es8388/).
 
 ```yaml
 select:
@@ -45,26 +117,23 @@ select:
 
 ### Configuration variables
 
-- **es8388_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for the [Es8388](/components/audio_dac/es8388/) component.
-- **dac_output** (*Optional*): Control the DAC Audio output.
+- **es8388_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the
+  [ES8388](/components/audio_dac/es8388/) component.
+- **dac_output** (*Optional*): Control the DAC output routing. Options are `LINE1`, `LINE2` and `BOTH`.
 
-  - `LINE1` (default)
-  - `LINE2`
-  - `BOTH`
+  - **initial_option** (*Optional*, string): The routing to apply at startup. Without it the select reports
+    whatever the codec is set to, which is `LINE1` after a power-on reset.
+  - All other options from [Select](/components/select/#config-select).
 
-  All options from [Select](/components/select#config-select).
+- **adc_input_mic** (*Optional*): Control the ADC input routing. Options are `LINE1`, `LINE2` and `DIFFERENCE`.
 
-- **adc_input_mic** (*Optional*): Control the ADC Mic Input.
-
-  - `LINE1` (default)
-  - `LINE2`
-  - `DIFFERENCE`
-
-  All options from [Select](/components/select#config-select).
+  - **initial_option** (*Optional*, string): The routing to apply at startup. Without it the select reports
+    whatever the codec is set to, which is `LINE1` after a power-on reset.
+  - All other options from [Select](/components/select/#config-select).
 
 ## Automations
 
-All [Audio DAC Automations](/components/audio_dac#automations-audio_dac) are supported by this platform.
+All [Audio DAC Automations](/components/audio_dac/#automations-audio_dac) are supported by this platform.
 
 ## Configuration Examples
 
@@ -124,8 +193,22 @@ switch:
     restore_mode: ALWAYS_ON
 ```
 
+**Startup routing**:
+
+```yaml
+select:
+  - platform: es8388
+    es8388_id: es8388_dac
+    dac_output:
+      name: "DAC Output"
+      initial_option: BOTH
+    adc_input_mic:
+      name: "ADC Input MIC"
+      initial_option: LINE2
+```
+
 ## See Also
 
-- [Audio Dac Component](/components/audio_dac/)
+- [Audio DAC Component](/components/audio_dac/)
 - <APIRef text="es8388.h" path="es8388/es8388.h" />
 - <APIRef text="audio_dac.h" path="audio_dac/audio_dac.h" />

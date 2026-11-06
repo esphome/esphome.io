@@ -127,6 +127,18 @@ Use **relative paths** starting with `/`:
 
 **Important**: Always include trailing slash `/` for internal links.
 
+This holds when the link carries an anchor, where the slash goes before the `#`:
+
+```markdown
+- See [Manual IPs](/components/wifi/#manual-ips) to configure a static address
+- The value is an [ID](/guides/configuration-types/#id)
+```
+
+Astro's `build.format` defaults to `directory`, so every page is emitted as `<path>/index.html`. Netlify then
+answers a request for the slash-less `/components/wifi` with a 301 to `/components/wifi/`, and the browser
+re-applies the anchor. A link written without the slash therefore costs every reader who follows it an
+avoidable redirect. `npm run lint` fails on an internal link written that way.
+
 #### Anchors
 
 Headings automatically create anchors using their slugified form. To link to a specific section:
@@ -135,7 +147,13 @@ Headings automatically create anchors using their slugified form. To link to a s
 See [Configuration Variables](#configuration-variables) for details.
 ```
 
-Wherever possible, use automatic anchors generated from headings. Only when it is not feasible to use automatic anchors should you use HTML:
+Wherever possible, use automatic anchors generated from headings. Never put a `<span id="...">` in front of a heading:
+the heading already has an anchor, and a page-prefixed id such as `#wifi-manual_ip` in front of `## Manual IPs` on the
+WiFi page only duplicates `#manual-ips`. Older pages still carry such spans; do not copy the pattern into new sections,
+and leave the existing ones in place unless you also update every link that points to them.
+
+Only when it is not feasible to use automatic anchors, for example a link target in the middle of a list or a
+paragraph, should you use HTML:
 
 ```markdown
 <span id="custom-section-name"></span>
@@ -166,18 +184,21 @@ Wherever possible, use automatic anchors generated from headings. Only when it i
    - Reference using absolute path
 
    ```mdx
-   <Image src="/images/shared-image.jpg" alt="Description" layout="constrained" />
+   <Image src="/images/shared-image.jpg" alt="Description" layout="constrained" width={800} height={600} />
    ```
 
 1. **ImgTable images** (component index pages):
 
-   - **MUST** be in `/public/images/`
+   - **MUST** be in `/public/images/`, unless they are a generated `badge:` (see
+     [Component Images](#component-images))
    - ImgTable component resolves to `/images/filename.png`
 
 **Image Optimization:**
 
 - **ALWAYS optimize images** before adding (use TinyPNG/TinyJPG)
-- **Maximum size**: ~1000x800 pixels
+- **Maximum file size**: 1 MB, enforced by lint; keep images far smaller than that where you can
+- **Prefer a transparent background** where possible (WebP, PNG or SVG) so the image looks right in both the light
+  and dark themes; crop product photos to the board rather than leaving a white box around it
 - All images must be as small as possible to minimize page load times
 - Variable names follow camelCase with `Img` suffix (e.g., `myImageImg`)
 
@@ -186,7 +207,8 @@ Wherever possible, use automatic anchors generated from headings. Only when it i
 - `src`: Either imported variable or absolute path
 - `alt`: Alternative text for accessibility (required)
 - `layout`: Use `"constrained"` for responsive images
-- `width` and `height`: Optional pixel values (not percentages)
+- `width` and `height`: Pixel values (not percentages). Required when `src` is an absolute path, optional for
+  imported images
 
 **Styling Images:**
 
@@ -201,13 +223,34 @@ Use inline styles for sizing:
 />
 ```
 
-#### Component Thumbnails
+#### Component Images
 
-- **Aspect ratio**: 8:10 or 10:8 (portrait or landscape orientation)
-- **Format**: SVG (heavily compressed) or JPG (max 300x300px)
+Use one image per component. It is shown both on the component card in the index page (via ImgTable) and at the
+top of the component page itself, so do not add a separate thumbnail.
+
 - **Location**: `/public/images/` directory
-- **Reference**: Use `/images/filename` path in ImgTable
-- Used in component listings and cards
+- **Format**: SVG, WebP, PNG or JPG; use WebP, PNG or SVG when the background can be transparent
+- **Size**: as small as possible; 500 to 800 pixels on the long side is plenty for both the card and the page
+  figure
+- **Reference**: `/images/filename` in ImgTable, and the same absolute path on the component page. A string `src`
+  needs explicit `width` and `height` attributes
+- **No photo available?** Use a generated name badge: set the ImgTable image to `badge:` followed by the text to
+  show, for example `badge:DHT22` or `badge:Audio_DAC` (letters, digits, hyphens and underscores; underscores are
+  shown as spaces). The badge SVG is generated at build time, so there is no file to add, and the component page does
+  not need a figure
+
+```mdx
+import Figure from '@components/Figure.astro';
+
+<Figure
+  src="/images/my-component.webp"
+  alt="My Component board"
+  caption="My Component board"
+  layout="constrained"
+  width={520}
+  height={520}
+/>
+```
 
 ### Alerts and Callouts
 
@@ -277,10 +320,12 @@ Create grids of component cards:
   ["Title", "/path/to/page/", "image.png"],
   ["Title 2", "/path/to/page2/", "image2.png", "caption"],
   ["Title 3", "/path/to/page3/", "image3.png", "caption", "dark-invert"],
+  ["Title 4", "/path/to/page4/", "badge:Title_4"],
 ]} />
 ```
 
-**Important**: All ImgTable images must be in `/public/images/`.
+**Important**: All ImgTable images must be in `/public/images/`, except `badge:<Name>` values, which use a component
+name badge generated at build time.
 
 #### Figure Component
 
@@ -307,6 +352,8 @@ import Figure from '@components/Figure.astro';
 <Figure
   src="/images/badge.svg"
   alt="Badge"
+  width={200}
+  height={100}
 >
   <p slot="caption">
     Download: [svg](/images/badge.svg), [png](/images/badge.png)
@@ -321,6 +368,8 @@ import Figure from '@components/Figure.astro';
   src="/images/shared-image.jpg"
   alt="Description"
   caption="Optional caption text"
+  width={800}
+  height={600}
   style="width: 50%"
 />
 ```
@@ -332,7 +381,7 @@ import Figure from '@components/Figure.astro';
 - `caption`: Optional caption text for simple captions (string)
 - `layout`: Use `"constrained"` for responsive images (default)
 - `style`: Optional inline CSS styles
-- `width`, `height`: Optional pixel values
+- `width`, `height`: Pixel values, required when `src` is an absolute path
 
 **Slots:**
 
@@ -358,6 +407,19 @@ When Markdown syntax produces the same rendered result, use it instead of raw HT
 
 Raw HTML and JSX should appear only when Markdown cannot express what you need: invoking custom components like
 `LightEffectPreview` or `Figure`, complex layouts, or specific accessibility attributes.
+
+### Preserving Spaces at Line Ends
+
+When a space at the end or start of a line must be kept, for example between an inline element and the rest of a
+sentence wrapped onto the next line inside a JSX element, use the HTML entity `&nbsp;`. Do not use the JSX expression
+`{" "}` (on one line or split across several lines), which formatters and code generators sometimes insert.
+
+```mdx
+<p slot="caption">
+  Download the badge as&nbsp;
+  [svg](/images/badge.svg).
+</p>
+```
 
 ## Git Workflow
 
@@ -409,6 +471,7 @@ npm run build
 ### Before Submitting
 
 - [ ] Check that all links work (internal and external with trailing slashes)
+- [ ] Internal links with an anchor keep the trailing slash before the `#` (`/components/wifi/#manual-ips`)
 - [ ] Verify code examples are syntactically correct
 - [ ] Ensure images are optimized and properly sized
 - [ ] Confirm line length is ≤120 characters
@@ -416,11 +479,12 @@ npm run build
 - [ ] Test that headings follow proper hierarchy (H2→H3→H4)
 - [ ] Verify no H1 headings in content (title comes from frontmatter)
 - [ ] Verify images are imported correctly (single-use) or in /public/images/ (multi-use)
-- [ ] Check that ImgTable images are in /public/images/
+- [ ] Check that ImgTable images are in /public/images/ (or use a `badge:` name)
 - [ ] Section headings use Title Case (e.g., "Configuration Variables")
 - [ ] Variable names, parameter names, and short code snippets are wrapped in single backticks
 - [ ] Markdown syntax used when it produces the same result as raw HTML
 - [ ] No large inline `<style>` blocks in MDX (raise with maintainers if you think one is needed)
+- [ ] Line-end spaces that must be kept use `&nbsp;`, not `{" "}`
 
 ## Common Patterns
 
@@ -434,13 +498,19 @@ title: "Component Name"
 description: "One-line description of what the component does"
 ---
 
-import { Image } from 'astro:assets';
-import myImageImg from './images/my-image.jpg';
+import Figure from '@components/Figure.astro';
 import APIRef from '@components/APIRef.astro';
 
 Brief introduction paragraph explaining what the component is and what it does.
 
-<Image src={myImageImg} alt="Component image" layout="constrained" />
+<Figure
+  src="/images/component_name.webp"
+  alt="Component Name board"
+  caption="Component Name board"
+  layout="constrained"
+  width={520}
+  height={520}
+/>
 
 ## Configuration
 
@@ -500,10 +570,11 @@ sensor:
 - **Optimize images** before adding them
 - **Single-use images**: Import from `./images/`
 - **Multi-use images**: Absolute path from `/public/images/`
-- **ImgTable images**: Must be in `/public/images/`
+- **ImgTable images**: Must be in `/public/images/`, or a generated `badge:<Name>`
 - **Keep examples minimal** - only essential configuration
 - **Use literal `GPIOXX`** - the XX is literal, don't replace with numbers (unless fixed hardware)
 - **Link to dependencies** instead of including their config
 - **Target correct branch** (current vs next)
-- **Internal links**: Include trailing slash (e.g., `/components/wifi/`)
+- **Internal links**: Include trailing slash (e.g., `/components/wifi/`), before the `#` when there is an anchor
+  (e.g. `/components/wifi/#manual-ips`)
 - **GitHub CLI not available** - ask user for GitHub information if needed

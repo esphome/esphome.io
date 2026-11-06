@@ -19,28 +19,14 @@
 <details>
 <summary><strong>New Component Images</strong></summary>
 
-If you are adding a new component to ESPHome, you can automatically generate a standardized black and white component name image for the documentation.
+If you are adding a new component to ESPHome and have no photo of it, use a standardized black and white component name badge. Badges are generated when the site is built, so there is no image file to add.
 
-**To generate a component image:**
-
-1. Comment on this pull request with the following command, replacing `component_name` with your component name in **lower_case** format with **underscores** (e.g., `bme280`, `sht3x`, `dallas_temp`):
-
-   ```
-   @esphomebot generate image component_name
-   ```
-
-2. The ESPHome bot will respond with a downloadable ZIP file containing the SVG image.
-
-3. Extract the SVG file and place it in the `/public/images/` folder of this repository.
-
-4. Use the image in your component's index table entry in `/src/content/docs/components/index.mdx`.
-
-**Example:** For a component called "DHT22 Temperature Sensor", use:
+Set the image of your component's entry in `/src/content/docs/components/index.mdx` to `badge:` followed by the text to show, using letters, digits, hyphens and underscores (underscores are shown as spaces):
 
 ```
-@esphomebot generate image dht22
+["DHT22", "/components/sensor/dht/", "badge:DHT22", "Temperature & Humidity"],
 ```
 
-**Note:** All images used in ImgTable components must be placed in `/public/images/` as the component resolves them to absolute paths.
+**Note:** All other images used in ImgTable components must be placed in `/public/images/` as the component resolves them to absolute paths.
 
 </details>

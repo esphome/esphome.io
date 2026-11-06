@@ -4,6 +4,7 @@ import { readFile, stat, readdir } from "fs/promises";
 import { join, basename, dirname, extname } from "path";
 import { execSync } from "child_process";
 import { fileURLToPath } from "url";
+import { needsAnchorTrailingSlash, withAnchorTrailingSlash } from "../src/lib/internal-links.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -22,10 +23,10 @@ const colors = {
 };
 
 // Folders to ignore
-const ignoreFolders = ["pagefind/", "node_modules/", "dist/", ".astro/", "public/vendor/", ".claude/"];
+const ignoreFolders = ["pagefind/", "node_modules/", "dist/", ".astro/", "public/vendor/", ".claude/", ".agents/"];
 
 // Files to ignore (skip all linting)
-const ignoreFiles = ["script/release_notes_template.mdx"];
+const ignoreFiles = ["script/release_notes_template.mdx", "script/blog_post_template.mdx"];
 
 // File types
 const fileTypes = [
@@ -39,6 +40,7 @@ const fileTypes = [
   ".jpg",
   ".js",
   ".json",
+  ".lock",
   ".md",
   ".mdx",
   ".png",
@@ -59,10 +61,11 @@ const fileTypes = [
   ".webp",
   ".bin",
   ".mp4",
+  ".webm",
   "", // empty string for files without extension (like .gitignore)
 ];
 const imageTypes = [".webp", ".jpg", ".ico", ".png", ".svg", ".gif"];
-const binaryTypes = [".bin", ".glb", ".mp4"];
+const binaryTypes = [".bin", ".glb", ".mp4", ".webm"];
 
 // Store errors
 const errors = new Map();
@@ -344,7 +347,7 @@ async function checkInternalLinks(fname, content, anchorCache) {
                 fname,
                 lineno,
                 col,
-                `Anchor-only link '#${anchorId}' not found on current page. If this should link to another page, use the full path like [${linkText}](/path/to/page#${anchorId})`,
+                `Anchor-only link '#${anchorId}' not found on current page. If this should link to another page, use the full path like [${linkText}](/path/to/page/#${anchorId})`,
               );
             }
           }
@@ -377,6 +380,18 @@ async function checkInternalLinks(fname, content, anchorCache) {
     if (!linkUrl.startsWith("/")) {
       addError(fname, lineno, col, `Relative link '${linkUrl}' should use an absolute path (e.g., /components/...)`);
       continue;
+    }
+
+    // Keep the trailing slash before an anchor. Without it the site answers with a 301 to the
+    // slashed URL, so every reader following the link pays an extra round trip.
+    if (needsAnchorTrailingSlash(linkUrl)) {
+      addError(
+        fname,
+        lineno,
+        col,
+        `Internal link '${linkUrl}' is missing the trailing slash before its anchor. ` +
+          `Use '${withAnchorTrailingSlash(linkUrl)}' instead.`,
+      );
     }
 
     // Parse internal link

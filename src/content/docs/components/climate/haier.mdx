@@ -15,6 +15,8 @@ There are two versions of the Haier protocol: the older version uses an applicat
 
 Older Haier models controlled by the SmartAir2 application are using the KZW-W002 module. This module can't be reused, and you need to replace it with an ESP or RPI Pico W module. The USB connector on the board doesn't support the USB protocol. It is a UART port that just uses a USB connector. To connect the ESP board to your AC you can cut a USB type A cable and connect wires to the climate connector.
 
+For water heaters, see [Haier Water Heater](/components/water_heater/haier_water_heater/).
+
 ### Haier UART pinout
 
 | Board | USB   | Wire color | ESP8266 |
@@ -98,10 +100,10 @@ climate:
 
 ## Configuration variables
 
-- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): ID of the UART port to communicate with AC.
+- **uart_id** (*Optional*, [ID](/guides/configuration-types/#id)): ID of the UART port to communicate with AC.
 - **protocol** (*Optional*, string): Defines communication protocol with AC. Possible values: `hon` or `smartair2`. The default value is `smartair2`.
 - **wifi_signal** (*Optional*, boolean): If `true` - send wifi signal level to AC.
-- **answer_timeout** (*Optional*, [Time](/guides/configuration-types#time)): Response timeout. The default value is `200ms`.
+- **answer_timeout** (*Optional*, [Time](/guides/configuration-types/#time)): Response timeout. The default value is `200ms`.
 - **alternative_swing_control** (*Optional*, boolean): (supported by smartAir2 only) If `true` - use alternative values to control swing mode. Use only if the original control method is not working for your AC.
 - **status_message_header_size** (*Optional*, int): (supported only by hOn) Define the header size of the status message. Can be used to handle some protocol variations. Use only if you are sure what you are doing. The default value: `0`.
 - **control_packet_size** (*Optional*, int): (supported only by hOn) Define the size of the control packet. Can help with some newer models of ACs that use bigger packets. The default value: `10`.
@@ -115,7 +117,7 @@ climate:
 - **on_alarm_start** (*Optional*, [Automation](/automations)): (supported only by hOn) Automation to perform when AC activates a new alarm. See [`on_alarm_start` Trigger](#haier-on_alarm_start).
 - **on_alarm_end** (*Optional*, [Automation](/automations)): (supported only by hOn) Automation to perform when AC deactivates a new alarm. See [`on_alarm_end` Trigger](#haier-on_alarm_end).
 - **on_status_message** (*Optional*, [Automation](/automations)): Automation to perform when status message received from AC. See [`on_status_message` Trigger](#haier-on_status_message).
-- All other options from [Climate](/components/climate#config-climate).
+- All other options from [Climate](/components/climate/#config-climate).
 
 ## Automations
 
@@ -123,7 +125,7 @@ climate:
 
 ### `on_alarm_start` Trigger
 
-This automation will be triggered when a new alarm is activated by AC. The error code of the alarm will be given in the variable `code` (`uint8_t`), error message in the variable `message` (`const char *`). Those variables can be used in [lambdas](/automations/templates#config-lambda).
+This automation will be triggered when a new alarm is activated by AC. The error code of the alarm will be given in the variable `code` (`uint8_t`), error message in the variable `message` (`const char *`). Those variables can be used in [lambdas](/automations/templates/#config-lambda).
 
 ```yaml
 climate:
@@ -140,7 +142,7 @@ climate:
 
 ### `on_alarm_end` Trigger
 
-This automation will be triggered when a previously activated alarm is deactivated by AC. The error code of the alarm will be given in the variable `code` (`uint8_t`), error message in the variable `message` (`const char *`). Those variables can be used in [lambdas](/automations/templates#config-lambda).
+This automation will be triggered when a previously activated alarm is deactivated by AC. The error code of the alarm will be given in the variable `code` (`uint8_t`), error message in the variable `message` (`const char *`). Those variables can be used in [lambdas](/automations/templates/#config-lambda).
 
 ```yaml
 climate:
@@ -157,7 +159,7 @@ climate:
 
 ### `on_status_message` Trigger
 
-This automation will be triggered when component receives new status packet from AC. Raw message binary (without header and checksum) will be provided in the variable `data` (`const char *`), message length in the variable `data_size` (`uint8_t`). Those variables can be used in [lambdas](/automations/templates#config-lambda).
+This automation will be triggered when component receives new status packet from AC. Raw message binary (without header and checksum) will be provided in the variable `data` (`const char *`), message length in the variable `data_size` (`uint8_t`). Those variables can be used in [lambdas](/automations/templates/#config-lambda).
 This trigger can be used to support some features that are unique to the model and not supported by others.
 
 ```yaml
@@ -170,6 +172,11 @@ climate:
             format: "New status message received, size=%d, subcmd=%02X%02X"
             args: ['data_size', 'data[0]', 'data[1]']
 ```
+
+> [!NOTE]
+> `on_status_message` may not contain deferring actions (`delay`, `wait_until`, `script.wait`, ...) - `data` points
+> into the receive buffer, which is reused for the next frame. Config validation rejects such an automation with an
+> error. Copy any value you need into a global first, then defer from a separate script or automation.
 
 ### `climate.haier.power_on` Action
 
@@ -263,7 +270,8 @@ on_...:
 
 ### `climate.haier.set_vertical_airflow` Action
 
-(supported only by hOn) Set direction for vertical airflow if the vertical swing is disabled.
+(supported only by hOn) Set the vertical airflow direction. While the vertical swing is on, the position is stored
+and applied when the swing is turned off.
 
 ```yaml
 on_...:
@@ -275,12 +283,13 @@ on_...:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the Haier climate component.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the Haier climate component.
 - **vertical_airflow** (**Required**, string, [templatable](/automations/templates)): The vertical airflow direction. Possible values: `Health_Up`, `Max_Up`, `Up`, `Center`, `Down`, `Health_Down`.
 
 ### `climate.haier.set_horizontal_airflow` Action
 
-(supported only by hOn) Set direction for horizontal airflow if the horizontal swing is disabled.
+(supported only by hOn) Set the horizontal airflow direction. While the horizontal swing is on, the position is
+stored and applied when the swing is turned off.
 
 ```yaml
 on_...:
@@ -292,7 +301,7 @@ on_...:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the Haier climate component.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the Haier climate component.
 - **horizontal_airflow** (**Required**, string, [templatable](/automations/templates)): The horizontal airflow direction. Possible values: `Max_Left`, `Left`, `Center`, `Right`, `Max_Right`.
 
 ### `climate.haier.start_self_cleaning` Action
@@ -322,6 +331,7 @@ on_...:
 - [Haier Climate Binary Sensors](/components/binary_sensor/haier/)
 - [Haier Climate Text Sensors](/components/text_sensor/haier/)
 - [Haier Climate Buttons](/components/button/haier/)
+- [Haier Climate Select](/components/select/haier/)
 - [Haier Climate Switches](/components/switch/haier/)
 - [Climate Component](/components/climate/)
 - <APIRef text="haier_base.h" path="haier/climate/haier_base.h" />

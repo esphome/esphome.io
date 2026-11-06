@@ -22,7 +22,7 @@ binary sensor or GPIO switch.
 The SX1509 can do much more than just simple digital pin control. It can produce PWM signals.
 And, with a built-in keypad engine, it can interface with up to 64 buttons set up in an 8x8 matrix.
 
-Any option accepting a [Pin Schema](/guides/configuration-types#pin-schema) can theoretically be used, but some more
+Any option accepting a [Pin Schema](/guides/configuration-types/#pin-schema) can theoretically be used, but some more
 complicated components that use the pin schema will not work. For example the I²C or SPI pins.
 
 <Figure
@@ -48,9 +48,18 @@ sx1509:
 
 ### Configuration variables
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The id to use for this SX1509 component.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The id to use for this SX1509 component.
 - **address** (*Optional*, int): The I²C address of the driver.
   Defaults to `0x3E`.
+- **led_driver_frequency** (*Optional*, frequency): The PWM frequency used by the LED driver for all pins configured
+  as PWM outputs. This setting is shared by every pin on the chip. One of `7840Hz`, `3920Hz`, `1960Hz`, `980Hz`,
+  `490Hz`, `245Hz` or `122Hz`, in any frequency form such as `980 Hz` or `0.98kHz`. Defaults to `122Hz`.
+
+  > [!NOTE]
+  > These values are nominal, computed from the datasheet's clock divider formula assuming the typical
+  > 2MHz internal oscillator frequency. The datasheet specifies a 1.3MHz to 2.6MHz range for this
+  > oscillator, so the actual frequency may vary between individual chips. A higher PWM frequency can
+  > help avoid visible flicker on some LED loads, or audible coil whine on inductive loads.
 
 The SX1509 integrates a fully programmable keypad scanning engine to implement keypad applications.
 up to 8x8 matrix (i.e. 64 keys).
@@ -81,7 +90,7 @@ up to 8x8 matrix (i.e. 64 keys).
 
 > [!NOTE]
 > Automatic handling of multiple keys (e.g. PIN code entry) is possible with the
-> the [Key Collector](/components/key_collector#key_collector) component.
+> the [Key Collector](/components/key_collector/#key_collector) component.
 
 Attention should be paid to the capabilities of the I/O pins.
 
@@ -176,7 +185,9 @@ light:
     output: sx1509_output
 ```
 
-- **sx1509** (**Required**, [ID](/guides/configuration-types#id)): The id of the SX1509 component of the pin.
+- **sx1509** (**Required**, [ID](/guides/configuration-types/#id)): The id of the SX1509 component of the pin.
+  Instead of an id, an `address:` can be given to select the hub by its I²C address; see
+  [Selecting an I2C Expander by Address](/guides/configuration-types/#selecting-an-i2c-expander-by-address).
 - **number** (**Required**, int): The pin number.
 - **inverted** (*Optional*, boolean): If all read and written values
   should be treated as inverted. Defaults to `false`.

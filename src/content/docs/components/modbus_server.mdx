@@ -24,7 +24,9 @@ See [Modbus](/components/modbus/#hardware-setup) for RS485 hardware setup instru
 
 ## Configuration variables
 
-- **modbus_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the `modbus` hub.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation.
+
+- **modbus_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the `modbus` hub.
 
 - **address** (**Required**, integer): The Modbus address of the server device. Address `0` is reserved
   for broadcasts and cannot be assigned to a server device.
@@ -71,7 +73,7 @@ See [Modbus](/components/modbus/#hardware-setup) for RS485 hardware setup instru
 
     Defaults to `U_WORD`.
 
-  - **read_lambda** (**Required**, [lambda](/automations/templates#config-lambda)):
+  - **read_lambda** (**Required**, [lambda](/automations/templates/#config-lambda)):
     Lambda that returns the value of this register. `address` is provided with this register's own
     start address, which is not necessarily the address the client asked for: under
     `allow_partial_read` a request may start inside the value. Returning an empty optional
@@ -80,7 +82,7 @@ See [Modbus](/components/modbus/#hardware-setup) for RS485 hardware setup instru
     unread. This is useful when the value isn't available right now, for example while a sensor is
     still warming up. A plain `return <value>;` still works as before and does not need to change.
 
-  - **write_lambda** (*Optional*, [lambda](/automations/templates#config-lambda)):
+  - **write_lambda** (*Optional*, [lambda](/automations/templates/#config-lambda)):
     Lambda that sets the value of this register. A variable `x` of the appropriate type (`uint16_t`, `int32_t`, etc, see above) is provided with the value,
     as well as `address` containing the address of this register. You must return `true` if the operation was successful, `false` otherwise, in which case
     a `SERVICE_DEVICE_FAILURE` (code `4`) exception will be sent to the client.
@@ -130,7 +132,7 @@ See [Modbus](/components/modbus/#hardware-setup) for RS485 hardware setup instru
 
   - **address** (**Required**, integer): the address of this bit.
 
-  - **read_lambda** (**Required**, [lambda](/automations/templates#config-lambda)):
+  - **read_lambda** (**Required**, [lambda](/automations/templates/#config-lambda)):
     Lambda that returns the value of this bit, as a `bool`. `address` is provided with the address
     of this bit. Anything that converts to `bool` is accepted, and that conversion is implicit: an
     entity such as `return id(my_switch);` hands back a pointer, which is always `true`, and the bit
@@ -140,7 +142,7 @@ See [Modbus](/components/modbus/#hardware-setup) for RS485 hardware setup instru
     exception instead of a value - the other bits in the same request go unread, so this is not a
     per-bit "not ready" signal.
 
-  - **write_lambda** (*Optional*, [lambda](/automations/templates#config-lambda)):
+  - **write_lambda** (*Optional*, [lambda](/automations/templates/#config-lambda)):
     Lambda that sets the value of this bit. A `bool` variable `x` is provided with the new value, as
     well as `address` containing the address of this bit. You must return `true` if the operation was
     successful, `false` otherwise, in which case a `SERVICE_DEVICE_FAILURE` (code `4`) exception will be

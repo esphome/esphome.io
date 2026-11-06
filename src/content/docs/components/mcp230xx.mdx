@@ -54,21 +54,23 @@ binary_sensor:
 
 ### Configuration variables
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The id to use for this MCP23008 component.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The id to use for this MCP23008 component.
 - **address** (*Optional*, int): The I²C address of the driver.
   Defaults to `0x20`.
 
 - **open_drain_interrupt** (*Optional*, boolean): Configure the interrupt pin to open-drain mode.
   Useful when the MCP23008's power supply is greater than 3.3 volts. Note that this pin
   will require a pull-up resistor (to 3.3 volts) when this mode is enabled.
-- **interrupt_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The pin connected to the
+- **interrupt_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The pin connected to the
   INT output of the MCP23008. When configured, the component becomes interrupt-driven instead of
   polling — it only reads the chip when a pin actually changes state, significantly reducing I²C bus traffic
   and CPU usage. Must be an internal GPIO pin (not another expander pin).
 
 ### Pin configuration variables
 
-- **mcp23xxx** (**Required**, [ID](/guides/configuration-types#id)): The id of the MCP23008 component.
+- **mcp23xxx** (**Required**, [ID](/guides/configuration-types/#id)): The id of the MCP23008 component.
+  Instead of an id, an `address:` can be given to select the hub by its I²C address; see
+  [Selecting an I2C Expander by Address](/guides/configuration-types/#selecting-an-i2c-expander-by-address).
 - **interrupt** (*Optional*): Set this pin to trigger the INT pin on the component. Can be one of `CHANGE`, `RISING`, `FALLING`.
 - **number** (**Required**, int): The pin number.
 - **inverted** (*Optional*, boolean): If all read and written values
@@ -120,10 +122,10 @@ binary_sensor:
 
 ### Configuration variables
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The id to use for this MCP23016 component.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The id to use for this MCP23016 component.
 - **address** (*Optional*, int): The I²C address of the driver.
   Defaults to `0x20`.
-- **interrupt_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The pin connected to the
+- **interrupt_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The pin connected to the
   INT output of the MCP23016. When configured, the component becomes interrupt-driven instead of
   polling — it only reads the chip when a pin actually changes state, significantly reducing I²C bus traffic
   and CPU usage. The INT pin is active-low and open-drain, so an external or internal pull-up resistor is
@@ -131,8 +133,10 @@ binary_sensor:
 
 ### Pin configuration variables
 
-- **mcp23xxx** (**Required**, [ID](/guides/configuration-types#id)): The id of the MCP23016 component.
-- All other options from [Pin Schema](/guides/configuration-types#pin-schema)
+- **mcp23016** (**Required**, [ID](/guides/configuration-types/#id)): The id of the MCP23016 component.
+  Instead of an id, an `address:` can be given to select the hub by its I²C address; see
+  [Selecting an I2C Expander by Address](/guides/configuration-types/#selecting-an-i2c-expander-by-address).
+- All other options from [Pin Schema](/guides/configuration-types/#pin-schema)
 
 <span id="mcp23017-label"></span>
 
@@ -186,23 +190,25 @@ binary_sensor:
 
 ### Configuration variables
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The id to use for this MCP23017 component.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The id to use for this MCP23017 component.
 - **address** (*Optional*, int): The I²C address of the driver.
   Defaults to `0x20`.
 
 - **open_drain_interrupt** (*Optional*, boolean): Configure interrupt pins to open-drain mode.
   Useful when the MCP23017's power supply is greater than 3.3 volts. Note that these pins
   will require pull-up resistors (to 3.3 volts) when this mode is enabled.
-- **interrupt_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The pin connected to the
+- **interrupt_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The pin connected to the
   INTA or INTB output of the MCP23017. When configured, the component becomes interrupt-driven instead of
   polling — it only reads the chip when a pin actually changes state, significantly reducing I²C bus traffic
   and CPU usage. Must be an internal GPIO pin (not another expander pin).
 
 ### Pin configuration variables
 
-- **mcp23xxx** (**Required**, [ID](/guides/configuration-types#id)): The id of the MCP23017 component.
+- **mcp23xxx** (**Required**, [ID](/guides/configuration-types/#id)): The id of the MCP23017 component.
+  Instead of an id, an `address:` can be given to select the hub by its I²C address; see
+  [Selecting an I2C Expander by Address](/guides/configuration-types/#selecting-an-i2c-expander-by-address).
 - **interrupt** (*Optional*): Set this pin to trigger the port INT pin on the component. Can be one of `CHANGE`, `RISING`, `FALLING`.
-- All other options from [Pin Schema](/guides/configuration-types#pin-schema)
+- All other options from [Pin Schema](/guides/configuration-types/#pin-schema)
 
 ## See Also
 

@@ -7,13 +7,12 @@ import APIRef from '@components/APIRef.astro';
 
 <span id="i2c"></span>
 
-This component sets up the I²C bus for your `esp32`, `esp8266`, `rp2040`, `nrf52`, or `host` platform. In order for these components
-to work correctly, you need to define the I²C bus in your configuration. On ESP32 (both Arduino and ESP-IDF
-frameworks), internal pullup resistors are enabled by default. On ESP8266, the internal 10kΩ pullup resistors
-are always enabled. External pullups are still recommended for longer wire runs or multiple devices.
-You can use multiple devices on one I²C bus as each device is given a
-unique address for communicating between it and the ESP. You can do this by hopping
-wires from the two lines (SDA and SCL) from each device board to the next device board or by
+This component sets up the I²C bus for your `esp32`, `esp8266`, `rp2040`, `nrf52`, `bk72xx`, or `host` platform. In
+order for these components to work correctly, you need to define the I²C bus in your configuration. On ESP32 (both
+Arduino and ESP-IDF frameworks), internal pullup resistors are enabled by default. On ESP8266, the internal 10kΩ pullup
+resistors are always enabled. External pullups are still recommended for longer wire runs or multiple devices. You can
+use multiple devices on one I²C bus as each device is given a unique address for communicating between it and the ESP.
+You can do this by hopping wires from the two lines (SDA and SCL) from each device board to the next device board or by
 connecting the wires from each device back to the two I²C pins on the ESP.
 
 ```yaml
@@ -26,6 +25,13 @@ i2c:
 ```
 
 ```yaml
+# Example configuration entry for BK72xx
+i2c:
+  sda: GPIOXX
+  scl: GPIOXX
+```
+
+```yaml
 # Example configuration entry for host platform
 i2c:
   device: /dev/i2c-1
@@ -34,23 +40,24 @@ i2c:
 
 ## Configuration variables
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this I²C bus if you need multiple I²C buses.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID for this I²C bus if you need multiple I²C buses.
 
 - **scan** (*Optional*, boolean): If ESPHome should do a search of the I²C address space on startup.
   Defaults to `true`.
 
 - **frequency** (*Optional*, frequency): Set the frequency the I²C bus should operate on.
-  Defaults to `50kHz`. Values are `10kHz`, `50kHz`, `100kHz`, `200kHz`, ... `800kHz`.
+  Defaults to `50kHz` (`100kHz` on `bk72xx`). Values are `10kHz`, `50kHz`, `100kHz`, `200kHz`, ... `800kHz`.
+  On `bk72xx` the real clock can be slower, see [below](#bk72xx).
 
 ### `esp32`, `esp8266`, `rp2040`, `nrf52`
 
-- **sda** (*Optional*, [Pin](/guides/configuration-types#pin)): The pin for the data line of the I²C bus.
+- **sda** (*Optional*, [Pin](/guides/configuration-types/#pin)): The pin for the data line of the I²C bus.
   Defaults to the default of your board (usually GPIO21 for ESP32 and GPIO4 for ESP8266).
 
-- **scl** (*Optional*, [Pin](/guides/configuration-types#pin)): The pin for the clock line of the I²C bus.
+- **scl** (*Optional*, [Pin](/guides/configuration-types/#pin)): The pin for the clock line of the I²C bus.
   Defaults to the default of your board (usually GPIO22 for ESP32 and GPIO5 for ESP8266).
 
-- **timeout** (*Optional*, [Time](/guides/configuration-types#time)): Set the I²C bus timeout.
+- **timeout** (*Optional*, [Time](/guides/configuration-types/#time)): Set the I²C bus timeout.
   Defaults to the framework defaults (`100us` on `esp32`, `1s` on `esp8266` and `1s` on `rp2040`).
   Maximum on `esp32` is 13ms.
 
@@ -64,6 +71,23 @@ i2c:
 
 - **low_power_mode** (*Optional*, boolean): Enable the low-power (master only) I²C bus.
   Only available on ESP32C5, ESP32C6 and ESP32P4. Defaults to `false` unless required.
+
+### `bk72xx`
+
+The BK72xx chips do not have an I²C implementation in the Arduino framework, so ESPHome drives the bus in software
+on two ordinary GPIO pins ("bit-banging"). Any two GPIO pins can be used; there are no default pins, and `inverted`
+is not supported on them.
+
+- **sda** (**Required**, [Pin](/guides/configuration-types/#pin)): The pin for the data line of the I²C bus.
+
+- **scl** (**Required**, [Pin](/guides/configuration-types/#pin)): The pin for the clock line of the I²C bus.
+
+- **timeout** (*Optional*, [Time](/guides/configuration-types/#time)): How long a device may hold the clock line low
+  (clock stretching) before the transfer is aborted. Defaults to `1ms`.
+
+The internal pullup resistors are enabled while a line is released, but external pullups are still recommended.
+The bus is driven from the main loop and a transfer blocks it for its duration, so keep the number of bytes per
+transfer small. The actual clock frequency can be lower than configured because of software overhead.
 
 ### `host`
 
