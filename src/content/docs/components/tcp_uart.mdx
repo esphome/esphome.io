@@ -57,7 +57,7 @@ The connecting client sends raw bytes, for example RTU frames for `modbus`, not 
 
 ## Configuration Variables
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation. Use
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation. Use
   this ID as `uart_id` in other components.
 - **role** (*Optional*, string): `client` or `server`. Defaults to `client`.
 - **host** (**Required** when `role` is `client`, string): The host to connect to. An IPv4 address or a hostname.
@@ -77,15 +77,47 @@ The connecting client sends raw bytes, for example RTU frames for `modbus`, not 
   `NONE`.
 - **stop_bits** (*Optional*, int): The number of stop bits reported to consuming components. One of `1`, `2`.
   Defaults to `1`.
-- **reconnect_interval** (*Optional*, [Time](/guides/configuration-types#time)): The time to wait before connecting
+- **reconnect_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The time to wait before connecting
   again after a failed or closed connection. An unanswered connection attempt is given up after
   `reconnect_interval` or 10 seconds, whichever is longer. For a server, this is the wait after a failed listen or
   accept; a new client is accepted as soon as the current one disconnects. Defaults to `5s`.
+
+## Binary Sensor
+
+```yaml
+# Example configuration entry
+binary_sensor:
+  - platform: tcp_uart
+    tcp_uart_id: tcp_uart_1
+    connected:
+      name: Connected
+```
+
+### Configuration Variables
+
+- **tcp_uart_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the TCP UART component. Required when
+  more than one is configured.
 - **connected** (*Optional*): A binary sensor that reports whether the TCP connection is established. All options
-  from [Binary Sensor](/components/binary_sensor#config-binary_sensor) are supported.
+  from [Binary Sensor](/components/binary_sensor/#config-binary_sensor) are supported.
+
+## Sensor
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: tcp_uart
+    tcp_uart_id: tcp_uart_1
+    disconnects:
+      name: Disconnects
+```
+
+### Configuration Variables
+
+- **tcp_uart_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the TCP UART component. Required when
+  more than one is configured.
 - **disconnects** (*Optional*): A sensor that counts how many times an open connection has closed. It starts at
   `0` on boot and does not increase again while the connection stays down. All options from
-  [Sensor](/components/sensor#config-sensor) are supported.
+  [Sensor](/components/sensor/#config-sensor) are supported.
 
 ## See Also
 

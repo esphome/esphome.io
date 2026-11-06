@@ -49,10 +49,10 @@ binary_sensor:
 
 ### Configuration variables
 
-- **cs_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin on the ESP that the chip select line
+- **cs_pin** (**Required**, [Pin Schema](/guides/configuration-types/#pin-schema)): The pin on the ESP that the chip select line
   is connected to.
 
-- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The duration of each scan on the PN532. This affects the
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The duration of each scan on the PN532. This affects the
   duration that the individual binary sensors stay active when they're found.
   If a device is not found within this time window, it will be marked as not present. Defaults to 1s.
 
@@ -62,10 +62,10 @@ binary_sensor:
 - **on_tag_removed** (*Optional*, [Automation](/automations)): An automation to perform
   when a tag is removed. See [`on_tag_removed`](#pn532-on_tag_removed).
 
-- **spi_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [SPI Component](/components/spi) if you want
+- **spi_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the [SPI Component](/components/spi) if you want
   to use multiple SPI buses.
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this component.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID for this component.
 
 <Figure
   src={pn532SpiImg}
@@ -96,19 +96,19 @@ binary_sensor:
 
 ### Configuration variables
 
-- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The duration of each scan on the PN532. This affects the
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The duration of each scan on the PN532. This affects the
   duration that the individual binary sensors stay active when they're found.
   If a device is not found within this time window, it will be marked as not present. Defaults to 1s.
 
 - **on_tag** (*Optional*, [Automation](/automations)): An automation to perform
   when a tag is read. See [pn532-on_tag](#pn532-on_tag).
 
-- **i2c_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [I²C Component](/components/i2c) if you want
+- **i2c_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the [I²C Component](/components/i2c) if you want
   to use multiple I²C buses.
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this component.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID for this component.
 
-## `on_tag` Action
+## `on_tag` Trigger
 
 This automation will be triggered when the PN532 module responds with a tag. This will only be triggered
 if the tag is changed or goes away for one cycle of `update_interval`.
@@ -129,7 +129,7 @@ pn532_...:
 ```
 
 A tag scanned event can also be sent to the Home Assistant tag component
-using [`homeassistant.tag_scanned` Action](/components/api#api-homeassistant_tag_scanned_action).
+using [`homeassistant.tag_scanned` Action](/components/api/#api-homeassistant_tag_scanned_action).
 
 ```yaml
 pn532_...:
@@ -159,7 +159,7 @@ text_sensor:
 
 <span id="pn532-on_tag_removed"></span>
 
-## `on_tag_removed`
+## `on_tag_removed` Trigger
 
 This automation will be triggered when the PN532 module responds with no tag. This will only be triggered
 if the tag goes away for one cycle of `update_interval`.
@@ -206,7 +206,7 @@ binary_sensor:
 - **uid** (**Required**, string): The unique ID of the NFC/RFID tag. This is a hyphen-separated list
   of hexadecimal values. For example `74-10-37-94`.
 
-- All other options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
+- All other options from [Binary Sensor](/components/binary_sensor/#config-binary_sensor).
 
 ## Setting Up Tags
 
@@ -229,7 +229,7 @@ The PN532 supports reading and writing NDEF formatted data into the cards.
 ### NDEF reading
 
 The following example will read an NFC tag that has been formatted and written using the Home Assistant Companion
-App and send it to Home Assistant using the [`homeassistant.tag_scanned` Action](/components/api#api-homeassistant_tag_scanned_action). The `tag` variable is
+App and send it to Home Assistant using the [`homeassistant.tag_scanned` Action](/components/api/#api-homeassistant_tag_scanned_action). The `tag` variable is
 supplied to the `on_tag` trigger and any actions that run and can be used as below.
 
 ```yaml

@@ -52,8 +52,8 @@ uart_tcp:
 
 ## Configuration Variables
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
-- **uart_id** (**Required**, [ID](/guides/configuration-types#id)): The [UART bus](/components/uart/) to use. This
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation.
+- **uart_id** (**Required**, [ID](/guides/configuration-types/#id)): The [UART bus](/components/uart/) to use. This
   component needs the UART for itself: another component with the same `uart_id`, or `dummy_receiver` in the UART's
   [debug](/components/uart/#debugging) option, is rejected. A `uart.write` action or a lambda that uses the UART is
   not detected, so avoid them.
@@ -68,14 +68,46 @@ uart_tcp:
   the option is omitted, every address may connect. A rejected client is closed immediately and logged as a
   warning at most once every 5 seconds; an IPv6 client is rejected unless it carries an IPv4 mapped address, as
   on a dual stack network. This option cannot be used when `role` is `client`.
-- **reconnect_interval** (*Optional*, [Time](/guides/configuration-types#time)): The time to wait before trying
+- **reconnect_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The time to wait before trying
   again after a failure. An unanswered connection attempt is given up after `reconnect_interval` or 10 seconds,
   whichever is longer. Defaults to `5s`.
+
+## Binary Sensor
+
+```yaml
+# Example configuration entry
+binary_sensor:
+  - platform: uart_tcp
+    uart_tcp_id: uart_tcp_1
+    connected:
+      name: Connected
+```
+
+### Configuration Variables
+
+- **uart_tcp_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the UART TCP component. Required when
+  more than one is configured.
 - **connected** (*Optional*): A binary sensor that reports whether the TCP connection is established. All options
-  from [Binary Sensor](/components/binary_sensor#config-binary_sensor) are supported.
+  from [Binary Sensor](/components/binary_sensor/#config-binary_sensor) are supported.
+
+## Sensor
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: uart_tcp
+    uart_tcp_id: uart_tcp_1
+    disconnects:
+      name: Disconnects
+```
+
+### Configuration Variables
+
+- **uart_tcp_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the UART TCP component. Required when
+  more than one is configured.
 - **disconnects** (*Optional*): A sensor that counts how many times an open connection has closed. It starts at
   `0` on boot and does not increase again while the connection stays down. All options from
-  [Sensor](/components/sensor#config-sensor) are supported.
+  [Sensor](/components/sensor/#config-sensor) are supported.
 
 ## Zigbee Coordinator
 
