@@ -60,6 +60,11 @@ import { socials, tagline } from "../data/bio";
   // which ignores the system clock and changes to it. If the request fails,
   // nothing changes: the page stays as it was built. Runs on load and every
   // minute after, so a page left open picks up a livestream as it starts.
+  //
+  // Some browsers pause performance.now() while the device sleeps, so the
+  // count would fall behind. The server's time is read again when the page is
+  // shown again (a tab brought back, or a page restored by the back button)
+  // and every 30 minutes; if that fails, the last good reading is kept.
   import { isShowing, select } from "../lib/bio-schedule.mjs";
 
   // The server's time, and the performance.now() it belongs to: the middle of
@@ -123,11 +128,25 @@ import { socials, tagline } from "../data/bio";
 
   // Most of the time nothing is scheduled, and there is nothing to check.
   if (document.querySelector("[data-starts], [data-ends]")) {
-    serverTime().then((server) => {
-      if (server === null) return;
-      const now = () => server.time + (performance.now() - server.at);
+    let server: { time: number; at: number } | null = null;
+    const now = () => server!.time + (performance.now() - server!.at);
+
+    async function sync() {
+      const reading = await serverTime();
+      if (reading === null) return;
+      const first = server === null;
+      server = reading;
       update(now());
-      setInterval(() => update(now()), 60 * 1000);
+      if (first) setInterval(() => update(now()), 60 * 1000);
+    }
+
+    sync();
+    setInterval(sync, 30 * 60 * 1000);
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") sync();
+    });
+    window.addEventListener("pageshow", (event) => {
+      if (event.persisted) sync();
     });
   }
 </script>

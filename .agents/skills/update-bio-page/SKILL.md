@@ -69,7 +69,7 @@ Everything added by hand uses `starts` (when it appears) and `ends` (when it goe
 
 Scheduled items are in the page's source before they show. Anyone who reads the source can see them early, so don't schedule anything under embargo, such as an unannounced release. Merge that at launch time instead, and say so to the requester.
 
-- **`starts` in the Latest list is required.** A past date shows the item as soon as the change is live; a future one makes it wait. On links `starts` is optional: without it, they show as soon as the change is live.
+- **`starts` in the Latest list is required.** A future date makes the item wait, then come in at the top. A past date places it among the posts by that date, so if it's older than the newest `latestCount` items it won't show at all, and the build still passes. To show something now, use today's date. On links `starts` is optional: without it, they show as soon as the change is live.
 - **No `ends`:** it stays until someone deletes it. A YouTube item is the exception: it comes down at the end of the day after `airs`, unless `ends` says otherwise.
 - **A date alone in `ends`** keeps the item up through that whole day (UTC).
 - **Dates and times are strings in quotes,** in ISO format.

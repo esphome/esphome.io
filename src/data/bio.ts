@@ -14,9 +14,11 @@
 //   uses the same two keys:
 //     - `starts`: when it appears. In `latest` it's required, and it also
 //       sets the item's place and the date shown on it, just like a blog
-//       post's publish date. A date in the past shows it right away; a future
-//       one makes it wait, then come in at the top of the list. On links
-//       it's optional: without it, a link shows as soon as the change is live.
+//       post's publish date. A future date makes it wait, then come in at
+//       the top of the list. A past date puts it among the posts by that
+//       date, so if it's older than the newest few (`latestCount`), it won't
+//       show at all: to show something now, use today's date. On links it's
+//       optional: without it, a link shows as soon as the change is live.
 //     - `ends`: when it goes. Optional: without it, the item stays until you
 //       delete it.
 //   A YouTube video or livestream also has `airs`: when it goes out, which

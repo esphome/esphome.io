@@ -7,6 +7,8 @@ import * as data from "../src/data/bio.ts";
 import {
   autoImage,
   BioConfigError,
+  IMAGE_FILE,
+  linkKey,
   parseEnd,
   parseTime,
   resolve,
@@ -21,7 +23,9 @@ const NOW = "2026-11-06T12:00:00Z";
 // The images in src/assets/bio/, which the real data file uses, and some made
 // up for the tests. Git drops the folder once its last image is removed, and
 // the page then has no images of its own, so a missing folder means none.
-const ASSETS = fs.existsSync("src/assets/bio") ? fs.readdirSync("src/assets/bio") : [];
+const ASSETS = fs.existsSync("src/assets/bio")
+  ? fs.readdirSync("src/assets/bio").filter((name) => IMAGE_FILE.test(name))
+  : [];
 const IMAGES = [...ASSETS, "a.webp", "now.webp", "soon.webp"];
 const VIDEO = "https://www.youtube.com/watch?v=XyAL1to3Lm4";
 
@@ -290,8 +294,39 @@ describe("validation: a mistake names the item", () => {
     );
   });
 
+  test("rejects any key it doesn't know, naming the date key to use", () => {
+    assertInvalid(latestItem({ end: "2026-11-02" }), 'latest[0] ("Item").end: is not a key here. Use ends');
+    assertInvalid(latestItem({ until: "2026-11-02" }), 'latest[0] ("Item").until: is not a key here. Use ends');
+    assertInvalid(latestItem({ from: "2026-11-02" }), 'latest[0] ("Item").from: is not a key here. Use starts');
+    assertInvalid(
+      latestItem({ airs: "2026-11-02" }),
+      'latest[0] ("Item").airs: is only for YouTube items (type: "youtube"). Use starts',
+    );
+    assertInvalid(
+      latestItem({ titel: "Typo" }),
+      'latest[0] ("Item").titel: is not a key here. Use one of: title, url, starts, ends, label, note, image',
+    );
+    assertInvalid(
+      config({
+        latest: [{ type: "youtube", video: VIDEO, title: "Stream", airs: "2026-11-15", from: "2026-11-12" }],
+      }),
+      'latest[0] ("Stream").from: is not a key here. Use airs',
+    );
+    assertInvalid(
+      link({ end: "2026-11-02" }),
+      'sections[0] ("Featured").links[0] ("Store").end: is not a key here. Use ends',
+    );
+    assertInvalid(
+      config({ sections: [{ title: "Featured", items: [], links: [{ label: "A", url: "/a/" }] }] }),
+      'sections[0] ("Featured").items: is not a key here. Use one of: title, links',
+    );
+  });
+
   test("rejects links that go to another site, or nowhere", () => {
     for (const url of [
+      "/\t/example.com/",
+      "/\n/example.com/",
+      "https://exa\tmple.com/",
       "//example.com/",
       "/\\example.com/",
       "https://",
@@ -314,13 +349,22 @@ describe("validation: a mistake names the item", () => {
   test("checks the optional text and image of an item in Latest", () => {
     assertInvalid(latestItem({ label: " " }), 'latest[0] ("Item").label: must be text, or left out');
     assertInvalid(latestItem({ note: "" }), 'latest[0] ("Item").note: must be text, or left out');
-    for (const image of ["missing.webp", "/images/bio/a.webp", "http://example.com/a.webp", "https://"]) {
+    assertInvalid(
+      latestItem({ image: "missing.webp" }),
+      'latest[0] ("Item").image: "missing.webp" is not in src/assets/bio/. Save the image there and give its file name, e.g. "2026-11-community-day.webp", or use "auto"',
+    );
+    // Only the formats BioLists.astro loads, so a file that passes here can't fail the build.
+    for (const image of ["/images/bio/a.webp", "http://example.com/a.webp", "https://", "banner.gif", "banner.JPG"]) {
       assertInvalid(
         latestItem({ image }),
-        `latest[0] ("Item").image: "${image}" is not in src/assets/bio/. Save the image there and give its file name, e.g. "2026-11-community-day.webp", or use "auto"`,
+        `latest[0] ("Item").image: "${image}" must be "auto", a full https:// URL, or the name of a .webp, .jpg, .png or .avif file in src/assets/bio/`,
       );
     }
     assertInvalid(latestItem({ type: "video" }), 'latest[0] ("Item").type: must be "youtube", or left out for a link');
+    assertInvalid(
+      config({ latest: [{ type: "YouTube", video: VIDEO, title: "V", airs: "2026-11-15" }] }),
+      'latest[0] ("V").type: must be "youtube", or left out for a link',
+    );
   });
 
   test("rejects ends before starts", () => {
@@ -446,6 +490,22 @@ describe("the Latest list", () => {
     assert.deepEqual(showingAt(lists, "2026-11-20T09:00:00Z").Latest, ["Soon", "2026.10.0", "Voice"]);
   });
 
+  test("leaves out a starts that has already passed, so the page doesn't ask for the time", () => {
+    const lists = build(
+      config({
+        latest: [
+          { title: "Past", url: "/past/", starts: "2026-11-01" },
+          { title: "Future", url: "/future/", starts: "2026-11-20" },
+        ],
+      }),
+    );
+    const starts = Object.fromEntries(
+      byTitle(lists).Latest.entries.map((e) => [e.title, e.starts?.toISOString() ?? null]),
+    );
+    assert.equal(starts.Past, null);
+    assert.equal(starts.Future, "2026-11-20T00:00:00.000Z");
+  });
+
   test("renders the post that moves up when an item ends", () => {
     const lists = build(config({ latest: [{ title: "Now", url: "/now/", starts: "2026-11-01", ends: "2026-11-07" }] }));
     assert.deepEqual(shown(lists).Latest, ["Now", "2026.10.0", "Voice"]);
@@ -479,6 +539,20 @@ describe("the Latest list", () => {
       ).Latest.entries.map((e) => e.title),
       ["Voice is here", "2026.10.0", "2026.9.0"],
     ));
+
+  test("keeps an older item that takes a post's link, even past the end of the list", () => {
+    // Limit 2: the item added by hand is older than every post, so it can't
+    // show, but while it's up it still takes /blog/2026-10-21/ from the post.
+    const cfg = config({
+      latestCount: 2,
+      latest: [{ title: "Promo", url: "/blog/2026-10-21/", starts: "2026-08-01", ends: "2026-11-07" }],
+    });
+    const lists = build(cfg);
+    assert.deepEqual(shown(lists).Latest, ["Voice", "2026.9.0"]);
+    assert.ok(byTitle(lists).Latest.entries.some((e) => e.title === "Promo"));
+    assert.deepEqual(showingAt(lists, NOW), shown(lists));
+    assert.deepEqual(showingAt(lists, "2026-11-08T00:00:00Z").Latest, ["2026.10.0", "Voice"]);
+  });
 
   test("gives an item that might come first a hero and a row version", () => {
     const lists = build(
@@ -523,6 +597,33 @@ describe("links to esphome.io", () => {
     assert.equal(sitePath("https://esphome.io/blog/?a=1#b"), "/blog/?a=1#b");
     assert.equal(sitePath("/blog/2026-10-14/"), "/blog/2026-10-14/");
     assert.equal(sitePath("https://example.com/blog/"), "https://example.com/blog/");
+  });
+
+  test("stay whole when shortening them would change where they go", () => {
+    for (const url of ["https://esphome.io//example.com/path/", "https://esphome.io:8443/blog/"]) {
+      assert.equal(sitePath(url), url);
+    }
+    const lists = build(
+      config({ latest: [{ title: "Odd link", url: "https://esphome.io//example.com/", starts: "2026-11-01" }] }),
+    );
+    assert.equal(byTitle(lists).Latest.entries[0].url, "https://esphome.io//example.com/");
+  });
+
+  test("match a post however the trailing slash is written, and keep the link as written", () => {
+    assert.equal(linkKey("/blog/2026-10-14"), "/blog/2026-10-14/");
+    assert.equal(linkKey("https://esphome.io/blog/2026-10-14"), "/blog/2026-10-14/");
+    assert.equal(linkKey("/blog/x?a=1#b"), "/blog/x/?a=1#b");
+    assert.equal(linkKey("/images/file.pdf"), "/images/file.pdf");
+    assert.equal(linkKey("https://example.com/x"), "https://example.com/x");
+    const lists = build(
+      config({
+        latest: [{ title: "Voice is here", url: "/blog/2026-10-14", starts: "2026-11-01", image: "auto" }],
+      }),
+    );
+    const entry = byTitle(lists).Latest.entries.find((e) => e.title === "Voice is here");
+    assert.equal(entry.href, "/blog/2026-10-14");
+    assert.equal(entry.image, "/images/2026-10-14.webp");
+    assert.deepEqual(shown(lists).Latest, ["Voice is here", "2026.10.0", "2026.9.0"]);
   });
 
   test("don't match other sites that only start the same way", () => {
@@ -581,6 +682,11 @@ describe("image: auto", () => {
   test("uses a blog post's own cover", () => {
     assert.equal(autoImage("/blog/2026-10-14/", POSTS), "/images/2026-10-14.webp");
     assert.equal(autoImage("https://esphome.io/blog/2026-10-14/", POSTS), "/images/2026-10-14.webp");
+  });
+
+  test("uses a crosspost's cover, though it links to another site", () => {
+    const crosspost = { ...post("2026-08-13", "Save the date"), url: "https://example.org/blog/save/" };
+    assert.equal(autoImage("https://example.org/blog/save/", [crosspost]), "/images/2026-08-13.webp");
   });
 
   test("uses the social preview image of any other page", () => {

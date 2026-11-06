@@ -59,7 +59,7 @@ const hasTime = (value: unknown) => /T\d{2}:\d{2}/.test(String(value));
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 const SITE = "https://esphome.io";
-const SITE_HOST = new URL(SITE).hostname;
+const SITE_HOST = new URL(SITE).host;
 // The Open Home Foundation's social preview images, which the blog's release
 // posts already use as covers.
 const OG_ENDPOINT = "https://assets.openhomefoundation.org/opengraph";
@@ -113,13 +113,43 @@ const itemPath = (list: string, index: number, item: unknown) => {
   return `${list}[${index}]${typeof name === "string" && !blank(name) ? ` ("${name}")` : ""}`;
 };
 
-// Keys that were renamed, or are easy to reach for. Naming the right key
-// beats an item that silently ignores its dates.
-function validateWindow(item: Raw, keyPath: string, video = false) {
-  const renamed = { expires: "ends", start: video ? "airs" : "starts", date: video ? "airs" : "starts" };
-  for (const [old, current] of Object.entries(renamed)) {
-    if (has(item, old)) fail(`${keyPath}.${old}`, `is not a key here. Use ${current}`);
+// The keys each kind of item can have. Anything else fails the build: a
+// misspelled key would otherwise be ignored, such as an `end` that never
+// takes the item down.
+const KEYS = {
+  link: ["title", "url", "starts", "ends", "label", "note", "image"],
+  video: ["type", "video", "title", "airs", "starts", "ends", "label"],
+  section: ["title", "links"],
+  sectionLink: ["label", "url", "highlight", "starts", "ends"],
+};
+
+// Date keys that are easy to reach for, and the one to use instead.
+const DATE_KEYS: Record<string, "starts" | "ends"> = {
+  start: "starts",
+  date: "starts",
+  from: "starts",
+  begins: "starts",
+  end: "ends",
+  expires: "ends",
+  expiry: "ends",
+  until: "ends",
+  to: "ends",
+  stop: "ends",
+};
+
+function checkKeys(item: Raw, keyPath: string, allowed: string[], video = false) {
+  for (const key of Object.keys(item)) {
+    if (allowed.includes(key)) continue;
+    if (Object.hasOwn(DATE_KEYS, key)) {
+      const use = video && DATE_KEYS[key] === "starts" ? "airs" : DATE_KEYS[key];
+      fail(`${keyPath}.${key}`, `is not a key here. Use ${use}`);
+    }
+    if (key === "airs") fail(`${keyPath}.airs`, 'is only for YouTube items (type: "youtube"). Use starts');
+    fail(`${keyPath}.${key}`, `is not a key here. Use one of: ${allowed.join(", ")}`);
   }
+}
+
+function validateWindow(item: Raw, keyPath: string) {
   const starts = parseTime(item.starts, `${keyPath}.starts`);
   const ends = parseEnd(item.ends, `${keyPath}.ends`);
   if (starts && ends && ends <= starts) fail(`${keyPath}.ends`, "must be after starts");
@@ -127,8 +157,13 @@ function validateWindow(item: Raw, keyPath: string, video = false) {
 
 // A full https:// URL with a host. A prefix check alone would let through
 // "https://" on its own.
+// Browsers drop tabs and line breaks from links, which can turn
+// "/\t/example.com/" into a link to another site.
+// eslint-disable-next-line no-control-regex -- matching control characters is the point
+const CONTROL = /[\u0000-\u001f\u007f]/;
+
 function isHttpsUrl(text: string) {
-  if (!text.startsWith("https://")) return false;
+  if (!text.startsWith("https://") || CONTROL.test(text)) return false;
   try {
     return new URL(text).hostname !== "";
   } catch {
@@ -138,7 +173,7 @@ function isHttpsUrl(text: string) {
 
 // A path on this site starts with one slash. Browsers read "//example.com/"
 // and "/\example.com/" as links to another site.
-const isSitePath = (text: string) => /^\/(?![/\\])/.test(text);
+const isSitePath = (text: string) => /^\/(?![/\\])/.test(text) && !CONTROL.test(text);
 
 function requireUrl(item: Raw, keyPath: string) {
   const url = String(item.url ?? "");
@@ -153,7 +188,25 @@ function requireUrl(item: Raw, keyPath: string) {
 export function sitePath(url: string): string {
   if (!isHttpsUrl(url)) return url;
   const parsed = new URL(url);
-  return parsed.hostname === SITE_HOST ? parsed.pathname + parsed.search + parsed.hash : url;
+  // The host with any port, so esphome.io:8443 stays as it is. A path such as
+  // "//example.com/" would turn into a link to another site, so it stays too.
+  if (parsed.host !== SITE_HOST || !isSitePath(parsed.pathname)) return url;
+  return parsed.pathname + parsed.search + parsed.hash;
+}
+
+/**
+ * What a link is matched on, to find the same page linked twice: an
+ * esphome.io link as a path, with the trailing slash the blog's own links
+ * have, so "/blog/x", "/blog/x/" and "https://esphome.io/blog/x/" all match.
+ * The link itself is shown as written: "/chat", say, is a redirect.
+ */
+export function linkKey(url: string): string {
+  const path = sitePath(url);
+  if (!isSitePath(path)) return path;
+  const parsed = new URL(path, SITE);
+  const last = parsed.pathname.split("/").pop() as string;
+  const pathname = last === "" || last.includes(".") ? parsed.pathname : `${parsed.pathname}/`;
+  return pathname + parsed.search + parsed.hash;
 }
 
 // Text, in quotes. A value such as `false` or `5` would otherwise pass, then
@@ -164,6 +217,10 @@ function requireText(item: Raw, key: string, keyPath: string, optional = false) 
   if (blank(value)) fail(`${keyPath}.${key}`, optional ? "must be text, or left out" : "is required");
   if (typeof value !== "string") fail(`${keyPath}.${key}`, `must be text in quotes, not ${JSON.stringify(value)}`);
 }
+
+// An image file in src/assets/bio/: a file name with one of the extensions
+// that src/components/BioLists.astro loads.
+export const IMAGE_FILE = /^[^/\\]+\.(avif|jpe?g|png|webp)$/;
 
 /**
  * Checks bio.ts. `images` are the file names in src/assets/bio/, which an
@@ -182,12 +239,14 @@ export function validate(bio: Raw, images: string[] = []): true {
   (bio.sections as unknown[]).forEach((section, index) => {
     const keyPath = itemPath("sections", index, section);
     if (!isMap(section)) return fail(keyPath, "must be an object with title and links");
+    checkKeys(section, keyPath, KEYS.section);
     requireText(section, "title", keyPath);
     if (!Array.isArray(section.links) || section.links.length === 0)
       fail(`${keyPath}.links`, "must be a non-empty list");
     (section.links as unknown[]).forEach((link, linkIndex) => {
       const linkPath = itemPath(`${keyPath}.links`, linkIndex, link);
       if (!isMap(link)) return fail(linkPath, "must be an object with label and url");
+      checkKeys(link, linkPath, KEYS.sectionLink);
       requireText(link, "label", linkPath);
       requireUrl(link, linkPath);
       validateWindow(link, linkPath);
@@ -204,10 +263,16 @@ export function validate(bio: Raw, images: string[] = []): true {
 // `starts` on a video only shows it early.
 function validateLatest(item: unknown, keyPath: string, images: string[]) {
   if (!isMap(item)) return fail(keyPath, "must be an object with title, url and starts");
+  // Checked first: a mistyped type would otherwise show up as a video's keys
+  // being unknown to a link.
+  if (has(item, "type") && item.type !== "youtube") {
+    fail(`${keyPath}.type`, 'must be "youtube", or left out for a link');
+  }
+  const video = item.type === "youtube";
+  checkKeys(item, keyPath, video ? KEYS.video : KEYS.link, video);
   requireText(item, "title", keyPath);
   requireText(item, "label", keyPath, true);
-  const video = item.type === "youtube";
-  validateWindow(item, keyPath, video);
+  validateWindow(item, keyPath);
 
   if (video) {
     if (!youtubeId(item.video)) {
@@ -229,18 +294,25 @@ function validateLatest(item: unknown, keyPath: string, images: string[]) {
     }
     return;
   }
-  if (has(item, "type")) fail(`${keyPath}.type`, 'must be "youtube", or left out for a link');
 
   requireUrl(item, keyPath);
   requireText(item, "note", keyPath, true);
   // A file in src/assets/bio/, so the build can make the thumbnail and the
   // card's smaller sizes from it.
   const image = item.image;
-  if (image !== undefined && image !== "auto" && !isHttpsUrl(String(image)) && !images.includes(String(image))) {
-    fail(
-      `${keyPath}.image`,
-      `"${image}" is not in src/assets/bio/. Save the image there and give its file name, e.g. "2026-11-community-day.webp", or use "auto"`,
-    );
+  if (image !== undefined && image !== "auto" && !isHttpsUrl(String(image))) {
+    if (!IMAGE_FILE.test(String(image))) {
+      fail(
+        `${keyPath}.image`,
+        `"${image}" must be "auto", a full https:// URL, or the name of a .webp, .jpg, .png or .avif file in src/assets/bio/`,
+      );
+    }
+    if (!images.includes(String(image))) {
+      fail(
+        `${keyPath}.image`,
+        `"${image}" is not in src/assets/bio/. Save the image there and give its file name, e.g. "2026-11-community-day.webp", or use "auto"`,
+      );
+    }
   }
   if (blank(item.starts)) fail(`${keyPath}.starts`, 'is required: when it appears, e.g. "2026-11-01"');
 }
@@ -282,7 +354,10 @@ export interface Post {
 /** One rendered item, with what the rule in bio-schedule.mjs needs to show and hide it. */
 export interface Entry {
   key: string;
+  /** What the rule matches the link on (see linkKey). */
   url: string;
+  /** The link, as written. */
+  href: string;
   /** How strong its claim to its link is: 1 for an item added by hand, 0 for a post. */
   rank: number;
   starts: Date | null;
@@ -318,6 +393,7 @@ export interface List {
 interface Item {
   title: string;
   url: string;
+  href: string;
   date: Date;
   rank: number;
   starts: Date | null;
@@ -336,9 +412,10 @@ const join = (parts: (string | null | undefined)[]) => parts.filter(Boolean).joi
 // social preview image of it.
 export function autoImage(url: string, posts: Post[]): ImageSource {
   const path = sitePath(url);
-  if (!isSitePath(path)) return `${OG_ENDPOINT}?url=${encodeURIComponent(url)}`;
-  const post = posts.find((candidate) => candidate.url === path);
-  return post?.image ?? `${OG_ENDPOINT}?url=${encodeURIComponent(SITE + path)}`;
+  // A crosspost's link is the article on the other site, so look it up by link.
+  const post = posts.find((candidate) => linkKey(candidate.url) === linkKey(url));
+  if (post?.image) return post.image;
+  return `${OG_ENDPOINT}?url=${encodeURIComponent(isSitePath(path) ? SITE + path : url)}`;
 }
 
 // The items added by hand, ready to merge with the posts.
@@ -363,6 +440,7 @@ function handPicked(latest: Raw[], posts: Post[], now: Date): Item[] {
       return {
         title: item.title as string,
         url: `https://www.youtube.com/watch?v=${id}`,
+        href: `https://www.youtube.com/watch?v=${id}`,
         date: airs,
         rank: 1,
         starts,
@@ -376,8 +454,9 @@ function handPicked(latest: Raw[], posts: Post[], now: Date): Item[] {
     }
     return {
       title: item.title as string,
-      // An esphome.io URL as a path, so it matches the post it links to.
-      url: sitePath(item.url as string),
+      // Matched on its key, so it takes the place of the post it links to.
+      url: linkKey(item.url as string),
+      href: sitePath(item.url as string),
       date: starts as Date,
       rank: 1,
       starts,
@@ -405,15 +484,20 @@ function canShow(items: Item[], limit: number, now: Date) {
   // The same order as select.
   const beats = (other: number, me: number) =>
     items[other].rank > items[me].rank || (items[other].rank === items[me].rank && other < me);
-  const kept: (Item & { sure: boolean })[] = [];
+  const kept: (Item & { sure: boolean; position: number })[] = [];
   let sure = 0;
   items.forEach((item, position) => {
-    if (sure >= limit) return;
+    // Past the point where the list is full, an item can't show, but while
+    // it's up it still takes its link from a kept item it beats, such as an
+    // older item added by hand that links to a newer post. Keep it so the rule
+    // on the page sees that too.
+    const full = sure >= limit;
+    if (full && !kept.some((other) => other.url === item.url && beats(position, other.position))) return;
     const rivals = items.flatMap((other, index) => (other.url === item.url && beats(index, position) ? [other] : []));
     // Something always up takes the link.
     if (rivals.some((rival) => fixed(rival, now))) return;
-    const isSure = fixed(item, now) && rivals.length === 0;
-    kept.push({ ...item, sure: isSure });
+    const isSure = !full && fixed(item, now) && rivals.length === 0;
+    kept.push({ ...item, sure: isSure, position });
     if (isSure) sure++;
   });
   return kept;
@@ -425,6 +509,8 @@ function latestList(bio: Raw, posts: Post[], now: Date): Omit<List, "hidden"> {
     ...handPicked(bio.latest as Raw[], posts, now),
     ...posts.map((post) => ({
       ...post,
+      url: linkKey(post.url),
+      href: post.url,
       rank: 0,
       starts: null,
       ends: null,
@@ -446,7 +532,7 @@ function latestList(bio: Raw, posts: Post[], now: Date): Omit<List, "hidden"> {
   // wherever it is.
   const kept = canShow(items, limit, now);
   const entries = kept.flatMap((item, index) => {
-    const { sure: _sure, date: _date, ...rest } = item;
+    const { sure: _sure, date: _date, position: _position, ...rest } = item;
     const row = { ...rest, key: String(index), hidden: false, card: item.video, highlight: false };
     if (item.video || !item.image || kept.slice(0, index).some((before) => before.sure)) return [row];
     const hero = { ...row, card: true };
@@ -472,6 +558,7 @@ function linkList(section: Raw, order: number, now: Date): Omit<List, "hidden"> 
       {
         key: String(index),
         url: link.url as string,
+        href: link.url as string,
         rank: 0,
         starts,
         ends,
@@ -504,7 +591,14 @@ export function resolve(bio: Raw, posts: Post[], now: Date): List[] {
   const picks = select(lists, now);
   return lists.flatMap((list, index) => {
     if (list.entries.length === 0) return [];
-    const entries = list.entries.map((entry) => ({ ...entry, hidden: !isShowing(entry, picks[index]) }));
+    // A `starts` that has passed can't change anything, because the page's
+    // time is never before the build's. Leaving it out means a page with
+    // nothing still to come doesn't ask the server for the time.
+    const entries = list.entries.map((entry) => ({
+      ...entry,
+      starts: entry.starts && entry.starts > now ? entry.starts : null,
+      hidden: !isShowing(entry, picks[index]),
+    }));
     return [{ ...list, entries, hidden: entries.every((entry) => entry.hidden) }];
   });
 }
