@@ -41,6 +41,10 @@ media_player:
   - **bitrate** (*Optional*, positive integer): Constant bitrate in kbps that Home Assistant encodes `MP3` at, one
     of `8`, `16`, `24`, `32`, `40`, `48`, `56`, `64`, `80`, `96`, `112`, `128`, `144`, `160`, `192`, `224`, `256` or
     `320`. Only valid when `format` is `MP3`. When omitted, Home Assistant uses its default variable bitrate.
+  - **start_condition** (*Optional*, lambda): The reader and decoder wait until this returns `true`. The media player
+    enters the playing or announcing state while waiting, so `on_play` or `on_announcement` can release a shared
+    resource. A stop command cancels the pending start. If the condition never becomes true, the player continues
+    waiting; use a condition that reliably reflects the resource state. If omitted, playback starts immediately.
 
 - **media_pipeline** (*Optional*, Pipeline Schema): Configuration settings for the media pipeline. Same options as the `announcement_pipeline`.
 - **buffer_size** (*Optional*, positive integer): The buffer size in bytes for each pipeline. Must be between `4000` and `4000000`. Defaults to `1000000`.
@@ -76,6 +80,26 @@ To change the announcement volume at runtime, use the
 [`media_player.speaker.set_announcement_volume` action](#media_player-speaker-set_announcement_volume-action).
 
 <span id="media_player-speaker-examples"></span>
+
+## Sharing an I²S Bus With a Microphone
+
+When a microphone and speaker use the same I²S controller in simplex mode, stop microphone capture before playback.
+Muting the microphone does not release the controller. The condition is checked without blocking the main loop;
+do not use a delay or a blocking operation inside the lambda.
+
+```yaml
+media_player:
+  - platform: speaker
+    announcement_pipeline:
+      speaker: speaker_id
+      start_condition: !lambda 'return id(mic_id).is_stopped();'
+    on_announcement:
+      - microphone.stop_capture: mic_id
+    on_idle:
+      - microphone.capture: mic_id
+```
+
+If another component uses the microphone, stop it before `microphone.stop_capture` and restart it after capture resumes.
 
 ## Example Configuration
 
