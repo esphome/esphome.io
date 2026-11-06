@@ -50,7 +50,8 @@ remote_transmitter:
 - **rmt_symbols** (*Optional*, int): When `use_dma` is enabled, this sets the size of the driver's internal DMA
   buffer. When DMA is disabled, it specifies how much RMT memory is allocated to the component. RMT memory is shared
   across all components and should be allocated in multiples of the block size. On the `ESP32` and `ESP32-S2`
-  variants, RMT memory is shared between RX and TX components. On other variants, RX and TX have dedicated RMT memory.
+  variants, RMT memory is shared between RX and TX components. On other variants, RX and TX have their own RMT
+  memory, but a TX component can also use RX memory that no RX component uses.
 
 | ESP32 Variant | Available Memory | Block Size |
 | ------------- | ---------------- | ---------- |
@@ -59,13 +60,39 @@ remote_transmitter:
 | ESP32-C5      | 96 symbols       | 48 symbols |
 | ESP32-C6      | 96 symbols       | 48 symbols |
 | ESP32-H2      | 96 symbols       | 48 symbols |
+| ESP32-H21     | 96 symbols       | 48 symbols |
+| ESP32-H4      | 96 symbols       | 48 symbols |
 | ESP32-P4      | 192 symbols      | 48 symbols |
 | ESP32-S2      | 256 symbols      | 64 symbols |
 | ESP32-S3      | 192 symbols      | 48 symbols |
+| ESP32-S31     | 192 symbols      | 48 symbols |
+
+Each component uses its own RMT channel: `remote_receiver` uses an RX channel, `remote_transmitter` and
+`esp32_rmt_led_strip` use a TX channel. A channel uses at least one block of memory, so the number of channels is the
+available memory divided by the block size, for example 8 on the `ESP32` and 2 on the `ESP32-C3`. On the `ESP32` and
+`ESP32-S2`, RX and TX components share these channels. On other variants, RX and TX each have this many channels.
+
+ESPHome checks all `esp32_rmt_led_strip`, `remote_transmitter` and `remote_receiver` components together. Validation
+fails if:
+
+- they need more channels than are available
+- more than one RX or more than one TX component sets `use_dma`, since only one channel per direction supports DMA
+- `rmt_symbols` is an odd number or smaller than one block
+- without `use_dma`, `rmt_symbols` is larger than one channel can use. On the `ESP32` and `ESP32-S2` that is all the RMT
+  memory; on other variants it is the RX memory for an RX component, or the TX and RX memory together for a TX component
+- a transmitter or LED strip with `use_dma` sets `rmt_symbols` above 2046
+
+A component with `use_dma` uses one block. When it compiles, ESPHome also works out which memory each channel gets when
+the components are set up: by `setup_priority`, then in the order of the configuration. A component that refers to
+another component by ID, such as a `power_supply`, can be set up after the ones that follow it. If a channel does not
+fit, ESPHome logs a warning that suggests an `rmt_symbols` value that fits, or a `setup_priority` that sets up the
+smaller ones first. `esphome config` does not show this warning. The order matters because a TX channel can extend into
+memory that the next one would need: on an `ESP32-S3`, a 48 symbol strip followed by a 288 symbol strip fits, but not
+the other way round.
 
 - **clock_resolution** (*Optional*, int): The clock resolution used by the RMT peripheral in Hz. Defaults to `1000000`.
 - **use_dma** (*Optional*, boolean): Enable DMA on variants that support it. If enabled `rmt_symbols` controls
-  the DMA buffer size and can be set to a large value.
+  the DMA buffer size and can be set to a large value, up to 2046.
 
 - **eot_level** (*Optional*, boolean): Overrides the default end of transmit level. Defaults to `false` unless `pin`
   is set to inverted or open-drain.
@@ -779,7 +806,7 @@ on_...:
 
 ### `remote_transmitter.transmit_nexus` Action
 
-This [action](/automations/actions#all-actions) sends a 36-bit Nexus temperature and humidity sensor code, as used
+This [action](/automations/actions/#all-actions) sends a 36-bit Nexus temperature and humidity sensor code, as used
 by Digoo and similar 433 MHz weather sensors, to a remote transmitter.
 
 ```yaml
@@ -811,7 +838,7 @@ on_...:
 
 ### `remote_transmitter.transmit_onkyori` Action
 
-This [action](/automations/actions#all-actions) sends an Onkyo RI remote code to a remote transmitter.
+This [action](/automations/actions/#all-actions) sends an Onkyo RI remote code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -878,7 +905,7 @@ on_...:
 
 ### `remote_transmitter.transmit_pd_pioneer` Action
 
-This [action](/automations/actions#all-actions) sends a PD Pioneer mini-split infrared code to a remote transmitter.
+This [action](/automations/actions/#all-actions) sends a PD Pioneer mini-split infrared code to a remote transmitter.
 The checksum byte is added automatically when 13 data bytes are provided.
 
 ```yaml
@@ -928,7 +955,7 @@ are largely shared among devices within a given class.
 
 ### `remote_transmitter.transmit_pioneer_wyt` Action
 
-This [action](/automations/actions#all-actions) sends a raw infrared frame for Pioneer Diamante Pro mini split heat
+This [action](/automations/actions/#all-actions) sends a raw infrared frame for Pioneer Diamante Pro mini split heat
 pumps, the WYT model family, to a remote transmitter. The frame is 14 bytes; give the first 13 and the checksum is
 appended, or give all 14 and the last byte is replaced by the computed checksum.
 
@@ -1013,7 +1040,7 @@ on_...:
 
 ### `remote_transmitter.transmit_rc5x` Action
 
-This [action](/automations/actions#all-actions) sends an RC5X (Marantz Extended RC5) infrared remote code to a
+This [action](/automations/actions/#all-actions) sends an RC5X (Marantz Extended RC5) infrared remote code to a
 remote transmitter.
 
 ```yaml
@@ -1300,7 +1327,7 @@ on_...:
 
 ### `remote_transmitter.transmit_somfy_rts` Action
 
-This [action](/automations/actions#all-actions) sends a Somfy RTS command, as used by Somfy blinds, shutters and
+This [action](/automations/actions/#all-actions) sends a Somfy RTS command, as used by Somfy blinds, shutters and
 awnings on 433.42 MHz, to a remote transmitter. ESPHome acts as one more remote: it has its own address and a rolling
 code that must grow by one with every command, so keep the code in a [global](/components/globals/) with
 `restore_value: true` and increment it in the lambda. Pair the device by holding the program button on an existing
