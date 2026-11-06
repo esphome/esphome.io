@@ -1,0 +1,22 @@
+---
+/**
+ * PageFrame override
+ *
+ * Bare pages (see content.config.ts) leave out the site header and sidebar, and
+ * the padding that makes room for the fixed header. Every other page gets
+ * Starlight's default frame.
+ */
+import Default from "@astrojs/starlight/components/PageFrame.astro";
+
+const isBare = Boolean(Astro.locals.starlightRoute.entry.data.bare);
+---
+
+{isBare ? (
+  <slot />
+) : (
+  <Default>
+    <slot name="header" slot="header" />
+    <slot name="sidebar" slot="sidebar" />
+    <slot />
+  </Default>
+)}

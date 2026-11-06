@@ -1,0 +1,171 @@
+---
+// The lists on the link-in-bio page (src/pages/bio.astro): Latest, then the
+// link sections, as src/lib/bio.ts resolves them from src/data/bio.ts and the
+// newest blog posts. It's a component rather than part of the page because
+// starlight-blog's post data is only ready once <StarlightPage> is rendering.
+// Styled by the page.
+//
+// Items that aren't showing at build time are rendered `hidden`, with the
+// data attributes the script on the page reads to show them when their time
+// comes (see src/lib/bio-schedule.mjs).
+//
+// Images are resized at build time: a row's thumbnail is shown about 6rem
+// wide, so it gets a small copy rather than the full 1200 × 630 image, and the
+// large card gets smaller sizes for phones. Remote images are resized only
+// from the domains in astro.config.mjs (`image.domains`). Others, such as
+// YouTube thumbnails, are used as they are.
+//
+// The icons are inline SVG rather than Starlight's Icon on purpose. Importing
+// "@astrojs/starlight/components" brings in components that add to the
+// page's <head>, and Astro then runs this component before <StarlightPage>,
+// when starlight-blog's post data isn't ready yet.
+import type { ImageMetadata } from "astro";
+import { getImage, imageConfig } from "astro:assets";
+import type { StarlightBlogPostData } from "starlight-blog/data";
+import * as bio from "../data/bio";
+import { resolve, validate, type Entry } from "../lib/bio";
+
+// The images for items added by hand, by file name.
+const files = import.meta.glob<ImageMetadata>("../assets/bio/*.{avif,jpeg,jpg,png,webp}", {
+  eager: true,
+  import: "default",
+});
+const images = Object.fromEntries(Object.entries(files).map(([path, image]) => [path.split("/").pop()!, image]));
+
+validate(bio, Object.keys(images));
+
+// A crosspost exists only to redirect to the article on another site, so link
+// straight there: its canonical link.
+function postUrl(post: StarlightBlogPostData) {
+  if (!post.entry.data.crosspostSource) return post.href;
+  const canonical = post.entry.data.head.find((tag) => tag.tag === "link" && tag.attrs?.rel === "canonical");
+  return typeof canonical?.attrs?.href === "string" ? canonical.attrs.href : post.href;
+}
+
+function cover(post: StarlightBlogPostData) {
+  const cover = post.cover;
+  return (cover && ("image" in cover ? cover.image : cover.dark)) || post.entry.data.crosspostCover;
+}
+
+const posts = Astro.locals.starlightBlog.posts
+  .filter((post) => !post.draft)
+  .map((post) => {
+    const label = post.tags.some((tag) => tag.label === "Releases") ? "Release" : "News";
+    const date = Astro.locals.t("starlightBlog.post.date", {
+      date: post.createdAt,
+      formatParams: { date: { dateStyle: "long" } },
+    });
+    return {
+      title: post.title,
+      url: postUrl(post),
+      date: post.createdAt,
+      note: `${label} · ${date}`,
+      image: cover(post),
+    };
+  });
+
+const lists = resolve(bio, posts, new Date());
+
+// A row's thumbnail is shown 6rem wide: 288 px covers 3x screens. The card
+// fills the column, at most 34rem less its padding.
+const ROW = { width: 288, height: 151 };
+const CARD = { widths: [600, 900, 1200], sizes: "(max-width: 34rem) calc(100vw - 2.75rem), 31.25rem" };
+
+// Astro downloads remote images after the pages are built, and a failed
+// download fails the whole build. So a remote image is resized only if it can
+// be reached now; otherwise the page uses it as it is, at full size.
+const reachable = new Map<string, Promise<boolean>>();
+function canReach(url: string) {
+  if (!reachable.has(url)) {
+    const check = fetch(url, { method: "HEAD", signal: AbortSignal.timeout(10_000) })
+      .then((response) => response.ok)
+      .catch(() => false);
+    reachable.set(url, check);
+  }
+  return reachable.get(url)!;
+}
+
+async function picture(entry: Entry) {
+  const image = entry.image!;
+  const source = typeof image === "string" && !image.startsWith("https://") ? images[image] : image;
+  if (typeof source === "string") {
+    const allowed = imageConfig.domains.includes(new URL(source).hostname);
+    if (!allowed || !(await canReach(source))) return { src: source };
+  }
+  const options = { src: source, width: 1200, height: 630, fit: "cover", format: "webp" } as const;
+  if (!entry.card) return { src: (await getImage({ ...options, ...ROW })).src };
+  const card = await getImage({ ...options, widths: CARD.widths });
+  return { src: card.src, srcset: card.srcSet.attribute, sizes: CARD.sizes };
+}
+
+const pictures = new Map(
+  await Promise.all(
+    lists.flatMap((list) =>
+      list.entries.filter((entry) => entry.image).map(async (entry) => [entry, await picture(entry)] as const),
+    ),
+  ),
+);
+
+const iso = (date: Date | null) => date?.toISOString();
+// What the script needs to show or hide an entry later.
+const schedule = (entry: Entry) => ({
+  hidden: entry.hidden,
+  "data-key": entry.key,
+  "data-url": entry.url,
+  "data-rank": entry.rank || undefined,
+  "data-variant": entry.variant,
+  "data-starts": iso(entry.starts),
+  "data-ends": iso(entry.ends),
+  "data-airs": iso(entry.airs),
+  "data-note-after": entry.noteAfter ?? undefined,
+});
+---
+
+{lists.map((list) => (
+  <section hidden={list.hidden}>
+    <h2>{list.title}</h2>
+    <ul data-schedule data-order={list.order} data-limit={list.limit} data-claims={list.claims || undefined}>
+      {list.entries.map((entry) => (
+        <li {...schedule(entry)}>
+          {list.claims ? (
+            <a href={entry.url} class:list={["link", entry.card ? "card" : "row"]}>
+              <span class="image">
+                {entry.image && (
+                  <img
+                    {...pictures.get(entry)}
+                    alt=""
+                    width="1200"
+                    height="630"
+                    loading={entry.card && !entry.hidden ? undefined : "lazy"}
+                  />
+                )}
+                {entry.video && (
+                  <svg class="play" viewBox="0 0 68 48" aria-hidden="true">
+                    <path
+                      d="M66.5 7.7a8.6 8.6 0 0 0-6-6C55.2.3 34 .3 34 .3s-21.2 0-26.5 1.4a8.6 8.6 0 0 0-6 6C.1 13 .1 24 .1 24s0 11 1.4 16.3a8.6 8.6 0 0 0 6 6c5.3 1.4 26.5 1.4 26.5 1.4s21.2 0 26.5-1.4a8.6 8.6 0 0 0 6-6C67.9 35 67.9 24 67.9 24s0-11-1.4-16.3Z"
+                      fill="#f00"
+                    />
+                    <path d="M45 24 27 14v20Z" fill="#fff" />
+                  </svg>
+                )}
+              </span>
+              <span class="text">
+                <strong>{entry.title}</strong>
+                {entry.note && <small class="note">{entry.note}</small>}
+              </span>
+            </a>
+          ) : (
+            <a href={entry.url} class:list={["link", "button", { highlight: entry.highlight }]}>
+              <span class="text">
+                <strong>{entry.title}</strong>
+              </span>
+              <svg class="arrow" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
+                <path d="M17.92 11.62a1 1 0 0 0-.21-.33l-5-5a1 1 0 1 0-1.42 1.42l3.3 3.29H7a1 1 0 0 0 0 2h7.59l-3.3 3.29a1 1 0 0 0 1.42 1.42l5-5a1 1 0 0 0 .21-.33 1 1 0 0 0 0-.76Z" />
+              </svg>
+            </a>
+          )}
+        </li>
+      ))}
+    </ul>
+  </section>
+))}

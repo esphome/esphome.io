@@ -1,0 +1,356 @@
+---
+// The link-in-bio page, /bio/: the one link on ESPHome's social profiles.
+// The content is in src/data/bio.ts. It's a bare page (see content.config.ts):
+// no site header, navigation or footer, but the site's <head> stays.
+//
+// The page is static, so it is built showing what is live at build time.
+// Items with `starts` or `ends` are also rendered, hidden, with their times,
+// and the script at the end shows and hides them as time passes (see
+// src/lib/bio-schedule.mjs). Without JavaScript the page stays as it was
+// built.
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+import { Icon } from "@astrojs/starlight/components";
+import BioLists from "@components/BioLists.astro";
+import logoDark from "../assets/logo-dark.svg";
+import logoLight from "../assets/logo-light.svg";
+import { socials, tagline } from "../data/bio";
+---
+
+<StarlightPage
+  frontmatter={{
+    title: "Links",
+    description: tagline,
+    template: "splash",
+    bare: true,
+    pagefind: false,
+    head: [{ tag: "meta", attrs: { name: "robots", content: "noindex" } }],
+  }}
+  hasSidebar={false}
+>
+  <div class="bio not-content">
+    <header class="header">
+      <h1>
+        <img class="logo-on-dark" src={logoLight.src} alt="ESPHome" width="306" height="60" />
+        <img class="logo-on-light" src={logoDark.src} alt="ESPHome" width="306" height="60" />
+      </h1>
+      <p>{tagline}</p>
+    </header>
+
+    <BioLists />
+
+    <nav class="socials" aria-label="ESPHome elsewhere">
+      {socials.map((social) => (
+        <a href={social.url} aria-label={social.label} rel="me noopener">
+          <Icon name={social.icon} size="1.25rem" />
+        </a>
+      ))}
+    </nav>
+
+    <p class="footer">
+      <a href="/">esphome.io</a> · An <a href="https://www.openhomefoundation.org/">Open Home Foundation</a> project
+    </p>
+  </div>
+</StarlightPage>
+
+<script>
+  // Shows and hides scheduled items by the same rule the build used, with the
+  // website's own time rather than the visitor's clock, which can be wrong or
+  // set on purpose. One HEAD request reads the server's time from the
+  // response's Date header; from there the page counts with performance.now(),
+  // which ignores the system clock and changes to it. If the request fails,
+  // nothing changes: the page stays as it was built. Runs on load and every
+  // minute after, so a page left open picks up a livestream as it starts.
+  import { isShowing, select } from "../lib/bio-schedule.mjs";
+
+  // The server's time, and the performance.now() it belongs to: the middle of
+  // the request, when the server most likely wrote the header.
+  //
+  // The Age header is left out on purpose. esphome.io is served by Netlify
+  // behind Cloudflare, and both set Date to the time of the response, even
+  // from cache, while Age says how long the copy has been cached. Adding Age
+  // would put the clock hours ahead.
+  async function serverTime(): Promise<{ time: number; at: number } | null> {
+    try {
+      const sent = performance.now();
+      const response = await fetch(location.pathname, { method: "HEAD", cache: "no-store" });
+      const received = performance.now();
+      const date = Date.parse(response.headers.get("Date") ?? "");
+      if (!response.ok || Number.isNaN(date)) return null;
+      return { time: date, at: (sent + received) / 2 };
+    } catch {
+      return null;
+    }
+  }
+
+  // The page's lists as the rule in bio-schedule.mjs reads them, in the order
+  // the build passed them.
+  const lists = [...document.querySelectorAll<HTMLElement>("[data-schedule]")]
+    .map((list) => {
+      const items = [...list.children] as HTMLElement[];
+      return {
+        list,
+        items,
+        order: Number(list.dataset.order),
+        limit: Number(list.dataset.limit) || Infinity,
+        claims: list.dataset.claims !== undefined,
+        entries: items.map(({ dataset }) => ({
+          key: dataset.key,
+          url: dataset.url,
+          rank: Number(dataset.rank) || 0,
+          variant: dataset.variant,
+          starts: dataset.starts,
+          ends: dataset.ends,
+        })),
+      };
+    })
+    .sort((a, b) => a.order - b.order);
+
+  function update(now: number) {
+    const picks = select(lists, now);
+    lists.forEach(({ list, items, entries }, listIndex) => {
+      const keys = picks[listIndex];
+      items.forEach((item, index) => {
+        item.hidden = !isShowing(entries[index], keys);
+        // A video that has started says when it aired, not when it starts.
+        const { airs, noteAfter } = item.dataset;
+        const note = item.querySelector(".note");
+        if (airs && noteAfter && note && Date.parse(airs) <= now) note.textContent = noteAfter;
+      });
+      const section = list.closest("section");
+      if (section) section.hidden = keys.length === 0;
+    });
+  }
+
+  // Most of the time nothing is scheduled, and there is nothing to check.
+  if (document.querySelector("[data-starts], [data-ends]")) {
+    serverTime().then((server) => {
+      if (server === null) return;
+      const now = () => server.time + (performance.now() - server.at);
+      update(now());
+      setInterval(() => update(now()), 60 * 1000);
+    });
+  }
+</script>
+
+<style is:global>
+  /* Global so it reaches BioLists.astro too; every rule starts with .bio. */
+  .bio {
+    box-sizing: border-box;
+    max-width: 34rem;
+    margin: 0 auto;
+    padding: 2rem max(1rem, env(safe-area-inset-right)) 3rem max(1rem, env(safe-area-inset-left));
+    color: var(--sl-color-white);
+    line-height: 1.3;
+  }
+
+  .bio .header {
+    margin-bottom: 1.75rem;
+    text-align: center;
+  }
+
+  .bio h1 {
+    margin: 0;
+    line-height: 0;
+  }
+
+  .bio h1 img {
+    display: block;
+    width: 12rem;
+    height: auto;
+    margin: 0 auto;
+  }
+
+  /* Starlight's light:sl-hidden utility loses to the site's .sl-markdown-content img rule. */
+  [data-theme="light"] .bio .logo-on-dark,
+  [data-theme="dark"] .bio .logo-on-light {
+    display: none;
+  }
+
+  .bio .header p {
+    margin: 0.75rem 0 0;
+    color: var(--sl-color-gray-2);
+    font-size: var(--sl-text-base);
+    text-wrap: balance;
+  }
+
+  .bio section + section {
+    margin-top: 1.5rem;
+  }
+
+  .bio h2 {
+    margin: 0 0 0.5rem;
+    color: var(--sl-color-gray-2);
+    font-size: var(--sl-text-xs);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .bio ul {
+    display: grid;
+    gap: 0.625rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .bio .link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 3.25rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: 0.75rem;
+    background: var(--sl-color-gray-6);
+    color: var(--sl-color-white);
+    text-decoration: none;
+    transition: background-color 0.15s ease;
+  }
+
+  .bio .link:hover {
+    background: var(--sl-color-gray-5);
+  }
+
+  .bio .link:focus-visible {
+    outline: 2px solid var(--sl-color-text-accent);
+    outline-offset: 2px;
+  }
+
+  .bio .text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .bio .text strong {
+    display: block;
+    font-size: var(--sl-text-base);
+    font-weight: 600;
+  }
+
+  .bio .text small {
+    display: block;
+    margin-top: 0.125rem;
+    color: var(--sl-color-gray-3);
+    font-size: var(--sl-text-xs);
+    text-wrap: pretty;
+  }
+
+  /* The grey shows through if an image is missing. */
+  .bio .image {
+    position: relative;
+    flex: none;
+    overflow: hidden;
+    aspect-ratio: 1200 / 630;
+    border-radius: 0.5rem;
+    background: var(--sl-color-gray-5);
+  }
+
+  .bio .image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* A YouTube video gets a play badge over its thumbnail. */
+  .bio .image .play {
+    position: absolute;
+    inset: 0;
+    width: 4.25rem;
+    height: 3rem;
+    margin: auto;
+  }
+
+  .bio .row .image .play {
+    width: 2rem;
+    height: 1.4rem;
+  }
+
+  /* Latest: the first item is a large card, the rest are rows with a thumbnail. */
+  .bio .card {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.625rem;
+    padding: 0.375rem 0.375rem 0.75rem;
+  }
+
+  .bio .card .text {
+    padding: 0 0.5rem;
+  }
+
+  .bio .card .text strong {
+    font-size: var(--sl-text-lg);
+  }
+
+  .bio .row {
+    padding-left: 0.5rem;
+  }
+
+  .bio .row .image {
+    width: 6rem;
+    border-radius: 0.375rem;
+  }
+
+  .bio .button svg {
+    flex: none;
+    color: var(--sl-color-gray-3);
+  }
+
+  /* Matches the accent "Get started" button in the site header. */
+  .bio .highlight,
+  .bio .highlight:hover {
+    border-color: transparent;
+    background: var(--sl-color-text-accent);
+    color: var(--sl-color-black);
+  }
+
+  .bio .highlight:hover {
+    opacity: 0.85;
+  }
+
+  .bio .highlight svg {
+    color: inherit;
+  }
+
+  .bio .socials {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+
+  .bio .socials a {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: 50%;
+    background: var(--sl-color-gray-6);
+    color: var(--sl-color-white);
+    transition: background-color 0.15s ease;
+  }
+
+  .bio .socials a:hover {
+    background: var(--sl-color-gray-5);
+  }
+
+  .bio .footer {
+    margin: 1.5rem 0 0;
+    color: var(--sl-color-gray-3);
+    font-size: var(--sl-text-xs);
+    text-align: center;
+  }
+
+  .bio .footer a {
+    color: inherit;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bio .link,
+    .bio .socials a {
+      transition: none;
+    }
+  }
+</style>

@@ -1,0 +1,19 @@
+---
+/**
+ * ContentPanel override
+ *
+ * Bare pages (see content.config.ts) lay out their own content, so they skip the
+ * panel's padding and divider. Every other page gets Starlight's default panel.
+ */
+import Default from "@astrojs/starlight/components/ContentPanel.astro";
+
+const isBare = Boolean(Astro.locals.starlightRoute.entry.data.bare);
+---
+
+{isBare ? (
+  <slot />
+) : (
+  <Default>
+    <slot />
+  </Default>
+)}

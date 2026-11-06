@@ -1,0 +1,13 @@
+---
+/**
+ * SkipLink override
+ *
+ * The skip link jumps past the site header to the page title. Bare pages (see
+ * content.config.ts) have neither, so they don't get one.
+ */
+import Default from "@astrojs/starlight/components/SkipLink.astro";
+
+const isBare = Boolean(Astro.locals.starlightRoute.entry.data.bare);
+---
+
+{!isBare && <Default />}

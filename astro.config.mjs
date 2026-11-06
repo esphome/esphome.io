@@ -192,11 +192,14 @@ export default defineConfig({
       },
       routeMiddleware: ["./src/routeData.ts"],
       components: {
+        ContentPanel: "./src/components/ContentPanel.astro",
         Footer: "./src/components/Footer.astro",
         Head: "./src/components/Head.astro",
         Header: "./src/components/Header.astro",
+        PageFrame: "./src/components/PageFrame.astro",
         PageTitle: "./src/components/PageTitle.astro",
         SiteTitle: "./src/components/SiteTitle.astro",
+        SkipLink: "./src/components/SkipLink.astro",
       },
       customCss: ["./src/styles/custom.css", "katex/dist/katex.min.css"],
       sidebar: [
@@ -419,7 +422,10 @@ export default defineConfig({
         },
       ],
     }),
-    sitemap(),
+    sitemap({
+      // The link-in-bio page is only for visitors from our social profiles.
+      filter: (page) => new URL(page).pathname !== "/bio/",
+    }),
     componentsJson(),
     routeIndex(),
   ],
