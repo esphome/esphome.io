@@ -71,6 +71,7 @@ will set the correct pins and dimensions for the display.
 | JC4880P443             | Guition        | [JC4880P443 product page](https://aliexpress.com/item/1005009618259341.html)                                     |
 | JC8012P4A1             | Guition        | [JC8012P4A1 product page](https://aliexpress.com/item/1005008789890066.html)                                     |
 | JC8012P4A1-V2          | Guition        | [JC8012P4A1-V2 product page](https://aliexpress.com/item/1005008789890066.html)                                     |
+| LILYGO-T-DISPLAY-P4-AMOLED | LilyGO     | [T-Display-P4 product page](https://wiki.lilygo.cc/products/t-display-series/t-display-p4/)                      |
 | M5STACK-TAB5           | M5Stack        | [TAB5 product page](https://shop.m5stack.com/products/m5stack-tab5-iot-development-kit-esp32-p4)                 |
 | M5STACK-TAB5-ST7123    | M5Stack        | [TAB5 product page](https://shop.m5stack.com/products/m5stack-tab5-iot-development-kit-esp32-p4)                 |
 | M5STACK-TAB5-ST7121    | M5Stack        | [TAB5 product page](https://shop.m5stack.com/products/m5stack-tab5-iot-development-kit-esp32-p4)                 |
@@ -111,6 +112,14 @@ Units manufactured in batch 2624 or later should use model `JC8012P4A1-V2`
 Units manufactured with a lower batch number should use model `JC8012P4A1`
 
 Selecting the incorrect driver will show horizontal lines on the display.
+
+> [!NOTE]
+> The `LILYGO-T-DISPLAY-P4-AMOLED` model is for the T-Display-P4 fitted with the 4.1-inch AMOLED panel. The panel reset
+> is on the board's XL9535 I/O expander, so the configuration must include an [XL9535](/components/xl9535/) at address
+> `0x20` on the I²C bus using GPIO7 (SDA) and GPIO8 (SCL). The display also needs [LDO](/components/esp_ldo/) channel 3
+> set to 2.5V.
+>
+> The touchscreen uses the `gt9895` touchscreen platform.
 
 > [!NOTE]
 > The Guition JC1060P470 (also sold under JC1060P470C_I_W_Y) has two hardware revisions with different display
