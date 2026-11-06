@@ -361,10 +361,11 @@ experimental: use `sniffer_only: true` unless you are testing TX.
 - **sniffer_only** (*Optional*, boolean): Disable all TX including buttons. Defaults to `false`.
 - **dump_frames** (*Optional*, boolean): Log every validated RX frame and every TX frame, as
   the full wire bytes (framing and CRC included), at DEBUG level. Defaults to `false`.
-- **max_frame_length** (*Optional*, integer, 2–1024): Discard frames longer than this many bytes. Defaults to `128`.
+- **max_frame_length** (*Optional*, integer, 2–1024): Discard frames longer than this many bytes. A hub
+  that transmits must be able to send its longest frame within 10s at the UART's baud rate. Defaults to `128`.
 - **frame_timeout** (*Optional*, [Time](/guides/configuration-types/#time)): Reset receive
   state if a partial frame sits on the bus longer than this. Prevents a noise burst or
-  mid-frame cable pull from permanently stalling reception. At most `65535ms`. Defaults to `50ms`.
+  mid-frame cable pull from permanently stalling reception. At most `10s`. Defaults to `50ms`.
 - **framing** (**Required**): DLE-framing configuration. The `escape:` sub-block must be set
   explicitly; the delimiter bytes default to the de-facto standard but can be overridden.
 
@@ -506,11 +507,11 @@ experimental: use `sniffer_only: true` unless you are testing TX.
       false (a configuration that would never fire is rejected at config time). Not used by
       `idle_gap` / `fixed_delay`.
     - **delay** (*Optional*, [Time](/guides/configuration-types/#time)): Additional delay
-      after the gate frame fires. At most `65535ms`. Defaults to `0ms`.
+      after the gate frame fires. At most `10s`. Defaults to `0ms`.
     - **min_silence** (*Optional*, [Time](/guides/configuration-types/#time)): Bus silence
-      required for `idle_gap` mode. At most `65535ms`. Defaults to `4ms`.
+      required for `idle_gap` mode. At most `10s`. Defaults to `4ms`.
     - **interval** (*Optional*, [Time](/guides/configuration-types/#time)): TX interval for
-      `fixed_delay` mode. At most `65535ms`. Defaults to `100ms`.
+      `fixed_delay` mode. At most `10s`. Defaults to `100ms`.
 
 ## Payload layout
 
