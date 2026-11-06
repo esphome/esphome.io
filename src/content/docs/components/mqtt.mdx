@@ -105,7 +105,7 @@ mqtt:
   The `log_topic` has an additional configuration option:
 
   - **level** (*Optional*, string): The log level to use for MQTT logs. See
-    [Log Levels](/components/logger#log-levels) for options.
+    [Log Levels](/components/logger/#log-levels) for options.
 
   When `esphome logs` connects through the broker, the device prints the log of its previous crash, if there is
   one, as it does for a native API client. It offers this only while `level` lets error messages through.
@@ -140,7 +140,7 @@ mqtt:
   Defaults to `/mqtt`.
 
 > [!TIP]
-> For MQTT security recommendations including TLS configuration, see the [Security Best Practices](/guides/security_best_practices#mqtt) guide.
+> For MQTT security recommendations including TLS configuration, see the [Security Best Practices](/guides/security_best_practices/#mqtt) guide.
 
 - **idf_send_async** (*Optional*, bool): Only on ESP32. If true publishing the message happens from a separate mqtt task.
   The client only enqueues the message. Defaults to `false`.
@@ -148,14 +148,14 @@ mqtt:
   The disadvantage is additional memory usage for the thread.
   Set this to true if you need to ensure that mqtt does not block the main thread, especially if you have poor network conditions.
 
-- **reboot_timeout** (*Optional*, [Time](/guides/configuration-types#time)): The amount of time to wait before rebooting when no
+- **reboot_timeout** (*Optional*, [Time](/guides/configuration-types/#time)): The amount of time to wait before rebooting when no
   MQTT connection exists. Can be disabled by setting this to `0s`. Defaults to `15min`.
 
 - **max_payload_size** (*Optional*, int): The largest incoming message in bytes, from 512 to 1048576; a unit such as
   `16kB` also works. Longer messages are dropped with a warning in the log. Defaults to `32768` on ESP32, `16384` on
   BK72xx, RTL87xx and LN882x, and `8192` on ESP8266.
 
-- **keepalive** (*Optional*, [Time](/guides/configuration-types#time)): The time
+- **keepalive** (*Optional*, [Time](/guides/configuration-types/#time)): The time
   to keep the MQTT socket alive, decreasing this can help with overall stability due to more
   WiFi traffic with more pings. Defaults to 15 seconds.
 
@@ -171,7 +171,7 @@ mqtt:
 - **on_json_message** (*Optional*, [Automation](/automations)): An action to be
   performed when a JSON message on a specific MQTT topic is received. See [`on_json_message` Trigger](#mqtt-on_json_message).
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation.
 - **publish_nan_as_none** (*Optional*, bool): Publish `None` instead of `NaN` for sensor states, climate target
   temperatures (both limits of a two-point target) and climate target humidity, so Home Assistant can represent
   missing values. Defaults to `false`.
@@ -563,7 +563,7 @@ command_retain: false
 ### `on_connect` Trigger
 
 This trigger is activated when a connection to the MQTT broker is established. To retrieve if the session is present,
-use a [lambda](/automations/templates#config-lambda) template, it is available under the name `session_present` inside that lambda.
+use a [lambda](/automations/templates/#config-lambda) template, it is available under the name `session_present` inside that lambda.
 `session_present` indicates whether the broker has a persistent session for this client from a previous connection. When `true`,
 the broker retained subscriptions and queued messages. When `false`, the session is new.
 
@@ -584,7 +584,7 @@ mqtt:
 ### `on_disconnect` Trigger
 
 This trigger is activated when a connection to the MQTT broker is dropped. To retrieve the disconnect reason,
-use a [lambda](/automations/templates#config-lambda) template, the reason is available under the name `reason` inside that lambda.
+use a [lambda](/automations/templates/#config-lambda) template, the reason is available under the name `reason` inside that lambda.
 
 ```yaml
 mqtt:
@@ -613,7 +613,7 @@ mqtt:
 ### `on_message` Trigger
 
 With this configuration option you can write complex automations whenever an MQTT
-message on a specific topic is received. To use the message content, use a [lambda](/automations/templates#config-lambda)
+message on a specific topic is received. To use the message content, use a [lambda](/automations/templates/#config-lambda)
 template, the message payload is available under the name `x` inside that lambda.
 
 ```yaml
@@ -652,7 +652,7 @@ mqtt:
 > ```
 
 > [!NOTE]
-> This action can also be used in [lambdas](/automations/templates#config-lambda):
+> This action can also be used in [lambdas](/automations/templates/#config-lambda):
 >
 > ```yaml
 > mqtt:
@@ -671,7 +671,7 @@ mqtt:
 ## `on_json_message` Trigger
 
 With this configuration option you can write complex automations whenever a JSON-encoded MQTT
-message is received. To use the message content, use a [lambda](/automations/templates#config-lambda)
+message is received. To use the message content, use a [lambda](/automations/templates/#config-lambda)
 template, the decoded message payload is available under the name `x` inside that lambda.
 
 The `x` object is of type `JsonObject` by the [ArduinoJson](https://github.com/bblanchon/ArduinoJson)
@@ -719,7 +719,7 @@ mqtt:
 > error. Copy any value you need into a global first, then defer from a separate script or automation.
 
 > [!NOTE]
-> This action can also be used in [lambdas](/automations/templates#config-lambda):
+> This action can also be used in [lambdas](/automations/templates/#config-lambda):
 >
 > ```yaml
 > mqtt:
@@ -769,7 +769,7 @@ on_...:
    have a retain flag on or not. Defaults to `false`.
 
 > [!NOTE]
-> This action can also be written in [lambdas](/automations/templates#config-lambda):
+> This action can also be written in [lambdas](/automations/templates/#config-lambda):
 >
 > ```yaml
 > mqtt:
@@ -808,7 +808,7 @@ on_...:
 - **topic** (**Required**, string, [templatable](/automations/templates)):
    The MQTT topic to publish the message.
 
-- **payload** (**Required**, [lambda](/automations/templates#config-lambda)): The message content.
+- **payload** (**Required**, [lambda](/automations/templates/#config-lambda)): The message content.
 - **qos** (*Optional*, int, [templatable](/automations/templates)): The [Quality of Service](https://www.hivemq.com/blog/mqtt-essentials-part-6-mqtt-quality-of-service-levels)
    level of the topic. Defaults to 0.
 
@@ -816,7 +816,7 @@ on_...:
    have a retain flag on or not. Defaults to `false`.
 
 > [!NOTE]
-> This action can also be written in [lambdas](/automations/templates#config-lambda):
+> This action can also be written in [lambdas](/automations/templates/#config-lambda):
 >
 > ```yaml
 > mqtt:
@@ -881,7 +881,7 @@ on_...:
 
 ### `mqtt.connected` Condition
 
-This [Condition](/automations/actions#all-conditions) checks if the MQTT client is currently connected to
+This [Condition](/automations/actions/#all-conditions) checks if the MQTT client is currently connected to
 the MQTT broker.
 
 ```yaml
@@ -894,7 +894,7 @@ on_...:
 ```
 
 > [!NOTE]
-> This action can also be written in [lambdas](/automations/templates#config-lambda):
+> This action can also be written in [lambdas](/automations/templates/#config-lambda):
 >
 > ```yaml
 > mqtt:
