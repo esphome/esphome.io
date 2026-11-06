@@ -1,0 +1,46 @@
+---
+description: "Instructions for setting up a bridge between two UART buses in ESPHome"
+title: "UART Bridge"
+---
+import APIRef from '@components/APIRef.astro';
+
+The UART Bridge (the `uart` platform of the [Bridge](/components/bridge/) component) copies bytes unchanged, in both
+directions, between two [UART buses](/components/uart/). Each bus keeps its own baud rate, data bits, parity and stop
+bits, so two serial devices with different settings can talk to each other through this device.
+
+The example assumes two UART buses with the IDs `device_a` and `device_b` are configured.
+
+```yaml
+# Example configuration entry
+bridge:
+  - platform: uart
+    uart_id: device_a
+    peer_id: device_b
+```
+
+## Configuration Variables
+
+- **uart_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of one UART bus.
+- **peer_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the other UART bus. The same bus on
+  both sides is rejected.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this component.
+
+> [!NOTE]
+> A bridge requires exclusive use of both buses. A configuration where another component (through `uart_id`) or
+> another bridge also uses either bus is rejected, and so is `dummy_receiver` in the
+> [debug](/components/uart#debugging) option of either bus.
+
+## How It Works
+
+- Bytes from a bus are collected until it has been quiet for a frame gap, or until 256 bytes are in. On a serial line
+  the gap is 3.5 characters, at least 1.75 ms. A UART whose bytes arrive in packets (for example over TCP or USB), or
+  one without a baud rate, uses 50 ms.
+- A block that starts a frame is sent once the destination line has been quiet for a frame gap.
+- Bytes for a side that is not connected, or that takes nothing for one second, are dropped with a warning.
+- On ESP32, a pause inside a frame longer than `rx_timeout` characters can split the frame in two.
+
+## See Also
+
+- [Bridge](/components/bridge/)
+- [UART Bus](/components/uart/)
+- <APIRef text="uart_bridge.h" path="uart/bridge/uart_bridge.h" />
