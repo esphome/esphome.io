@@ -19,8 +19,9 @@ nrf52:
 - **board** (*Required*, string): The board type. Valid options are `adafruit_feather_nrf52840`,
   `adafruit_itsybitsy`, `xiao_ble`, `nrf52840dongle`, `nrf54lm20dk` (experimental),
   `nrf54l15dk` (experimental). Other boards should work with
-  those configuration as well. `adafruit_itsybitsy` was called `adafruit_itsybitsy_nrf52840` in older Zephyr
-  versions.
+  those configuration as well. `adafruit_itsybitsy` was called `adafruit_itsybitsy_nrf52840` before sdk-nrf 2.7
+  (Zephyr 3.7); both names are accepted, and older versions, including the `toolchain: platformio` default,
+  need the old one.
   ESPHome takes the chip (nRF52840, nRF54LM20 or nRF54L15) from the board name; the chip decides which
   [pins](#gpio-pin-numbering) are valid. `nrf54lm20dk` and `nrf54l15dk` are short names for the
   Zephyr boards `nrf54lm20dk/nrf54lm20a/cpuapp` and `nrf54l15dk/nrf54l15/cpuapp`; both forms are accepted.
@@ -194,6 +195,8 @@ nrf52:
 ```
 
 - The nRF54L15 has no USB device. Logs go to UART0, which is the J-Link virtual COM port; `USB_CDC` is rejected.
+- The nRF54L15 builds with the default sdk-nrf version. Flashing through the J-Link needs the `sdk-nrf`
+  toolchain (the default).
 - Flash the board through the on-board J-Link debugger, see
   [Flashing with a SEGGER J-Link](#flashing-with-a-segger-j-link).
 - The hardware watchdog is turned on automatically.
