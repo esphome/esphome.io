@@ -1,0 +1,111 @@
+---
+title: "I²S AEC Microphone"
+description: "Reduce speaker echo in microphone audio on a full-duplex ESP32 I²S bus using ESP-SR AEC."
+---
+
+The `i2s_aec_microphone` component provides a 16 kHz, 16-bit mono microphone stream with echo from the local
+speaker reduced by Espressif's ESP-SR acoustic echo cancellation (AEC). Other components can use its ID as a
+[microphone](/components/microphone/). The component needs a microphone and a speaker on the same
+[full-duplex I²S bus](/components/i2s_audio/#full-duplex).
+
+The speaker reference is taken from PCM buffers after their I²S TX DMA completion is observed. The component aligns
+that reference with the microphone stream. When no usable speaker reference is available, it passes the microphone
+audio through without echo cancellation.
+
+> [!WARNING]
+> This component currently supports only the original ESP32 with ESP-IDF and PSRAM. On this chip, an ESP-IDF I²S
+> interrupt issue can lose TX DMA-completion events and disrupt reference alignment. See
+> [the upstream ESP-IDF report](https://github.com/espressif/esp-idf/issues/19305). Hardware measurements for the
+> component used a local ESP-IDF fix; do not assume the same stability with an unpatched ESP-IDF release.
+
+## Configuration
+
+Configure an [I²S Audio](/components/i2s_audio/) bus with `full_duplex: true` and `keep_tx_active: true`, an
+[I²S Audio Microphone](/components/microphone/i2s_audio/) on that bus, and a
+[16-bit stereo I²S Audio Speaker](/components/speaker/i2s_audio/) on the same bus. The speaker's sample rate must be
+16 or 48 kHz. The source passed to AEC must provide 16 kHz, 16-bit mono audio.
+
+For a 16 kHz bus, the source can be the I²S microphone directly if it provides the required format. For a 48 kHz bus,
+convert its microphone stream to 16 kHz mono first, for example with a
+[Resampler Microphone](/components/microphone/resampler/). RX and TX on one full-duplex bus use the same physical
+sample rate; this conversion does not make the I²S RX clock run at 16 kHz while TX runs at 48 kHz.
+
+Once the bus, speaker and microphone source have been configured, add:
+
+```yaml
+i2s_aec_microphone:
+  id: echo_cancelled_microphone
+  i2s_audio_id: audio_bus
+  microphone: voice_microphone
+```
+
+Here, `audio_bus` is the ID of the full-duplex I²S bus and `voice_microphone` is the ID of its 16 kHz mono microphone
+source. Use `echo_cancelled_microphone` in a component that accepts a microphone ID.
+
+## Configuration Variables
+
+- **microphone** (**Required**, [ID](/guides/configuration-types/#id)): The 16 kHz, 16-bit mono microphone source.
+  It must originate from an I²S microphone on the selected bus, either directly or through a converter.
+- **i2s_audio_id** (*Optional*, [ID](/guides/configuration-types/#id)): The full-duplex I²S bus to observe.
+  It must have `keep_tx_active: true`. The only bus is selected automatically if there is one.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID used by downstream microphone consumers.
+- **filter_length** (*Optional*, integer): ESP-SR AEC filter length, from `1` to `4`. Defaults to `2`.
+  Longer filters use more processing time and memory.
+- **reference_gain** (*Optional*, float): Gain applied to the speaker reference before AEC, from `0.1` to `20.0`.
+  Defaults to `1.0`.
+- **fast_reference_decimation** (*Optional*, boolean): Use an ESP-DSP 3:1 decimator for the speaker reference when
+  the I²S speaker runs at 48 kHz. Defaults to `false`, which keeps the standard resampler. The optional filter adds
+  working RAM. This setting is independent of the source microphone's `fast_decimation` option: enabling either one
+  does not enable the other. The AEC source must still provide 16 kHz mono audio. A 16 kHz speaker uses its reference
+  directly and cannot enable this option.
+- **task_core** (*Optional*, integer): Pin the AEC task to CPU `0` or `1`. If omitted, FreeRTOS chooses the core.
+- All other options from the [Microphone Component](/components/microphone/).
+
+## Diagnostics
+
+The optional AEC probe is compiled and runs when the global logger level is `DEBUG` (or more verbose). The tag level
+controls which results are reported, not whether the calculations run:
+
+```yaml
+logger:
+  level: DEBUG
+  logs:
+    i2s_aec_microphone: DEBUG
+```
+
+Setting the tag to `INFO` at runtime hides probe messages but does not stop its calculations. A firmware compiled with
+global `INFO` omits the probe; raising the reporting level at runtime cannot add it back. No microphone recordings or
+additional audio ring buffers are retained.
+
+The probe samples one in 128 audio samples, rotating the sampling position between frames, at seven nearby reference
+delays. It accumulates about four seconds of reference/microphone products. It selects the delay most strongly
+associated with the **raw** microphone and compares the reference-related component before and after AEC at that
+same delay and with the same normalization. The primary result is signed `attenuation` in dB:
+`20 log10(remaining)`, where `remaining` is the ratio of correlated amplitudes after and before AEC, stabilized near
+zero correlation by a small fixed floor. A negative value indicates suppression (for example, `−20 dB`), zero means no
+change, and a positive value indicates amplification.
+The delay tracker moves only after two consecutive windows favour the same new delay;
+it never changes the alignment supplied to ESP-SR.
+
+The first synchronization also logs the best candidate from the existing correlation search and the RX/TX counter
+offset actually used by AEC. Their difference initializes the probe's observed-path delay; it is **not** an internal
+delay reported by ESP-SR. Windows with zero signal variance or dropped audio are reported as `n/a`; when playback is
+idle, an explicit `0.0 dB (idle: no playback, not a measurement)` is a status value, not measured attenuation. Nearby
+speech, periodic music and reflections at other delays can still mislead this inexpensive single-delay indicator.
+Compare it with recordings when assessing actual echo suppression.
+
+If RX/TX sample alignment changes, AEC logs a warning and recalibrates. During recalibration, microphone audio passes
+through without echo cancellation; `AEC reference synchronized` confirms that the reference is aligned again.
+
+## Resource Use
+
+AEC runs continuously while its microphone stream is captured and playback is active. It uses CPU time and PSRAM in
+addition to the I²S microphone, speaker and any sample-rate converter. Available headroom depends on the full device
+configuration; a longer filter or additional audio components may exceed it. Measure memory and audio losses on the
+target device before using the component alongside other demanding features.
+
+## See Also
+
+- [I²S Audio Component](/components/i2s_audio/)
+- [I²S Audio Microphone](/components/microphone/i2s_audio/)
+- [Resampler Microphone](/components/microphone/resampler/)
