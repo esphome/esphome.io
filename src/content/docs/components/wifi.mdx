@@ -42,7 +42,7 @@ wifi:
 ```
 
 > [!TIP]
-> For WiFi security recommendations including `min_auth_mode` configuration, see the [Security Best Practices](/guides/security_best_practices#wifi-security) guide.
+> For WiFi security recommendations including `min_auth_mode` configuration, see the [Security Best Practices](/guides/security_best_practices/#wifi-security) guide.
 
 ## Configuration variables
 
@@ -86,7 +86,7 @@ wifi:
   - **manual_ip** (*Optional*): Manually set the IP options for the AP. Same options as
     manual_ip for station mode.
 
-  - **ap_timeout** (*Optional*, [Time](/guides/configuration-types#time)): The time after which to enable the
+  - **ap_timeout** (*Optional*, [Time](/guides/configuration-types/#time)): The time after which to enable the
     configured fallback hotspot. Can be disabled by setting this to `0s`, which requires manually starting the AP by
     other means (eg: from a button press). Defaults to `90s`. With `ap_mode: always_on` or `wisp`, it is instead
     the wait before a failed start is tried again, and `0s` is rejected.
@@ -104,7 +104,7 @@ wifi:
   For example, if it's set to `.local`, all uploads will be sent to `<HOSTNAME>.local`.
   Defaults to `.local`.
 
-- **reboot_timeout** (*Optional*, [Time](/guides/configuration-types#time)): The amount of time to wait before rebooting when no
+- **reboot_timeout** (*Optional*, [Time](/guides/configuration-types/#time)): The amount of time to wait before rebooting when no
   WiFi connection exists. Can be disabled by setting this to `0s`, but note that the low level IP stack currently
   seems to have issues with WiFi where a full reboot is required to get the interface back working. Defaults to `15min`.
   The device does not reboot while a client (for example a phone) is connected to its fallback access point, or when
@@ -181,7 +181,7 @@ wifi:
     The ESP32-C2 and C61 variants have no RTC memory, so `storage: flash` must be set to use the cache on them.
     Without it, the configuration is rejected.
 
-  - **max_age** (*Optional*, [Time](/guides/configuration-types#time)): Do not re-use a cached lease older than this,
+  - **max_age** (*Optional*, [Time](/guides/configuration-types/#time)): Do not re-use a cached lease older than this,
     regardless of the lease length the DHCP server granted. By default there is no extra limit, and a cached lease is
     re-used until its renewal deadline.
 
@@ -241,13 +241,27 @@ wifi:
   [Post-Connect Roaming](#post-connect-roaming). Set to `false` with `ap_mode: always_on`, see
   [Always-On Access Point](#always-on-access-point). Defaults to `true`.
 
+- **dpp** (*Optional*): Let a phone provision the network with Wi-Fi Easy Connect. ESP32 only. See
+  [Wi-Fi Easy Connect](#wi-fi-easy-connect).
+  - **channels** (*Optional*, list of int): The channels the device listens on for a configurator. Defaults to `[6]`.
+  - **device_info** (*Optional*, string): Free text carried in the URI, such as a serial number, that some
+    configurators show. It cannot contain spaces.
+  - **private_key** (*Optional*, string): The bootstrapping private key, 32 bytes written as 64 hexadecimal
+    characters. A new key is generated on every boot when it is left out, so the URI, and with it the QR code,
+    changes with each boot.
+  - **timeout** (*Optional*, [Time](/guides/configuration-types/#time)): How long the configured or saved networks
+    are tried before the device listens for a configurator. The device then listens during each pause between
+    connection attempts. Without any network it listens from boot, and listens again at most once per `timeout`
+    after an attempt that did not finish. Defaults to `1min`.
 - **on_connect** (*Optional*, [Automation](/automations)): An action to be performed when a connection is established.
 - **on_disconnect** (*Optional*, [Automation](/automations)): An action to be performed when the connection is dropped.
+- **on_dpp_uri** (*Optional*, [Automation](/automations)): An action to be performed when the Wi-Fi Easy Connect URI
+  is ready, available as `uri` of type `const char *`. Requires `dpp`.
 - **enable_on_boot** (*Optional*, boolean): If enabled, the WiFi interface will be enabled on boot. Defaults to `true`.
 - **use_psram** (*Optional*, boolean): For ESP32 only, requests that the WiFi libraries try to allocate memory from PSRAM.
   Defaults to `false`. Requires PSRAM to be configured.
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation.
 
 ## Access Point Mode
 
@@ -392,10 +406,31 @@ While the portal is shown, or while the upstream connection has no DNS servers, 
 server so that they reach the portal. When this changes, clients are briefly disconnected to pick up the new DNS
 server.
 
+## Wi-Fi Easy Connect
+
+On the ESP32, `dpp` lets a phone provision the network with Wi-Fi Easy Connect, the Device Provisioning Protocol: the
+device publishes a bootstrapping URI, which is shown as a QR code, and a configurator such as the Android Wi-Fi
+settings scans it and sends the credentials. The device saves them and connects, and keeps using them on later boots
+like credentials entered on the captive portal. The device listens for a configurator right away when it has no
+network, neither configured nor saved, and otherwise once those networks have failed for `timeout`.
+
+```yaml
+# Example configuration entry
+wifi:
+  dpp:
+    channels: [1, 6, 11]
+  on_dpp_uri:
+    - lambda: id(my_qr_code).set_value(uri);
+```
+
+The [QR Code](/components/qr_code/) display component renders the URI from `on_dpp_uri` once a lambda passes it to
+`set_value()`.
+
 ## User Entered Credentials
 
-Some components such as [Captive Portal](/components/captive_portal/), [Improv Serial](/components/improv_serial/) and
-[Improv via BLE](/components/improv_ble/) enable the user to send and save Wi-Fi credentials to the device.
+Some components such as [Captive Portal](/components/captive_portal/), [Improv Serial](/components/improv_serial/),
+[Improv via BLE](/components/improv_ble/) and [Wi-Fi Easy Connect](#wi-fi-easy-connect) enable the user to send and
+save Wi-Fi credentials to the device.
 Beginning in 2022.11.0, as long as no credentials are set in the config file, and firmware is uploaded without
 erasing the flash (via OTA), the device will keep the saved credentials.
 
@@ -429,7 +464,7 @@ network doesn't allow for `.local` addresses. When a manual IP is in your config
 the OTA process will automatically choose that as the target for the upload.
 
 > [!NOTE]
-> See also [Changing ESPHome Node Name](/components/esphome#esphome-changing_node_name).
+> See also [Changing ESPHome Node Name](/components/esphome/#esphome-changing_node_name).
 
 ## Power Save Mode
 
@@ -767,7 +802,7 @@ on_...:
 - **save** (*Optional*, boolean, [templatable](/automations/templates)): If set to `true`, the SSID and password will be
   saved in persistent memory. Defaults to `true`.
 
-- **timeout** (*Optional*, [Time](/guides/configuration-types#time), [templatable](/automations/templates)): The time to wait for the connection
+- **timeout** (*Optional*, [Time](/guides/configuration-types/#time), [templatable](/automations/templates)): The time to wait for the connection
   to be established. Defaults to 30 seconds.
 
 - **on_connect** (*Optional*, [Automation](/automations)): An action to be performed when a connection is established.
@@ -793,7 +828,7 @@ The action is ignored if the device is not currently connected, or if a roaming 
 
 ### `wifi.connected` Condition
 
-This [Condition](/automations/actions#all-conditions) checks if the WiFi client is currently connected to a station.
+This [Condition](/automations/actions/#all-conditions) checks if the WiFi client is currently connected to a station.
 
 ```yaml
 on_...:
@@ -808,7 +843,7 @@ The lambda equivalent for this is `id(wifi_id).is_connected()`.
 
 ### `wifi.enabled` Condition
 
-This [Condition](/automations/actions#all-conditions) checks if WiFi is currently enabled or not.
+This [Condition](/automations/actions/#all-conditions) checks if WiFi is currently enabled or not.
 
 ```yaml
 on_...:
@@ -824,7 +859,7 @@ The lambda equivalent for this is `!id(wifi_id).is_disabled()`.
 
 ### `wifi.ap_active` Condition
 
-This [Condition](/automations/actions#all-conditions) checks if WiFi AP is currently active or not.
+This [Condition](/automations/actions/#all-conditions) checks if WiFi AP is currently active or not.
 
 ```yaml
 on_...:

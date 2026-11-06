@@ -10,14 +10,14 @@ const displayVersion = versionData.release ?? "";
 const versionUrl = versionData.blog_url ?? "";
 ---
 
-<Default {...Astro.props}><slot /></Default>
-{
-  displayVersion && versionUrl && (
-    <a href={versionUrl} class="version-badge" title={`ESPHome ${displayVersion}`} translate="no">
-      {displayVersion}
-    </a>
-  )
-}
+<Default {...Astro.props}>
+  <slot />
+</Default>
+{displayVersion && versionUrl && (
+  <a href={versionUrl} class="version-badge" title={`ESPHome ${displayVersion}`} translate="no">
+    {displayVersion}
+  </a>
+)}
 
 <style>
   .version-badge {
