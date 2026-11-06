@@ -1,0 +1,128 @@
+---
+description: "Embed the device's YAML configuration in firmware for recovery via the native API."
+title: "Store YAML"
+---
+The `store_yaml` component embeds the local YAML configuration files that built
+the firmware (the entry YAML, files loaded with `!include`, and local packages)
+into the device's flash, so a working configuration can be recovered from a
+running device if the original files are lost on your computer.
+
+Remote packages (packages loaded from a Git repository or URL) are not
+embedded. Only their sources are recorded, in a `store_yaml_uncaptured.yaml`
+note, and they must be fetched again when you recover the configuration.
+
+The files are compressed with [zstd](https://facebook.github.io/zstd/) at build
+time and stored in flash (`PROGMEM`). The compressed blob is streamed back over
+the [native API](/components/api/) on request. The device itself never
+decompresses the data, so no decompression code or decompression buffer is
+needed on the device.
+
+```yaml
+# Example configuration entry
+api:
+  encryption:
+    key: !secret api_encryption_key
+
+store_yaml:
+```
+
+`store_yaml` depends on the [Native API](/components/api/). On the build
+machine it uses the zstd module from the Python 3.14 standard library, or the
+`backports.zstd` package that ESPHome installs on older Python versions.
+
+Because the embedded YAML may contain network credentials, `store_yaml`
+requires [API encryption](/components/api/#configuration-variables) to be
+configured. For isolated lab setups you can set `allow_unencrypted: true` to
+override this after acknowledging the risk.
+
+## Configuration Variables
+
+- **include_secrets** (*Optional*, boolean): Controls how secrets are handled
+  in the embedded files. Defaults to `false`.
+
+  With the default `false`, each file is re-generated from its parsed form
+  with every secret value replaced by a `!secret` reference: values loaded
+  through `!secret` keep their names, and values written inline in the YAML
+  get a name derived from where they appear (for example `wifi_password`).
+  The `secrets.yaml` content is replaced with a skeleton listing every
+  referenced key. To make a recovered configuration flashable, fill in the
+  skeleton's values; nothing else needs to change. Because the files are
+  re-generated, comments and formatting are not preserved in this mode.
+
+  With `include_secrets: true`, every file, including `secrets.yaml`, is
+  embedded byte for byte, exactly as written.
+
+  > [!CAUTION]
+  > Setting `include_secrets: true` writes your Wi-Fi password, API encryption key and every other secret into
+  > the firmware binary, and any client that can connect to the native API can pull them back out. Never combine
+  > it with `allow_unencrypted: true`: every host that can reach the device would then get the secrets in plain
+  > text. Keep this off unless you understand the trade-off.
+
+- **allow_unencrypted** (*Optional*, boolean): Allow `store_yaml` without
+  [API encryption](/components/api/#configuration-variables). When enabled,
+  any client that can reach the device on the network can pull the embedded
+  YAML. Defaults to `false`.
+
+## What Gets Redacted
+
+Secret redaction covers values that ESPHome validates as sensitive (Wi-Fi
+credentials, API encryption keys, OTA and MQTT passwords, BLE bind keys, and
+similar). A credential placed in an option that is not marked sensitive, for
+example in a custom or external component, is embedded as written, so prefer
+`!secret` for any value you consider secret.
+
+If a sensitive value cannot be replaced (for example because it is assembled
+from several substitutions), the build fails rather than embedding it.
+Reference the value with `!secret`, or set `include_secrets: true` to embed
+secrets deliberately.
+
+Some content cannot be captured at build time. It is left out of the
+embedded set, and a `store_yaml_uncaptured.yaml` note listing it is included in
+the recovered files so you know what to restore:
+
+- `!include` paths that contain substitution variables (such as
+  `!include ${board}.yaml`). Restore these files manually.
+- Remote packages. The note lists each source with its `ref`, with
+  credentials in the URL masked and secrets shown by name. Fetch these packages
+  again to complete the configuration.
+- Directories that were symbolic links. The note lists each link and its
+  target so you can recreate them.
+
+## Retrieving the YAML
+
+The native API exposes a `GetYamlRequest` message. The device answers with a
+series of `GetYamlResponse` messages, each carrying the next part of the
+compressed blob in its `data` field. The first message also sets `total_size`
+to the size of the whole blob. A client joins the `data` of every message in
+order until it receives a message with `done` set; that message carries the
+last part. The size of each part is chosen by the firmware to fit in one API
+packet, so clients must not expect a fixed size. A new `GetYamlRequest` sent
+while a transfer is still running is ignored; reconnect to start again.
+
+Client tooling that decompresses the bytes and unpacks the file tree is shipped
+separately from this component.
+
+After decompression, the blob is a small envelope with little-endian integers:
+
+```text
+magic "EHY1" | uint32 file_count
+  repeat: uint16 path_len | path (utf-8) | uint32 content_len | content
+```
+
+Recovery tooling decompresses the blob and writes each `(path, content)` pair
+back to disk.
+
+## Memory and Flash Impact
+
+- **Flash:** the compressed blob itself, plus a small amount of code in the
+  API streaming path. Real-world ESPHome YAML compresses to roughly 10% to
+  30% of its original size at zstd's highest level, 22.
+- **RAM:** the blob stays in flash and is never copied to RAM as a whole.
+  Each API connection keeps one transfer offset. During a transfer, each part
+  is copied from flash straight into the API's shared send buffer, the same
+  buffer used for every other API message, on all platforms including ESP8266.
+  No extra buffer is set aside for `store_yaml`.
+
+## See Also
+
+- [Native API](/components/api/)
