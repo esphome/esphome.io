@@ -15,11 +15,12 @@ HTTP leaves the other listeners running. Samples are forwarded without resamplin
 
 > [!IMPORTANT]
 > Over Wi-Fi, [PSRAM](/components/psram/) is strongly recommended. Wi-Fi can pause for one to several seconds, and the
-> 128 KiB buffer that PSRAM allows holds about four seconds of 16 kHz audio, enough to cover those pauses. Without
-> PSRAM, the buffer is 16 KiB (half a second of 16 kHz audio), so a stream over Wi-Fi can still end with a full buffer
-> during a long pause; Ethernet works well without PSRAM. When Wi-Fi is configured, the component also turns on
-> [high-performance networking](/components/network/), because the default TCP send buffer is too small for an audio
-> stream over Wi-Fi. Ethernet-only devices keep the default buffers.
+> 128 KiB buffer that PSRAM allows holds about four seconds of 16 kHz audio, enough to cover those pauses. A 16 KiB
+> buffer holds only half a second of 16 kHz audio, so a stream over Wi-Fi can still end with a full buffer if PSRAM
+> is unavailable or the larger buffer cannot be allocated. Ethernet works well with the smaller buffer. When Wi-Fi is
+> configured, the component also turns on [high-performance networking](/components/network/#high-performance-networking),
+> because the default TCP send buffer is too small for an audio stream over Wi-Fi. Ethernet-only devices keep the
+> default buffers.
 
 ```yaml
 # Example configuration entry
@@ -39,9 +40,10 @@ microphone_http_stream:
   must output mono, 16-bit PCM. Select a microphone that exposes the desired capture stage.
 - **max_clients** (*Optional*, integer): Maximum simultaneous listeners, from `1` to `3`. Defaults to `1`. Each
   configured slot reserves a buffer at startup, even when no client is connected. With one slot, the buffer is 128 KiB
-  in PSRAM when the device has PSRAM, and 16 KiB in internal RAM when it does not. Two or three slots require an
-  enabled [PSRAM](/components/psram/) component. Each buffer is then 128 KiB in PSRAM, for a total of 256 or 384 KiB,
-  respectively. If the buffers cannot be allocated at startup, both audio endpoints return HTTP `503`.
+  in PSRAM when the device has PSRAM. If that allocation fails, it falls back to 16 KiB. Without PSRAM, it uses 16 KiB
+  in internal RAM. Two or three slots require an enabled [PSRAM](/components/psram/) component. Each buffer is then
+  128 KiB in PSRAM, for a total of 256 or 384 KiB, respectively. If the buffers cannot be allocated at startup, both
+  audio endpoints return HTTP `503`.
 
 ## HTTP Endpoints
 
@@ -53,8 +55,7 @@ microphone_http_stream:
 Both endpoints apply the web server's `allowed_origins` policy to requests with an `Origin` header. Requests without
 an `Origin` header, such as those from native HTTP clients, remain allowed. Origin checks do not replace authentication.
 
-If the microphone stops delivering samples for five seconds, the HTTP connection closes. Sharing behavior depends on
-whether the microphone implementation tracks its listeners.
+If the microphone stops delivering samples for five seconds, the HTTP connection closes.
 
 The response body contains raw **S16LE mono** samples at the source microphone's configured sample rate. Its content
 type is `application/octet-stream`; the `X-Audio-Format`, `X-Audio-Sample-Rate` and `X-Audio-Channels` headers specify
