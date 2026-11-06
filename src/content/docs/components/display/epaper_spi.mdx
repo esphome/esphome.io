@@ -56,6 +56,7 @@ Models listed under **Aliases** use identical driver settings, so either name ca
 | `GooDisplay-GDEY029T94-2.9`   | `029BN-T94-D2`                | Dalian Good Display | 2.9" mono e-paper (128x296, SSD1680). Seeed ships it with a 029BN-T94-D2 sticker. Replaces the `waveshare_epaper` model `gdey029t94`.          | [Product page](https://www.seeedstudio.com/2-9-Monochrome-ePaper-Display-with-296x128-Pixels-p-5782.html)  |
 | `GooDisplay-GDEY029Z95-2.9`   |                               | Dalian Good Display | 2.9" 3-color e-paper (128x296, SSD1680)                                                                                                        | [Product page](https://www.good-display.com/product/527.html)                                              |
 | `GooDisplay-GDEY042T81-4.2`   |                               | Dalian Good Display |                                                                                                                                                | [Product page](https://www.good-display.com/product/386.html)                                              |
+| `GooDisplay-GDEY0583T81-5.83` | `0583BN-T81-D2`               | Dalian Good Display | 5.83" mono e-paper (648x480, UC8179). Seeed ships it with a 0583BN-T81-D2 sticker. Replaces the `waveshare_epaper` model `gdey0583t81`.        |                                                                                                            |
 | `TTGO-T5-2.13in-B74`          | `GooDisplay-GDEY0213B74-2.13` | LilyGO              | LilyGO TTGO T5 2.13" B74 board with the GDEY0213B74 panel. Pins are not predefined                                                             |                                                                                                            |
 | `Waveshare-1.54in-G`          |                               | Waveshare           |                                                                                                                                                | [Product page](https://www.waveshare.com/1.54inch-e-paper-g.htm)                                           |
 | `Waveshare-1.54in-v2`         | `GooDisplay-GDEY0154D67-1.54` | Waveshare           | 1.54" V2 mono e-paper (200x200, SSD1681)                                                                                                       | [Product page](https://www.waveshare.com/1.54inch-e-paper-module.htm)                                      |
@@ -112,7 +113,8 @@ but can be overridden if needed.
   > [!NOTE]
   > Some displays use inverted busy pin polarity (LOW = busy, HIGH = idle). For these models, set `inverted: true`
   > on the busy pin. This applies to: `UC8151`, `Waveshare-1.54in-G`, `Waveshare-2.13in-bv3`, `Waveshare-2.13in-G`,
-  > `Waveshare-2.13in-G-V1`, `Waveshare-7.5in-H`, `Waveshare-7.5in-V2`, `inkplate6color`.
+  > `Waveshare-2.13in-G-V1`, `Waveshare-7.5in-H`, `Waveshare-7.5in-V2`, `GooDisplay-GDEY0583T81-5.83`,
+  > `0583BN-T81-D2`, `inkplate6color`.
 
 - **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The RESET pin, if used. Required for the SSD1681-based models (`SSD1681`, `Waveshare-1.54in-v2`, `GooDisplay-GDEY0154D67-1.54`), whose panels only wake from deep sleep on a hardware reset, and for `GooDisplay-GDEY029Z95-2.9`.
   Make sure you pull this pin high (by connecting it to 3.3V with a resistor) if not connected to a GPIO pin.
@@ -192,10 +194,10 @@ display:
 
 ### Fast and partial refresh example (reTerminal E1001)
 
-Displays based on the UC8179 controller (`Waveshare-7.5in-V2`, `Seeed-reTerminal-E1001`) support fast full and
-partial refresh. Set `full_update_every` greater than `1` to enable it: a fast full refresh is performed every
-`full_update_every` updates, with partial refreshes in between. With the default of `1`, every update is a normal
-full refresh.
+Displays based on the UC8179 controller (`Waveshare-7.5in-V2`, `Seeed-reTerminal-E1001`,
+`GooDisplay-GDEY0583T81-5.83`, `0583BN-T81-D2`) support fast full and partial refresh. Set `full_update_every`
+greater than `1` to enable it: a fast full refresh is performed every `full_update_every` updates, with partial
+refreshes in between. With the default of `1`, every update is a normal full refresh.
 
 ```yaml
 display:
