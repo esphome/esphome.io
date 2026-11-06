@@ -13,7 +13,7 @@ It supports two different audio pipelines: announcement and media. Each audio pi
 
 On-device files built directly into the firmware are played without a network connection. Encode on-device files with the configured sample rate, 1 or 2 channels, and 16 bits per sample.
 
-This platform only works on ESP32-based chips using the [ESP-IDF framework](/components/esp32#framework).
+This platform only works on ESP32-based chips using the [ESP-IDF framework](/components/esp32/#framework).
 
 > [!WARNING]
 > Audio and voice components consume a significant amount of resources (RAM, CPU) on the device.
@@ -34,7 +34,7 @@ media_player:
 
 - **announcement_pipeline** (**Required**, Pipeline Schema): Configuration settings for the announcement pipeline.
 
-  - **speaker** (**Required**, [ID](/guides/configuration-types#id)): The [speaker](/components/speaker/) to output the audio.
+  - **speaker** (**Required**, [ID](/guides/configuration-types/#id)): The [speaker](/components/speaker/) to output the audio.
   - **format** (*Optional*, enum): The audio format Home Assistant will transcode audio to before sending it to the device. One of `FLAC`, `MP3`, `OPUS`, `WAV`, or `NONE`. `NONE` disables transcoding in Home Assistant; ESPHome will then compile support for all supported codecs (`FLAC`, `MP3`, `OPUS`, and `WAV`), which increases firmware size. To compile in additional codecs without setting this to `NONE`, use the [Audio](/components/audio/) component. Defaults to `FLAC`.
   - **sample_rate** (*Optional*, positive integer): Sample rate for the transcoded audio. Should be supported by the configured `speaker` component. Defaults to the speaker's sample rate. The `OPUS` codec only supports a `48000` sample rate.
   - **num_channels** (*Optional*, positive integer): Number of channels for the transcoded audio. Must be either `1` or `2`. Defaults to the speaker's number of channels.
@@ -47,14 +47,14 @@ media_player:
 - **volume_min** (*Optional*, percentage): The minimum volume allowed. Defaults to `0%`.
 - **volume_max** (*Optional*, percentage): The maximum volume allowed. Defaults to `100%`.
 - **files** (*Optional*, list): A list of media files to build into the firmware for on-device playback.
-  - **id** (**Required**, [ID](/guides/configuration-types#id)): Unique ID for the file.
+  - **id** (**Required**, [ID](/guides/configuration-types/#id)): Unique ID for the file.
   - **file** (**Required**, string): Path to audio file. Can be a local file path or a URL.
 - **on_mute** (*Optional*, [Automation](/automations)): An automation to perform when muted.
 - **on_unmute** (*Optional*, [Automation](/automations)): An automation to perform when unmuted.
 - **on_volume** (*Optional*, [Automation](/automations)): An automation to perform when the volume is changed.
 - **on_turn_off** (*Optional*, [Automation](/automations)): An automation to perform when media_player is turned off, implements the `supports_turn_off_on` trait.
 - **on_turn_on** (*Optional*, [Automation](/automations)): An automation to perform when media_player is turned on, implements the `supports_turn_off_on` trait.
-- All other options from [Media Player](/components/media_player#config-media_player)
+- All other options from [Media Player](/components/media_player/#config-media_player)
 
 <span id="media_player-speaker-examples"></span>
 
@@ -158,7 +158,7 @@ on_...:
 
 Configuration variables:
 
-- **media_file** (**Required**, [ID](/guides/configuration-types#id)): The ID of the media file.
+- **media_file** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the media file.
 - **announcement** (*Optional*, boolean, [templatable](/automations/templates)): Whether to play back the file as an announcement or media stream. Defaults to `false`.
 - **enqueue** (*Optional*, boolean, [templatable](/automations/templates)): Whether to add the media file to the end of the pipeline's internal playlist. Defaults to `false`.
 
