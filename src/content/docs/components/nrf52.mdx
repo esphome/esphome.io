@@ -186,12 +186,12 @@ The Feather comes with one of two Adafruit bootloaders, which expect different S
 To find out which one a board has, check the boot log: when the bootloader is older than 0.11.0, the logger
 prints a warning with its version, and the original bootloader shows up as version 0.5.0. If the wrong value is
 set, the bootloader refuses the firmware package and the upload fails with an error from `adafruit-nrfutil`;
-set the other value and upload again.
+set the other value and run `esphome run yourfile.yaml` again, which builds a new package for it.
 
 ### Flashing
 
 1. Connect the board to the PC via USB.
-1. Run `esphome upload yourfile.yaml` and pick the board's serial port.
+1. Run `esphome run yourfile.yaml` and pick the board's serial port. ESPHome builds the firmware and then uploads it.
 
 ESPHome uploads over serial DFU through the board's USB serial chip. `adafruit-nrfutil` resets the board into the
 bootloader through the chip's DTR line, so no button press and no 1200 baud touch is needed. No UF2 file is
