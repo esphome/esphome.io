@@ -9,16 +9,17 @@ This component allows ESPHome to use a TCP connection as a [UART bus](/component
 socket can be read like UART data, and bytes written to the UART are sent to the socket. Any component that has a
 `uart_id` option can use it.
 
-The component can connect to a remote host (`role: client`) or listen for one incoming connection (`role: server`).
-Only one TCP connection is open at a time. When `role` is `server`, a new client is accepted only after the current
-connection is closed.
+The component can connect to a remote host (`role: client`) or listen for incoming connections (`role: server`).
+A server accepts one connection at a time unless `max_connections` allows more; see
+[Several Connections](#several-connections).
 
 To copy a hardware UART to a TCP socket instead, see [UART TCP](/components/uart_tcp/).
 
 > [!WARNING]
 > The connection is plain TCP with no encryption and no authentication; `allowed_ips` filters by address but
-> does not authenticate the peer. If it is omitted, any host that can reach the port is accepted. Only use
-> this component on a trusted network.
+> does not authenticate the peer. If it is omitted, any host that can reach the port is accepted. With
+> `max_connections` above `1`, every client that may connect can also close the quietest other client by
+> connecting. Only use this component on a trusted network.
 
 > [!NOTE]
 > While the connection is down, or while its 1024-byte send buffer is full, written bytes are dropped and a warning
@@ -55,6 +56,32 @@ tcp_uart:
 
 The connecting client sends raw bytes, for example RTU frames for `modbus`, not Modbus TCP.
 
+## Several Connections
+
+```yaml
+# Example configuration entry
+tcp_uart:
+  - id: meter_bus
+    role: server
+    port: 8899
+    max_connections: 4
+```
+
+With `max_connections` above `1`, several clients can connect to the same port. They take turns: only the bytes of
+the client that has the turn are read, and everything written goes to that client. The bytes of the other clients
+wait in the network stack and are not lost.
+
+The turn passes to the next client that has sent data when the client that has it closes, or when it has been quiet
+in both directions for `turn_timeout` and the bytes already read from it have been consumed. Bytes written after
+the turn has ended still go to the last client until another client gets the turn; once that client has closed,
+they are dropped. A client that sends without a pause keeps the turn, so this suits clients that send a request and
+wait for the answer. A client may have to wait until each of the other clients has had its turn.
+A component whose reply takes longer than `turn_timeout`, for example a bridge to a slow serial device, needs a
+longer `turn_timeout`.
+
+When all connections are in use, a new client takes the place of the one that has been quiet the longest, and that
+client is closed. The client that has the turn is never closed this way.
+
 ## Configuration Variables
 
 - **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation. Use
@@ -65,6 +92,11 @@ The connecting client sends raw bytes, for example RTU frames for `modbus`, not 
   This option cannot be used when `role` is `server`.
 - **port** (**Required**, int): When `role` is `client`, the TCP port to connect to. When `role` is `server`,
   the TCP port to listen on.
+- **max_connections** (*Optional* when `role` is `server`, int): How many clients can be connected at the same
+  time, from `1` to `8`. With `1`, a second client waits until the current connection is closed. Each connection
+  above the first uses about 1.1 kB of RAM. This option cannot be used when `role` is `client`. Defaults to `1`.
+- **turn_timeout** (*Optional* when `max_connections` is above `1`, [Time](/guides/configuration-types/#time)): How
+  long the client that has the turn may be quiet before the next client's bytes are read. Defaults to `100ms`.
 - **allowed_ips** (*Optional* when `role` is `server`, list): IPv4 addresses that may connect. A plain
   address is one host. A network is written in CIDR form, for example `192.0.2.0/24`. At most 255 entries. If
   the option is omitted, every address may connect. A rejected client is closed immediately and logged as a
@@ -80,7 +112,7 @@ The connecting client sends raw bytes, for example RTU frames for `modbus`, not 
 - **reconnect_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The time to wait before connecting
   again after a failed or closed connection. An unanswered connection attempt is given up after
   `reconnect_interval` or 10 seconds, whichever is longer. For a server, this is the wait after a failed listen or
-  accept; a new client is accepted as soon as the current one disconnects. Defaults to `5s`.
+  accept, except when it runs out of sockets or memory; a new client is accepted without this wait. Defaults to `5s`.
 
 ## Binary Sensor
 
@@ -97,8 +129,8 @@ binary_sensor:
 
 - **tcp_uart_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the TCP UART component. Required when
   more than one is configured.
-- **connected** (*Optional*): A binary sensor that reports whether the TCP connection is established. All options
-  from [Binary Sensor](/components/binary_sensor/#config-binary_sensor) are supported.
+- **connected** (*Optional*): A binary sensor that reports whether at least one TCP connection is established.
+  All options from [Binary Sensor](/components/binary_sensor/#config-binary_sensor) are supported.
 
 ## Sensor
 
