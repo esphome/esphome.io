@@ -27,8 +27,13 @@ nrf52:
   Zephyr boards `nrf54lm20dk/nrf54lm20a/cpuapp` and `nrf54l15dk/nrf54l15/cpuapp`; both forms are accepted.
   `adafruit_feather_nrf52832` is built on the Zephyr board `nrf52dk/nrf52832`, see
   [Adafruit Feather nRF52832](#adafruit-feather-nrf52832).
-- **bootloader** (*Optional*, string): Bootloader type. Valid options are `mcuboot`, `adafruit`, `adafruit_nrf52_sd132`, `adafruit_nrf52_sd132_v6`, `adafruit_nrf52_sd132_v2`, `adafruit_nrf52_sd140_v6`, `adafruit_nrf52_sd140_v7`, `nrf`. Default value depends on board type.
-- **dcdc** (*Optional*, boolean): Enable DC/DC converter for REG1 stage. Defaults follow board settings from Zephyr, except on `adafruit_feather_nrf52832`, where it defaults to `false`.
+- **bootloader** (*Optional*, string): Bootloader type. Valid options are `mcuboot`, `adafruit`,
+  `adafruit_nrf52_sd132`, `adafruit_nrf52_sd132_v6`, `adafruit_nrf52_sd132_v2`, `adafruit_nrf52_sd140_v6`,
+  `adafruit_nrf52_sd140_v7`, `nrf`. Default value depends on board type. `adafruit_nrf52_sd132` uses the
+  nRF52840 flash layout; for the Adafruit Feather nRF52832 use `adafruit_nrf52_sd132_v6` or
+  `adafruit_nrf52_sd132_v2`, see [Bootloader](#bootloader).
+- **dcdc** (*Optional*, boolean): Enable DC/DC converter for REG1 stage. Defaults follow board settings from
+  Zephyr, except on `adafruit_feather_nrf52832`, where it defaults to `false`.
 External LC filters must be connected to the DC/DC regulator pins if it is being used.
 The advantage of using a DC/DC regulator is that the overall power consumption is normally reduced
 as the efficiency of such a regulator is higher than that of a LDO.
@@ -81,6 +86,9 @@ Nordic's [nRF Connect for Desktop](https://www.nordicsemi.com/Products/Developme
 Programmer or `nrfutil device recover`. Then flash again.
 
 ## Flashing with Adafruit nRF52 Bootloader
+
+These steps do not apply to the Adafruit Feather nRF52832, which has no native USB; see
+[Adafruit Feather nRF52832](#adafruit-feather-nrf52832).
 
 For flashing via a flash drive.
 
