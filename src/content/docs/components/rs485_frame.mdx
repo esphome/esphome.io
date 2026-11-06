@@ -7,6 +7,16 @@ params:
       buses, configured explicitly with framing bytes, CRC, and a command encoder.
 ---
 
+import Figure from '@components/Figure.astro';
+
+<Figure
+  src="/images/rs485.jpg"
+  alt="RS485 transceiver module"
+  layout="constrained"
+  width={300}
+  height={145}
+/>
+
 The `rs485_frame` hub is a generic DLE-framing engine: it lets an ESPHome
 device participate in RS485 buses that wrap their payloads in
 DLE-STX/ETX-delimited, byte-stuffed frames. It receives and validates frames
@@ -54,9 +64,10 @@ transceiver** (e.g. MAX13487, MAX22025), where DE follows the TX line. On ESP826
 the hub waits for the UART to finish sending each frame.
 
 `idle_gap` TX gate mode is sensitive to echo on the RX line: each transmitted frame comes
-back as bus activity, which resets the idle timer and may keep `idle_gap` from ever firing
-again. Without the ESP32 hardware mode, prefer `frame_trigger` or `fixed_delay`, or use a
-transceiver that suppresses local echo.
+back as bus activity and restarts the `min_silence` wait, which delays the next frame.
+Without the ESP32 hardware mode, prefer `frame_trigger` or use a transceiver that suppresses
+local echo. `fixed_delay` does not check for bus activity at all, so use it only on buses
+where sending at a fixed interval is safe.
 
 ## Basic Usage
 
@@ -218,14 +229,15 @@ A general-purpose [Action](/automations/actions/) you can invoke from anywhere �
 on_frame: triggers, template buttons, schedule entries. Both fields are templatable.
 
 ```yaml
-# Pool controller example: send a fixed AUX command frame from a script.
+# Hayward AquaLogic wireless example: press AUX 1 from a script (channel byte, the
+# press and release words, then the trailing pad).
 script:
   - id: pulse_aux1
     then:
       - rs485_frame.send_frame:
           id: pool
           frame_type: [0x00, 0x83]
-          payload: [0x00, 0x01, 0x02, 0x00, 0x02, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00]
+          payload: [0x01, 0x00, 0x02, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00]
 
 # Computed payload via lambda — useful when the bytes depend on entity state, a
 # trigger argument, or any other runtime value. Payload layout is protocol-specific.
@@ -400,8 +412,8 @@ experimental: use `sniffer_only: true` unless you are testing TX.
   instead, or add `command_format:` to opt into the encoder.
 
   - **value_element_bytes** (**Required**, integer): Number of bytes written per value element:
-    `1`, `2`, `3`, or `4`. Each element is taken from the low `value_element_bytes × 8` bits of its
-    32-bit value; elements are written back-to-back between the preamble and postamble.
+    `1`, `2`, `3`, or `4`. Each value must fit in that many bytes, or the config is rejected;
+    elements are written back-to-back between the preamble and postamble.
   - **preamble** (*Optional*, list of hex bytes): Bytes written to the payload before the
     value field(s). Up to 8 bytes. Defaults to `[]` (none).
   - **endian** (*Optional*, string): Byte order of each value element: `big`

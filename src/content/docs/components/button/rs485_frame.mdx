@@ -16,8 +16,8 @@ be configured, and supports three construction forms:
 
 - **`value:`** — encodes one or more values into the on-wire payload, back-to-back, using the
   [`command_format:`](/components/rs485_frame/#command-format) block of the button or the hub.
-  Requires one of the two to be set. Each value is stored as a uint32; `value_element_bytes` controls
-  how many of the low-order bytes are written per element (1, 2, 3, or 4). A list is shorthand
+  Requires one of the two to be set. `value_element_bytes` sets how many bytes each value is
+  written as (1, 2, 3, or 4), and a value that does not fit is rejected. A list is shorthand
   for protocols whose frame carries more than one value in a single payload, without repeating
   the preamble/postamble per value.
 - **`frame_type:` + `payload:`** — bypasses `command_format:` entirely. The supplied
@@ -56,9 +56,10 @@ as wire bytes: DLE/STX, the frame type and payload, the CRC (1 or 2 bytes depend
 `crc.type`), then DLE/ETX, with byte-stuffing still applied. Frames longer than 32 bytes
 span several log lines; join them first.
 
-To get the bytes a button sends, drop the leading DLE/STX, the CRC and the trailing
-DLE/ETX, then undo the byte-stuffing: with `escape_byte`, DLE followed by the marker byte
-is one DLE; with `double`, two DLEs are one DLE. What is left starts with the frame type.
+To get the bytes a button sends, drop the leading DLE/STX and the trailing DLE/ETX, undo
+the byte-stuffing (with `escape_byte`, DLE followed by the marker byte is one DLE; with
+`double`, two DLEs are one DLE), then drop the CRC bytes from the end. The CRC is stuffed
+too, so remove it only after unstuffing. What is left starts with the frame type.
 Use it as the raw `frame_type:` + `payload:` form, or, if the same layout repeats across
 buttons, as `command_format:` on the hub: put the frame type and the fixed bytes after it
 in `preamble`, and the part that changes between buttons in `value:`.
@@ -76,11 +77,11 @@ controller-wiring-dependent — rename and verify against your physical panel.
 Provide **exactly one** of the following forms:
 
 - **value** (**Required**, hex uint32 or list of up to 8 hex uint32): Value(s) to encode,
-  e.g. `0x00010000` or `[0x00010000, 0x00020000]`. Each value is stored as a uint32; the low
-  `value_element_bytes × 8` bits are written per element, back-to-back between the hub's
-  preamble and postamble. Rejected at config time if the hub has no `command_format:` — use
-  the raw form, add `command_format:` to the hub, or add `command_format:` directly to this
-  button.
+  e.g. `0x00010000` or `[0x00010000, 0x00020000]`. Each value is written as
+  `value_element_bytes` bytes, back-to-back between the preamble and postamble of the
+  `command_format:` in use (the button's, otherwise the hub's); a value that does not fit is
+  rejected at config time. Also rejected when neither the button nor the hub has a
+  `command_format:` — use the raw form or add one.
 - **frame_type** + **payload** (**Required together** when not using `value:`):
 
   - **frame_type** (list of hex bytes): 2-byte (or longer, up to 8 bytes) frame type prefix.
