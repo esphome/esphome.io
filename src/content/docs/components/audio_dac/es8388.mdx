@@ -27,12 +27,16 @@ audio_dac:
 
 - **address** (*Optional*, int): The I²C address of the driver. Defaults to `0x10`.
 - **i2c_id** (*Optional*): The ID of the [I²C bus](/components/i2c) the ES8388 is connected to.
+- **volume_min_db** (*Optional*, float): The DAC attenuation at volume 0, from `-96dB` to `0dB`. Defaults to `-96dB`.
+- **volume_max_db** (*Optional*, float): The DAC attenuation at volume 1, from `-96dB` to `0dB`. Must be higher than
+  `volume_min_db`. Defaults to `0dB`. The volume maps linearly in dB between the two. With a small speaker that is
+  barely heard at low volumes, raise `volume_min_db` (for example to `-50dB`) so the whole volume range can be used.
 - **mic_gain** (*Optional*, enum): The ADC PGA gain applied to both channels at startup, in dB.
   One of `0DB`, `3DB`, `6DB`, `9DB`, `12DB`, `15DB`, `18DB`, `21DB`, `24DB`. Defaults to `0DB`.
   Set this if you record from a microphone and the input level is too low for speech
   recognition. On some boards the default is too quiet to transcribe; see
   [Microphone recording level](#microphone-recording-level).
-- All other options from [Audio DAC](/components/audio_dac#config-audio_dac).
+- All other options from [Audio DAC](/components/audio_dac/#config-audio_dac).
 
 > [!NOTE]
 > The default is `0DB` for backwards compatibility: a higher default would raise the input level
@@ -129,7 +133,7 @@ select:
 
 ## Automations
 
-All [Audio DAC Automations](/components/audio_dac#automations-audio_dac) are supported by this platform.
+All [Audio DAC Automations](/components/audio_dac/#automations-audio_dac) are supported by this platform.
 
 ## Configuration Examples
 
