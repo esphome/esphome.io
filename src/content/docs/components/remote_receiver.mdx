@@ -126,7 +126,8 @@ Multiple remote receivers can be configured as a list of dict definitions within
   - `edge`: a pin interrupt records the time of each edge with `micros()`, which can jump on these chips and make
     the measured pulse lengths less accurate.
   - `timer`: a hardware timer interrupt reads the pin every `sample_period` and measures each pulse with the
-    26 MHz system tick counter, so a late interrupt does not change the measured lengths.
+    26 MHz system tick counter, which avoids the `micros()` jumps. A late interrupt can still delay edge
+    detection and distort the measured lengths.
 
 - **sample_period** (*Optional*, [Time](/guides/configuration-types/#time)): How often the pin is read with
   `sampling: timer`. Allowed values are in range `50us` to `1000us`. Defaults to `100us`. Only allowed with
