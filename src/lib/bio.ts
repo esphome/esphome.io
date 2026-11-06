@@ -110,7 +110,7 @@ export function youtubeId(value: unknown): string | null {
 // The item's place in the file, and its title so it's easy to find.
 const itemPath = (list: string, index: number, item: unknown) => {
   const name = isMap(item) ? (item.title ?? item.label) : undefined;
-  return `${list}[${index}]${blank(name) ? "" : ` ("${name}")`}`;
+  return `${list}[${index}]${typeof name === "string" && !blank(name) ? ` ("${name}")` : ""}`;
 };
 
 // Keys that were renamed, or are easy to reach for. Naming the right key
@@ -156,9 +156,13 @@ export function sitePath(url: string): string {
   return parsed.hostname === SITE_HOST ? parsed.pathname + parsed.search + parsed.hash : url;
 }
 
+// Text, in quotes. A value such as `false` or `5` would otherwise pass, then
+// render as a link with no name.
 function requireText(item: Raw, key: string, keyPath: string, optional = false) {
-  if (optional && item[key] === undefined) return;
-  if (blank(item[key])) fail(`${keyPath}.${key}`, optional ? "must be text, or left out" : "is required");
+  const value = item[key];
+  if (optional && value === undefined) return;
+  if (blank(value)) fail(`${keyPath}.${key}`, optional ? "must be text, or left out" : "is required");
+  if (typeof value !== "string") fail(`${keyPath}.${key}`, `must be text in quotes, not ${JSON.stringify(value)}`);
 }
 
 /**
@@ -248,6 +252,22 @@ function validateLatest(item: unknown, keyPath: string, images: string[]) {
  * a post's cover, which is an imported image or a URL.
  */
 export type ImageSource = string | ImageMetadata;
+
+/** Where an image comes from, so src/components/BioLists.astro knows what it can resize. */
+export type ResolvedImage =
+  { kind: "file"; image: ImageMetadata } | { kind: "remote"; url: string } | { kind: "as-is"; url: string };
+
+/**
+ * Resolves an image against `files`, the images in src/assets/bio/ by file
+ * name. A blog cover can also be a path to a file in public/, such as
+ * "/images/cover.webp", which the build can't resize: it's used as it is.
+ */
+export function resolveImage(image: ImageSource, files: Record<string, ImageMetadata>): ResolvedImage {
+  if (typeof image !== "string") return { kind: "file", image };
+  if (Object.hasOwn(files, image)) return { kind: "file", image: files[image] };
+  if (isHttpsUrl(image)) return { kind: "remote", url: image };
+  return { kind: "as-is", url: image };
+}
 
 /** A blog post, as src/components/BioLists.astro passes it in. */
 export interface Post {

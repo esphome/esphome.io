@@ -23,7 +23,7 @@ import type { ImageMetadata } from "astro";
 import { getImage, imageConfig } from "astro:assets";
 import type { StarlightBlogPostData } from "starlight-blog/data";
 import * as bio from "../data/bio";
-import { resolve, validate, type Entry } from "../lib/bio";
+import { resolve, resolveImage, validate, type Entry } from "../lib/bio";
 
 // The images for items added by hand, by file name.
 const files = import.meta.glob<ImageMetadata>("../assets/bio/*.{avif,jpeg,jpg,png,webp}", {
@@ -86,12 +86,13 @@ function canReach(url: string) {
 }
 
 async function picture(entry: Entry) {
-  const image = entry.image!;
-  const source = typeof image === "string" && !image.startsWith("https://") ? images[image] : image;
-  if (typeof source === "string") {
-    const allowed = imageConfig.domains.includes(new URL(source).hostname);
-    if (!allowed || !(await canReach(source))) return { src: source };
+  const resolved = resolveImage(entry.image!, images);
+  if (resolved.kind === "as-is") return { src: resolved.url };
+  if (resolved.kind === "remote") {
+    const allowed = imageConfig.domains.includes(new URL(resolved.url).hostname);
+    if (!allowed || !(await canReach(resolved.url))) return { src: resolved.url };
   }
+  const source = resolved.kind === "file" ? resolved.image : resolved.url;
   const options = { src: source, width: 1200, height: 630, fit: "cover", format: "webp" } as const;
   if (!entry.card) return { src: (await getImage({ ...options, ...ROW })).src };
   const card = await getImage({ ...options, widths: CARD.widths });

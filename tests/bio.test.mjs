@@ -10,6 +10,7 @@ import {
   parseEnd,
   parseTime,
   resolve,
+  resolveImage,
   sitePath,
   validate,
   youtubeId,
@@ -278,6 +279,17 @@ describe("validation: a mistake names the item", () => {
     );
   });
 
+  test("needs text in quotes, not other values", () => {
+    assertInvalid(latestItem({ title: false }), "latest[0].title: must be text in quotes, not false");
+    assertInvalid(latestItem({ label: 5 }), 'latest[0] ("Item").label: must be text in quotes, not 5');
+    assertInvalid(latestItem({ note: true }), 'latest[0] ("Item").note: must be text in quotes, not true');
+    assertInvalid(link({ label: false }), 'sections[0] ("Featured").links[0].label: must be text in quotes, not false');
+    assertInvalid(
+      config({ sections: [{ title: 7, links: [{ label: "A", url: "/a/" }] }] }),
+      "sections[0].title: must be text in quotes, not 7",
+    );
+  });
+
   test("rejects links that go to another site, or nowhere", () => {
     for (const url of [
       "//example.com/",
@@ -539,6 +551,27 @@ describe("links to esphome.io", () => {
     assert.equal(byTitle(lists).Latest.entries.find((e) => e.title === "Voice is here").url, "/blog/2026-10-14/");
     assert.deepEqual(showingAt(lists, "2026-11-11T00:00:00Z").Latest, ["Voice is here", "2026.10.0", "2026.9.0"]);
     assert.deepEqual(showingAt(lists, "2026-11-13T00:00:00Z").Latest, ["2026.10.0", "Voice", "2026.9.0"]);
+  });
+});
+
+describe("where an image comes from", () => {
+  const file = { src: "/_astro/a.webp", width: 1200, height: 630, format: "webp" };
+  const files = { "2026-11-a.webp": file };
+
+  test("a file in src/assets/bio/, or a post's imported cover, can be resized", () => {
+    assert.deepEqual(resolveImage("2026-11-a.webp", files), { kind: "file", image: file });
+    assert.deepEqual(resolveImage(file, {}), { kind: "file", image: file });
+  });
+
+  test("a remote image is resized if its site allows it", () =>
+    assert.deepEqual(resolveImage("https://example.com/a.webp", files), {
+      kind: "remote",
+      url: "https://example.com/a.webp",
+    }));
+
+  test("a cover in public/ is used as it is, not looked up in src/assets/bio/", () => {
+    assert.deepEqual(resolveImage("/images/shared.webp", files), { kind: "as-is", url: "/images/shared.webp" });
+    assert.deepEqual(resolveImage("constructor", files), { kind: "as-is", url: "constructor" });
   });
 });
 
