@@ -1,0 +1,369 @@
+---
+description: "Instructions for setting up the TI BQ25820 1- to 14-cell battery charger with MPPT"
+title: "BQ25820"
+---
+
+The TI BQ25820 is a battery charger for 1 to 14 lithium-ion cells in series, with an integrated MPPT (maximum
+power point tracking) input, which allows a solar panel to charge the battery directly at high efficiency. It
+supports charge currents of up to 20A, an input operating range of 4.4V to 70V (the input voltage regulation
+point is programmable up to 65V), and a reverse mode in which the battery powers the system. The chip is
+configured and monitored over [I²C](/components/i2c/) at address `0x6B`.
+
+> [!WARNING]
+> Please note that the BQ25820 does **not** act as a multi-cell manager, charge balancer, or primary battery
+> *protection* device. **All battery pack(s) that you connect to your circuit(s) should *always* have their
+> own primary battery management systems with multi-stage protections, and fully tested and implemented first.**
+
+TI offers their [bqStudio](https://www.ti.com/tool/BQSTUDIO) (Windows desktop app) for development, testing,
+and initial-register configurations for their BQ series of charge controllers. You may need to reach out for
+support on their [TI Forums](https://e2e.ti.com/search?category=forum&q=BQSTUDIO) to request a BQ25820
+firmware profile (file) to take advantage of their bqStudio software, and begin bench-testing with the TI
+[BQ25820EVM](https://www.ti.com/tool/BQ25820EVM), or your own circuit design.
+
+ESPHome exposes the chip's:
+
+- Voltage and current measurements as [sensors](/components/sensor/),
+- Battery charge, fault and power state as [binary sensors](/components/binary_sensor/),
+- Decoded charge and temperature status as [text sensors](/components/text_sensor/).
+
+The charge current, input limits, MPPT behaviour, charge safety timers and battery temperature thresholds
+are all configurable.
+
+In order to communicate with the BQ25820, you need to have an [I²C](/components/i2c/) component (and its
+requisite GPIO pins) defined in your configuration.
+
+```yaml
+# Example configuration entry
+bq25820:
+  charge_current: 1A
+  mppt_enabled: true
+```
+
+## BQ25820 Component
+
+The `bq25820` component polls the chip and applies the charge configuration on startup. Multiple instances
+may be defined if the device has more than one BQ25820.
+
+### Configuration Variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation.
+  Necessary if you want to define multiple instances of this component; the platforms below then pick one
+  with `bq25820_id`.
+
+- **i2c_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the
+  [I²C](/components/i2c/) bus if you want to use multiple I²C buses.
+
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval between
+  polling the chip. Defaults to `60s`; set a shorter interval (for example `1s`) for more granular battery
+  data. With the `watchdog` enabled, it must be shorter than the watchdog period. It cannot be `never`,
+  since the poll writes the configuration again after a charger reset.
+
+- **charge_current** (*Optional*, Current): The battery charge current. With the reference `5mΩ`
+  battery sense resistor this is `400mA` to `20A` in steps of 50mA; the range and step scale with
+  `bat_sns_res`. When not set, the chip keeps its power-on value and the resistor on the ICHG pin
+  sets the current.
+
+- **bat_sns_res** (*Optional*, Resistance): The battery sense (shunt) resistor, between `0.01mΩ` and
+  `10mΩ`. Must match the hardware: the battery current readings and the charge and precharge
+  current settings are scaled by it. Defaults to `5mΩ`.
+
+- **ac_sns_res** (*Optional*, Resistance): The input sense (shunt) resistor, between `0.01mΩ` and
+  `10mΩ`. Must match the hardware: the input current readings and `input_current_limit` are scaled
+  by it. Defaults to `2mΩ`.
+
+- **watchdog** (*Optional*, Enum): The period of the chip's I²C watchdog, one of `disabled`, `40s`,
+  `80s` or `160s`. The component feeds the watchdog on every poll, so `update_interval` must be shorter
+  than the period, or the configuration is rejected. If the microcontroller stops polling, the chip falls
+  back to its power-on charge settings when the watchdog expires; the component writes the configuration
+  again once polling resumes. `true` is accepted as `160s` and `false` as `disabled`.
+  Defaults to `disabled`.
+
+- **charge_voltage** (*Optional*, Voltage): The VFB regulation trim point, in steps of 2mV between
+  `1.504V` and `1.566V`. The battery charge voltage itself is set by the external VFB resistor divider;
+  this option only trims the regulation limit. Defaults to `1.536V`.
+
+- **input_current_limit** (*Optional*, Current): The input current limit. The charger reduces the
+  charge current to keep the input current below it. With the reference `2mΩ` input sense resistor
+  this is `1A` to `50A` in steps of 125mA; the range and step scale with `ac_sns_res`. When not set,
+  the chip keeps its power-on value (the maximum).
+
+- **input_voltage_limit** (*Optional*, Voltage): The lowest input voltage the charger allows, in steps
+  of 20mV between `4.4V` and `65V`. The charger reduces the charge current to keep the input above it.
+  The input undervoltage and overvoltage window is set by external resistors on the ACUV and ACOV pins,
+  not by I²C. Defaults to `4.4V`.
+
+- **precharge_current** (*Optional*, Current): The current used while the battery is below the
+  precharge voltage. With the reference `5mΩ` battery sense resistor this is `250mA` to `10A` in steps
+  of 50mA; the range and step scale with `bat_sns_res`. When not set, the chip keeps its power-on value
+  (`4A` with the reference resistor).
+
+- **reverse_system_voltage** (*Optional*, Voltage): The system voltage target in reverse mode (when
+  the battery powers the system), in steps of 20mV between `3.3V` and `65V`. Defaults to `5V`.
+
+- **charge_enabled** (*Optional*, Boolean): Enable the charger. Defaults to `true`.
+
+- **hiz_enabled** (*Optional*, Boolean): Enable HIZ (high impedance) mode, which disconnects the input
+  source; the battery then powers the system. Defaults to `false`.
+
+- **charge_timer** (*Optional*, Enum): The charge safety timer, one of `5h`, `8h`, `12h` or `24h`.
+  If the battery is still charging after this time, charging stops and the `charge_safety_timer`
+  binary sensor activates. Defaults to `8h`.
+
+- **topoff_timer** (*Optional*, Enum): The top-off timer, one of `disabled`, `15m`, `30m` or `45m`.
+  Defaults to `disabled`.
+
+- **ideal_diode** (*Optional*, Boolean): Enable the ideal diode mode. Defaults to `false`.
+
+- **mppt_enabled** (*Optional*, Boolean): Enable MPPT on the input. Defaults to `false` - enable this
+  when the input is a solar panel.
+
+- **mppt_sweep_timer** (*Optional*, Enum): How often the MPPT input sweep runs, one of `3m`, `10m`,
+  `15m` or `20m`. Defaults to `3m`.
+
+- **force_mppt_sweep** (*Optional*, Boolean): Run one MPPT sweep at startup. Defaults to `false`.
+
+- **temp_en** (*Optional*, Boolean): Enable the TS (temperature) input. The TS pin expects an NTC
+  thermistor from TS to PGND with a resistor from REGN to TS; the `ts_t*` thresholds are rated for a 10kΩ
+  NTC with a 10kΩ resistor. Defaults to `true`.
+
+- **ts_t1** (*Optional*, Enum): One of `-10C`, `-5C`, `0C` or `5C`. Below this temperature, charging
+  is disabled. Defaults to `0C`.
+
+- **ts_t2** (*Optional*, Enum): One of `5C`, `10C`, `15C` or `20C`. Below this temperature, the
+  charge current is limited to the precharge current. Defaults to `10C`.
+
+- **ts_t3** (*Optional*, Enum): One of `40C`, `45C`, `50C` or `55C`. Above this temperature (the warm
+  region), charging continues at the charge current with a reduced charge voltage. Defaults to `45C`.
+
+- **ts_t5** (*Optional*, Enum): One of `50C`, `55C`, `60C` or `65C`. Above this temperature, charging
+  is disabled. Defaults to `50C`.
+
+## Sensor
+
+The chip's voltage and current measurements are exposed as sensors. The current values are derived from
+the sense resistors configured above.
+
+```yaml
+sensor:
+  - platform: bq25820
+    vbat:
+      name: "Battery Voltage"
+    ibat:
+      name: "Battery Current"
+```
+
+### Configuration Variables
+
+At least one sensor must be set.
+
+- **bq25820_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `bq25820`
+  component defined above. Required only when there is more than one.
+
+- **vbat** (*Optional*): The battery voltage in V. All options from [Sensor](/components/sensor/).
+
+- **vsys** (*Optional*): The system output voltage in V. All options from [Sensor](/components/sensor/).
+
+- **vac** (*Optional*): The input voltage in V. All options from [Sensor](/components/sensor/).
+
+- **ibat** (*Optional*): The battery current in A, positive while charging and negative while
+  discharging. All options from [Sensor](/components/sensor/).
+
+- **iac** (*Optional*): The input current in A. All options from [Sensor](/components/sensor/).
+
+- **temp_in_c** (*Optional*): The battery thermistor temperature on the TS pin in °C. Requires
+  `temp_en: true` and a connected NTC. The defaults match a 10kΩ NTC with a B constant of 3435 and a
+  10kΩ resistor. All options from [Sensor](/components/sensor/), and:
+
+  - **b_constant** (*Optional*, float): The B constant of the NTC thermistor. Defaults to `3435`.
+
+  - **reference_resistance** (*Optional*, Resistance): The resistance of the NTC thermistor at
+    `reference_temperature`. Defaults to `10kΩ`.
+
+  - **reference_temperature** (*Optional*, Temperature): The temperature at which the NTC thermistor has
+    `reference_resistance`. Defaults to `25°C`.
+
+  - **resistor** (*Optional*, Resistance): The resistor from REGN to TS, above the NTC thermistor.
+    Defaults to `10kΩ`.
+
+## Binary Sensor
+
+The charge, fault and power state of the chip is exposed as binary sensors.
+
+```yaml
+binary_sensor:
+  - platform: bq25820
+    charging:
+      name: "Charging"
+    charged:
+      name: "Charged"
+```
+
+### Configuration Variables
+
+At least one binary sensor must be set.
+
+- **bq25820_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `bq25820`
+  component defined above. Required only when there is more than one.
+
+- **charging** (*Optional*): Active while the charger is charging the battery, in any phase from
+  trickle to top-off. All options from [Binary Sensor](/components/binary_sensor/).
+
+- **charged** (*Optional*): Active while the battery is fully charged. All options from
+  [Binary Sensor](/components/binary_sensor/).
+
+- **low_battery** (*Optional*): Active while the charger is in trickle or precharge, which means the
+  battery voltage is below the precharge threshold. It is only reported while charging.
+  All options from [Binary Sensor](/components/binary_sensor/).
+
+- **pg** (*Optional*): Active while the input power is good, that is present and within its operating
+  window. All options from [Binary Sensor](/components/binary_sensor/).
+
+- **reverse** (*Optional*): Active while the chip is in reverse mode, powering the system from the
+  battery. All options from [Binary Sensor](/components/binary_sensor/).
+
+- **vac_undervoltage** (*Optional*): Active while the input voltage is below the undervoltage window.
+  All options from [Binary Sensor](/components/binary_sensor/).
+
+- **vac_overvoltage** (*Optional*): Active while the input voltage is above the overvoltage window.
+  All options from [Binary Sensor](/components/binary_sensor/).
+
+- **ibat_overcurrent** (*Optional*): Active on a battery overcurrent fault. All options from
+  [Binary Sensor](/components/binary_sensor/).
+
+- **vbat_overvoltage** (*Optional*): Active on a battery overvoltage fault. All options from
+  [Binary Sensor](/components/binary_sensor/).
+
+- **thermal_shutdown** (*Optional*): Active while the chip is in thermal shutdown. All options from
+  [Binary Sensor](/components/binary_sensor/).
+
+- **charge_safety_timer** (*Optional*): Active when the charge safety timer has expired. All options
+  from [Binary Sensor](/components/binary_sensor/).
+
+- **drv_supply_invalid** (*Optional*): Active on a driver supply invalid fault. All options from
+  [Binary Sensor](/components/binary_sensor/).
+
+## Text Sensor
+
+Decoded status strings for the charge cycle and the battery temperature.
+
+```yaml
+text_sensor:
+  - platform: bq25820
+    charge_status:
+      name: "Charge Status"
+```
+
+### Configuration Variables
+
+At least one text sensor must be set.
+
+- **bq25820_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `bq25820`
+  component defined above. Required only when there is more than one.
+
+- **charge_status** (*Optional*): The charge cycle state: `Not Charging`, `Trickle`, `Precharge`,
+  `Fast Charge`, `Taper`, `Top-Off` or `Done`, and `Unknown` for a reserved code. All options from
+  [Text Sensor](/components/text_sensor/).
+
+- **temp_status** (*Optional*): The battery temperature state: `Normal`, `Warm`, `Cool`, `Cold` or
+  `Hot`, and `Unknown` for a reserved code. Requires `temp_en: true` and a connected NTC. All options from
+  [Text Sensor](/components/text_sensor/).
+
+## Full Example
+
+```yaml
+bq25820:
+  id: bq25820_charger
+  # --- Current sensing ---
+  charge_current: 3A         # leave out to keep the ICHG pin setting
+  bat_sns_res: 5mΩ           # battery sense shunt resistor (0.01-10 mΩ)
+  ac_sns_res: 2mΩ            # input sense shunt resistor (0.01-10 mΩ)
+  watchdog: 160s             # chip falls back to defaults if not fed;
+                             # must be longer than update_interval
+  # --- Charge limits ---
+  charge_voltage: 1.536V     # trims the VFB regulation point; the pack
+                             # charge voltage is set by the external VFB
+                             # resistor divider
+  input_current_limit: 8A    # input (DPM) current limit
+  input_voltage_limit: 40V   # input (VINDPM) regulation point
+  precharge_current: 1A
+  reverse_system_voltage: 3.3V
+  charge_enabled: true
+  hiz_enabled: false         # HIZ: disconnect the input source
+  charge_timer: 12h          # charge safety timer
+  topoff_timer: disabled
+  ideal_diode: false
+  # --- MPPT ---
+  mppt_enabled: true
+  mppt_sweep_timer: 10m
+  force_mppt_sweep: false    # run one panel sweep at startup
+  # --- Temperature ---
+  # TS pin: 10k NTC from TS to PGND with a 10k resistor from REGN to TS
+  temp_en: true
+  ts_t1: 0C
+  ts_t2: 10C
+  ts_t3: 45C
+  ts_t5: 50C
+
+sensor:
+  - platform: bq25820
+    bq25820_id: bq25820_charger
+    vbat:
+      name: "Battery Voltage"
+    vsys:
+      name: "System Voltage"
+    vac:
+      name: "Input Voltage"
+    ibat:
+      name: "Battery Current"
+    iac:
+      name: "Input Current"
+    temp_in_c:
+      name: "Pack Temperature"
+      b_constant: 3435
+      reference_resistance: 10kΩ
+      reference_temperature: 25°C
+      resistor: 10kΩ
+
+binary_sensor:
+  - platform: bq25820
+    bq25820_id: bq25820_charger
+    charging:
+      name: "Charging"
+    charged:
+      name: "Charged"
+    low_battery:
+      name: "Low Battery"
+    pg:
+      name: "Power Good"
+    reverse:
+      name: "Reverse Mode"
+    vac_undervoltage:
+      name: "Input Undervoltage"
+    vac_overvoltage:
+      name: "Input Overvoltage"
+    ibat_overcurrent:
+      name: "Battery Overcurrent"
+    vbat_overvoltage:
+      name: "Battery Overvoltage"
+    thermal_shutdown:
+      name: "Thermal Shutdown"
+    charge_safety_timer:
+      name: "Charge Safety Timer"
+    drv_supply_invalid:
+      name: "Driver Supply Invalid"
+
+text_sensor:
+  - platform: bq25820
+    bq25820_id: bq25820_charger
+    charge_status:
+      name: "Charge Status"
+    temp_status:
+      name: "Temperature Status"
+```
+
+## See Also
+
+- [I²C](/components/i2c/)
+- [Sensor](/components/sensor/)
+- [Binary Sensor](/components/binary_sensor/)
+- [Text Sensor](/components/text_sensor/)
