@@ -18,7 +18,7 @@ and requires [Modbus Controller](/components/modbus_controller/) to be configure
   - `input`  : Input Registers - 16-bit registers used for input; may only be read. Modbus *Function Code 4 (Read Input Registers)* will be used. `read` is an accepted alias for this value.
 
 - **address** (**Required**, int): start address of the first register in a range (can be decimal or hexadecimal).
-- **bitmask** (*Optional*, int): sometimes multiple values are packed in a single register's response. The bitmask is used to determined if the result is true or false. See [Bitmasks](/components/modbus_controller#bitmasks).
+- **bitmask** (*Optional*, int): sometimes multiple values are packed in a single register's response. The bitmask is used to determined if the result is true or false. See [Bitmasks](/components/modbus_controller/#bitmasks).
 - **skip_updates** (*Optional*, int): **Deprecated and no longer has any effect** — every register range is polled on
   each `update_interval`. The key is still accepted (logging a config-time warning) and will be removed in 2027.3.0.
   To poll some registers less often, place those sensors on a second `modbus_controller` with the same `address:` and a
@@ -38,7 +38,7 @@ and requires [Modbus Controller](/components/modbus_controller/) to be configure
   error.
   See [Using `custom_pdu`](/components/modbus_controller/#modbus_custom_pdu) for how to use `custom_pdu`.
 
-- **lambda** (*Optional*, [lambda](/automations/templates#config-lambda)):
+- **lambda** (*Optional*, [lambda](/automations/templates/#config-lambda)):
   Lambda to be evaluated every update interval to get the new value of the binary sensor. Parameters:
 
   - **x** (bool): The parsed boolean value of the modbus data
@@ -51,7 +51,7 @@ and requires [Modbus Controller](/components/modbus_controller/) to be configure
 
 - **offset** (*Optional*, int): Offset from start address in bytes (only required for uncommon response encodings). If more than one register is written in a command, this value is used to find the start of this datapoint relative to the start address. The component calculates the size of the range based on offset and size of the value type. The value for offset depends on the register type. If a binary_sensor is created from an input register, the offset is in bytes. For coil and discrete input resisters, the LSB of the first data byte contains the coil addressed in the request. The other coils follow toward the high-order end of this byte and from low order to high order in subsequent bytes. For registers, the offset is the position of the relevant bit. To get the value of the coil register, 2 can be retrieved using `address: 2` / `offset: 0` or `address: 0` / `offset 2`.
 
-- All other options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
+- All other options from [Binary Sensor](/components/binary_sensor/#config-binary_sensor).
 
 ## Example
 
