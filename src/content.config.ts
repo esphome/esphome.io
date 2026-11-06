@@ -40,6 +40,12 @@ export const collections = {
                 .regex(/^\/(?!\/)/, 'anchor redirect targets must be site-relative paths starting with a single "/"'),
             )
             .optional(),
+          /**
+           * Leaves out the site header, footer, skip link and page title, so a
+           * page can render its own layout while keeping the site's <head>.
+           * Used by the link-in-bio page (src/pages/bio.astro).
+           */
+          bare: z.boolean().optional(),
         }),
     }),
   }),

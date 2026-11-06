@@ -19,6 +19,9 @@ const isBlogPost = /^blog\/(?!(\d+\/?|tags\/.+|authors\/.+)$).+$/.test(id);
 // for them (this also avoids Discourse auto-creating a topic for the URL).
 const isCrosspost = Boolean(entry.data.crosspostSource);
 
+// Bare pages (see content.config.ts) have no site footer.
+const isBare = Boolean(entry.data.bare);
+
 // Only load the Discourse comments embed on the production deploy. Netlify sets
 // CONTEXT to "production" only for the main production build; branch deploys
 // (e.g. beta/next) and deploy previews get "branch-deploy"/"deploy-preview", so
@@ -58,69 +61,71 @@ const footerLinks = [
 {isBlogPage && !isBlogPost && <ReadMoreLinks />}
 {isBlogPost && isProduction && !isCrosspost && <DiscourseComments />}
 
-<footer class="sl-flex">
-  <div class="meta sl-flex">
-    <EditLink />
-    <LastUpdated />
-  </div>
-
-  <div class="site-footer not-content">
-    <div class="footer-links">
-      {footerLinks.map((section) => (
-        <div class="footer-column">
-          <div class="footer-heading">{section.name}</div>
-          <ul>
-            {section.children.map((link) => (
-              <li>
-                <a
-                  href={link.url}
-                  {...(link.url.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                >
-                  {link.name}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
+{!isBare && (
+  <footer class="sl-flex">
+    <div class="meta sl-flex">
+      <EditLink />
+      <LastUpdated />
     </div>
 
-    <div class="footer-bottom">
-      <a href="https://www.openhomefoundation.org/" target="_blank" rel="noopener noreferrer" class="ohf-link">
-        <span>ESPHome is a project from the</span>
-        <img
-          class="ohf-dark"
-          src="/images/OHF-lockup-main-color-on-dark.svg"
-          alt="Open Home Foundation"
-          width="200"
-          height="44"
-        />
-        <img
-          class="ohf-light"
-          src="/images/OHF-lockup-main-color-on-bright.svg"
-          alt="Open Home Foundation"
-          width="200"
-          height="44"
-        />
-      </a>
+    <div class="site-footer not-content">
+      <div class="footer-links">
+        {footerLinks.map((section) => (
+          <div class="footer-column">
+            <div class="footer-heading">{section.name}</div>
+            <ul>
+              {section.children.map((link) => (
+                <li>
+                  <a
+                    href={link.url}
+                    {...(link.url.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                  >
+                    {link.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
 
-      <p class="analytics-note">
-        This website uses&nbsp;
-        <a
-          href="https://www.openhomefoundation.org/blog/making-our-web-analytics-open-source-with-plausible/"
-          rel="noopener"
-        >
-          privacy-first analytics
+      <div class="footer-bottom">
+        <a href="https://www.openhomefoundation.org/" target="_blank" rel="noopener noreferrer" class="ohf-link">
+          <span>ESPHome is a project from the</span>
+          <img
+            class="ohf-dark"
+            src="/images/OHF-lockup-main-color-on-dark.svg"
+            alt="Open Home Foundation"
+            width="200"
+            height="44"
+          />
+          <img
+            class="ohf-light"
+            src="/images/OHF-lockup-main-color-on-bright.svg"
+            alt="Open Home Foundation"
+            width="200"
+            height="44"
+          />
         </a>
-        &nbsp;to help us improve the site. You can view all data in our&nbsp;
-        <a href="https://plausible.openhomefoundation.org/esphome.io" rel="noopener">
-          public dashboard
-        </a>
-        .
-      </p>
+
+        <p class="analytics-note">
+          This website uses&nbsp;
+          <a
+            href="https://www.openhomefoundation.org/blog/making-our-web-analytics-open-source-with-plausible/"
+            rel="noopener"
+          >
+            privacy-first analytics
+          </a>
+          &nbsp;to help us improve the site. You can view all data in our&nbsp;
+          <a href="https://plausible.openhomefoundation.org/esphome.io" rel="noopener">
+            public dashboard
+          </a>
+          .
+        </p>
+      </div>
     </div>
-  </div>
-</footer>
+  </footer>
+)}
 
 <style>
   footer {

@@ -1,0 +1,604 @@
+// The link-in-bio page at /bio/, built from src/data/bio.ts.
+//
+// The page is what the "link in bio" on ESPHome's social profiles points at.
+// Its Latest list mixes the items added by hand in bio.ts with the site's
+// newest blog posts, which src/components/BioLists.astro passes in. Nothing is
+// fetched here, so the page can't slow down or break the build for reasons
+// outside the repository.
+//
+// bio.ts is edited by people who don't run the site locally, so every mistake
+// fails the build and names the item at fault, rather than silently rendering
+// something wrong on the live page.
+//
+// Plain enough for Node to run without a build step (tests/bio.test.mjs).
+import type { ImageMetadata } from "astro";
+import { isShowing, select } from "./bio-schedule.mjs";
+
+type Raw = Record<string, unknown>;
+
+export class BioConfigError extends Error {}
+
+const fail = (keyPath: string, message: string): never => {
+  throw new BioConfigError(`src/data/bio.ts ${keyPath}: ${message}`);
+};
+
+const blank = (value: unknown) => value === undefined || value === null || String(value).trim() === "";
+const isMap = (value: unknown): value is Raw => value !== null && typeof value === "object" && !Array.isArray(value);
+const has = (object: Raw, key: string) => Object.prototype.hasOwnProperty.call(object, key);
+
+// -- Dates --------------------------------------------------------------------
+
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}(?::\d{2})?(?:Z|[+-]\d{2}:\d{2})?)?$/;
+
+// Dates must be ISO. A lenient parser would happily read "31/11/2026" or
+// "01/11/2026" as some other day instead of rejecting it. Times without a
+// zone are UTC.
+export function parseTime(value: unknown, keyPath: string): Date | null {
+  if (value === undefined || value === null) return null;
+  const text = String(value).trim();
+  const example = "Use YYYY-MM-DD, or YYYY-MM-DDTHH:MM:SSZ for a time";
+  if (!ISO_DATE.test(text)) fail(keyPath, `"${value}" is not a date. ${example}`);
+  let iso = text.length === 10 ? `${text}T00:00:00` : text;
+  if (!/(Z|[+-]\d{2}:\d{2})$/.test(iso)) iso += "Z";
+  const date = new Date(iso);
+  // Rejects days that don't exist, such as 2026-02-30.
+  const calendar = new Date(`${text.slice(0, 10)}T00:00:00Z`);
+  if (
+    Number.isNaN(date.getTime()) ||
+    Number.isNaN(calendar.getTime()) ||
+    !calendar.toISOString().startsWith(text.slice(0, 10))
+  ) {
+    fail(keyPath, `"${value}" is not a date. ${example}`);
+  }
+  return date;
+}
+
+// A time was given, not just a day.
+const hasTime = (value: unknown) => /T\d{2}:\d{2}/.test(String(value));
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+const SITE = "https://esphome.io";
+const SITE_HOST = new URL(SITE).host;
+// The Open Home Foundation's social preview images, which the blog's release
+// posts already use as covers.
+const OG_ENDPOINT = "https://assets.openhomefoundation.org/opengraph";
+const startOfDay = (date: Date) => new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+
+// Without `ends`, a video comes down at the end of the day after it airs, so a
+// livestream doesn't linger once it's over.
+const videoEnd = (airs: Date) => new Date(startOfDay(airs).getTime() + 2 * DAY_MS);
+
+// An `ends` with only a day keeps the item up through that whole day:
+// `ends: "2026-11-15"` hides it at midnight UTC as the 16th begins. With a
+// time, it hides at that time.
+export function parseEnd(value: unknown, keyPath: string): Date | null {
+  const date = parseTime(value, keyPath);
+  if (!date || hasTime(value)) return date;
+  return new Date(date.getTime() + DAY_MS);
+}
+
+const DAY = new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" });
+const DAY_NO_YEAR = new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", timeZone: "UTC" });
+const TIME = new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: "UTC" });
+
+// -- YouTube ------------------------------------------------------------------
+
+const YOUTUBE_ID = /^[A-Za-z0-9_-]{11}$/;
+
+// Accepts a bare video ID or any of the usual YouTube links.
+export function youtubeId(value: unknown): string | null {
+  const text = String(value ?? "").trim();
+  if (YOUTUBE_ID.test(text)) return text;
+  let url;
+  try {
+    url = new URL(text);
+  } catch {
+    return null;
+  }
+  const host = url.hostname.replace(/^(www|m)\./, "");
+  let id = null;
+  if (host === "youtu.be") id = url.pathname.slice(1);
+  else if (host === "youtube.com") {
+    id = url.searchParams.get("v") ?? url.pathname.match(/^\/(?:live|shorts|embed)\/([^/]+)/)?.[1] ?? null;
+  }
+  return id && YOUTUBE_ID.test(id) ? id : null;
+}
+
+// -- Validation ---------------------------------------------------------------
+
+// The item's place in the file, and its title so it's easy to find.
+const itemPath = (list: string, index: number, item: unknown) => {
+  const name = isMap(item) ? (item.title ?? item.label) : undefined;
+  return `${list}[${index}]${typeof name === "string" && !blank(name) ? ` ("${name}")` : ""}`;
+};
+
+// The keys each kind of item can have. Anything else fails the build: a
+// misspelled key would otherwise be ignored, such as an `end` that never
+// takes the item down.
+const KEYS = {
+  link: ["title", "url", "starts", "ends", "label", "note", "image"],
+  video: ["type", "video", "title", "airs", "starts", "ends", "label"],
+  section: ["title", "links"],
+  sectionLink: ["label", "url", "highlight", "starts", "ends"],
+};
+
+// Date keys that are easy to reach for, and the one to use instead.
+const DATE_KEYS: Record<string, "starts" | "ends"> = {
+  start: "starts",
+  date: "starts",
+  from: "starts",
+  begins: "starts",
+  end: "ends",
+  expires: "ends",
+  expiry: "ends",
+  until: "ends",
+  to: "ends",
+  stop: "ends",
+};
+
+function checkKeys(item: Raw, keyPath: string, allowed: string[], video = false) {
+  for (const key of Object.keys(item)) {
+    if (allowed.includes(key)) continue;
+    if (Object.hasOwn(DATE_KEYS, key)) {
+      const use = video && DATE_KEYS[key] === "starts" ? "airs" : DATE_KEYS[key];
+      fail(`${keyPath}.${key}`, `is not a key here. Use ${use}`);
+    }
+    if (key === "airs") fail(`${keyPath}.airs`, 'is only for YouTube items (type: "youtube"). Use starts');
+    fail(`${keyPath}.${key}`, `is not a key here. Use one of: ${allowed.join(", ")}`);
+  }
+}
+
+function validateWindow(item: Raw, keyPath: string) {
+  const starts = parseTime(item.starts, `${keyPath}.starts`);
+  const ends = parseEnd(item.ends, `${keyPath}.ends`);
+  if (starts && ends && ends <= starts) fail(`${keyPath}.ends`, "must be after starts");
+}
+
+// A full https:// URL with a host. A prefix check alone would let through
+// "https://" on its own.
+// Browsers drop tabs and line breaks from links, which can turn
+// "/\t/example.com/" into a link to another site.
+// eslint-disable-next-line no-control-regex -- matching control characters is the point
+const CONTROL = /[\u0000-\u001f\u007f]/;
+
+function isHttpsUrl(text: string) {
+  if (!text.startsWith("https://") || CONTROL.test(text)) return false;
+  try {
+    return new URL(text).hostname !== "";
+  } catch {
+    return false;
+  }
+}
+
+// A path on this site starts with one slash. Browsers read "//example.com/"
+// and "/\example.com/" as links to another site.
+const isSitePath = (text: string) => /^\/(?![/\\])/.test(text) && !CONTROL.test(text);
+
+function requireUrl(item: Raw, keyPath: string) {
+  const url = String(item.url ?? "");
+  if (isSitePath(url) || isHttpsUrl(url)) return;
+  fail(`${keyPath}.url`, "must be a site path like /blog/ or a full https:// URL");
+}
+
+/**
+ * An esphome.io URL as a path on the site, so it matches the blog's own links.
+ * Any other URL comes back as it is.
+ */
+export function sitePath(url: string): string {
+  if (!isHttpsUrl(url)) return url;
+  const parsed = new URL(url);
+  // The host with any port, so esphome.io:8443 stays as it is. A path such as
+  // "//example.com/" would turn into a link to another site, so it stays too.
+  if (parsed.host !== SITE_HOST || !isSitePath(parsed.pathname)) return url;
+  return parsed.pathname + parsed.search + parsed.hash;
+}
+
+/**
+ * What a link is matched on, to find the same page linked twice: an
+ * esphome.io link as a path, with the trailing slash the blog's own links
+ * have, so "/blog/x", "/blog/x/" and "https://esphome.io/blog/x/" all match.
+ * The link itself is shown as written: "/chat", say, is a redirect.
+ */
+export function linkKey(url: string): string {
+  const path = sitePath(url);
+  if (!isSitePath(path)) return path;
+  const parsed = new URL(path, SITE);
+  const last = parsed.pathname.split("/").pop() as string;
+  const pathname = last === "" || last.includes(".") ? parsed.pathname : `${parsed.pathname}/`;
+  return pathname + parsed.search + parsed.hash;
+}
+
+// Text, in quotes. A value such as `false` or `5` would otherwise pass, then
+// render as a link with no name.
+function requireText(item: Raw, key: string, keyPath: string, optional = false) {
+  const value = item[key];
+  if (optional && value === undefined) return;
+  if (blank(value)) fail(`${keyPath}.${key}`, optional ? "must be text, or left out" : "is required");
+  if (typeof value !== "string") fail(`${keyPath}.${key}`, `must be text in quotes, not ${JSON.stringify(value)}`);
+}
+
+// An image file in src/assets/bio/: a file name with one of the extensions
+// that src/components/BioLists.astro loads.
+export const IMAGE_FILE = /^[^/\\]+\.(avif|jpe?g|png|webp)$/;
+
+/**
+ * Checks bio.ts. `images` are the file names in src/assets/bio/, which an
+ * item's `image` can name.
+ */
+export function validate(bio: Raw, images: string[] = []): true {
+  if (!Array.isArray(bio.latest)) fail("latest", "must be a list");
+  (bio.latest as unknown[]).forEach((item, index) => validateLatest(item, itemPath("latest", index, item), images));
+
+  const count = bio.latestCount;
+  if (!Number.isInteger(count) || (count as number) < 1 || (count as number) > 10) {
+    fail("latestCount", "must be a whole number from 1 to 10");
+  }
+
+  if (!Array.isArray(bio.sections)) fail("sections", "must be a list");
+  (bio.sections as unknown[]).forEach((section, index) => {
+    const keyPath = itemPath("sections", index, section);
+    if (!isMap(section)) return fail(keyPath, "must be an object with title and links");
+    checkKeys(section, keyPath, KEYS.section);
+    requireText(section, "title", keyPath);
+    if (!Array.isArray(section.links) || section.links.length === 0)
+      fail(`${keyPath}.links`, "must be a non-empty list");
+    (section.links as unknown[]).forEach((link, linkIndex) => {
+      const linkPath = itemPath(`${keyPath}.links`, linkIndex, link);
+      if (!isMap(link)) return fail(linkPath, "must be an object with label and url");
+      checkKeys(link, linkPath, KEYS.sectionLink);
+      requireText(link, "label", linkPath);
+      requireUrl(link, linkPath);
+      validateWindow(link, linkPath);
+    });
+  });
+
+  return true;
+}
+
+// An item in Latest. `starts` is when it appears, and also where it sits and
+// the date shown on it, as a post's publish date is, so it is required: a
+// scheduled item comes in at the top. A YouTube video takes its link and
+// picture from the video, and its place and date from when it `airs`;
+// `starts` on a video only shows it early.
+function validateLatest(item: unknown, keyPath: string, images: string[]) {
+  if (!isMap(item)) return fail(keyPath, "must be an object with title, url and starts");
+  // Checked first: a mistyped type would otherwise show up as a video's keys
+  // being unknown to a link.
+  if (has(item, "type") && item.type !== "youtube") {
+    fail(`${keyPath}.type`, 'must be "youtube", or left out for a link');
+  }
+  const video = item.type === "youtube";
+  checkKeys(item, keyPath, video ? KEYS.video : KEYS.link, video);
+  requireText(item, "title", keyPath);
+  requireText(item, "label", keyPath, true);
+  validateWindow(item, keyPath);
+
+  if (video) {
+    if (!youtubeId(item.video)) {
+      fail(`${keyPath}.video`, "must be a YouTube video ID or link, e.g. https://www.youtube.com/watch?v=XyAL1to3Lm4");
+    }
+    if (blank(item.airs)) fail(`${keyPath}.airs`, 'is required: when it goes out, e.g. "2026-11-15T18:00:00Z"');
+    const airs = parseTime(item.airs, `${keyPath}.airs`) as Date;
+    const ends = parseEnd(item.ends, `${keyPath}.ends`);
+    if (ends && ends <= airs) fail(`${keyPath}.ends`, "must be after airs");
+    // Without `ends`, the video comes down by itself: it must start before then.
+    const starts = parseTime(item.starts, `${keyPath}.starts`);
+    const end = ends ?? videoEnd(airs);
+    if (!ends && starts && end <= starts) {
+      const lastDay = DAY.format(new Date(end.getTime() - 1));
+      fail(
+        `${keyPath}.starts`,
+        `must be before the video comes down at the end of ${lastDay} (UTC), the day after it airs. Use an earlier starts, or add an ends`,
+      );
+    }
+    return;
+  }
+
+  requireUrl(item, keyPath);
+  requireText(item, "note", keyPath, true);
+  // A file in src/assets/bio/, so the build can make the thumbnail and the
+  // card's smaller sizes from it.
+  const image = item.image;
+  if (image !== undefined && image !== "auto" && !isHttpsUrl(String(image))) {
+    if (!IMAGE_FILE.test(String(image))) {
+      fail(
+        `${keyPath}.image`,
+        `"${image}" must be "auto", a full https:// URL, or the name of a .webp, .jpg, .png or .avif file in src/assets/bio/`,
+      );
+    }
+    if (!images.includes(String(image))) {
+      fail(
+        `${keyPath}.image`,
+        `"${image}" is not in src/assets/bio/. Save the image there and give its file name, e.g. "2026-11-community-day.webp", or use "auto"`,
+      );
+    }
+  }
+  if (blank(item.starts)) fail(`${keyPath}.starts`, 'is required: when it appears, e.g. "2026-11-01"');
+}
+
+// -- Resolution ---------------------------------------------------------------
+
+/**
+ * An image: a file name in src/assets/bio/ or a URL (items added by hand), or
+ * a post's cover, which is an imported image or a URL.
+ */
+export type ImageSource = string | ImageMetadata;
+
+/** Where an image comes from, so src/components/BioLists.astro knows what it can resize. */
+export type ResolvedImage =
+  { kind: "file"; image: ImageMetadata } | { kind: "remote"; url: string } | { kind: "as-is"; url: string };
+
+/**
+ * Resolves an image against `files`, the images in src/assets/bio/ by file
+ * name. A blog cover can also be a path to a file in public/, such as
+ * "/images/cover.webp", which the build can't resize: it's used as it is.
+ */
+export function resolveImage(image: ImageSource, files: Record<string, ImageMetadata>): ResolvedImage {
+  if (typeof image !== "string") return { kind: "file", image };
+  if (Object.hasOwn(files, image)) return { kind: "file", image: files[image] };
+  if (isHttpsUrl(image)) return { kind: "remote", url: image };
+  return { kind: "as-is", url: image };
+}
+
+/** A blog post, as src/components/BioLists.astro passes it in. */
+export interface Post {
+  title: string;
+  url: string;
+  date: Date;
+  /** Shown under the title, e.g. "Release · October 21, 2026". */
+  note: string;
+  image?: ImageSource;
+}
+
+/** One rendered item, with what the rule in bio-schedule.mjs needs to show and hide it. */
+export interface Entry {
+  key: string;
+  /** What the rule matches the link on (see linkKey). */
+  url: string;
+  /** The link, as written. */
+  href: string;
+  /** How strong its claim to its link is: 1 for an item added by hand, 0 for a post. */
+  rank: number;
+  starts: Date | null;
+  ends: Date | null;
+  /** "hero" shows only in first place, "row" anywhere else. */
+  variant?: "hero" | "row";
+  /** Not showing at build time. */
+  hidden: boolean;
+  title: string;
+  note: string | null;
+  /** For a video that hasn't aired at build time: when it airs, and the note to show from then. */
+  airs: Date | null;
+  noteAfter: string | null;
+  image: ImageSource | null;
+  /** Shown as the large card. */
+  card: boolean;
+  video: boolean;
+  highlight: boolean;
+}
+
+export interface List {
+  title: string;
+  /** Its place among the page's lists. */
+  order: number;
+  limit: number | null;
+  /** Latest's links each show only once (see select in bio-schedule.mjs). */
+  claims: boolean;
+  entries: Entry[];
+  /** Nothing is showing yet, but something will. */
+  hidden: boolean;
+}
+
+interface Item {
+  title: string;
+  url: string;
+  href: string;
+  date: Date;
+  rank: number;
+  starts: Date | null;
+  ends: Date | null;
+  note: string | null;
+  noteAfter: string | null;
+  airs: Date | null;
+  image: ImageSource | null;
+  video: boolean;
+}
+
+const join = (parts: (string | null | undefined)[]) => parts.filter(Boolean).join(" · ");
+
+// `image: "auto"` reuses what the site already has for social previews: a
+// blog post's own cover, or, for any other page, the Open Home Foundation's
+// social preview image of it.
+export function autoImage(url: string, posts: Post[]): ImageSource {
+  const path = sitePath(url);
+  // A crosspost's link is the article on the other site, so look it up by link.
+  const post = posts.find((candidate) => linkKey(candidate.url) === linkKey(url));
+  if (post?.image) return post.image;
+  return `${OG_ENDPOINT}?url=${encodeURIComponent(isSitePath(path) ? SITE + path : url)}`;
+}
+
+// The items added by hand, ready to merge with the posts.
+function handPicked(latest: Raw[], posts: Post[], now: Date): Item[] {
+  return latest.map((item, index) => {
+    const keyPath = itemPath("latest", index, item);
+    const starts = parseTime(item.starts, `${keyPath}.starts`);
+    const ends = parseEnd(item.ends, `${keyPath}.ends`);
+    const label = item.label as string | undefined;
+    if (item.type === "youtube") {
+      const id = youtubeId(item.video);
+      const airs = parseTime(item.airs, `${keyPath}.airs`) as Date;
+      // Before it airs: "Livestream · Starts November 15 · 18:00 UTC". The
+      // script on the page swaps in `noteAfter` once it has started.
+      const upcoming = airs > now;
+      const before = join([
+        label,
+        `Starts ${DAY_NO_YEAR.format(airs)}`,
+        hasTime(item.airs) ? `${TIME.format(airs)} UTC` : null,
+      ]);
+      const after = join([label, DAY.format(airs)]);
+      return {
+        title: item.title as string,
+        url: `https://www.youtube.com/watch?v=${id}`,
+        href: `https://www.youtube.com/watch?v=${id}`,
+        date: airs,
+        rank: 1,
+        starts,
+        ends: ends ?? videoEnd(airs),
+        note: upcoming ? before : after,
+        noteAfter: upcoming ? after : null,
+        airs: upcoming ? airs : null,
+        image: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
+        video: true,
+      };
+    }
+    return {
+      title: item.title as string,
+      // Matched on its key, so it takes the place of the post it links to.
+      url: linkKey(item.url as string),
+      href: sitePath(item.url as string),
+      date: starts as Date,
+      rank: 1,
+      starts,
+      ends,
+      note: (item.note as string | undefined) ?? join([label, DAY.format(starts as Date)]),
+      noteAfter: null,
+      airs: null,
+      image:
+        item.image === "auto" ? autoImage(item.url as string, posts) : ((item.image as string | undefined) ?? null),
+      video: false,
+    };
+  });
+}
+
+// Up from now on, until it's removed: nothing about it will change.
+const fixed = (item: Item, now: Date) => (!item.starts || item.starts <= now) && !item.ends;
+
+// The items of Latest that might ever show, each marked `sure` if it is
+// certain to show whenever the list gets that far: it is up for good and
+// nothing could take its link. Once there are `limit` sure items, nothing
+// after them can show. Leaving out what can never show keeps the page small:
+// the blog has hundreds of posts.
+function canShow(items: Item[], limit: number, now: Date) {
+  // Who gets a link when both are up: the higher rank, then the earlier item.
+  // The same order as select.
+  const beats = (other: number, me: number) =>
+    items[other].rank > items[me].rank || (items[other].rank === items[me].rank && other < me);
+  const kept: (Item & { sure: boolean; position: number })[] = [];
+  let sure = 0;
+  items.forEach((item, position) => {
+    // Past the point where the list is full, an item can't show, but while
+    // it's up it still takes its link from a kept item it beats, such as an
+    // older item added by hand that links to a newer post. Keep it so the rule
+    // on the page sees that too.
+    const full = sure >= limit;
+    if (full && !kept.some((other) => other.url === item.url && beats(position, other.position))) return;
+    const rivals = items.flatMap((other, index) => (other.url === item.url && beats(index, position) ? [other] : []));
+    // Something always up takes the link.
+    if (rivals.some((rival) => fixed(rival, now))) return;
+    const isSure = !full && fixed(item, now) && rivals.length === 0;
+    kept.push({ ...item, sure: isSure, position });
+    if (isSure) sure++;
+  });
+  return kept;
+}
+
+function latestList(bio: Raw, posts: Post[], now: Date): Omit<List, "hidden"> {
+  const limit = bio.latestCount as number;
+  const items = [
+    ...handPicked(bio.latest as Raw[], posts, now),
+    ...posts.map((post) => ({
+      ...post,
+      url: linkKey(post.url),
+      href: post.url,
+      rank: 0,
+      starts: null,
+      ends: null,
+      noteAfter: null,
+      airs: null,
+      image: post.image ?? null,
+      video: false,
+    })),
+  ]
+    .filter((item) => !(item.ends && item.ends <= now))
+    // Newest first. The sort is stable, so on the same date an item added by
+    // hand comes before a post.
+    .sort((a, b) => b.date.getTime() - a.date.getTime());
+
+  // The large first card goes to an item that might come first: one with
+  // nothing sure to show before it. Those get a hero version and, unless
+  // they are always first, a row version too. Without an image an item stays
+  // a row rather than a card with a hole. A video is always a large card,
+  // wherever it is.
+  const kept = canShow(items, limit, now);
+  const entries = kept.flatMap((item, index) => {
+    const { sure: _sure, date: _date, position: _position, ...rest } = item;
+    const row = { ...rest, key: String(index), hidden: false, card: item.video, highlight: false };
+    if (item.video || !item.image || kept.slice(0, index).some((before) => before.sure)) return [row];
+    const hero = { ...row, card: true };
+    if (index === 0) return [hero];
+    return [
+      { ...hero, variant: "hero" as const },
+      { ...row, variant: "row" as const },
+    ];
+  });
+  return { title: "Latest", order: 0, limit, claims: true, entries };
+}
+
+// Links, minus those that have ended. Links have no limit and don't claim,
+// so the store can be in Latest and Featured at once.
+function linkList(section: Raw, order: number, now: Date): Omit<List, "hidden"> {
+  const keyPath = itemPath("sections", order - 1, section);
+  const entries = (section.links as Raw[]).flatMap((link, index) => {
+    const linkPath = itemPath(`${keyPath}.links`, index, link);
+    const starts = parseTime(link.starts, `${linkPath}.starts`);
+    const ends = parseEnd(link.ends, `${linkPath}.ends`);
+    if (ends && ends <= now) return [];
+    return [
+      {
+        key: String(index),
+        url: link.url as string,
+        href: link.url as string,
+        rank: 0,
+        starts,
+        ends,
+        hidden: false,
+        title: link.label as string,
+        note: null,
+        airs: null,
+        noteAfter: null,
+        image: null,
+        card: false,
+        video: false,
+        highlight: link.highlight === true,
+      },
+    ];
+  });
+  return { title: section.title as string, order, limit: null, claims: false, entries };
+}
+
+/**
+ * Every list on the page, in order: Latest, then the link sections. Each
+ * entry is marked `hidden` if it isn't showing at `now`; the rule in
+ * bio-schedule.mjs shows it when its time comes. Lists with nothing to render
+ * are left out.
+ */
+export function resolve(bio: Raw, posts: Post[], now: Date): List[] {
+  const lists = [
+    latestList(bio, posts, now),
+    ...(bio.sections as Raw[]).map((section, index) => linkList(section, index + 1, now)),
+  ];
+  const picks = select(lists, now);
+  return lists.flatMap((list, index) => {
+    if (list.entries.length === 0) return [];
+    // A `starts` that has passed can't change anything, because the page's
+    // time is never before the build's. Leaving it out means a page with
+    // nothing still to come doesn't ask the server for the time.
+    const entries = list.entries.map((entry) => ({
+      ...entry,
+      starts: entry.starts && entry.starts > now ? entry.starts : null,
+      hidden: !isShowing(entry, picks[index]),
+    }));
+    return [{ ...list, entries, hidden: entries.every((entry) => entry.hidden) }];
+  });
+}
