@@ -59,12 +59,12 @@ sensor:
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor.
   Defaults to `0x44`. Supported addresses are `0x44` through `0x47`.
 
-- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the sensor.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval to check the sensor.
   Defaults to `60s`.
 
 ## `hdc302x.heater_on` Action
 
-This [action](/automations/actions#all-actions) enables the integrated heater on the sensor with the given ID.
+This [action](/automations/actions/#all-actions) enables the integrated heater on the sensor with the given ID.
 The heater can be used to remove condensation from the humidity sensor or to verify sensor functionality.
 
 > [!WARNING]
@@ -91,7 +91,7 @@ on_...:
         duration: 5s
 ```
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the HDC302x sensor.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the HDC302x sensor.
 - **power** (*Optional*): The heater power level. Higher power removes condensation faster
   but increases die temperature. Defaults to `QUARTER`.
   - `QUARTER`: Lowest power, safest option.
@@ -99,12 +99,12 @@ on_...:
   - `FULL`: Maximum power. Use with caution -- see warning above.
   - A raw integer value between `0` and `16383` may also be used for fine-grained control
     of the 14-bit heater current control. See Table 7-15 in the [datasheet](https://www.ti.com/lit/ds/symlink/hdc3020.pdf).
-- **duration** (*Optional*, [Time](/guides/configuration-types#time)): Duration to run the heater.
+- **duration** (*Optional*, [Time](/guides/configuration-types/#time)): Duration to run the heater.
   Set to `0s` to keep the heater on until manually disabled with `hdc302x.heater_off`. Defaults to `5s`.
 
 ## `hdc302x.heater_off` Action
 
-This [action](/automations/actions#all-actions) disables the integrated heater on the sensor with the given ID.
+This [action](/automations/actions/#all-actions) disables the integrated heater on the sensor with the given ID.
 After turning off the heater, allow several minutes for the sensor to cool down before expecting accurate readings.
 
 ```yaml
