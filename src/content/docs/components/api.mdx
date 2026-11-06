@@ -96,7 +96,7 @@ api:
 > For comprehensive security guidance including API encryption best practices, see the [Security Best Practices](/guides/security_best_practices) guide.
 
 - **actions** (*Optional*, list): A list of user-defined actions. See [User-defined Actions](#api-device-actions).
-- **batch_delay** (*Optional*, [Time](/guides/configuration-types#time)): The delay time for batching multiple state update messages
+- **batch_delay** (*Optional*, [Time](/guides/configuration-types/#time)): The delay time for batching multiple state update messages
   together to reduce network overhead. Lower values send updates sooner but use more network packets,
   while higher values batch more efficiently but add latency. Must be between `0ms` and `65535ms`
   (65.535 seconds). Defaults to `100ms`.
@@ -110,7 +110,7 @@ api:
 - **custom_services** (*Optional*, boolean): Enable compilation of custom API services for external components that use the C++ `CustomAPIDevice` class. Only needed when external components register their own services via the native API. Defaults to `false`.
 - **homeassistant_services** (*Optional*, boolean): Enable compilation of Home Assistant service call support for external components that use the C++ `CustomAPIDevice::call_homeassistant_service()` or `CustomAPIDevice::fire_homeassistant_event()` methods. This is automatically enabled when using `homeassistant.service` or `homeassistant.event` actions, or the `homeassistant` platform for number or switch components. Only needs to be manually set when external components call Home Assistant services without using the built-in actions. Defaults to `false`.
 - **homeassistant_states** (*Optional*, boolean): Enable compilation of Home Assistant state subscription support for external components that use the C++ `CustomAPIDevice::subscribe_homeassistant_state()` method. This is automatically enabled when using any `homeassistant` platform components (sensor, binary_sensor, text_sensor, switch, or number). Only needs to be manually set when external components subscribe to Home Assistant states without using the built-in components. Defaults to `false`.
-- **reboot_timeout** (*Optional*, [Time](/guides/configuration-types#time)): The amount of time to wait before rebooting when no
+- **reboot_timeout** (*Optional*, [Time](/guides/configuration-types/#time)): The amount of time to wait before rebooting when no
   client connects to the API. This is needed because sometimes the low level ESP functions report that
   the ESP is connected to the network, when in fact it is not - only a full reboot fixes it.
   Only a client that completes authentication counts; a connection that never does, such as a port scan or
@@ -120,12 +120,12 @@ api:
 - **wizard** (*Optional*): A setup wizard that Home Assistant shows when the device is added.
   See [Wizard](#wizard).
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation.
 
-- **on_client_connected** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform when a client
+- **on_client_connected** (*Optional*, [Action](/automations/actions/#all-actions)): An automation to perform when a client
   connects to the API. See [`on_client_connected` Trigger](#api-on_client_connected_trigger).
 
-- **on_client_disconnected** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform when a client
+- **on_client_disconnected** (*Optional*, [Action](/automations/actions/#all-actions)): An automation to perform when a client
   disconnects from the API. See [`on_client_disconnected` Trigger](#api-on_client_disconnected_trigger).
 
 - **outgoing_connection** (*Optional*): Have the device open the API connection itself when no dial-back client is
@@ -135,7 +135,7 @@ api:
   - **host** (*Optional*, IP address): The address to dial. When not set, the device remembers the address of the last
     client that declared itself a dial-back target (such as Home Assistant) and dials that.
   - **port** (*Optional*, integer): The TCP port the dial-back target listens on. Defaults to `6054`.
-  - **delay** (*Optional*, [Time](/guides/configuration-types#time)): How long to give a dial-back client to connect
+  - **delay** (*Optional*, [Time](/guides/configuration-types/#time)): How long to give a dial-back client to connect
     in on its own, both after boot and after one disconnects, before the device dials out. Devices with
     [deep sleep](/components/deep_sleep/) skip the wait and dial as soon as the network is up on every wake, since
     the awake window is short. Defaults to `60s`.
@@ -222,7 +222,7 @@ on_...:
   This is evaluated on the Home Assistant side with Home Assistant's templating engine.
 
 - **variables** (*Optional*, mapping): Optional variables that can be used in the `data_template`.
-  A value tagged with `!lambda` is a [lambda](/automations/templates#config-lambda) evaluated on the device
+  A value tagged with `!lambda` is a [lambda](/automations/templates/#config-lambda) evaluated on the device
   before sending the request; any other value is sent as a static string.
 
 ### `homeassistant.action` Action
@@ -263,7 +263,7 @@ on_...:
   This is evaluated on the Home Assistant side with Home Assistant's templating engine.
 
 - **variables** (*Optional*, mapping): Optional variables that can be used in the `data_template`.
-  A value tagged with `!lambda` is a [lambda](/automations/templates#config-lambda) evaluated on the device
+  A value tagged with `!lambda` is a [lambda](/automations/templates/#config-lambda) evaluated on the device
   before sending the request; any other value is sent as a static string.
 
 - **capture_response** (*Optional*, boolean): Enable capturing the response from the Home Assistant action call.
@@ -453,7 +453,7 @@ api:
 
 ### `api.connected` Condition
 
-This [Condition](/automations/actions#all-conditions) checks if at least one client is connected to the ESPHome native API.
+This [Condition](/automations/actions/#all-conditions) checks if at least one client is connected to the ESPHome native API.
 
 #### Configuration Variables
 
@@ -461,7 +461,7 @@ This [Condition](/automations/actions#all-conditions) checks if at least one cli
   clients that have subscribed to entity state updates. This filters out log-only connections, which can cause false
   positives when waiting for Home Assistant. Since ESPHome 2026.4.0, `esphome logs` (also used by the
   [ESPHome Device Builder](/install/) log viewer) subscribes to entity states by default to show state changes in the
-  log, which means it is counted here unless started with [`--no-states`](/guides/cli#logs-command).
+  log, which means it is counted here unless started with [`--no-states`](/guides/cli/#logs-command).
   Defaults to `false`.
 
 **Check if any client is connected:**
@@ -499,7 +499,7 @@ the lambda equivalent for this is `id(api_id).is_connected_with_state_subscripti
 
 ### `api.wizard.input_is_set` Condition
 
-This [Condition](/automations/actions#all-conditions) checks if a Home Assistant entity has been picked for a
+This [Condition](/automations/actions/#all-conditions) checks if a Home Assistant entity has been picked for a
 standalone [wizard](#wizard) input. Home Assistant sends the picked entity each time it connects, so after a restart
 this condition is false until Home Assistant has connected.
 It only works with standalone inputs (declared with `id`). A linked input is read through its `homeassistant` entity.
@@ -556,7 +556,7 @@ Each page lists **entities**, **inputs**, or both:
     [text sensor](/components/text_sensor/homeassistant/), [number](/components/number/homeassistant/),
     [switch](/components/switch/homeassistant/), [text](/components/text/homeassistant/),
     [select](/components/select/homeassistant/) and [button](/components/button/homeassistant/).
-  - **standalone** (`id`): it only stores an entity ID, for use in [lambdas](/automations/templates#config-lambda).
+  - **standalone** (`id`): it only stores an entity ID, for use in [lambdas](/automations/templates/#config-lambda).
     `id(my_input).entity_id()` returns the picked entity ID, and `id(my_input).has_entity_id()` returns whether one
     has been picked. See also the [`api.wizard.input_is_set` Condition](#api-wizard-input_is_set-condition).
     With `multiple: true` the user can pick several entities, and `entity_id()` returns them as one comma separated
@@ -577,16 +577,16 @@ shorten the texts or use fewer pages, entities or filters.
   - **description** (*Optional*, string): A text shown at the top of the page. At most 255 characters.
   - **entities** (*Optional*, list): Entities of the device to show on the page. Each entry has these options:
 
-    - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the entity. The entity must be exposed
+    - **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the entity. The entity must be exposed
       to Home Assistant, so it cannot be `internal`, and it must have a `name` that is not empty.
     - **description** (*Optional*, string): A text shown with the entity. At most 255 characters.
 
   - **inputs** (*Optional*, list): Home Assistant entities for the user to pick. Each entry needs exactly one of
     `entity` and `id`, and each input can appear in the wizard only once:
 
-    - **entity** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a `homeassistant` platform entity on
+    - **entity** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of a `homeassistant` platform entity on
       the device to link the input to.
-    - **id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a new standalone input.
+    - **id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of a new standalone input.
     - **description** (*Optional*, string): A text shown with the input. At most 255 characters.
     - **multiple** (*Optional*, boolean): Let the user pick more than one entity. Only for standalone inputs (`id`).
       Defaults to `false`.
@@ -882,7 +882,7 @@ success/error status and optionally include JSON data.
   Defaults to `true`.
 - **error_message** (*Optional*, string, [templatable](/automations/templates)): An error message to include
   when `success` is `false`. Defaults to an empty string.
-- **data** (*Optional*, [lambda](/automations/templates#config-lambda)): A lambda that populates a JSON object
+- **data** (*Optional*, [lambda](/automations/templates/#config-lambda)): A lambda that populates a JSON object
   with response data. The lambda receives a `root` variable of type [`JsonObject`](https://arduinojson.org/v7/api/jsonobject/)
   that you can populate with key-value pairs.
 
