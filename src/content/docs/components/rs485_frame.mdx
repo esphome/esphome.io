@@ -41,37 +41,22 @@ It helps to think of the setup as a three-stage pipeline:
 > the [rs485_frame-examples repository](https://github.com/b3nj1/rs485_frame-examples) — copy the
 > family's `example-device.yaml`, fill in your pins, uncomment the equipment you have, and flash.
 
-## Recommended framework: ESP-IDF
+## Direction control by platform
 
-Use the **ESP-IDF framework**, not Arduino:
+On ESP32, with either the ESP-IDF or the Arduino framework, set `flow_control_pin` on the
+`uart:` component to the transceiver's DE/RE pin. The UART then runs in hardware RS485
+half-duplex mode (`UART_MODE_RS485_HALF_DUPLEX`): the hardware asserts DE/RE when it starts
+sending, releases it only after the last bit has left the shift register, and suppresses the
+echo of transmitted bytes on RX.
 
-```yaml
-esp32:
-  board: BOARDXX     # replace with your board identifier
-  variant: VARIANTXX # must match your hardware; see the esp32 component docs
-  framework:
-    type: esp-idf
-```
+`flow_control_pin` is only available on ESP32. On other platforms use an **auto-direction
+transceiver** (e.g. MAX13487, MAX22025), where DE follows the TX line. On ESP8266 and RP2040
+the hub waits for the UART to finish sending each frame.
 
-When `flow_control_pin` is set on the `uart:` component under ESP-IDF, the
-device's UART peripheral enters hardware RS485 half-duplex mode
-(`UART_MODE_RS485_HALF_DUPLEX`). The hardware asserts the DE/RE pin exactly when
-the TX FIFO fills and deasserts only after the **shift register** finishes
-clocking out the last bit — sub-bit precision that no software loop can match.
-
-Under the Arduino framework the `uart:` component does **not** drive
-`flow_control_pin`. Arduino users must therefore use an **auto-DE transceiver
-chip** (e.g. MAX13487, MAX22025) where DE follows the TX line state
-automatically. With auto-DE hardware, the `rs485_frame` TX path waits for the
-UART to finish sending each frame, so the TX line stays active for the full
-frame; on ESP-IDF it does not wait, because the hardware mode already handles
-deassertion timing.
-
-`idle_gap` TX gate mode is sensitive to echo on the RX line — each transmitted
-frame comes back as an echo that counts as bus activity, which resets the idle timer and may
-prevent `idle_gap` from ever firing again. ESP-IDF's hardware RS485 mode
-suppresses TX echo automatically; on Arduino, prefer `frame_trigger` or
-`fixed_delay`, or use a transceiver that suppresses local echo in hardware.
+`idle_gap` TX gate mode is sensitive to echo on the RX line: each transmitted frame comes
+back as bus activity, which resets the idle timer and may keep `idle_gap` from ever firing
+again. Without the ESP32 hardware mode, prefer `frame_trigger` or `fixed_delay`, or use a
+transceiver that suppresses local echo.
 
 ## Basic usage
 
@@ -119,33 +104,30 @@ rs485_frame:
             id(led_filter).publish_state(bool(mask & (1UL << 5)));
             id(led_lights).publish_state(bool(mask & (1UL << 6)));
 
-    # Display frame: decode the Hayward text encoding once, push to all display sensors.
-    # A static (BSS) buffer avoids heap allocation during character extraction; one
-    # std::string is constructed only at the publish_state call. Text sensors
-    # deduplicate internally so repeated equal values are not forwarded to Home Assistant.
+    # Display frame: decode the Hayward text into a static buffer. Text sensors forward
+    # every publish_state() call, so publish only when the text changes.
     - frame_type: [0x01, 0x03]
       then:
         - lambda: |-
-            // BUF_LEN sized for Hayward Pro Logic's widest displays (~40 chars) plus
-            // UTF-8 degree-symbol expansion. static: BSS-allocated once at program
-            // start -- no per-call stack or heap, matching the hub's setup-time
-            // buffer discipline.
+            // Sized for Hayward Pro Logic's widest displays (~40 chars) plus the
+            // 2-byte UTF-8 degree symbol.
             const size_t BUF_LEN = 128;
             static char out[BUF_LEN];
-            uint8_t olen = 0;
-            for (size_t i = 3; i < payload.size() && olen < (BUF_LEN - 2); i++) {
-              uint8_t b = payload[i];
-              if (b > 0x7F) b -= 0x80;
+            size_t olen = 0;
+            for (size_t i = 2; i < payload.size() && olen < BUF_LEN - 2; i++) {
+              uint8_t b = payload[i] & 0x7F;  // bit 7 marks blinking text
               if (b == 0) continue;
               if (b == '_') {
-                if (olen + 2 <= (BUF_LEN - 2)) { out[olen++] = '\xC2'; out[olen++] = '\xB0'; }
+                out[olen++] = '\xC2';
+                out[olen++] = '\xB0';
               } else {
                 out[olen++] = char(b);
               }
             }
             while (olen > 0 && out[olen - 1] == ' ') olen--;
-            out[olen] = '\0';
-            id(display_text).publish_state(std::string(out, olen));
+            const auto &state = id(display_text).state;
+            if (state.size() != olen || memcmp(state.data(), out, olen) != 0)
+              id(display_text).publish_state(out, olen);
 
 binary_sensor:
   - platform: template
@@ -179,8 +161,8 @@ like Jandy). To keep long-uptime devices stable, follow these patterns:
 - **No heap allocation in the lambda.** Decode into fixed-size buffers
   (`char[BUF_LEN]`, `uint8_t[N]`, structs). Avoid `std::string text;` followed by
   `text.push_back()` — even with `reserve()`, the underlying string is freshly
-  allocated each call. Build into a fixed buffer and construct one `std::string`
-  only at the `publish_state(...)` call site.
+  allocated each call. Build into a fixed buffer and pass it with its length:
+  `publish_state(buf, len)`.
 - **Prefer `static` buffers for anything larger than a few bytes.** A `static`
   buffer inside a lambda is BSS-allocated once at program start (the same
   discipline the hub uses for its setup-time scratch buffers): no per-call
@@ -191,7 +173,7 @@ like Jandy). To keep long-uptime devices stable, follow these patterns:
   static char text[BUF_LEN];    // allocated once in .bss; reused across calls
   uint8_t tlen = 0;             // local, resets each call
   // ... build into text[0..tlen) ...
-  id(display_text).publish_state(std::string(text, tlen));
+  id(display_text).publish_state(text, tlen);
   ```
 
   Use a named constant (`BUF_LEN`) instead of bare magic numbers so the bound
@@ -204,8 +186,13 @@ like Jandy). To keep long-uptime devices stable, follow these patterns:
 - **Avoid `std::to_string`, `String::format`, and other allocating helpers**
   inside the lambda. Use `snprintf` into a `static char[]` buffer if you need
   formatted text.
+- **Publish only changes.** Text sensors forward every `publish_state()` call,
+  so compare with `.state` first when a frame repeats unchanged.
 - **Don't block.** A long loop or `delay()` inside the lambda stalls every
   other ESPHome component for the duration. Keep decode logic tight.
+- **No waiting actions.** `on_frame:` actions must be synchronous: `delay:`,
+  `wait_until:` and other actions that wait are rejected at config time. For
+  slow work, copy the bytes you need into globals and start a script.
 - **Decoding multi-byte fields?** The `bytebuffer` helper provides endian-aware `get_*` accessors
   over a byte span, which is cleaner (and allocation-free) than hand-assembling integers from
   `payload[i]` shifts.
@@ -294,7 +281,11 @@ to use it, or use the raw form above.
 | Send a command via the hub's encoder | `button: value:` (requires a `command_format:` on the button or hub) |
 | Send a fixed custom frame to a generic device | `button: frame_type: + payload:` |
 | Send a frame computed from entity state or a trigger argument | `rs485_frame.send_frame:` with a lambda payload |
-| Send a multi-frame setup sequence | several `rs485_frame.send_frame:` actions in a script |
+| Send a multi-frame setup sequence | several `rs485_frame.send_frame:` actions in a script, with `tx.queue_policy: fifo` |
+
+With the default `tx.queue_policy: replace_latest`, each queued frame replaces the one still
+waiting for the TX gate, so a sequence sends only its last frame. Use `fifo` with a
+`tx.max_queue_size` that holds the whole sequence.
 
 ## Hardware setup
 
@@ -313,10 +304,9 @@ A / B       → RS485 bus terminals
 ```
 
 For half-duplex adapters with a DE/RE pin, set `flow_control_pin` on the
-**`uart:` component** (not on `rs485_frame:`). Under ESP-IDF this activates
-the UART peripheral's built-in RS485 half-duplex mode; the hardware drives
-DE with shift-register-level precision and suppresses the TX echo on RX
-automatically.
+**`uart:` component** (not on `rs485_frame:`). On ESP32 this activates the
+UART peripheral's built-in RS485 half-duplex mode; see
+[Direction control by platform](#direction-control-by-platform).
 
 ```yaml
 uart:
@@ -361,8 +351,8 @@ experimental: use `sniffer_only: true` unless you are testing TX.
 - **sniffer_only** (*Optional*, boolean): Disable all TX including buttons. Defaults to `false`.
 - **dump_frames** (*Optional*, boolean): Log every validated RX frame and every TX frame, as
   the full wire bytes (framing and CRC included), at DEBUG level. Defaults to `false`.
-- **max_frame_length** (*Optional*, integer, 2–1024): Discard frames longer than this many bytes.
-  Defaults to `128`.
+- **max_frame_length** (*Optional*, integer, 2–1024): Discard frames longer than this many bytes,
+  counting the frame type and payload before byte-stuffing, without the CRC. Defaults to `128`.
 - **frame_timeout** (*Optional*, [Time](/guides/configuration-types/#time)): Reset receive
   state if a partial frame sits on the bus longer than this. Prevents a noise burst or
   mid-frame cable pull from permanently stalling reception. At most `10s`. Defaults to `50ms`.
@@ -467,7 +457,8 @@ experimental: use `sniffer_only: true` unless you are testing TX.
   matching frame is received. Multiple entries may be listed; each fires independently based
   on its `frame_type` filter. The automation receives the payload as `payload`
   (`std::span<const uint8_t>`). It points into the receive buffer, which the next frame
-  overwrites, so read it before any `delay:`. Use `[]` to match every frame.
+  overwrites. The actions must be synchronous; `delay:` and other waiting actions are
+  rejected at config time. Use `[]` to match every frame.
 
   - **frame_type** (**Required**, list of hex bytes *or* list of byte-lists): Frame-type
     prefix(es) to match against the start of each received payload. Two forms are
@@ -507,7 +498,7 @@ experimental: use `sniffer_only: true` unless you are testing TX.
       false (a configuration that would never fire is rejected at config time). Not used by
       `idle_gap` / `fixed_delay`.
     - **delay** (*Optional*, [Time](/guides/configuration-types/#time)): Additional delay
-      after the gate frame fires. At most `10s`. Defaults to `0ms`.
+      after the gate opens, in every mode. At most `10s`. Defaults to `0ms`.
     - **min_silence** (*Optional*, [Time](/guides/configuration-types/#time)): Bus silence
       required for `idle_gap` mode. At most `10s`. Defaults to `4ms`.
     - **interval** (*Optional*, [Time](/guides/configuration-types/#time)): TX interval for
@@ -566,8 +557,10 @@ Create a YAML with `sniffer_only: true` and `dump_frames: true`. Set
 
 `framing.escape` is still required: pick `mode: double` (DLE doubling, the more common
 convention) or `mode: escape_byte` with the marker byte your bus uses. On a bus you have not
-yet characterized, start with `double`; if payloads decode with stray `0x10` bytes, switch to
-`escape_byte` and re-check.
+yet characterized, start with `double`. In `double` mode a DLE followed by any byte other than
+DLE, STX or ETX drops the frame, so if expected frames go missing, the bus may use
+`escape_byte`. Compare with a raw UART capture (the `uart:` `debug:` option) to see which byte
+follows each `0x10`.
 
 ```yaml
 rs485_frame:
@@ -593,8 +586,10 @@ wire bytes — framing (DLE/STX/ETX) and CRC included, same as the TX log lines:
 [D][rs485_frame:xxx]: RX 100201030103500050006f6f6c2054...ff1003
 ```
 
-With the default `dle`/`stx` bytes, each line starts `1002`; the two-byte frame type follows
-right after. Collect these over a few minutes and note cadence. Press physical buttons and
+With the default `dle`/`stx` bytes, each frame starts `1002`; the two-byte frame type follows
+right after. Frames longer than 32 wire bytes are split over several `RX` lines, and only the
+first starts with `1002`: join the lines up to the one ending in `1003` before reading the next
+frame type. Collect these over a few minutes and note cadence. Press physical buttons and
 watch for new frame types.
 
 ### Step 4: Confirm the CRC
