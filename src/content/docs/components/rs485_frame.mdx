@@ -41,7 +41,7 @@ It helps to think of the setup as a three-stage pipeline:
 > the [rs485_frame-examples repository](https://github.com/b3nj1/rs485_frame-examples) — copy the
 > family's `example-device.yaml`, fill in your pins, uncomment the equipment you have, and flash.
 
-## Direction control by platform
+## Direction Control by Platform
 
 On ESP32, with either the ESP-IDF or the Arduino framework, set `flow_control_pin` on the
 `uart:` component to the transceiver's DE/RE pin. The UART then runs in hardware RS485
@@ -58,7 +58,7 @@ back as bus activity, which resets the idle timer and may keep `idle_gap` from e
 again. Without the ESP32 hardware mode, prefer `frame_trigger` or `fixed_delay`, or use a
 transceiver that suppresses local echo.
 
-## Basic usage
+## Basic Usage
 
 The following illustrates a Hayward AquaLogic wireless bus. The same structure applies to
 any DLE-framed bus — substitute the `uart:` settings, `framing.escape` scheme, `crc.type`,
@@ -153,7 +153,7 @@ button:
     value: [0x80000000, 0x80000000]
 ```
 
-## Writing `on_frame:` lambdas — best practices
+## Writing `on_frame:` Lambdas — Best Practices
 
 `on_frame:` fires at bus frequency (~10 Hz for Hayward, faster on polled buses
 like Jandy). To keep long-uptime devices stable, follow these patterns:
@@ -199,7 +199,7 @@ like Jandy). To keep long-uptime devices stable, follow these patterns:
 
 For broader background, see [ESPHome Lambda Magic](/automations/templates/#config-lambda).
 
-## Raw frame transmission
+## Raw Frame Transmission
 
 When the hub has a `command_format:` block, it can turn `value:` entries into the on-wire
 payload via a fixed preamble + value bytes + postamble. For anything that doesn't map
@@ -243,7 +243,7 @@ button:
             };
 ```
 
-#### Action configuration variables
+#### Action Configuration Variables
 
 - **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the `rs485_frame` hub.
 - **frame_type** (**Required**, list of hex bytes or
@@ -253,7 +253,7 @@ button:
   [Templatable](/automations/templates/#config-templatable)): The payload bytes that follow the
   frame type. Caller-composed, not double-encoded.
 
-### Raw form on the button platform
+### Raw Form on the Button Platform
 
 For static frames a template button + action is overkill; the
 [rs485_frame button platform](/components/button/rs485_frame/) also accepts a raw form
@@ -274,7 +274,7 @@ button:
 The `value:` form encodes via a `command_format:` set on the button or on the hub; add one
 to use it, or use the raw form above.
 
-### When to use which
+### When to Use Which
 
 | You want to... | Use |
 |---|---|
@@ -287,7 +287,7 @@ With the default `tx.queue_policy: replace_latest`, each queued frame replaces t
 waiting for the TX gate, so a sequence sends only its last frame. Use `fifo` with a
 `tx.max_queue_size` that holds the whole sequence.
 
-## Hardware setup
+## Hardware Setup
 
 Use an RS485-to-TTL adapter connected to a UART on your ESPHome device, or
 an integrated device like WaveShare's ESP32-S3-RS485-CAN which has both the
@@ -317,7 +317,7 @@ If you receive no data, try swapping `tx_pin`/`rx_pin` or the A/B bus wires.
 Some adapters label DI/RO from the adapter's perspective, which is the reverse
 of the device's.
 
-## Configuring for a specific device
+## Configuring for a Specific Device
 
 Configure the bus explicitly: set the `uart:` parameters your device uses, declare the
 `framing.escape` scheme, choose the `crc:` algorithm, set `tx.gate.frame_type` to the bus
@@ -344,7 +344,7 @@ A Jandy AllButton emulator has to ACK every probe within the poll cycle or the c
 marks it offline. The hub does not send idle frames on its own, so TX on Jandy is
 experimental: use `sniffer_only: true` unless you are testing TX.
 
-## Configuration variables
+## Configuration Variables
 
 - **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the hub.
 - **uart_id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the [UART](/components/uart/) bus.
@@ -365,8 +365,6 @@ experimental: use `sniffer_only: true` unless you are testing TX.
   - **dle** (*Optional*, hex byte): Frame delimiter byte. Defaults to `0x10`.
   - **stx** (*Optional*, hex byte): Start-of-frame byte. Defaults to `0x02`.
   - **etx** (*Optional*, hex byte): End-of-frame byte. Defaults to `0x03`.
-
-  <span id="framing-escape"></span>
 
   - **escape** (**Required**): How a literal DLE inside the payload (and CRC) is byte-stuffed
     on the wire. There is no default: the wrong scheme silently corrupts any frame that
@@ -504,7 +502,7 @@ experimental: use `sniffer_only: true` unless you are testing TX.
     - **interval** (*Optional*, [Time](/guides/configuration-types/#time)): TX interval for
       `fixed_delay` mode. At most `10s`. Defaults to `100ms`.
 
-## Payload layout
+## Payload Layout
 
 All `on_frame:` handlers receive the same payload bytes:
 
@@ -523,7 +521,7 @@ lambda: |-
   // payload[2..] is frame data for a 2-byte frame_type
 ```
 
-### Offset convention: payload-relative
+### Offset Convention: Payload-Relative
 
 `rs485_frame` uses **payload-relative** byte offsets: `payload[0]` is the
 first byte of the `frame_type` prefix. For the typical 2-byte frame_type, the
@@ -539,17 +537,17 @@ frame_type before counting, so what they call "byte 0" of the frame is our
 examples for common open-source projects are in
 [rs485_frame-examples CONTRIBUTING.md](https://github.com/b3nj1/rs485_frame-examples/blob/main/CONTRIBUTING.md).
 
-## Getting started with an unknown bus
+## Getting Started with an Unknown Bus
 
 Use this workflow when you don't yet have known-good settings for your controller.
 
-### Step 1: Gather existing research
+### Step 1: Gather Existing Research
 
 Search for prior work before touching hardware. The HA community forums and GitHub
 often have threads with baud rates, framing details, and frame-type catalogs for
 specific controllers.
 
-### Step 2: Flash a passive sniffer
+### Step 2: Flash a Passive Sniffer
 
 Create a YAML with `sniffer_only: true` and `dump_frames: true`. Set
 `crc: {type: none}` so every framing-valid frame is logged regardless of CRC.
@@ -575,7 +573,7 @@ rs485_frame:
     type: none
 ```
 
-### Step 3: Catalog frame types from logs
+### Step 3: Catalog Frame Types from Logs
 
 With `dump_frames: true` and logger at DEBUG level, each validated frame is logged as the full
 wire bytes — framing (DLE/STX/ETX) and CRC included, same as the TX log lines:
@@ -598,13 +596,13 @@ Once you have captured payloads, test CRC candidates. Set `crc.type` and tempora
 `rx_accept` to only one variant, then check that frames still appear in the `dump_frames`
 log; frames that fail the CRC check are not logged.
 
-### Step 5: Configure decoders
+### Step 5: Configure Decoders
 
 Replace the sniffer config with `on_frame:` handlers that decode each frame type
 of interest, plus `template` sensors that receive the decoded values via
 `id(...).publish_state(...)`. See the [Basic usage](#basic-usage) example.
 
-## Why buttons, not switches
+## Why Buttons, Not Switches
 
 Each `rs485_frame` button sends a single frame event onto the bus. What the bus device
 does with it — and whether the device state changes — depends on the device. The ESP has
@@ -617,7 +615,7 @@ On Hayward AquaLogic this maps directly to pressing a physical panel key: the co
 decides whether to change state, and the LED status frame that follows is the authoritative
 answer.
 
-## See also
+## See Also
 
 - [rs485_frame-examples](https://github.com/b3nj1/rs485_frame-examples) — ready-to-use
   configurations for Hayward AquaLogic and other DLE-framed RS485 controllers.
