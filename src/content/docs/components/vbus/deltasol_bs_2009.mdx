@@ -1,0 +1,68 @@
+---
+title: "DeltaSol BS 2009 VBus Guide"
+description: "VBus measurements and controls available for the DeltaSol BS 2009."
+---
+
+The `deltasol_bs_2009` RX decoder receives broadcasts from the DeltaSol BS 2009. Also sold as DeltaSol BS Plus V2. The
+Dux H3214 uses this decoder; pump 2 is not supported on that unit. Use the [VBus hardware
+guide](/components/vbus/#hardware-connection) and configure the UART first.
+
+## Receive Telemetry
+
+```yaml
+vbus:
+  uart_id: resol
+
+sensor:
+  - platform: vbus
+    model: deltasol_bs_2009
+    temperature_1:
+      name: Solar Temperature 1
+```
+
+Each field below is optional. Add only the measurements you need and name them for the controller terminals and
+hydraulic scheme in your installation. These are broadcast values; adding them does not poll settings.
+
+### Available Sensors
+
+- **Temperature 1**: `temperature_1`.
+- **Temperature 2**: `temperature_2`.
+- **Temperature 3**: `temperature_3`.
+- **Temperature 4**: `temperature_4`.
+- **Pump speed 1**: `pump_speed_1`.
+- **Pump speed 2**: `pump_speed_2`.
+- **Operating hours 1**: `operating_hours_1`.
+- **Operating hours 2**: `operating_hours_2`.
+- **Heat quantity**: `heat_quantity`.
+- **Time**: `time`.
+- **Version**: `version`.
+
+All fields support the normal [Sensor](/components/sensor/) options.
+
+### Status And Fault Sensors
+
+- **Sensor 1 fault**: `sensor1_error`.
+- **Sensor 2 fault**: `sensor2_error`.
+- **Sensor 3 fault**: `sensor3_error`.
+- **Sensor 4 fault**: `sensor4_error`.
+- **Frost protection active**: `frost_protection_active`.
+
+Add these under `binary_sensor:` with `platform: vbus`, the same `model` and a `name` for each desired field.
+See the [binary sensor example](/components/vbus/#receive-only) and [Binary Sensor](/components/binary_sensor/) options.
+
+## Settings Access
+
+No built-in settings profile is available for this model. The RX decoder does not define writable parameters.
+Custom work with documented commands can use the [generic transmit reference](/components/vbus/transmit/).
+A matching address alone does not establish compatible settings or firmware.
+
+## Protocol Reference
+
+The broadcast source address is `0x427B`. Use it for [controller
+identification](/components/vbus/receive/#identify-a-controller)
+or documented custom decoding; ordinary `deltasol_bs_2009` RX sensors do not need an explicit address.
+
+## See Also
+
+- [VBus Component](/components/vbus/)
+- [Advanced Reception](/components/vbus/receive/)
