@@ -4,12 +4,23 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import { describe, test } from "node:test";
 import * as data from "../src/data/bio.ts";
-import { autoImage, BioConfigError, parseEnd, parseTime, resolve, validate, youtubeId } from "../src/lib/bio.ts";
+import {
+  autoImage,
+  BioConfigError,
+  parseEnd,
+  parseTime,
+  resolve,
+  sitePath,
+  validate,
+  youtubeId,
+} from "../src/lib/bio.ts";
 import { isOpen, isShowing, select } from "../src/lib/bio-schedule.mjs";
 
 const NOW = "2026-11-06T12:00:00Z";
-// The images in src/assets/bio/, which the real data file uses, and some made up for the tests.
-const ASSETS = fs.readdirSync("src/assets/bio");
+// The images in src/assets/bio/, which the real data file uses, and some made
+// up for the tests. Git drops the folder once its last image is removed, and
+// the page then has no images of its own, so a missing folder means none.
+const ASSETS = fs.existsSync("src/assets/bio") ? fs.readdirSync("src/assets/bio") : [];
 const IMAGES = [...ASSETS, "a.webp", "now.webp", "soon.webp"];
 const VIDEO = "https://www.youtube.com/watch?v=XyAL1to3Lm4";
 
@@ -267,10 +278,31 @@ describe("validation: a mistake names the item", () => {
     );
   });
 
+  test("rejects links that go to another site, or nowhere", () => {
+    for (const url of [
+      "//example.com/",
+      "/\\example.com/",
+      "https://",
+      "https://exa mple.com/",
+      "http://example.com/",
+    ]) {
+      assertInvalid(
+        latestItem({ url }),
+        'latest[0] ("Item").url: must be a site path like /blog/ or a full https:// URL',
+      );
+      assertInvalid(
+        link({ url }),
+        'sections[0] ("Featured").links[0] ("Store").url: must be a site path like /blog/ or a full https:// URL',
+      );
+    }
+    assert.equal(validate(latestItem({ url: "https://example.com/" }), IMAGES), true);
+    assert.equal(validate(latestItem({ url: "/blog/" }), IMAGES), true);
+  });
+
   test("checks the optional text and image of an item in Latest", () => {
     assertInvalid(latestItem({ label: " " }), 'latest[0] ("Item").label: must be text, or left out');
     assertInvalid(latestItem({ note: "" }), 'latest[0] ("Item").note: must be text, or left out');
-    for (const image of ["missing.webp", "/images/bio/a.webp", "http://example.com/a.webp"]) {
+    for (const image of ["missing.webp", "/images/bio/a.webp", "http://example.com/a.webp", "https://"]) {
       assertInvalid(
         latestItem({ image }),
         `latest[0] ("Item").image: "${image}" is not in src/assets/bio/. Save the image there and give its file name, e.g. "2026-11-community-day.webp", or use "auto"`,
@@ -338,6 +370,17 @@ describe("validation: a mistake names the item", () => {
     assertInvalid(video({ ends: "2026-11-15T17:00:00Z" }), 'latest[0] ("Stream").ends: must be after airs');
     assertInvalid(video({ date: "2026-11-15" }), 'latest[0] ("Stream").date: is not a key here. Use airs');
     assertInvalid(video({ start: "2026-11-15" }), 'latest[0] ("Stream").start: is not a key here. Use airs');
+  });
+
+  test("rejects a video that would come down before it starts showing", () => {
+    const video = (fields) =>
+      config({ latest: [{ type: "youtube", video: VIDEO, title: "Stream", airs: "2026-11-15", ...fields }] });
+    const message =
+      'latest[0] ("Stream").starts: must be before the video comes down at the end of November 16, 2026 (UTC), the day after it airs. Use an earlier starts, or add an ends';
+    assertInvalid(video({ starts: "2026-11-20" }), message);
+    assertInvalid(video({ starts: "2026-11-17T00:00:00Z" }), message);
+    assert.equal(validate(video({ starts: "2026-11-16T23:00:00Z" })), true);
+    assert.equal(validate(video({ starts: "2026-11-20", ends: "2026-11-25" })), true);
   });
 });
 
@@ -459,6 +502,43 @@ describe("the Latest list", () => {
         ["Old", false, null],
       ],
     );
+  });
+});
+
+describe("links to esphome.io", () => {
+  test("are read as paths on the site", () => {
+    assert.equal(sitePath("https://esphome.io/blog/2026-10-14/"), "/blog/2026-10-14/");
+    assert.equal(sitePath("https://esphome.io/blog/?a=1#b"), "/blog/?a=1#b");
+    assert.equal(sitePath("/blog/2026-10-14/"), "/blog/2026-10-14/");
+    assert.equal(sitePath("https://example.com/blog/"), "https://example.com/blog/");
+  });
+
+  test("don't match other sites that only start the same way", () => {
+    for (const url of ["https://esphome.io.example.com/blog/", "https://esphome.iox/blog/"]) {
+      assert.equal(sitePath(url), url);
+      assert.equal(
+        autoImage(url, POSTS),
+        `https://assets.openhomefoundation.org/opengraph?url=${encodeURIComponent(url)}`,
+      );
+    }
+  });
+
+  test("take the place of the post they link to, written either way", () => {
+    const lists = build(
+      config({
+        latest: [
+          {
+            title: "Voice is here",
+            url: "https://esphome.io/blog/2026-10-14/",
+            starts: "2026-11-10",
+            ends: "2026-11-12",
+          },
+        ],
+      }),
+    );
+    assert.equal(byTitle(lists).Latest.entries.find((e) => e.title === "Voice is here").url, "/blog/2026-10-14/");
+    assert.deepEqual(showingAt(lists, "2026-11-11T00:00:00Z").Latest, ["Voice is here", "2026.10.0", "2026.9.0"]);
+    assert.deepEqual(showingAt(lists, "2026-11-13T00:00:00Z").Latest, ["2026.10.0", "Voice", "2026.9.0"]);
   });
 });
 
@@ -637,16 +717,18 @@ describe("the page and the build agree", () => {
     }
   });
 
-  test("the real data file builds, and the page agrees with it", () => {
-    const lists = build(data, NOW);
-    assert.deepEqual(shown(lists).Latest, ["Community Day 2026", "2026.10.0", "Voice", "2026.9.0", "2026.8.0"]);
-    assert.deepEqual(showingAt(lists, NOW), shown(lists));
-    assert.deepEqual(showingAt(lists, "2026-11-08T00:00:00Z").Latest, [
-      "2026.10.0",
-      "Voice",
-      "2026.9.0",
-      "2026.8.0",
-      "Desktop app",
-    ]);
+  // Only that it builds and agrees, never which items it shows: bio.ts is
+  // edited all the time, and a valid edit mustn't fail the tests.
+  test("the real data file builds, and the page agrees with it, today and later", () => {
+    const today = new Date();
+    for (const days of [0, 1, 7, 30, 90]) {
+      const time = new Date(today.getTime() + days * 24 * 60 * 60 * 1000).toISOString();
+      const lists = build(data, time);
+      assert.ok(
+        lists.some((list) => list.title === "Latest"),
+        time,
+      );
+      assert.deepEqual(showingAt(lists, time), shown(lists), time);
+    }
   });
 });

@@ -59,10 +59,15 @@ const hasTime = (value: unknown) => /T\d{2}:\d{2}/.test(String(value));
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 const SITE = "https://esphome.io";
+const SITE_HOST = new URL(SITE).hostname;
 // The Open Home Foundation's social preview images, which the blog's release
 // posts already use as covers.
 const OG_ENDPOINT = "https://assets.openhomefoundation.org/opengraph";
 const startOfDay = (date: Date) => new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+
+// Without `ends`, a video comes down at the end of the day after it airs, so a
+// livestream doesn't linger once it's over.
+const videoEnd = (airs: Date) => new Date(startOfDay(airs).getTime() + 2 * DAY_MS);
 
 // An `ends` with only a day keeps the item up through that whole day:
 // `ends: "2026-11-15"` hides it at midnight UTC as the 16th begins. With a
@@ -120,10 +125,35 @@ function validateWindow(item: Raw, keyPath: string, video = false) {
   if (starts && ends && ends <= starts) fail(`${keyPath}.ends`, "must be after starts");
 }
 
+// A full https:// URL with a host. A prefix check alone would let through
+// "https://" on its own.
+function isHttpsUrl(text: string) {
+  if (!text.startsWith("https://")) return false;
+  try {
+    return new URL(text).hostname !== "";
+  } catch {
+    return false;
+  }
+}
+
+// A path on this site starts with one slash. Browsers read "//example.com/"
+// and "/\example.com/" as links to another site.
+const isSitePath = (text: string) => /^\/(?![/\\])/.test(text);
+
 function requireUrl(item: Raw, keyPath: string) {
   const url = String(item.url ?? "");
-  if (url.startsWith("/") || url.startsWith("https://")) return;
+  if (isSitePath(url) || isHttpsUrl(url)) return;
   fail(`${keyPath}.url`, "must be a site path like /blog/ or a full https:// URL");
+}
+
+/**
+ * An esphome.io URL as a path on the site, so it matches the blog's own links.
+ * Any other URL comes back as it is.
+ */
+export function sitePath(url: string): string {
+  if (!isHttpsUrl(url)) return url;
+  const parsed = new URL(url);
+  return parsed.hostname === SITE_HOST ? parsed.pathname + parsed.search + parsed.hash : url;
 }
 
 function requireText(item: Raw, key: string, keyPath: string, optional = false) {
@@ -183,6 +213,16 @@ function validateLatest(item: unknown, keyPath: string, images: string[]) {
     const airs = parseTime(item.airs, `${keyPath}.airs`) as Date;
     const ends = parseEnd(item.ends, `${keyPath}.ends`);
     if (ends && ends <= airs) fail(`${keyPath}.ends`, "must be after airs");
+    // Without `ends`, the video comes down by itself: it must start before then.
+    const starts = parseTime(item.starts, `${keyPath}.starts`);
+    const end = ends ?? videoEnd(airs);
+    if (!ends && starts && end <= starts) {
+      const lastDay = DAY.format(new Date(end.getTime() - 1));
+      fail(
+        `${keyPath}.starts`,
+        `must be before the video comes down at the end of ${lastDay} (UTC), the day after it airs. Use an earlier starts, or add an ends`,
+      );
+    }
     return;
   }
   if (has(item, "type")) fail(`${keyPath}.type`, 'must be "youtube", or left out for a link');
@@ -192,12 +232,7 @@ function validateLatest(item: unknown, keyPath: string, images: string[]) {
   // A file in src/assets/bio/, so the build can make the thumbnail and the
   // card's smaller sizes from it.
   const image = item.image;
-  if (
-    image !== undefined &&
-    image !== "auto" &&
-    !String(image).startsWith("https://") &&
-    !images.includes(String(image))
-  ) {
+  if (image !== undefined && image !== "auto" && !isHttpsUrl(String(image)) && !images.includes(String(image))) {
     fail(
       `${keyPath}.image`,
       `"${image}" is not in src/assets/bio/. Save the image there and give its file name, e.g. "2026-11-community-day.webp", or use "auto"`,
@@ -280,8 +315,8 @@ const join = (parts: (string | null | undefined)[]) => parts.filter(Boolean).joi
 // blog post's own cover, or, for any other page, the Open Home Foundation's
 // social preview image of it.
 export function autoImage(url: string, posts: Post[]): ImageSource {
-  const path = url.startsWith(SITE) ? url.slice(SITE.length) : url;
-  if (!path.startsWith("/")) return `${OG_ENDPOINT}?url=${encodeURIComponent(url)}`;
+  const path = sitePath(url);
+  if (!isSitePath(path)) return `${OG_ENDPOINT}?url=${encodeURIComponent(url)}`;
   const post = posts.find((candidate) => candidate.url === path);
   return post?.image ?? `${OG_ENDPOINT}?url=${encodeURIComponent(SITE + path)}`;
 }
@@ -311,9 +346,7 @@ function handPicked(latest: Raw[], posts: Post[], now: Date): Item[] {
         date: airs,
         rank: 1,
         starts,
-        // Down at the end of the day after it airs, so a livestream doesn't
-        // linger once it's over.
-        ends: ends ?? new Date(startOfDay(airs).getTime() + 2 * DAY_MS),
+        ends: ends ?? videoEnd(airs),
         note: upcoming ? before : after,
         noteAfter: upcoming ? after : null,
         airs: upcoming ? airs : null,
@@ -323,7 +356,8 @@ function handPicked(latest: Raw[], posts: Post[], now: Date): Item[] {
     }
     return {
       title: item.title as string,
-      url: item.url as string,
+      // An esphome.io URL as a path, so it matches the post it links to.
+      url: sitePath(item.url as string),
       date: starts as Date,
       rank: 1,
       starts,
