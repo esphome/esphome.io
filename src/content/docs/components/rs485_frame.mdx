@@ -47,7 +47,7 @@ It helps to think of the setup as a three-stage pipeline:
   Home Assistant entities and produce outbound commands.
 
 > [!TIP]
-> Have a Hayward AquaLogic or Jandy AquaLink RS? Start with the ready-to-flash configurations in
+> Have a Hayward AquaLogic? Start with the ready-to-flash configurations in
 > the [rs485_frame-examples repository](https://github.com/b3nj1/rs485_frame-examples) — copy the
 > family's `example-device.yaml`, fill in your pins, uncomment the equipment you have, and flash.
 
@@ -166,8 +166,8 @@ button:
 
 ## Writing `on_frame:` Lambdas — Best Practices
 
-`on_frame:` fires at bus frequency (~10 Hz for Hayward, faster on polled buses
-like Jandy). To keep long-uptime devices stable, follow these patterns:
+`on_frame:` fires at bus frequency (~10 Hz for Hayward, faster on polled buses).
+To keep long-uptime devices stable, follow these patterns:
 
 - **No heap allocation in the lambda.** Decode into fixed-size buffers
   (`char[BUF_LEN]`, `uint8_t[N]`, structs). Avoid `std::string text;` followed by
@@ -336,7 +336,7 @@ Configure the bus explicitly: set the `uart:` parameters your device uses, decla
 keep-alive / poll frame, and (only if you want the `value:` button shorthand) add a
 `command_format:`. To find those values:
 
-- **Ready-to-flash configs** for Hayward AquaLogic and Jandy AquaLink RS (and a starting point
+- **Ready-to-flash configs** for Hayward AquaLogic (and a starting point
   for contributing new ones) live in the
   [rs485_frame-examples repository](https://github.com/b3nj1/rs485_frame-examples).
 - **Passive sniffing** — enable `sniffer_only: true` (see
@@ -346,15 +346,6 @@ keep-alive / poll frame, and (only if you want the `value:` button shorthand) ad
 - **Open-source reverse-engineering projects** for your controller family may have already
   cataloged frame types, escape schemes, and CRC variants — a search turns up community
   work for many pool, HVAC, and lighting controllers.
-
-> [!WARNING]
-> The Jandy AquaLink RS configurations in rs485_frame-examples are community-contributed and
-> **have not been verified on physical hardware** — the AllButton ACK byte and poll-cycle timing
-> are reverse-engineering guesses. Treat them as a starting point and confirm against a live bus.
-
-A Jandy AllButton emulator has to ACK every probe within the poll cycle or the controller
-marks it offline. The hub does not send idle frames on its own, so TX on Jandy is
-experimental: use `sniffer_only: true` unless you are testing TX.
 
 ## Configuration Variables
 
@@ -421,7 +412,7 @@ experimental: use `sniffer_only: true` unless you are testing TX.
   - **postamble** (*Optional*, list of hex bytes): Bytes written after the value field(s).
     Up to 8 bytes. Defaults to `[]` (none).
 
-  Two representative formats (exercises the full range of fields). Per-device sets are in the
+  A representative format. Per-device sets are in the
   [rs485_frame-examples repository](https://github.com/b3nj1/rs485_frame-examples).
 
   ```yaml
@@ -430,11 +421,6 @@ experimental: use `sniffer_only: true` unless you are testing TX.
     preamble: [0x00, 0x83, 0x01]   # frame sub-type + channel byte
     value_element_bytes: 4
     postamble: [0x00]              # trailing pad
-
-  # Jandy AquaLink RS AllButton ACK — minimal size-1 case
-  command_format:
-    preamble: [0x00, 0x01, 0x80]
-    value_element_bytes: 1
   ```
 
   **Hayward wired unit-address customisation:** Hayward AquaLogic distinguishes wired
