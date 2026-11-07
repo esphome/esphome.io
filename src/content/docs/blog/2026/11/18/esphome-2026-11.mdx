@@ -52,7 +52,7 @@ This is the short, plain-language version for anyone short on time or still find
 - **Sub-devices:** every entry under `esphome: devices:` now needs a `relation:` field – `via` for a separate physical device reached through this node, `child` for a logical part of this node.
 - **HTTP requests in scripts:** `http_request.get`, `.post` and `.send` no longer pause the script, so add `mode: queued` or `mode: parallel` where repeated runs must not be skipped.
 - **ESP-IDF minimum version:** if your ESP32 build pins the ESP-IDF framework to a 5.0 version, move it to 5.1 or newer (or remove the pin).
-- **Pulse counting on Beken chips:** short pulses were previously double counted on BK72xx, so `pulse_counter` and `hlw8012` power meters (HLW8012, BL0937, CSE7759) read twice the real rate. They now count each pulse once and match ESP32, so a value calibrated on an older release reads half after updating; calibrate it again.
+- **Power meters on Beken chips:** on BK72xx, `hlw8012` power meters (HLW8012, BL0937, CSE7759) with inverted pins previously double counted their short pulses. They now count each pulse once and match ESP32, so a plug calibrated on an older release reads half after updating; calibrate it again.
 
 **New features:** ESPHome uses less memory on every supported chip, especially the ESP8266, and the way automations are built now produces smaller, faster code.
 
@@ -227,10 +227,12 @@ sweep closes memory, event-decoding and REST-visibility bugs.
   `DISPLAY_TYPE_COLOR`.
 - If you use the CB3S board (LN-CB3S V1.0) with the `D12` alias, update your pin to `D13` or `PA11`; `D12` now
   drives PA10.
-- If you count pulses on a BK72xx (Beken) chip with `pulse_counter` or `hlw8012` (HLW8012, BL0937, CSE7759),
-  calibrate again: short pulses such as the 38 µs BL0937 output were previously double counted on Beken chips, so
-  a `voltage_divider`, `current_resistor`, pulse multiplier or calibration filter tuned on an older release now reads
-  half. Each pulse is now counted once, the same as on ESP32
+- If you use `hlw8012` (HLW8012, BL0937, CSE7759) on a BK72xx (Beken) chip with inverted pins, calibrate again:
+  pulses shorter than about 150 µs, such as the 38 µs BL0937 output, were previously double counted on Beken chips,
+  so a `voltage_divider`, `current_resistor` or calibration filter tuned on an older release now reads half. Each
+  pulse is now counted once, the same as on ESP32. With pins that are not inverted, these short pulses were missed
+  before and are now counted. The same applies to `pulse_counter` with `internal_filter: 0us`; with the default
+  filter, and for slower pulses such as water and gas meters, `pulse_counter` counts as before
   ([#21271](https://github.com/esphome/esphome/pull/21271)).
 {/* UPGRADE_CHECKLIST_END */}
 
