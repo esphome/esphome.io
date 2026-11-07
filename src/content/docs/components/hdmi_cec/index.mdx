@@ -41,7 +41,7 @@ The examples below assume `id: cec`.
 
 ### Configuration Variables
 
-- **pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The GPIO pin wired to the CEC
+- **pin** (**Required**, [Pin Schema](/guides/configuration-types/#pin-schema)): The GPIO pin wired to the CEC
   line.
 - **address** (**Required**, int): The logical address the device answers to, `0x0` to `0xF`. `0x5` is an
   audio system, `0x4` a playback device, `0xF` the unregistered address; a device that only listens uses it
@@ -83,9 +83,9 @@ button:
           data: [0x36]  # Standby
 ```
 
-- **destination** (**Required**, int, [templatable](/automations/templates#config-templatable)): The logical
+- **destination** (**Required**, int, [templatable](/automations/templates/#config-templatable)): The logical
   address to send to, `0xF` for a broadcast.
-- **data** (**Required**, list of int, [templatable](/automations/templates#config-templatable)): The
+- **data** (**Required**, list of int, [templatable](/automations/templates/#config-templatable)): The
   payload, the opcode first, up to 15 bytes. A lambda returns a `std::vector<uint8_t>`.
 
 The same is available in lambdas as `id(cec).send(destination, {opcode, ...})`. Both report the message in
