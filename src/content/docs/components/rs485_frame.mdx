@@ -259,8 +259,8 @@ button:
 
 - **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the `rs485_frame` hub.
 - **frame_type** (**Required**, list of hex bytes or
-  [Templatable](/automations/templates/#config-templatable)): The 2-byte (or longer, up to 8
-  bytes) frame type prefix.
+  [Templatable](/automations/templates/#config-templatable)): The frame type prefix, up to 8
+  bytes (usually 2). Frame type and payload together must be at least 2 bytes.
 - **payload** (**Required**, list of hex bytes or
   [Templatable](/automations/templates/#config-templatable)): The payload bytes that follow the
   frame type. Caller-composed, not double-encoded.
@@ -584,9 +584,9 @@ wire bytes — framing (DLE/STX/ETX) and CRC included, same as the TX log lines:
 
 With the default `dle`/`stx` bytes, each frame starts `1002`; the two-byte frame type follows
 right after. Frames longer than 32 wire bytes are split over several `RX` lines, and only the
-first starts with `1002`: join the lines up to the one ending in `1003` before reading the next
-frame type. Collect these over a few minutes and note cadence. Press physical buttons and
-watch for new frame types.
+first starts with `1002`. Join the lines until the closing `1003`, which can itself be split
+across two lines, before reading the next frame type. Collect these over a few minutes and
+note cadence. Press physical buttons and watch for new frame types.
 
 ### Step 4: Confirm the CRC
 

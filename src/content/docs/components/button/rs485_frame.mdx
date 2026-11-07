@@ -54,7 +54,8 @@ Enable `dump_frames: true` and `sniffer_only: true` on the hub, then press a phy
 button on your controller and watch the ESP log. Each validated frame is printed in hex
 as wire bytes: DLE/STX, the frame type and payload, the CRC (1 or 2 bytes depending on
 `crc.type`), then DLE/ETX, with byte-stuffing still applied. Frames longer than 32 bytes
-span several log lines; join them first.
+span several log lines, and the closing DLE/ETX can be split across two of them; join them
+first.
 
 To get the bytes a button sends, drop the leading DLE/STX and the trailing DLE/ETX, undo
 the byte-stuffing (with `escape_byte`, DLE followed by the marker byte is one DLE; with
@@ -82,7 +83,8 @@ Provide **exactly one** of the following forms:
   `command_format:` — use the raw form or add one.
 - **frame_type** + **payload** (**Required together** when not using `value:`):
 
-  - **frame_type** (list of hex bytes): 2-byte (or longer, up to 8 bytes) frame type prefix.
+  - **frame_type** (list of hex bytes): Frame type prefix, up to 8 bytes (usually 2). Frame type
+    and payload together must be at least 2 bytes.
     Same convention as `gate.frame_type` and `on_frame.frame_type` elsewhere in the component.
   - **payload** (list of hex bytes): The payload bytes that follow the frame type.
     Caller-composed; the hub adds framing and CRC.
