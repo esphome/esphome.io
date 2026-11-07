@@ -394,7 +394,9 @@ number:
 
 ## Button
 
-The `ld2450` button allows you to perform `restart` and `factory reset` actions on your [Ld2450](/components/sensor/ld2450/).
+The `ld2450` button allows you to perform `restart` and `factory reset` actions on your
+[Ld2450](/components/sensor/ld2450/), and to temporarily publish every position of the `xy`
+[text sensors](#text-sensor).
 
 ```yaml
 button:
@@ -404,6 +406,8 @@ button:
       name: "LD2450 Factory Reset"
     restart:
       name: "LD2450 Restart"
+    xy_unfiltered:
+      name: "LD2450 XY Unfiltered"
 ```
 
 ### Configuration variables
@@ -413,6 +417,22 @@ button:
   All options from [Button](/components/button/#config-button).
 
 - **restart** (*Optional*): Restart the `ld2450` device. All options from [Button](/components/button/#config-button).
+
+- **xy_unfiltered** (*Optional*): For the next `10s`, the `xy` [text sensors](#text-sensor) of all targets publish every
+  position the radar reports, up to 10 times per second, as if they had no filters. Pressing the button again during
+  that time starts the `10s` over. After that, the filters of each `xy` text sensor, the default ones or those you
+  set, apply again, as they do after boot.
+  All options from [Button](/components/button/#config-button).
+
+  The filters are fixed when the firmware is built, so without this button the only way to get every position is
+  `filters: []` on the `xy` text sensors. That publishes 10 updates per second all the time, which keeps your network
+  and Home Assistant busy with updates that nobody may be looking at. With the button you keep the default of one
+  update per second, and ask for the full rate only when you need it, for example to draw the path of a target. Press
+  the button again before the `10s` end to keep the full rate for as long as you need it. If you stop pressing, the
+  filters come back by themselves.
+
+  A filter that keeps state of its own, such as a [lambda](/components/text_sensor/#lambda) filter that uses a global
+  variable, is not reset by the button.
 
 ## Text
 
@@ -549,7 +569,8 @@ text_sensor:
               value: "NA"
       ```
 
-      See [Text Sensor Filters](/components/text_sensor/#text-sensor-filters).
+      See [Text Sensor Filters](/components/text_sensor/#text-sensor-filters). To publish every position only for
+      a short time, keep the filters and use the [xy_unfiltered button](#button).
     - All options from [Text Sensor](/components/text_sensor/#config-text_sensor).
 
 ## Select
@@ -756,6 +777,8 @@ button:
     restart:
       name: "LD2450 Restart"
       entity_category: "config"
+    xy_unfiltered:
+      name: "LD2450 XY Unfiltered"
 
 text_sensor:
   - platform: ld2450
