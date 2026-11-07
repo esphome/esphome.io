@@ -48,6 +48,7 @@ const MIN_EMITTED_INTROS = {
   registryDocs: 20,
   enumDocs: 100,
   platformIndexDocs: 10,
+  triggerDocs: 50,
 };
 
 const CONFIG_VARS_RE = /^Configuration (variables|options):?$/i;
@@ -110,6 +111,8 @@ export class SchemaStore {
     this.files = new Map();
     this.core = null;
     this.componentIntros = new Set(); // components whose intro this run has written
+    this.triggerIntros = new Map(); // trigger key -> the paragraph under its heading, as this run wrote it
+    this.propBullets = new Map(); // key or refined copy -> the option bullet text this run wrote to it
   }
 
   /** Load esphome.json, whose `core` lists every component and platform. */
@@ -297,7 +300,8 @@ export class SchemaStore {
   /**
    * Like findProp but also says which schema object holds the key (owner) and
    * which top-level variant of the section led to it (root), so a refined copy
-   * of an inherited key lands on a schema that really accepts the key.
+   * of an inherited key lands on a schema that really accepts the key. An
+   * inherited key also carries the ref of the schema that declares it (ref).
    */
   async findPropOwner(inner, name, inherited = false, seen = new Set(), root = null) {
     if (!inner) return null;
@@ -314,7 +318,10 @@ export class SchemaStore {
         if (seen.has(ext)) continue;
         seen.add(ext);
         const found = await this.findPropOwner(await this.resolveExtends(ext), name, true, seen, top);
-        if (found) return found;
+        if (found) {
+          found.ref ??= ext;
+          return found;
+        }
       }
     }
     return null;
@@ -349,18 +356,26 @@ export class SchemaStore {
   }
 
   /**
-   * The schema behind a nested key, from every definition the section's own
-   * variants hold (typed group, bus union, or the platform part of a hub union),
-   * as one inner so docs reach each of them.
+   * Every definition of a nested key the section's own variants hold (typed
+   * group, bus union, or the platform part of a hub union).
    */
-  async nestedInner(inner, name) {
-    if (!inner) return null;
+  async nestedProps(inner, name) {
+    if (!inner) return [];
     const scope =
       inner.typedCount || inner.multi
         ? inner
         : { variants: inner.variants.slice(0, inner.primaryCount ?? inner.variants.length) };
     const holders = await this.propHolders(scope, name);
-    const props = holders.length ? holders.map((h) => h.prop) : [await this.findProp(inner, name)];
+    return holders.length ? holders.map((h) => h.prop) : [await this.findProp(inner, name)];
+  }
+
+  /** The schema behind a nested key, from every definition nestedProps finds, as one inner so docs reach each. */
+  async nestedInner(inner, name) {
+    return SchemaStore.mergeInners(await this.nestedProps(inner, name));
+  }
+
+  /** The nested schemas of several definitions of one key, merged into one inner. */
+  static mergeInners(props) {
     const inners = props.map((prop) => propInner(prop)).filter(Boolean);
     if (inners.length <= 1) return inners[0] ?? null;
     const variants = inners.flatMap((i) => i.variants);
@@ -687,13 +702,15 @@ export function registryHeading(node) {
   return { name: codes[0].value, names: codes.map((c) => c.value), type: m[1].toLowerCase() };
 }
 
-/** `time.on_time` Trigger -> on_time */
+/** `time.on_time` Trigger -> ["time.on_time"]; "`a` / `b` Trigger" names both */
 function triggerHeading(node) {
-  const code = node.children.find((c) => c.type === "inlineCode");
-  if (!code) return null;
-  const rest = toString({ children: node.children.filter((c) => c.type !== "inlineCode") }).trim();
-  if (!/^Trigger$/i.test(rest)) return null;
-  return code.value;
+  const codes = node.children.filter((c) => c.type === "inlineCode");
+  if (!codes.length) return null;
+  const rest = toString({ children: node.children.filter((c) => c.type !== "inlineCode") })
+    .replace(/\s*\/\s*/g, " ")
+    .trim();
+  if (!/^Triggers?$/i.test(rest)) return null;
+  return codes.map((c) => c.value);
 }
 
 /** The code span of a heading that is nothing but `name`, else null. */
@@ -764,6 +781,7 @@ export class Report {
         componentDocs: 0,
         platformDocs: 0,
         platformIndexDocs: 0,
+        triggerDocs: 0,
       },
     };
   }
@@ -805,6 +823,8 @@ export class Walker {
     this.defaultRef = null;
     this.componentRef = null; // top ref like "uart" or "template.sensor" for named-schema lookup
     this.holdEmit = null; // depth of a heading whose option bullets are only counted, neither written nor audited
+    // { ref, depth, at } of the section a trigger heading at depth `at` sat under, for its sibling triggers
+    this.triggerOwner = null;
   }
 
   /** Whether docs are written right now: emitting, and not under a heading that holds its bullets back. */
@@ -1096,14 +1116,76 @@ export class Walker {
 
   /** A description plus the See-also link to the section it came from. */
   withSeeAlso(text) {
-    const anchor = this.lastHeadingSlug ? `#${this.lastHeadingSlug}` : "";
-    return `${this.links(text)}\n\n*See also: [${this.title}](${this.deployUrl}${this.url}${anchor})*`;
+    return `${this.links(text)}\n\n${this.seeAlso()}`;
   }
 
-  /** First paragraph after index in the top-level children, or null if a code block comes first. */
-  leadParagraph(children, index) {
+  /** The See-also link to the section being read. */
+  seeAlso() {
+    const anchor = this.lastHeadingSlug ? `#${this.lastHeadingSlug}` : "";
+    return `*See also: [${this.title}](${this.deployUrl}${this.url}${anchor})*`;
+  }
+
+  /** Write the paragraph under a trigger heading to the trigger key, after the key's own bullet text. */
+  async emitTriggerDocs(resolved, trig, text) {
+    if (!this.writing || !text || !resolved) return;
+    const { store } = this;
+    const busless = (c) => c?.replace(/_(i2c|spi)$/, "");
+    const pageComp = busless(this.componentRef?.split(".")[0]);
+    // The key as this page's component holds it: its own definition or local copy on each variant, or the
+    // shared key its component (or one of its bus variants) declares
+    const variants = new Set(store.groupVariants(resolved));
+    // A heading in one bus wiring's section describes the key every wiring of the page holds
+    const page = this.pageDefault?.defaultRef ? await store.resolve(this.pageDefault.defaultRef) : null;
+    const busUnion = page?.multi && [...variants].every((v) => page.variants.includes(v));
+    if (busUnion) for (const v of page.variants) variants.add(v);
+    const targets = new Set();
+    const foreign = [];
+    for (const variant of variants) {
+      const own = variant.config_vars?.[trig];
+      if (own) targets.add(own);
+      for (const ext of variant.extends ?? []) {
+        const base = await store.findPropOwner(await store.resolveExtends(ext), trig);
+        if (!base) continue;
+        if (busless((base.ref ?? ext).split(".")[0]) === pageComp) targets.add(base.prop);
+        else if (!own) foreign.push({ variant, prop: base.prop });
+        else if (!store.propBullets.has(own) && store.propBullets.has(base.prop)) {
+          // A copy saved by an earlier run leads with the inherited key's bullet, as a new copy does
+          store.propBullets.set(own, store.propBullets.get(base.prop));
+        }
+        break;
+      }
+    }
+    // A typed group or bus union is all this component's, so each variant that inherits the key from another
+    // component gets a copy; a hub's union also holds platform schemas, so those only when nothing else does
+    if (resolved.typedKey || resolved.multi || busUnion || !targets.size) {
+      // Inherited from another component's schema: describe it on this component, not on the shared key
+      for (const { variant, prop } of foreign) {
+        variant.config_vars ??= {};
+        const copy = (variant.config_vars[trig] = { ...prop });
+        targets.add(copy);
+        const bullet = store.propBullets.get(prop);
+        if (bullet) store.propBullets.set(copy, bullet);
+      }
+    }
+    const intro = this.links(text);
+    for (const prop of targets) {
+      // The first page of this run to describe a trigger wins, as for component intros
+      if (store.triggerIntros.has(prop)) continue;
+      store.triggerIntros.set(prop, intro);
+      const bullet = store.propBullets.get(prop);
+      prop.docs = bullet ? `${bullet.body}\n\n${intro}\n\n${bullet.seeAlso}` : `${intro}\n\n${this.seeAlso()}`;
+      this.report.stats.emitted.triggerDocs++;
+    }
+  }
+
+  /**
+   * First paragraph after index in the top-level children, or null if a code block comes first. With
+   * ownOnly, a heading also ends the search, so a heading without a paragraph does not take the next one's.
+   */
+  leadParagraph(children, index, ownOnly = false) {
     for (let i = index; i < children.length; i++) {
       const n = children[i];
+      if (ownOnly && n.type === "heading") return null;
       if (["mdxjsEsm", "mdxJsxFlowElement", "mdxFlowExpression", "heading", "html", "blockquote"].includes(n.type)) {
         continue;
       }
@@ -1332,14 +1414,28 @@ export class Walker {
     }
     const { prop, inherited } = found;
     const e = this.report.stats.emitted;
-    let converted = this.withSeeAlso(docText);
+    let body = this.links(docText);
     if (typeText) {
       const typeParts = typeText.split(",").map((t) => t.trim());
       if (typeParts.length > 1 && !/\[templatable\]/.test(typeParts[1])) {
-        converted = `**${this.links(typeParts[1])}**: ${converted}`;
+        body = `**${this.links(typeParts[1])}**: ${body}`;
       }
     }
-    if (prop.docs === converted) {
+    const seeAlso = this.seeAlso();
+    // A trigger heading read earlier in this run adds its paragraph after the bullet's text
+    const intro = this.store.triggerIntros.get(prop);
+    const converted = intro ? `${body}\n\n${intro}\n\n${seeAlso}` : `${body}\n\n${seeAlso}`;
+    // On a rerun over an emitted bundle the trigger's docs still hold the intro an earlier run added after
+    // this bullet; the heading writes it again. A heading removed since, or one that no longer resolves, leaves
+    // the old intro in place, so that needs a fresh bundle
+    const earlierIntro =
+      !intro &&
+      prop.type === "trigger" &&
+      typeof prop.docs === "string" &&
+      prop.docs.startsWith(`${body}\n\n`) &&
+      prop.docs.endsWith(`\n\n${seeAlso}`);
+    if (prop.docs === converted || earlierIntro) {
+      this.store.propBullets.set(prop, { body, seeAlso });
       e.propsSkipped++;
       return;
     }
@@ -1353,10 +1449,12 @@ export class Walker {
       target.config_vars ??= {};
       const refined = (target.config_vars[parsed.key] ??= { ...prop });
       refined.docs = converted;
+      this.store.propBullets.set(refined, { body, seeAlso });
       e.propsRefined++;
       return;
     }
     prop.docs = converted;
+    this.store.propBullets.set(prop, { body, seeAlso });
     e.props++;
   }
 
@@ -1511,6 +1609,11 @@ export class Walker {
     this.lastEnumProps = [];
     if (this.failedSection && node.depth <= this.failedSection.depth) this.failedSection = null;
     if (this.holdEmit !== null && node.depth <= this.holdEmit) this.holdEmit = null;
+    // Any other heading beside or above the last trigger heading leaves the section that trigger sat under
+    const owner = this.triggerOwner;
+    if (owner && (node.depth <= owner.depth || (node.depth <= owner.at && !triggerHeading(node)))) {
+      this.triggerOwner = null;
+    }
     const intro = () => this.leadParagraph(siblings, index + 1);
 
     // A bus or component heading re-targets the page only for its own subtree; its section ends with it,
@@ -1552,36 +1655,73 @@ export class Walker {
       if (node.depth <= this.section.depth) this.section.interrupted = true;
     }
 
-    const trigPath = triggerHeading(node);
-    const trig = trigPath?.split(".").pop();
-    if (trig) {
+    const trigPaths = triggerHeading(node);
+    if (trigPaths) {
       // The page's own schema is tried after the current one: a hub documents its triggers after
-      // the sections of its platforms. nestedInner sees through a docs-only copy of an inherited trigger.
-      // "`vane.on_state`" is first read as the nested key path vane/on_state, then as the component-qualified
-      // name "time.on_time", whose last word is the trigger
+      // the sections of its platforms. "`vane.on_state`" is first read as the nested key path
+      // vane/on_state, then as the component-qualified name "time.on_time", whose last word is the trigger.
+      // A trigger without options of its own still exists: the heading documents it, and the text under it
+      // is not the page schema's.
       const pageRef = this.pageDefault?.defaultRef;
-      const nestedPath = trigPath.split(".").slice(0, -1);
       // "### `on_done` Trigger" under "## `foo.do` Action" is the action's trigger before the component's
+      // A trigger heading ends that section, so a sibling trigger heading after it is still the action's
       const ownerDepth = this.section?.ownerDepth ?? this.section?.depth;
-      const sectionRef = this.section && node.depth > ownerDepth ? this.section.ref : null;
+      if (this.section && node.depth > ownerDepth) this.triggerOwner = { ref: this.section.ref, depth: ownerDepth };
+      if (this.triggerOwner) this.triggerOwner.at = node.depth;
+      const sectionRef = this.triggerOwner?.ref;
       const refs = [sectionRef, this.defaultRef, pageRef].filter((r, i, all) => r && all.indexOf(r) === i);
-      for (const ref of refs) {
-        if (!ref) continue;
-        for (const path of nestedPath.length ? [nestedPath, []] : [[]]) {
-          const holder = path.length ? `${ref}/${path.join("/")}` : ref;
-          if (!(await store.nestedInner(await store.resolve(holder), trig))) continue;
-          this.markDocumented(holder, trig, line);
-          await this.openSection(`${holder}/${trig}`, node.depth, line, "heading");
-          return;
+      const missing = [];
+      const withOptions = [];
+      for (const trigPath of trigPaths) {
+        const trig = trigPath.split(".").pop();
+        const nestedPath = trigPath.split(".").slice(0, -1);
+        let hit = null;
+        for (const ref of refs) {
+          for (const path of nestedPath.length ? [nestedPath, []] : [[]]) {
+            const holder = path.length ? `${ref}/${path.join("/")}` : ref;
+            const resolved = await store.resolve(holder);
+            const props = await store.nestedProps(resolved, trig);
+            const inner = SchemaStore.mergeInners(props);
+            if (!inner && !props.some((p) => p?.type === "trigger")) continue;
+            hit = { holder, inner, resolved };
+            break;
+          }
+          if (hit) break;
         }
+        if (!hit) {
+          missing.push(trig);
+          continue;
+        }
+        this.markDocumented(hit.holder, trig, line);
+        await this.emitTriggerDocs(hit.resolved, trig, this.leadParagraph(siblings, index + 1, true));
+        if (hit.inner) withOptions.push(`${hit.holder}/${trig}`);
       }
       // Platform index pages document triggers the bundle does not place under the platform's schemas;
       // their options are neither written nor audited, since the text may belong to another trigger's key of
       // the same name. On a component page the options are not the component's: drop them until this
       // heading's subtree ends, as for an unknown action
-      this.report.add("unresolved_trigger", this.rel, line, {
-        detail: `trigger '${trig}' not under ${this.defaultRef}`,
-      });
+      for (const trig of missing) {
+        this.report.add("unresolved_trigger", this.rel, line, {
+          detail: `trigger '${trig}' not under ${this.defaultRef}`,
+        });
+      }
+      if (missing.length < trigPaths.length) {
+        if (trigPaths.length === 1 && withOptions.length === 1) {
+          await this.openSection(withOptions[0], node.depth, line, "heading");
+          return;
+        }
+        if (withOptions.length) {
+          // The list under a combined heading cannot be told apart between one trigger's options and
+          // another's lambda variables
+          this.report.add("unroutable_section", this.rel, line, {
+            detail: `combined trigger heading names triggers with options: ${withOptions.join(", ")}`,
+          });
+        }
+        this.pendingRegistry = null;
+        await this.closeSection();
+        this.holdEmit = node.depth;
+        return;
+      }
       if (this.defaultRef && !this.defaultRef.endsWith(".*")) {
         this.pendingRegistry = null;
         await this.closeSection();
