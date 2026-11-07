@@ -25,7 +25,7 @@ safe_mode:
 - **disabled** (*Optional*, boolean): Set to `true` to disable safe_mode. [Ota](/components/ota/) automatically
    sets up safe mode; this allows disabling it if/when it is not wanted.
 
-- **boot_is_good_after** (*Optional*, [Time](/guides/configuration-types#time)): The amount of time after which the boot is considered successful.
+- **boot_is_good_after** (*Optional*, [Time](/guides/configuration-types/#time)): The amount of time after which the boot is considered successful.
    Defaults to `1min`.
 
 - **boot_is_good_on_shutdown** (*Optional*, boolean): Whether an orderly shutdown (entering deep sleep, a restart or
@@ -38,7 +38,7 @@ safe_mode:
 - **num_attempts** (*Optional*, int): The number of failed boot attempts which must occur before invoking safe mode.
    Defaults to `10`.
 
-- **reboot_timeout** (*Optional*, [Time](/guides/configuration-types#time)): The amount of time to wait before rebooting when in safe mode.
+- **reboot_timeout** (*Optional*, [Time](/guides/configuration-types/#time)): The amount of time to wait before rebooting when in safe mode.
    Defaults to `5min`.
 
 - **storage** (*Optional*, string): Where to persist the boot-attempt counter. One of:
@@ -47,8 +47,10 @@ safe_mode:
   - `rtc`: store the counter in RTC memory. It survives software reboots (restarts, OTA updates, crashes) and deep
     sleep but **not** power loss, and avoids flash wear.
 
-  Defaults to `flash` on ESP32 and `rtc` on ESP8266. Only `flash` is available on platforms without RTC-backed storage
-  (the RP2040 and the ESP32-C2 and C61 variants, which have no RTC memory), where `rtc` is rejected.
+  Defaults to `flash` on ESP32 and `rtc` on ESP8266. `rtc` is available on ESP32 (except the C2 and C61 variants,
+  which have no RTC memory), ESP8266 and the Beken BK7231T, BK7231N and BK7238; elsewhere only `flash` is available and
+  `rtc` is rejected. These Beken chips have no RTC memory: there `rtc` keeps the counter in flash and forgets it after a
+  power cut, so it does not avoid flash wear.
 
   Note that on the original ESP32, pressing the hardware reset button (the EN pin) also clears RTC memory, so it
   counts as power loss rather than as a reboot. On newer variants (S3, C3, C6) RTC memory survives a chip reset
@@ -77,7 +79,7 @@ on_...:
 ```
 
 On platforms with OTA bootloader rollback support enabled (see `enable_ota_rollback` for
-[ESP32](/components/esp32#advanced-configuration) and [nRF52](/components/nrf52#advanced-configuration)), marking the
+[ESP32](/components/esp32/#advanced-configuration) and [nRF52](/components/nrf52/#advanced-configuration)), marking the
 boot as successful also confirms the currently running firmware, so the bootloader does not roll back to the previous
 version after an OTA update.
 
@@ -86,7 +88,7 @@ version after an OTA update.
 > the boot as successful and confirms the firmware, so devices that sleep before `boot_is_good_after` elapses no
 > longer need to run this action to keep OTA updates from being rolled back. This can be disabled with the
 > `boot_is_good_on_shutdown` option, in which case only `boot_is_good_after` elapsing or this action confirms the
-> firmware. See [Deep Sleep and OTA Rollback](/components/deep_sleep#deep-sleep-and-ota-rollback) for details.
+> firmware. See [Deep Sleep and OTA Rollback](/components/deep_sleep/#deep-sleep-and-ota-rollback) for details.
 
 ## Rebooting to the recovery app on ESP32
 

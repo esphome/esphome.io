@@ -127,6 +127,18 @@ Use **relative paths** starting with `/`:
 
 **Important**: Always include trailing slash `/` for internal links.
 
+This holds when the link carries an anchor, where the slash goes before the `#`:
+
+```markdown
+- See [Manual IPs](/components/wifi/#manual-ips) to configure a static address
+- The value is an [ID](/guides/configuration-types/#id)
+```
+
+Astro's `build.format` defaults to `directory`, so every page is emitted as `<path>/index.html`. Netlify then
+answers a request for the slash-less `/components/wifi` with a 301 to `/components/wifi/`, and the browser
+re-applies the anchor. A link written without the slash therefore costs every reader who follows it an
+avoidable redirect. `npm run lint` fails on an internal link written that way.
+
 #### Anchors
 
 Headings automatically create anchors using their slugified form. To link to a specific section:
@@ -177,7 +189,8 @@ paragraph, should you use HTML:
 
 1. **ImgTable images** (component index pages):
 
-   - **MUST** be in `/public/images/`
+   - **MUST** be in `/public/images/`, unless they are a generated `badge:` (see
+     [Component Images](#component-images))
    - ImgTable component resolves to `/images/filename.png`
 
 **Image Optimization:**
@@ -221,8 +234,10 @@ top of the component page itself, so do not add a separate thumbnail.
   figure
 - **Reference**: `/images/filename` in ImgTable, and the same absolute path on the component page. A string `src`
   needs explicit `width` and `height` attributes
-- **No photo available?** Ask the bot on your pull request for a generated name image (see the PR template) and
-  use that SVG in both places
+- **No photo available?** Use a generated name badge: set the ImgTable image to `badge:` followed by the text to
+  show, for example `badge:DHT22` or `badge:Audio_DAC` (letters, digits, hyphens and underscores; underscores are
+  shown as spaces). The badge SVG is generated at build time, so there is no file to add, and the component page does
+  not need a figure
 
 ```mdx
 import Figure from '@components/Figure.astro';
@@ -305,10 +320,12 @@ Create grids of component cards:
   ["Title", "/path/to/page/", "image.png"],
   ["Title 2", "/path/to/page2/", "image2.png", "caption"],
   ["Title 3", "/path/to/page3/", "image3.png", "caption", "dark-invert"],
+  ["Title 4", "/path/to/page4/", "badge:Title_4"],
 ]} />
 ```
 
-**Important**: All ImgTable images must be in `/public/images/`.
+**Important**: All ImgTable images must be in `/public/images/`, except `badge:<Name>` values, which use a component
+name badge generated at build time.
 
 #### Figure Component
 
@@ -454,6 +471,7 @@ npm run build
 ### Before Submitting
 
 - [ ] Check that all links work (internal and external with trailing slashes)
+- [ ] Internal links with an anchor keep the trailing slash before the `#` (`/components/wifi/#manual-ips`)
 - [ ] Verify code examples are syntactically correct
 - [ ] Ensure images are optimized and properly sized
 - [ ] Confirm line length is ≤120 characters
@@ -461,7 +479,7 @@ npm run build
 - [ ] Test that headings follow proper hierarchy (H2→H3→H4)
 - [ ] Verify no H1 headings in content (title comes from frontmatter)
 - [ ] Verify images are imported correctly (single-use) or in /public/images/ (multi-use)
-- [ ] Check that ImgTable images are in /public/images/
+- [ ] Check that ImgTable images are in /public/images/ (or use a `badge:` name)
 - [ ] Section headings use Title Case (e.g., "Configuration Variables")
 - [ ] Variable names, parameter names, and short code snippets are wrapped in single backticks
 - [ ] Markdown syntax used when it produces the same result as raw HTML
@@ -552,10 +570,11 @@ sensor:
 - **Optimize images** before adding them
 - **Single-use images**: Import from `./images/`
 - **Multi-use images**: Absolute path from `/public/images/`
-- **ImgTable images**: Must be in `/public/images/`
+- **ImgTable images**: Must be in `/public/images/`, or a generated `badge:<Name>`
 - **Keep examples minimal** - only essential configuration
 - **Use literal `GPIOXX`** - the XX is literal, don't replace with numbers (unless fixed hardware)
 - **Link to dependencies** instead of including their config
 - **Target correct branch** (current vs next)
-- **Internal links**: Include trailing slash (e.g., `/components/wifi/`)
+- **Internal links**: Include trailing slash (e.g., `/components/wifi/`), before the `#` when there is an anchor
+  (e.g. `/components/wifi/#manual-ips`)
 - **GitHub CLI not available** - ask user for GitHub information if needed

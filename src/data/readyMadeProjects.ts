@@ -51,10 +51,6 @@ export interface Device {
    * `installPlacement: "device"`.
    */
   manifest?: string;
-  /** Manual instructions shown in place of an install button. Inline HTML is allowed. */
-  steps?: string[];
-  /** Prompt above `steps`. */
-  stepsPrompt?: string;
 }
 
 export interface ProjectType {
@@ -381,13 +377,8 @@ export const PROJECT_TYPES: ProjectType[] = [
         id: "raspberry",
         image: "/projects/empty/pico-w.png",
         imageAlt: "Raspberry Pi Pico W",
-        stepsPrompt: "Installation instructions:",
-        steps: [
-          "Disconnect your Raspberry Pi Pico from your computer",
-          "Hold the BOOTSEL button and connect the Pico to your computer. The Pico will show up as a USB drive named RPI-RP2",
-          'Download <a href="https://firmware.esphome.io/esphome-web/pico-w/esphome-web-rp2040.uf2">ESPHome for Pico</a>',
-          "Drag the downloaded file to the RPI-RP2 USB drive. The installation is complete when the drive disappears",
-          'Connect your Pico to the Wi-Fi network. Once connected, it will automatically show up on your ESPHome dashboard.<br /><button type="button" id="improv-wifi-btn">Configure Wi-Fi</button>',
+        body: [
+          'Open <a href="https://web.esphome.io/?pico">ESPHome Web</a> and follow the instructions to install ESPHome on your Raspberry Pi Pico W and connect it to Wi-Fi.',
         ],
       },
     ],
