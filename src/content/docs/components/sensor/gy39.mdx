@@ -4,17 +4,23 @@ title: "GY-39 Environment Sensor"
 ---
 
 import Figure from '@components/Figure.astro';
-import gy39FullImg from './images/gy39.png';
-import gy39TopImg from './images/gy39_top.png';
-import gy39BottomImg from './images/gy39_bottom.png';
-import gy39ModesImg from './images/gy39_modes.png';
+import gy39TopImg from './images/gy39_top.webp';
+import gy39BottomImg from './images/gy39_bottom.webp';
+import gy39ModesImg from './images/gy39_modes.webp';
 import APIRef from '@components/APIRef.astro';
 
 The `gy39` sensor platform reads the GY-39 module ([datasheet](https://www.gysensor.cn/gy39-esphome/)): illuminance from
 its MAX44009 and temperature, pressure, humidity and altitude from its BME280, all through the module's own
 microcontroller. [I²C](/components/i2c/) is required.
 
-<Figure src={gy39FullImg} alt="" caption="GY-39 environment sensor module." layout="constrained" />
+<Figure
+  src="/images/gy39.webp"
+  alt="GY-39 module"
+  caption="GY-39 environment sensor module."
+  layout="constrained"
+  width={640}
+  height={538}
+/>
 
 ```yaml
 # Example configuration entry
@@ -45,13 +51,13 @@ sensor:
 
 ## Wiring
 
-<Figure src={gy39TopImg} alt="" caption="Top side, facing the light" layout="" />
-<Figure src={gy39BottomImg} alt="" caption="Bottom side" layout="" />
+<Figure src={gy39TopImg} alt="GY-39 top side" caption="Top side, facing the light" layout="constrained" />
+<Figure src={gy39BottomImg} alt="GY-39 bottom side" caption="Bottom side" layout="constrained" />
 
 The module supports several modes. ESPHome uses the I²C mode of its microcontroller, which reads both chips for
 you. Select it by connecting pin `S0` to `GND` (mode 2, `MCU_IIC`):
 
-<Figure src={gy39ModesImg} alt="" caption="Modes of operation" layout="" />
+<Figure src={gy39ModesImg} alt="GY-39 jumper settings for the three modes" caption="Modes of operation" layout="constrained" />
 
 The `CT` and `DR` pins are then the I²C bus:
 
