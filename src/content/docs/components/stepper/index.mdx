@@ -132,7 +132,7 @@ Configuration variables:
 
 - All other from [Base Stepper Configuration](#base_stepper_config).
 
-### L298N and other dual H-bridges
+### L298N and Other Dual H-Bridges
 
 The `uln2003` platform also drives a bipolar stepper through an L298N or a similar dual H-bridge. Connect coil A
 to `OUT1`/`OUT2` and coil B to `OUT3`/`OUT4`, keep the `ENA` and `ENB` jumpers fitted, and swap the middle two
@@ -149,8 +149,9 @@ stepper:
     max_speed: 250 steps/s
 ```
 
-With `sleep_when_done: true` all four inputs go low when the target is reached, so the motor turns freely and
-draws no current.
+With `sleep_when_done: true` all four inputs go low when the target is reached, so the motor draws no current
+from the supply. The jumpers keep both bridges enabled, though, so the shorted coils resist turning; the
+`uln2003` platform does not drive `ENA`/`ENB`.
 
 ## `stepper.set_target` Action
 
