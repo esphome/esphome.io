@@ -11,9 +11,9 @@ or 433 MHz radio frequency (RF) signals.
 The component is split into two parts:
 
 - The remote transmitter "hub", which defines the pin and a few additional settings, and...
-- Individual [actions](/automations/actions#all-actions) to send encoded remote signals.
+- Individual [actions](/automations/actions/#all-actions) to send encoded remote signals.
 
-**See** [Setting up IR Devices](/guides/setting_up_rmt_devices#remote-setting-up-infrared) **and** [Setting up RF Devices](/guides/setting_up_rmt_devices#remote-setting-up-rf) **for details.**
+**See** [Setting up IR Devices](/guides/setting_up_rmt_devices/#remote-setting-up-infrared) **and** [Setting up RF Devices](/guides/setting_up_rmt_devices/#remote-setting-up-rf) **for details.**
 
 > [!NOTE]
 > This component performs best with an ESP32 or variant; most have a dedicated RMT hardware peripheral which ensures
@@ -29,12 +29,12 @@ remote_transmitter:
 
 ## Configuration variables
 
-- **pin** (**Required**, [Pin](/guides/configuration-types#pin)): The pin to transmit the remote signal on.
+- **pin** (**Required**, [Pin](/guides/configuration-types/#pin)): The pin to transmit the remote signal on.
 - **carrier_duty_percent** (**Required**, int): How much of the time the remote is on. For example, infrared protocols
   modulate the signal using a carrier signal. Set this to `50%` if you're using IR LEDs and `100%` for RF
   applications like 433 MHz transmitters.
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation. Useful when multiple
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation. Useful when multiple
   transmitters are connected to a single device.
 - **non_blocking** (*Optional*, boolean): If enabled, transmissions return immediately and complete in the
   background; the `on_complete` automation triggers once the transmission finishes. Only available on ESP32
@@ -50,7 +50,8 @@ remote_transmitter:
 - **rmt_symbols** (*Optional*, int): When `use_dma` is enabled, this sets the size of the driver's internal DMA
   buffer. When DMA is disabled, it specifies how much RMT memory is allocated to the component. RMT memory is shared
   across all components and should be allocated in multiples of the block size. On the `ESP32` and `ESP32-S2`
-  variants, RMT memory is shared between RX and TX components. On other variants, RX and TX have dedicated RMT memory.
+  variants, RMT memory is shared between RX and TX components. On other variants, RX and TX have their own RMT
+  memory, but a TX component can also use RX memory that no RX component uses.
 
 | ESP32 Variant | Available Memory | Block Size |
 | ------------- | ---------------- | ---------- |
@@ -59,13 +60,39 @@ remote_transmitter:
 | ESP32-C5      | 96 symbols       | 48 symbols |
 | ESP32-C6      | 96 symbols       | 48 symbols |
 | ESP32-H2      | 96 symbols       | 48 symbols |
+| ESP32-H21     | 96 symbols       | 48 symbols |
+| ESP32-H4      | 96 symbols       | 48 symbols |
 | ESP32-P4      | 192 symbols      | 48 symbols |
 | ESP32-S2      | 256 symbols      | 64 symbols |
 | ESP32-S3      | 192 symbols      | 48 symbols |
+| ESP32-S31     | 192 symbols      | 48 symbols |
+
+Each component uses its own RMT channel: `remote_receiver` uses an RX channel, `remote_transmitter` and
+`esp32_rmt_led_strip` use a TX channel. A channel uses at least one block of memory, so the number of channels is the
+available memory divided by the block size, for example 8 on the `ESP32` and 2 on the `ESP32-C3`. On the `ESP32` and
+`ESP32-S2`, RX and TX components share these channels. On other variants, RX and TX each have this many channels.
+
+ESPHome checks all `esp32_rmt_led_strip`, `remote_transmitter` and `remote_receiver` components together. Validation
+fails if:
+
+- they need more channels than are available
+- more than one RX or more than one TX component sets `use_dma`, since only one channel per direction supports DMA
+- `rmt_symbols` is an odd number or smaller than one block
+- without `use_dma`, `rmt_symbols` is larger than one channel can use. On the `ESP32` and `ESP32-S2` that is all the RMT
+  memory; on other variants it is the RX memory for an RX component, or the TX and RX memory together for a TX component
+- a transmitter or LED strip with `use_dma` sets `rmt_symbols` above 2046
+
+A component with `use_dma` uses one block. When it compiles, ESPHome also works out which memory each channel gets when
+the components are set up: by `setup_priority`, then in the order of the configuration. A component that refers to
+another component by ID, such as a `power_supply`, can be set up after the ones that follow it. If a channel does not
+fit, ESPHome logs a warning that suggests an `rmt_symbols` value that fits, or a `setup_priority` that sets up the
+smaller ones first. `esphome config` does not show this warning. The order matters because a TX channel can extend into
+memory that the next one would need: on an `ESP32-S3`, a 48 symbol strip followed by a 288 symbol strip fits, but not
+the other way round.
 
 - **clock_resolution** (*Optional*, int): The clock resolution used by the RMT peripheral in Hz. Defaults to `1000000`.
 - **use_dma** (*Optional*, boolean): Enable DMA on variants that support it. If enabled `rmt_symbols` controls
-  the DMA buffer size and can be set to a large value.
+  the DMA buffer size and can be set to a large value, up to 2046.
 
 - **eot_level** (*Optional*, boolean): Overrides the default end of transmit level. Defaults to `false` unless `pin`
   is set to inverted or open-drain.
@@ -94,7 +121,7 @@ remote_transmitter:
 
 ## Remote Transmitter Actions
 
-Remote transmitters support a number of [actions](/automations/actions#all-actions) that can be used to send remote codes. All
+Remote transmitters support a number of [actions](/automations/actions/#all-actions) that can be used to send remote codes. All
 supported protocols are listed below. All actions have these additional #### Configuration variables
 
 ```yaml
@@ -112,10 +139,10 @@ on_...:
   sent only once.
 
   - **times** (int, [templatable](/automations/templates)): The number of times to repeat the code.
-  - **wait_time** ([Time](/guides/configuration-types#time), [templatable](/automations/templates)): The time to wait between repeats (in
-    µs as a result of a [lambda](/automations/templates#config-lambda)).
+  - **wait_time** ([Time](/guides/configuration-types/#time), [templatable](/automations/templates)): The time to wait between repeats (in
+    µs as a result of a [lambda](/automations/templates/#config-lambda)).
 
-- **transmitter_id** (*Optional*, [ID](/guides/configuration-types#id)): The remote transmitter to send the remote code with. Defaults to
+- **transmitter_id** (*Optional*, [ID](/guides/configuration-types/#id)): The remote transmitter to send the remote code with. Defaults to
   the first one defined in the configuration.
 
 If you're looking for the same functionality as is default in the `rpi_rf` integration in Home Assistant, you'll want
@@ -125,7 +152,7 @@ to set the **times** to 10 and the **wait_time** to 0s.
 
 ### `remote_transmitter.transmit_abbwelcome` Action
 
-This [action](/automations/actions#all-actions) sends a ABB-Welcome message to the intercom bus. The
+This [action](/automations/actions/#all-actions) sends a ABB-Welcome message to the intercom bus. The
 message type, addresses, address length and data can vary a lot between ABB-Welcome
 systems. Please refer to the received messages while performing actions like ringing a
 doorbell or opening a door.
@@ -179,7 +206,7 @@ on_...:
 
 ### `remote_transmitter.transmit_aeha` Action
 
-This [action](/automations/actions#all-actions) sends a AEHA code to a remote transmitter.
+This [action](/automations/actions/#all-actions) sends a AEHA code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -234,7 +261,7 @@ Set `dump: aok` on a [remote receiver](/components/remote_receiver/) to read the
 
 ### `remote_transmitter.transmit_beo4` Action
 
-This [action](/automations/actions#all-actions) sends a B&O Beo4 infrared protocol code to a remote transmitter.
+This [action](/automations/actions/#all-actions) sends a B&O Beo4 infrared protocol code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -253,7 +280,7 @@ on_...:
 
 ### `remote_transmitter.transmit_brennenstuhl` Action
 
-This [action](/automations/actions#all-actions) sends a brennenstuhl protocol code to a remote transmitter.
+This [action](/automations/actions/#all-actions) sends a brennenstuhl protocol code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -268,14 +295,14 @@ on_...:
 
 > [!NOTE]
 > The brennenstuhl devices use rolling codes, i.e. each button of the remote generates 4 different codes in
-> a pseudo random manner. See [Rolling Codes](/guides/setting_up_rmt_devices#remote-setting-up-rolling-codes)
+> a pseudo random manner. See [Rolling Codes](/guides/setting_up_rmt_devices/#remote-setting-up-rolling-codes)
 > for details and a complete YAML example.
 
 <span id="remote_transmitter-transmit_byronsx"></span>
 
 ### `remote_transmitter.transmit_byronsx` Action
 
-This [action](/automations/actions#all-actions) sends a Byron Doorbell RF protocol code to a remote transmitter.
+This [action](/automations/actions/#all-actions) sends a Byron Doorbell RF protocol code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -294,7 +321,7 @@ on_...:
 
 ### `remote_transmitter.transmit_canalsat` Action
 
-This [action](/automations/actions#all-actions) sends a CanalSat infrared remote code to a remote transmitter.
+This [action](/automations/actions/#all-actions) sends a CanalSat infrared remote code to a remote transmitter.
 
 > [!NOTE]
 > The CanalSat and CanalSatLD protocols use a higher carrier frequency (56kHz) and are very similar.
@@ -321,7 +348,7 @@ on_...:
 
 ### `remote_transmitter.transmit_canalsatld` Action
 
-This [action](/automations/actions#all-actions) sends a CanalSatLD infrared remote code to a remote transmitter.
+This [action](/automations/actions/#all-actions) sends a CanalSatLD infrared remote code to a remote transmitter.
 
 > [!NOTE]
 > The CanalSat and CanalSatLD protocols use a higher carrier frequency (56kHz) and are very similar.
@@ -348,7 +375,7 @@ on_...:
 
 ### `remote_transmitter.transmit_coolix` Action
 
-This [action](/automations/actions#all-actions) sends one or two 24-bit Coolix infrared remote codes to a remote transmitter.
+This [action](/automations/actions/#all-actions) sends one or two 24-bit Coolix infrared remote codes to a remote transmitter.
 
 ```yaml
 on_...:
@@ -371,7 +398,7 @@ on_...:
 
 ### `remote_transmitter.transmit_dish` Action
 
-This [action](/automations/actions#all-actions) sends a Dish Network infrared remote code to a remote transmitter.
+This [action](/automations/actions/#all-actions) sends a Dish Network infrared remote code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -393,7 +420,7 @@ You can find a list of commands in the
 
 ### `remote_transmitter.transmit_dooya` Action
 
-This [action](/automations/actions#all-actions) sends a Dooya RF remote code to a remote transmitter.
+This [action](/automations/actions/#all-actions) sends a Dooya RF remote code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -418,7 +445,7 @@ on_...:
 
 ### `remote_transmitter.transmit_drayton` Action
 
-This [action](/automations/actions#all-actions) sends a Drayton Digistat RF remote code to a remote transmitter.
+This [action](/automations/actions/#all-actions) sends a Drayton Digistat RF remote code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -450,7 +477,7 @@ Set `address` and either `data` or both `channel` and `command`.
 
 ### `remote_transmitter.transmit_dyson` Action
 
-This [action](/automations/actions#config-action) sends a Dyson cool AM07 infrared protocol code to a remote transmitter.
+This [action](/automations/actions/#config-action) sends a Dyson cool AM07 infrared protocol code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -478,7 +505,7 @@ on_...:
 
 ### `remote_transmitter.transmit_gobox` Action
 
-This [action](/automations/actions#all-actions) sends a command to a Go-Box via the IR transmitter.
+This [action](/automations/actions/#all-actions) sends a command to a Go-Box via the IR transmitter.
 
 ```yaml
 on_...:
@@ -509,7 +536,7 @@ on_...:
 
 ### `remote_transmitter.transmit_hob2hood` Action
 
-This [action](/automations/actions#all-actions) sends a Hob2Hood infrared remote code to a remote transmitter.
+This [action](/automations/actions/#all-actions) sends a Hob2Hood infrared remote code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -534,7 +561,7 @@ on_...:
 
 ### `remote_transmitter.transmit_jvc` Action
 
-This [action](/automations/actions#all-actions) sends a JVC infrared remote code to a remote transmitter.
+This [action](/automations/actions/#all-actions) sends a JVC infrared remote code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -551,7 +578,7 @@ on_...:
 
 ### `remote_transmitter.transmit_keeloq` Action
 
-This [action](/automations/actions#all-actions) sends KeeLoq RF remote code to a remote transmitter.
+This [action](/automations/actions/#all-actions) sends KeeLoq RF remote code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -569,6 +596,15 @@ on_...:
       code: '0xd19ef0a9'
       suffix: '0x2A'
       suffix_bits: 6
+  # Jarolift TDEF group frame (72 bits)
+  - remote_transmitter.transmit_keeloq:
+      address: '0x1234500'
+      command: '0x8'
+      code: '0xF94A09F2'
+      group: '0x0F'
+      repeat:
+        times: 2
+        wait_time: 0ms
 ```
 
 #### Configuration variables
@@ -582,14 +618,20 @@ on_...:
   validation; a lambda value is cut to the lowest **suffix_bits** bits at run time. Defaults to `0`.
 - **suffix_bits** (*Optional*, int, [templatable](/automations/templates)): How many suffix bits to send, from `0`
   to `16`; a lambda value above `16` is capped at `16`. Defaults to `0`, which sends only the 66-bit word.
+- **group** (*Optional*, int, [templatable](/automations/templates/)): The 8 group bits (channels 9 to 16) of a
+  72-bit Jarolift TDEF frame, sent after the 64-bit word in place of the low battery and repeat bits. Channels 1
+  to 8 are part of the encrypted **code**. Combining it with **suffix** or **suffix_bits** is rejected, and
+  **level** must stay `false` (no lambda).
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
-- A repeat **wait_time** of 15ms as shown replicates the repetition of an HCS301.
+- A repeat **wait_time** of 15ms, as in the first example, replicates the repetition of an HCS301. The Jarolift
+  example repeats its frame with no extra wait: the guard time that ends every KeeLoq frame already separates the
+  two copies.
 
 <span id="remote_transmitter-transmit_haier"></span>
 
 ### `remote_transmitter.transmit_haier` Action
 
-This [action](/automations/actions#all-actions) sends a Haier code to a remote transmitter. The 8-bit checksum is added
+This [action](/automations/actions/#all-actions) sends a Haier code to a remote transmitter. The 8-bit checksum is added
 automatically.
 
 ```yaml
@@ -634,7 +676,7 @@ on_...:
 
 ### `remote_transmitter.transmit_lg` Action
 
-This [action](/automations/actions#all-actions) sends an LG infrared remote code to a remote transmitter.
+This [action](/automations/actions/#all-actions) sends an LG infrared remote code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -653,7 +695,7 @@ on_...:
 
 ### `remote_transmitter.transmit_magiquest` Action
 
-This [action](/automations/actions#all-actions) sends a MagiQuest wand code to a remote transmitter.
+This [action](/automations/actions/#all-actions) sends a MagiQuest wand code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -681,7 +723,7 @@ on_...:
 
 ### `remote_transmitter.transmit_midea` Action
 
-This [action](/automations/actions#all-actions) sends a 40-bit Midea code to a remote transmitter. 8-bits of checksum added
+This [action](/automations/actions/#all-actions) sends a 40-bit Midea code to a remote transmitter. 8-bits of checksum added
 automatically.
 
 ```yaml
@@ -705,7 +747,7 @@ on_...:
 
 ### `remote_transmitter.transmit_nec` Action
 
-This [action](/automations/actions#all-actions) sends an NEC infrared remote code to a remote transmitter.
+This [action](/automations/actions/#all-actions) sends an NEC infrared remote code to a remote transmitter.
 
 > [!NOTE]
 > In version 2021.12, the order of transferring bits was corrected from MSB to LSB in accordance with the NEC
@@ -737,7 +779,7 @@ on_...:
 
 ### `remote_transmitter.transmit_nexa` Action
 
-This [action](/automations/actions#all-actions) a Nexa RF remote code to a remote transmitter.
+This [action](/automations/actions/#all-actions) a Nexa RF remote code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -764,7 +806,7 @@ on_...:
 
 ### `remote_transmitter.transmit_nexus` Action
 
-This [action](/automations/actions#all-actions) sends a 36-bit Nexus temperature and humidity sensor code, as used
+This [action](/automations/actions/#all-actions) sends a 36-bit Nexus temperature and humidity sensor code, as used
 by Digoo and similar 433 MHz weather sensors, to a remote transmitter.
 
 ```yaml
@@ -796,7 +838,7 @@ on_...:
 
 ### `remote_transmitter.transmit_onkyori` Action
 
-This [action](/automations/actions#all-actions) sends an Onkyo RI remote code to a remote transmitter.
+This [action](/automations/actions/#all-actions) sends an Onkyo RI remote code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -832,7 +874,7 @@ Code lists and protocol descriptions are published by the
 
 ### `remote_transmitter.transmit_panasonic` Action
 
-This [action](/automations/actions#all-actions) sends a Panasonic infrared remote code to a remote transmitter.
+This [action](/automations/actions/#all-actions) sends a Panasonic infrared remote code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -863,7 +905,7 @@ on_...:
 
 ### `remote_transmitter.transmit_pd_pioneer` Action
 
-This [action](/automations/actions#all-actions) sends a PD Pioneer mini-split infrared code to a remote transmitter.
+This [action](/automations/actions/#all-actions) sends a PD Pioneer mini-split infrared code to a remote transmitter.
 The checksum byte is added automatically when 13 data bytes are provided.
 
 ```yaml
@@ -884,7 +926,7 @@ on_...:
 
 ### `remote_transmitter.transmit_pioneer` Action
 
-This [action](/automations/actions#all-actions) sends a Pioneer infrared remote code to a remote transmitter.
+This [action](/automations/actions/#all-actions) sends a Pioneer infrared remote code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -913,7 +955,7 @@ are largely shared among devices within a given class.
 
 ### `remote_transmitter.transmit_pioneer_wyt` Action
 
-This [action](/automations/actions#all-actions) sends a raw infrared frame for Pioneer Diamante Pro mini split heat
+This [action](/automations/actions/#all-actions) sends a raw infrared frame for Pioneer Diamante Pro mini split heat
 pumps, the WYT model family, to a remote transmitter. The frame is 14 bytes; give the first 13 and the checksum is
 appended, or give all 14 and the last byte is replaced by the computed checksum.
 
@@ -933,7 +975,7 @@ on_...:
 
 ### `remote_transmitter.transmit_pronto` Action
 
-This [action](/automations/actions#all-actions) sends a raw code to a remote transmitter specified in Pronto format.
+This [action](/automations/actions/#all-actions) sends a raw code to a remote transmitter specified in Pronto format.
 
 ```yaml
 on_...:
@@ -952,7 +994,7 @@ on_...:
 
 ### `remote_transmitter.transmit_raw` Action
 
-This [action](/automations/actions#all-actions) sends a raw code to a remote transmitter.
+This [action](/automations/actions/#all-actions) sends a raw code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -981,7 +1023,7 @@ on_...:
 
 ### `remote_transmitter.transmit_rc5` Action
 
-This [action](/automations/actions#all-actions) sends an RC5 infrared remote code to a remote transmitter.
+This [action](/automations/actions/#all-actions) sends an RC5 infrared remote code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -998,7 +1040,7 @@ on_...:
 
 ### `remote_transmitter.transmit_rc5x` Action
 
-This [action](/automations/actions#all-actions) sends an RC5X (Marantz Extended RC5) infrared remote code to a
+This [action](/automations/actions/#all-actions) sends an RC5X (Marantz Extended RC5) infrared remote code to a
 remote transmitter.
 
 ```yaml
@@ -1022,7 +1064,7 @@ on_...:
 
 ### `remote_transmitter.transmit_rc6` Action
 
-This [action](/automations/actions#all-actions) sends an RC6 infrared remote code to a remote transmitter.
+This [action](/automations/actions/#all-actions) sends an RC6 infrared remote code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -1041,7 +1083,7 @@ on_...:
 
 ### `remote_transmitter.transmit_rc_switch_raw` Action
 
-This [action](/automations/actions#all-actions) sends a raw RC-Switch code to a
+This [action](/automations/actions/#all-actions) sends a raw RC-Switch code to a
 remote transmitter.
 
 ```yaml
@@ -1063,7 +1105,7 @@ on_...:
 
 ### `remote_transmitter.transmit_rc_switch_type_a` Action
 
-This [action](/automations/actions#all-actions) sends a type A RC-Switch code to a
+This [action](/automations/actions/#all-actions) sends a type A RC-Switch code to a
 remote transmitter.
 
 ```yaml
@@ -1089,7 +1131,7 @@ on_...:
 
 ### `remote_transmitter.transmit_rc_switch_type_b` Action
 
-This [action](/automations/actions#all-actions) sends a type B RC-Switch code to a
+This [action](/automations/actions/#all-actions) sends a type B RC-Switch code to a
 remote transmitter.
 
 ```yaml
@@ -1115,7 +1157,7 @@ on_...:
 
 ### `remote_transmitter.transmit_rc_switch_type_c` Action
 
-This [action](/automations/actions#all-actions) sends a type C RC-Switch code to a
+This [action](/automations/actions/#all-actions) sends a type C RC-Switch code to a
 remote transmitter.
 
 ```yaml
@@ -1143,7 +1185,7 @@ on_...:
 
 ### `remote_transmitter.transmit_rc_switch_type_d` Action
 
-This [action](/automations/actions#all-actions) sends a type D RC-Switch code to a
+This [action](/automations/actions/#all-actions) sends a type D RC-Switch code to a
 remote transmitter.
 
 ```yaml
@@ -1169,7 +1211,7 @@ on_...:
 
 ### `remote_transmitter.transmit_roomba` Action
 
-This [action](/automations/actions#all-actions) sends a Roomba infrared remote code to a remote transmitter.
+This [action](/automations/actions/#all-actions) sends a Roomba infrared remote code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -1197,7 +1239,7 @@ on_...:
 
 ### `remote_transmitter.transmit_samsung` Action
 
-This [action](/automations/actions#all-actions) sends a Samsung infrared remote code to a remote transmitter.
+This [action](/automations/actions/#all-actions) sends a Samsung infrared remote code to a remote transmitter.
 It transmits codes up to 64 bits in length in a single packet.
 
 ```yaml
@@ -1220,7 +1262,7 @@ on_...:
 
 ### `remote_transmitter.transmit_samsung36` Action
 
-This [action](/automations/actions#all-actions) sends a Samsung36 infrared remote code to a remote transmitter.
+This [action](/automations/actions/#all-actions) sends a Samsung36 infrared remote code to a remote transmitter.
 It transmits the `address` and `command` in two packets separated by a "space".
 
 ```yaml
@@ -1240,7 +1282,7 @@ on_...:
 
 ### `remote_transmitter.transmit_symphony` Action
 
-This [action](/automations/actions#config-action) sends a Symphony infrared remote code to a remote transmitter.
+This [action](/automations/actions/#config-action) sends a Symphony infrared remote code to a remote transmitter.
 It transmits constant bit-time frames with a footer gap. Physical Symphony remotes typically
 send the same frame twice separated by a ~35 ms gap. Use `command_repeats` to control how
 many identical frames are sent; defaults to 2.
@@ -1266,7 +1308,7 @@ on_...:
 
 ### `remote_transmitter.transmit_sony` Action
 
-This [action](/automations/actions#all-actions) a Sony infrared remote code to a remote transmitter.
+This [action](/automations/actions/#all-actions) a Sony infrared remote code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -1285,7 +1327,7 @@ on_...:
 
 ### `remote_transmitter.transmit_somfy_rts` Action
 
-This [action](/automations/actions#all-actions) sends a Somfy RTS command, as used by Somfy blinds, shutters and
+This [action](/automations/actions/#all-actions) sends a Somfy RTS command, as used by Somfy blinds, shutters and
 awnings on 433.42 MHz, to a remote transmitter. ESPHome acts as one more remote: it has its own address and a rolling
 code that must grow by one with every command, so keep the code in a [global](/components/globals/) with
 `restore_value: true` and increment it in the lambda. Pair the device by holding the program button on an existing
@@ -1323,7 +1365,7 @@ on_...:
 
 ### `remote_transmitter.transmit_toshiba_ac` Action
 
-This [action](/automations/actions#all-actions) sends a Toshiba AC infrared remote code to a remote transmitter.
+This [action](/automations/actions/#all-actions) sends a Toshiba AC infrared remote code to a remote transmitter.
 
 > [!NOTE]
 > This action transmits codes using the new(er) Toshiba AC protocol and likely will not work with older units.
@@ -1347,7 +1389,7 @@ on_...:
 
 ### `remote_transmitter.transmit_mirage` Action
 
-This [action](/automations/actions#all-actions) sends a 112-bit Mirage code to a remote transmitter. 8-bits of checksum added
+This [action](/automations/actions/#all-actions) sends a 112-bit Mirage code to a remote transmitter. 8-bits of checksum added
 automatically.
 
 ```yaml
@@ -1365,22 +1407,19 @@ on_...:
 
 ### `remote_transmitter.transmit_toto` Action
 
-This [action](/automations/actions#all-actions) sends a Toto infrared remote code to a remote transmitter.
+This [action](/automations/actions/#all-actions) sends a Toto infrared remote code to a remote transmitter.
 
 ```yaml
 on_...:
   - remote_transmitter.transmit_toto:
-      command: 0xED  # Set water and seat temperature
-      rc_code_1: 0x0 # Water heater off
-      rc_code_2: 0x0 # Seat heater off
+      code: 0x1200  # Close lid
       # Repeats 3 times at a 36ms interval by default
 ```
 
 #### Configuration variables
 
-- **command** (**Required**, int, [templatable](/automations/templates)): The 1-byte Toto command code to send. Range is 0 to 0xFF.
-- **rc_code_1** (*Optional*, int, [templatable](/automations/templates)): The first 4-bit Toto code (usually a command parameter) to send. Range is 0 to 0xF.
-- **rc_code_2** (*Optional*, int, [templatable](/automations/templates)): The second 4-bit Toto code (usually a command parameter) to send. Range is 0 to 0xF.
+- **code** (**Required**, int, [templatable](/automations/templates/)): The 2-byte Toto command code to send.
+  Range is 0 to 0xFFFF.
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
 > [!NOTE]
@@ -1390,7 +1429,7 @@ on_...:
 
 ### `remote_transmitter.digital_write` Action
 
-This [action](/automations/actions#all-actions) sets the output value of the pin.
+This [action](/automations/actions/#all-actions) sets the output value of the pin.
 
 ```yaml
 on_...:
@@ -1400,7 +1439,7 @@ on_...:
 
 #### Configuration variables
 
-- **transmitter_id** (*Optional*, [ID](/guides/configuration-types#id)): The remote transmitter to set the pin value on. Defaults to
+- **transmitter_id** (*Optional*, [ID](/guides/configuration-types/#id)): The remote transmitter to set the pin value on. Defaults to
   the first one defined in the configuration.
 
 - **value** (**Required**, bool, [templatable](/automations/templates)): The output value of the pin.
@@ -1424,7 +1463,7 @@ All RC Switch `protocol` settings have these settings:
 
 ### Lambda calls
 
-Actions may also be called from [lambdas](/automations/templates#config-lambda). The `.transmit()` call can be populated with
+Actions may also be called from [lambdas](/automations/templates/#config-lambda). The `.transmit()` call can be populated with
 raw timings or encoded data for a specific protocol by following the examples below.
 
 - `.transmit()`: Returns a call to populate with data and send.
@@ -1463,9 +1502,9 @@ call.perform();
 ## See Also
 
 - [Remote Receiver](/components/remote_receiver/)
-- [Setting up IR Devices](/guides/setting_up_rmt_devices#remote-setting-up-infrared)
-- [Setting up RF Devices](/guides/setting_up_rmt_devices#remote-setting-up-rf)
+- [Setting up IR Devices](/guides/setting_up_rmt_devices/#remote-setting-up-infrared)
+- [Setting up RF Devices](/guides/setting_up_rmt_devices/#remote-setting-up-rf)
 - [RF Bridge Component](/components/rf_bridge/)
-- [Delaying Remote Transmissions](/cookbook/lambda_magic#lambda_magic_rf_queues)
+- [Delaying Remote Transmissions](/cookbook/lambda_magic/#lambda_magic_rf_queues)
 - [RCSwitch](https://github.com/sui77/rc-switch) by [Suat Özgür](https://github.com/sui77)
 - <APIRef text="remote_transmitter.h" path="remote_transmitter/remote_transmitter.h" />

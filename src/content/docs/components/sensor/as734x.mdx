@@ -54,7 +54,7 @@ more entries to the list to use several sensors.
 ### Configuration variables
 
 - **type** (**Required**, string): The sensor model. Must be `AS7341`, `AS7343` or `TCS3448`.
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this component. Set it
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID for this component. Set it
   when you have more than one `as734x` sensor.
 - **normalize_basic_counts** (*Optional*, string): Divide every basic count by a common reference, so the
   published values describe the shape of the spectrum rather than its strength. Defaults to `NONE`. Must be one
@@ -96,11 +96,11 @@ more entries to the list to use several sensors.
 - **atime** (*Optional*, int): The number of integration steps. Defaults to `29`. Must be between `0` and `255`.
 - **astep** (*Optional*, int): The length of one integration step in increments of 2.78µs. Defaults to `599`.
   Must be between `0` and `65534`.
-- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to read the sensor.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval to read the sensor.
   Defaults to `60s`.
 - **address** (*Optional*, int): The I²C address of the sensor. Defaults to `0x39`, or to `0x59` when `type`
   is `TCS3448`, which answers on a different address than the AS7343.
-- **i2c_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the
+- **i2c_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the
   [I²C Component](/components/i2c/) if you want to use multiple I²C buses.
 
 > [!NOTE]
@@ -127,7 +127,7 @@ sensor:
 
 ### Configuration variables
 
-- **as734x_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the `as734x` component to read
+- **as734x_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `as734x` component to read
   from. Only needed when you have more than one `as734x` sensor.
 - **counts** (*Optional*): The raw per-band readings to publish, see [Raw Counts](#raw-counts). Each band is
   optional; only the bands you list are published. Each band accepts all options from
@@ -178,7 +178,7 @@ text_sensor:
 
 ### Configuration variables
 
-- **as734x_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the `as734x` component to read
+- **as734x_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `as734x` component to read
   from. Only needed when you have more than one `as734x` sensor.
 - **rgb_hex** (*Optional*): The colour of the light as an sRGB hex string. All options from
   [Text Sensor](/components/text_sensor/), or just a name as a shorthand.
@@ -454,9 +454,9 @@ components, but keep the total below your `update_interval`.
 
 ## Moving From `as7341`
 
-The `as7341` platform keeps working. To move to `as734x`, add an `as734x` entry with `type: AS7341` and the
-`gain`, `atime`, `astep`, `address` and `update_interval` options, then change the sensor platform to `as734x`
-and move the bands under `counts`. The options keep their names and their defaults.
+The `as7341` platform is deprecated and will be removed in 2027.5.0. To move to `as734x`, add an `as734x` entry
+with `type: AS7341` and the `gain`, `atime`, `astep`, `address` and `update_interval` options, then change the
+sensor platform to `as734x` and move the bands under `counts`. The options keep their names and their defaults.
 
 ```yaml
 # Old configuration

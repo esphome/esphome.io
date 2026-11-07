@@ -15,7 +15,7 @@ qr_code:
 
 ## Configuration variables
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID with which you will be able to reference the QR-code later
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID with which you will be able to reference the QR-code later
   in your display code.
 
 - **value** (**Required**, string): The string which you want to encode in the QR-code.
@@ -44,4 +44,14 @@ display:
           auto x = (it.get_width() / 2) - (size / 2);
           auto y = (it.get_height() / 2) - (size / 2);
           it.qr_code(x, y, id(homepage_qr), Color(255,255,255), 2);
+```
+
+A lambda can replace the encoded string at runtime with `set_value()`; the code is regenerated on the next draw.
+For example, to show the [Wi-Fi Easy Connect](/components/wifi/#wi-fi-easy-connect) URI:
+
+```yaml
+wifi:
+  dpp: {}
+  on_dpp_uri:
+    - lambda: id(homepage_qr).set_value(uri);
 ```
