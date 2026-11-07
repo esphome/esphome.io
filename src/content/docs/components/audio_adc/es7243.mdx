@@ -1,0 +1,77 @@
+---
+description: "Instructions for using ESPHome's ES7243 platform to configure microphone inputs."
+title: "ES7243"
+---
+import APIRef from '@components/APIRef.astro';
+
+
+The `es7243` platform allows your ESPHome devices to use the ES7243 stereo audio ADC
+([datasheet](http://www.everest-semi.com/pdf/ES7243%20PB.pdf)). This allows attached microphones to be used as a
+microphone input via [I2S Audio](/components/microphone/i2s_audio/). The chip is found on the ESP32-LyraT-Mini.
+
+The ES7243 is a different chip from the [ES7243E](/components/audio_adc/es7243e/), with its own register map and
+a different default I²C address (`0x13` instead of `0x10`). Use this platform for boards whose schematic lists an
+ES7243 without the `E` suffix.
+
+The [I²C bus](/components/i2c/) is required in your configuration as this is used to communicate with the ES7243.
+The chip only answers on I²C after it has received a clock on its MCLK input, so the
+[I2S Audio](/components/i2s_audio/) bus it is attached to must set `i2s_mclk_pin`. The platform pulses that pin
+during setup and the I2S peripheral drives it afterwards.
+
+```yaml
+# Example configuration entry
+audio_adc:
+  - platform: es7243
+```
+
+## Configuration Variables
+
+- **mic_gain** (*Optional*, enum): The gain applied to the ADC microphones. One of `1dB`, `3.5dB`, `18dB`,
+  `20.5dB`, `22.5dB`, `24.5dB`, `25dB` or `27dB`. Defaults to `27dB`.
+
+- **i2s_audio_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the
+  [I2S Audio](/components/i2s_audio/) bus whose `i2s_mclk_pin` clocks the chip. Required when more than one bus is
+  configured.
+- **address** (*Optional*, int): The I²C address of the driver. Defaults to `0x13`.
+- **i2c_id** (*Optional*): The ID of the [I²C bus](/components/i2c/) the ES7243 is connected to.
+- All other options from [Audio ADC](/components/audio_adc/#config-audio_adc).
+
+## Automations
+
+All [Audio ADC Automations](/components/audio_adc/#automations-audio_adc) are supported by this platform.
+
+## Configuration Examples
+
+**ESP32-LyraT-Mini**:
+
+```yaml
+i2c:
+  sda: GPIO18
+  scl: GPIO23
+
+i2s_audio:
+  - id: i2s_audio_bus
+    i2s_lrclk_pin: GPIO25
+    i2s_bclk_pin: GPIO5
+    i2s_mclk_pin: GPIO0
+
+audio_adc:
+  - platform: es7243
+    id: es7243_adc
+    i2s_audio_id: i2s_audio_bus
+
+microphone:
+  - platform: i2s_audio
+    id: lyrat_mic
+    i2s_audio_id: i2s_audio_bus
+    i2s_din_pin: GPIO26
+    adc_type: external
+    sample_rate: 16000
+    bits_per_sample: 16bit
+```
+
+## See Also
+
+- [Audio ADC Component](/components/audio_adc/)
+- [ES7243E](/components/audio_adc/es7243e/)
+- <APIRef text="es7243.h" path="es7243/es7243.h" />
