@@ -26,25 +26,20 @@ microcontroller. [I²C](/components/i2c/) is required.
 # Example configuration entry
 sensor:
   - platform: gy39
-    illuminance:
-      name: GY-39 Illuminance
     temperature:
       name: GY-39 Temperature
-    pressure:
-      name: GY-39 Pressure
     humidity:
       name: GY-39 Humidity
-    altitude:
-      name: GY-39 Altitude
 ```
 
-## Configuration variables
+## Configuration Variables
 
 - **illuminance** (*Optional*): Illuminance in lux. All options from [Sensor](/components/sensor/).
 - **temperature** (*Optional*): Temperature in °C. All options from [Sensor](/components/sensor/).
 - **pressure** (*Optional*): Air pressure in Pa. All options from [Sensor](/components/sensor/).
 - **humidity** (*Optional*): Relative humidity in %. All options from [Sensor](/components/sensor/).
-- **altitude** (*Optional*): Altitude in metres, as calculated by the module. All options from [Sensor](/components/sensor/).
+- **altitude** (*Optional*): Altitude in metres, as calculated by the module. All options from
+  [Sensor](/components/sensor/).
 - **address** (*Optional*, int): The I²C address of the module. Defaults to `0x5B`.
 - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval to read the module.
   Defaults to `60s`.
@@ -57,7 +52,12 @@ sensor:
 The module supports several modes. ESPHome uses the I²C mode of its microcontroller, which reads both chips for
 you. Select it by connecting pin `S0` to `GND` (mode 2, `MCU_IIC`):
 
-<Figure src={gy39ModesImg} alt="GY-39 jumper settings for the three modes" caption="Modes of operation" layout="constrained" />
+<Figure
+  src={gy39ModesImg}
+  alt="GY-39 jumper settings for the three modes"
+  caption="Modes of operation"
+  layout="constrained"
+/>
 
 The `CT` and `DR` pins are then the I²C bus:
 
