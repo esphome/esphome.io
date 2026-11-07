@@ -132,6 +132,26 @@ Configuration variables:
 
 - All other from [Base Stepper Configuration](#base_stepper_config).
 
+### L298N and other dual H-bridges
+
+The `uln2003` platform also drives a bipolar stepper through an L298N or a similar dual H-bridge. Connect coil A
+to `OUT1`/`OUT2` and coil B to `OUT3`/`OUT4`, keep the `ENA` and `ENB` jumpers fitted, and swap the middle two
+pins so that each step energizes the coils in the right order:
+
+```yaml
+stepper:
+  - platform: uln2003
+    id: my_stepper
+    pin_a: GPIOXX  # IN1
+    pin_b: GPIOXX  # IN3
+    pin_c: GPIOXX  # IN2
+    pin_d: GPIOXX  # IN4
+    max_speed: 250 steps/s
+```
+
+With `sleep_when_done: true` all four inputs go low when the target is reached, so the motor turns freely and
+draws no current.
+
 ## `stepper.set_target` Action
 
 To use your stepper motor in [automations](/automations) or templates, you can use this action to set the target
