@@ -231,8 +231,9 @@ sweep closes memory, event-decoding and REST-visibility bugs.
   pulses shorter than about 150 µs, such as the 38 µs BL0937 output, were previously double counted on Beken chips,
   so a `voltage_divider`, `current_resistor` or calibration filter tuned on an older release now reads half. Each
   pulse is now counted once, the same as on ESP32. With pins that are not inverted, these short pulses were missed
-  before and are now counted. The same applies to `pulse_counter` with `internal_filter: 0us`; with the default
-  filter, and for slower pulses such as water and gas meters, `pulse_counter` counts as before
+  before and are now counted. On RTL8720C (Realtek) chips `hlw8012` counted nothing before and now reads correctly.
+  The same applies to `pulse_counter` with `internal_filter: 0us`; with the default filter, and for slower pulses
+  such as water and gas meters on Beken chips, `pulse_counter` counts as before
   ([#21271](https://github.com/esphome/esphome/pull/21271)).
 {/* UPGRADE_CHECKLIST_END */}
 
