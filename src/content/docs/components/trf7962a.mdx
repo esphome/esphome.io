@@ -35,7 +35,8 @@ trf7962a:
   `IRQ` line. The reader signals the end of each exchange on it.
 - **vin** (*Optional*, string): The supply voltage on the reader's `VIN` pin, `5V` or `3.3V`. Defaults to `5V`.
 - **rf_power** (*Optional*, string): The transmitter output power, `FULL` or `HALF`. Defaults to `FULL`.
-- **data_rate** (*Optional*): The SPI clock rate. Defaults to `2MHz`, the rate the datasheet recommends.
+- **data_rate** (*Optional*): The SPI clock rate, up to `10MHz`. Defaults to `2MHz`, the rate the datasheet
+  recommends.
 - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often to poll for a tag.
   Defaults to `500ms`.
 - **on_tag** (*Optional*, [Automation](/automations/)): An automation to perform when a tag is first read. See
@@ -45,6 +46,10 @@ trf7962a:
 - **spi_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the
   [SPI component](/components/spi/) if you want to use multiple SPI buses.
 - **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID for this component.
+
+> [!NOTE]
+> The reader handles one tag at a time. If two tags are on the antenna, their responses collide and neither is read,
+> so a tag already reported is treated as removed after three polls.
 
 ## `on_tag` Trigger
 
