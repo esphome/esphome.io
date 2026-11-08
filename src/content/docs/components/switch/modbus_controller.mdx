@@ -26,11 +26,11 @@ and requires [Modbus Controller](/components/modbus_controller/) to be configure
   `allow_broadcast_read` on [Modbus Controller](/components/modbus_controller/)), wait for the reply to each write
   instead of treating it as a fire-and-forget broadcast. Rejected under a controller at any other address.
   Defaults to `false`.
-- **bitmask** (*Optional*, int): Some values are packed in a response. The bitmask is used to determined if the result is true or false. See [Bitmasks](/components/modbus_controller#bitmasks).
-- **lambda** (*Optional*, [lambda](/automations/templates#config-lambda)):
+- **bitmask** (*Optional*, int): Some values are packed in a response. The bitmask is used to determined if the result is true or false. See [Bitmasks](/components/modbus_controller/#bitmasks).
+- **lambda** (*Optional*, [lambda](/automations/templates/#config-lambda)):
   Lambda to be evaluated every update interval to read the status of the switch.
 
-- **write_lambda** (*Optional*, [lambda](/automations/templates#config-lambda)): Lambda called before send.
+- **write_lambda** (*Optional*, [lambda](/automations/templates/#config-lambda)): Lambda called before send.
   Lambda is evaluated before the modbus write command is created.
 
   Parameters passed into the lambda
@@ -63,7 +63,7 @@ and requires [Modbus Controller](/components/modbus_controller/) to be configure
   See [Using `custom_pdu`](/components/modbus_controller/#modbus_custom_pdu) for how to use `custom_pdu`
 
 - **offset** (*Optional*, int): Offset from start address in bytes (only required for uncommon response encodings). If more than one register is written in a command, this value is used to find the start of this datapoint relative to the start address. The component calculates the size of the range based on offset and size of the value type. The value for offset depends on the register type. For holding input registers, the offset is in bytes. For coil and discrete input resisters, the LSB of the first data byte contains the coil addressed in the request. The other coils follow toward the high-order end of this byte and from low order to high order in subsequent bytes. For registers, the offset is the position of the relevant bit. To get the value of the coil register, 2 can be retrieved using `address: 2` / `offset: 0` or `address: 0` / `offset 2`.
-- **restore_mode** (*Optional*): See [Switch](/components/switch#config-switch), since this configuration variable is inherited. The default value for this setting is `DISABLED` (recommended).
+- **restore_mode** (*Optional*): See [Switch](/components/switch/#config-switch), since this configuration variable is inherited. The default value for this setting is `DISABLED` (recommended).
   `DISABLED` leaves the initial state up to the hardware: usually the state lives in the device and ESPHome does not need to remember it. The switch frontend will show an undetermined
   state until the real state is retrieved from the device on the next refresh. Use any other setting if a reboot of your ESPHome device is tied to a reboot of the modbus device.
 

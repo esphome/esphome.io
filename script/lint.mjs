@@ -4,6 +4,7 @@ import { readFile, stat, readdir } from "fs/promises";
 import { join, basename, dirname, extname } from "path";
 import { execSync } from "child_process";
 import { fileURLToPath } from "url";
+import { needsAnchorTrailingSlash, withAnchorTrailingSlash } from "../src/lib/internal-links.mjs";
 
 import { collectPageAnchors } from "./heading-anchors.mjs";
 
@@ -313,7 +314,7 @@ async function checkInternalLinks(fname, content, anchorCache) {
                 fname,
                 lineno,
                 col,
-                `Anchor-only link '#${anchorId}' not found on current page. If this should link to another page, use the full path like [${linkText}](/path/to/page#${anchorId})`,
+                `Anchor-only link '#${anchorId}' not found on current page. If this should link to another page, use the full path like [${linkText}](/path/to/page/#${anchorId})`,
               );
             }
           }
@@ -346,6 +347,18 @@ async function checkInternalLinks(fname, content, anchorCache) {
     if (!linkUrl.startsWith("/")) {
       addError(fname, lineno, col, `Relative link '${linkUrl}' should use an absolute path (e.g., /components/...)`);
       continue;
+    }
+
+    // Keep the trailing slash before an anchor. Without it the site answers with a 301 to the
+    // slashed URL, so every reader following the link pays an extra round trip.
+    if (needsAnchorTrailingSlash(linkUrl)) {
+      addError(
+        fname,
+        lineno,
+        col,
+        `Internal link '${linkUrl}' is missing the trailing slash before its anchor. ` +
+          `Use '${withAnchorTrailingSlash(linkUrl)}' instead.`,
+      );
     }
 
     // Parse internal link

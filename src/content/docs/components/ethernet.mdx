@@ -112,15 +112,15 @@ ethernet:
 
 ### RMII configuration variables
 
-- **mdc_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The MDC pin of the board.
+- **mdc_pin** (**Required**, [Pin](/guides/configuration-types/#pin)): The MDC pin of the board.
   Usually this is `GPIO23`.
 
-- **mdio_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The MDIO pin of the board.
+- **mdio_pin** (**Required**, [Pin](/guides/configuration-types/#pin)): The MDIO pin of the board.
   Usually this is `GPIO18`.
 
 - **clk** (**Required**, mapping): The RMII clock configuration.
 
-  - **pin** (**Required**, [Pin](/guides/configuration-types#pin)): The RMII clock pin.
+  - **pin** (**Required**, [Pin](/guides/configuration-types/#pin)): The RMII clock pin.
   - **mode** (**Required**, string): The clock mode of the data lines. See your board's
     datasheet for more details. Must be one of the following values:
 
@@ -134,7 +134,7 @@ ethernet:
   - **value** (**Required**, hex): The value of the register to set as a hex number (e.g. `0x1FFA`  )
   - **page_id** (*Optional*, hex): (RTL8201 only) Register page number to select before writing (e.g. `0x07` for page 7)
 
-- **power_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The pin controlling the
+- **power_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The pin controlling the
   power/reset status of the Ethernet controller. Leave unspecified for no power pin (default).
 
 ### GENERIC (RGMII) configuration variables
@@ -144,10 +144,10 @@ Media-Independent Interface, gigabit) interface, using ESP-IDF's built-in generi
 supported on gigabit-capable variants (currently the ESP32-S31). The RGMII data, control and clock GPIOs are
 taken from the ESP-IDF per-target default configuration, so only the management pins need to be set:
 
-- **mdc_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The MDC pin. On the ESP32-S31 this is `GPIO5`.
-- **mdio_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The MDIO pin. On the ESP32-S31 this is `GPIO6`.
+- **mdc_pin** (**Required**, [Pin](/guides/configuration-types/#pin)): The MDC pin. On the ESP32-S31 this is `GPIO5`.
+- **mdio_pin** (**Required**, [Pin](/guides/configuration-types/#pin)): The MDIO pin. On the ESP32-S31 this is `GPIO6`.
 - **phy_addr** (*Optional*, int): The PHY address of the Ethernet controller. Defaults to `0`.
-- **power_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The PHY reset/power pin. On the ESP32-S31
+- **power_pin** (*Optional*, [Pin](/guides/configuration-types/#pin)): The PHY reset/power pin. On the ESP32-S31
   this is `GPIO7`. Recommended so the PHY is reset cleanly at startup.
 - **phy_registers** (*Optional*, mapping): Arbitrary PHY register values to set after Ethernet
   initialization, with the same `address`/`value`/`page_id` sub-options as the
@@ -167,26 +167,26 @@ It takes the same configuration variables as the [GENERIC type](#generic-rgmii-c
 
 ### SPI configuration variables
 
-- **clk_pin** (**Required** unless `spi_id` is set, [Pin](/guides/configuration-types#pin)): The SPI clock pin.
-- **mosi_pin** (**Required** unless `spi_id` is set, [Pin](/guides/configuration-types#pin)): The SPI MOSI pin.
-- **miso_pin** (**Required** unless `spi_id` is set, [Pin](/guides/configuration-types#pin)): The SPI MISO pin.
-- **cs_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The SPI chip select pin.
-- **spi_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of an [SPI Component](/components/spi/) bus
+- **clk_pin** (**Required** unless `spi_id` is set, [Pin](/guides/configuration-types/#pin)): The SPI clock pin.
+- **mosi_pin** (**Required** unless `spi_id` is set, [Pin](/guides/configuration-types/#pin)): The SPI MOSI pin.
+- **miso_pin** (**Required** unless `spi_id` is set, [Pin](/guides/configuration-types/#pin)): The SPI MISO pin.
+- **cs_pin** (**Required**, [Pin](/guides/configuration-types/#pin)): The SPI chip select pin.
+- **spi_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of an [SPI Component](/components/spi/) bus
   to attach the Ethernet chip to instead of initializing a dedicated SPI host. ESP32 only. This allows the chip to
   share the SPI bus with other peripherals, each using its own CS pin. The referenced bus must use a hardware SPI
   interface (for example `interface: spi2`, not `software`) and must have a `miso_pin`. When `spi_id` is set,
   `clk_pin`, `mosi_pin`, `miso_pin` and `interface` must not be set - they come from the referenced bus.
-- **interrupt_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The interrupt pin.
+- **interrupt_pin** (*Optional*, [Pin](/guides/configuration-types/#pin)): The interrupt pin.
   This variable is **required** for older frameworks. See below.
 
-- **reset_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The reset pin.
+- **reset_pin** (*Optional*, [Pin](/guides/configuration-types/#pin)): The reset pin.
 - **clock_speed** (*Optional*, float): The SPI clock speed. ESP32 only.
   The minimum is `8MHz`. The maximum depends on the chip: `20MHz` for `ENC28J60`, `40MHz` for `KSZ8851SNL`,
   `72MHz` for `CH390`, and `80MHz` for the rest. The nearest integer division of `80MHz` is used, i.e. `16MHz`
   (`80MHz` / 5) is used when `15MHz` is configured.
   Default: `26.67MHz`.
 
-- **polling_interval** (*Optional*, [Time](/guides/configuration-types#time)): If `interrupt_pin` is not set,
+- **polling_interval** (*Optional*, [Time](/guides/configuration-types/#time)): If `interrupt_pin` is not set,
   set the time interval for periodic polling. Minimum is 1ms; defaults to 10ms. ESP32 only.
   Older frameworks may not support this variable. See below for details.
 - **interface** (*Optional*, string): Controls which ESP-IDF SPI implementation should be used.
@@ -230,7 +230,7 @@ If you are using a framework that does not support SPI polling mode,
 - **on_connect** (*Optional*, [Automation](/automations)): An action to be performed when a connection is established.
 - **on_disconnect** (*Optional*, [Automation](/automations)): An action to be performed when the connection is dropped.
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation.
 
 > [!NOTE]
 > If your Ethernet board is not designed with the microcontroller built in, it's common to attempt
@@ -694,7 +694,7 @@ on_...:
 
 ### `ethernet.connected` Condition
 
-This [Condition](/automations/actions#all-conditions) checks if the device currently has an Ethernet connection.
+This [Condition](/automations/actions/#all-conditions) checks if the device currently has an Ethernet connection.
 
 ```yaml
 on_...:
@@ -709,7 +709,7 @@ The lambda equivalent for this is `id(ethernet_id).is_connected()`.
 
 ### `ethernet.enabled` Condition
 
-This [Condition](/automations/actions#all-conditions) checks if the Ethernet interface is currently enabled.
+This [Condition](/automations/actions/#all-conditions) checks if the Ethernet interface is currently enabled.
 
 ```yaml
 on_...:
