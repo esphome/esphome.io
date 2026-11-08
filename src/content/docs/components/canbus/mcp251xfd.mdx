@@ -13,6 +13,12 @@ communicates with ESPHome over the [SPI bus](/components/spi/). Configure an SPI
 The MCP2517FD and MCP2518FD controllers need a separate CAN transceiver connected to the CAN bus. Use a CAN FD-capable
 transceiver when using CAN FD, and terminate the bus according to your network's requirements.
 
+> [!NOTE]
+> The MCP2517FD has an erratum that limits pauses in SPI reads of its message memory. ESPHome drives the chip select
+> pin in software and cannot guarantee that timing, so an MCP2517FD can occasionally lose a received frame or interrupt
+> a transmission even when SPI transfers pass their CRC check. The driver logs a warning when this happens. Prefer the
+> MCP2518FD or MCP251863, which fix this erratum.
+
 ```yaml
 # Example configuration entry
 canbus:
