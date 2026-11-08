@@ -52,8 +52,13 @@ speaker:
 > gives a BCLK below the PLL's minimum input; use `32bit` instead.
 
 > [!NOTE]
-> Without `mclk_frequency`, the DAC needs the I²S bit clock running while it powers up, so it powers up when audio
-> first plays. The outputs stay muted until then, which keeps the speaker free of pops at boot.
+> The DAC needs its clock running while it powers up, so it powers up when audio first plays. The outputs stay muted
+> until then, which keeps the speaker free of pops at boot. An I²S speaker must name this DAC in its `audio_dac`
+> option; a speaker further up the chain, such as a mixer, does not report when the clocks start.
+
+> [!NOTE]
+> The clock dividers are fixed for `sample_rate`, so audio has to reach the I²S speaker at that rate. Use a
+> [Resampler Speaker](/components/speaker/resampler/) or set the media player pipeline's `sample_rate`.
 
 ## Automations
 
