@@ -82,6 +82,10 @@ longer `turn_timeout`.
 When all connections are in use, a new client takes the place of the one that has been quiet the longest, and that
 client is closed. The client that has the turn is never closed this way.
 
+With `timeout`, every connection is timed on its own: a client with no byte in either direction for that long is
+closed, and the other clients stay connected. Bytes that wait for their turn count as traffic, and so does a turn
+that a component holds until its reply, so a client whose request waits for its turn or for its reply is not closed.
+
 ## Configuration Variables
 
 - **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation. Use
