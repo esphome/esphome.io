@@ -67,10 +67,15 @@ The known node types are:
 | 8    | UCBAT  | Battery powered remote       |
 | 9    | UC     | Wired wall switch            |
 | 10   | UCRH   | Humidity sensor              |
+| 10   | BSRH   | Built-in humidity sensor     |
 | 12   | UCCO2  | CO2 sensor                   |
+| 12   | BSCO2  | Built-in CO2 sensor          |
 | 13   | VLV    | Valve                        |
 | 17   | BOX    | The ventilation box itself   |
 | 18   | SWITCH | Sensor for the current mode  |
+
+`UCRH`/`BSRH` and `UCCO2`/`BSCO2` share their type number. The network type reported during discovery distinguishes
+the user-controller and built-in variants.
 
 With the addresses you can add sensors, for example the CO2 level and temperature of the CO2 sensors above:
 
@@ -113,10 +118,30 @@ duco:
     Defaults to `15min`.
 - **disable_crc** (*Optional*, boolean): Accept messages that fail the checksum check. Only for troubleshooting.
   Defaults to `false`.
+- **allow_dangerous_controls** (*Optional*, boolean): Allow controls that can change installer, ventilation, bypass,
+  NightBoost, frost protection or node configuration settings. Defaults to `false`.
 
 > [!WARNING]
 > The remaining filter time is computed from the clock of the box. Setting the clock to a time in the past lowers the
 > remaining filter time accordingly.
+
+### Dangerous Controls
+
+These writes are disabled by default. Enable them at startup with `allow_dangerous_controls: true`, or at runtime:
+
+```yaml
+switch:
+  - platform: duco
+    allow_dangerous_controls:
+      name: "Allow Dangerous Controls"
+```
+
+After a reboot, the switch returns to the value configured under `duco:`. Mode selection, comfort temperature and
+locator controls do not require dangerous controls. The other writable settings documented below do.
+
+> [!WARNING]
+> Only enable dangerous controls when needed. Incorrect installer, ventilation or frost protection settings can
+> affect the operation of the ventilation system.
 
 ## Select
 
@@ -126,6 +151,17 @@ The select shows and changes the ventilation mode.
 select:
   - platform: duco
     name: "Ventilation Mode"
+```
+
+To control more than one node:
+
+```yaml
+select:
+  - platform: duco
+    mode:
+      - name: "Box Mode"
+      - name: "Bedroom Mode"
+        address: 3
 ```
 
 | Value  | Mode                               |
@@ -152,6 +188,47 @@ select:
 - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often the mode is read.
   Defaults to `3s`.
 - All other options from [Select](/components/select/).
+- **mode** (*Optional*): A list of ventilation-mode selects. Each entry accepts:
+  - **address** (*Optional*, int): Node address. Defaults to `1`.
+  - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often the mode is read.
+    Defaults to `3s`.
+
+### Other Selects
+
+The following selects require dangerous controls:
+
+```yaml
+select:
+  - platform: duco
+    bypass:
+      name: "Bypass Control"
+    nightboost:
+      name: "NightBoost"
+    uc_error_mode:
+      - name: "Bedroom Error Mode"
+        address: 3
+
+  - platform: duco
+    type: time_filter
+    name: "Filter Time"
+```
+
+| Option                                | Values                                  | Address                      |
+| ------------------------------------- | --------------------------------------- | ---------------------------- |
+| `bypass`                              | `AUTO`, `OPEN`, `CLOSED`                | Box only                     |
+| `adaptive_bypass`                     | `ON`, `OFF`                             | Box only                     |
+| `frost_heater`                        | `ALLOW`, `REFUSE`                       | Box only                     |
+| `passive_cooling`                     | `AUTO`, `ON`, `OFF`                     | Box only                     |
+| `nightboost`                          | `ON`, `OFF`                             | Box only                     |
+| `nightboost_month_start`              | January through December                | Box only                     |
+| `nightboost_month_stop`               | January through December                | Box only                     |
+| `uc_error_mode`                       | `DISABLED`, `ON INPUT`, `AUTOMATIC`     | Optional, defaults to node 1 |
+| `rh_delta_mode`                       | `DISABLED`, `ENABLED`                   | Nodes only, defaults to node 1 |
+| `co2_temperature_dependent_control`   | `DISABLED`, `ENABLED`                   | Nodes only, defaults to node 1 |
+| `type: time_filter`                   | `90 days`, `180 days`, `270 days`, `360 days` | Box only              |
+
+Node-specific lists accept an optional **address** from `1` to `69` and default to node `1`. The update interval
+defaults to `60s`. All entities accept the options from [Select](/components/select/).
 
 ## Number
 
@@ -163,6 +240,21 @@ number:
     name: "Comfort Temperature"
 ```
 
+The default parameter address is `0x12`. DucoBox Energy Premium systems with two zones use `0x13` and `0x14`:
+
+```yaml
+number:
+  - platform: duco
+    comfort_temperature:
+      - name: "Comfort Temperature Zone 1"
+        address: 0x13
+      - name: "Comfort Temperature Zone 2"
+        address: 0x14
+```
+
+> [!IMPORTANT]
+> `0x13` and `0x14` are hexadecimal values. They are decimal 19 and 20, not decimal 13 and 14.
+
 ### Configuration Variables
 
 - **duco_id** (*Optional*, [ID](/guides/configuration-types/#id)): The Duco component to use. Only needed with more
@@ -170,6 +262,40 @@ number:
 - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often the temperature is read.
   Defaults to `60s`.
 - All other options from [Number](/components/number/).
+- **comfort_temperature** (*Optional*): A list of comfort-temperature numbers. Each entry accepts:
+  - **address** (*Optional*, int): Parameter address. Defaults to `0x12`.
+  - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): Defaults to `60s`.
+
+### Other Numbers
+
+```yaml
+number:
+  - platform: duco
+    nightboost_temperature:
+      name: "NightBoost Setpoint"
+    manual_time:
+      - name: "Bedroom Manual Ventilation Time"
+        address: 3
+    co2_setpoint:
+      - name: "Bedroom CO2 Setpoint"
+        address: 3
+```
+
+| Option                       | Range             | Step | Address                      |
+| ---------------------------- | ----------------- | ---- | ---------------------------- |
+| `nightboost_temperature`     | 0–60 °C           | 1 °C | Box only                     |
+| `nightboost_max`             | 10–100%           | 5%   | Box only                     |
+| `box_ventilation_min`        | 10–100%           | 5%   | Box only                     |
+| `box_ventilation_max`        | 10–100%           | 5%   | Box only                     |
+| `manual_time`                | 5–720 minutes     | 5    | Optional, defaults to node 1 |
+| `flow_level_manual_1`        | 0–50%             | 5%   | Optional, defaults to node 1 |
+| `flow_level_manual_2`        | 10–100%           | 5%   | Optional, defaults to node 1 |
+| `flow_level_manual_3`        | 50–100%           | 5%   | Optional, defaults to node 1 |
+| `co2_setpoint`               | 0–2000 ppm        | 10   | Optional, defaults to node 1 |
+| `rh_setpoint`                | 0–90%             | 5%   | Optional, defaults to node 1 |
+| `show_sensor_level`          | 0–100%            | 5%   | Optional, defaults to node 1 |
+
+All settings in this table require dangerous controls and use an update interval of `60s`.
 
 ## Text Sensor
 
@@ -181,6 +307,28 @@ text_sensor:
     name: "Serial Number"
 ```
 
+To read multiple nodes:
+
+```yaml
+text_sensor:
+  - platform: duco
+    serial:
+      - name: "Node 2 Serial Number"
+        address: 2
+    version:
+      - name: "Node 2 Version"
+        address: 2
+    error:
+      - name: "Node 2 Errors"
+        address: 2
+    uptime:
+      - name: "Node 2 Uptime"
+        address: 2
+    node_type:
+      - name: "Node 2 Type"
+        address: 2
+```
+
 ### Configuration Variables
 
 - **duco_id** (*Optional*, [ID](/guides/configuration-types/#id)): The Duco component to use. Only needed with more
@@ -188,6 +336,17 @@ text_sensor:
 - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often the serial number is read.
   Defaults to `300s`.
 - All other options from [Text Sensor](/components/text_sensor/).
+- **serial** (*Optional*): A list of serial-number text sensors. Address `0` reads the box serial number; node serial
+  numbers use their node address. Defaults to address `0` and an update interval of `300s`.
+- **version** (*Optional*): A list of node software-version text sensors. Defaults to address `1` and an update
+  interval of `300s`.
+- **error** (*Optional*): A list of node error text sensors. Defaults to address `1` and an update interval of `60s`.
+- **uptime** (*Optional*): A list of human-readable node uptime text sensors. Defaults to address `1` and an update
+  interval of `60s`.
+- **node_type** (*Optional*): A list of node-type text sensors. Defaults to address `1` and an update interval of
+  `300s`.
+
+Each entry accepts an optional **address** and the options from [Text Sensor](/components/text_sensor/).
 
 ## Sensor
 
@@ -252,6 +411,80 @@ sensor:
   - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): Defaults to `60s`, except for
     `filter_remaining`.
   - All other options from [Sensor](/components/sensor/).
+
+### Additional Sensors
+
+```yaml
+sensor:
+  - platform: duco
+    flow_level_request:
+      - address: 3
+        name: "Bedroom Requested Flow Level"
+    uptime:
+      - name: "Box Uptime"
+      - address: 3
+        name: "Bedroom Node Uptime"
+```
+
+- **flow_level_request** (*Optional*): A list containing the flow level requested by each node, in %. Each entry
+  requires an **address** from 0 to 68.
+- **uptime** (*Optional*): A list of box or node uptime sensors, in minutes. Each entry accepts an optional
+  **address** from 1 to 68 and defaults to node `1`.
+
+## Text
+
+NightBoost start and stop times use 24-hour `HH:MM` values. Changing them requires dangerous controls.
+
+```yaml
+text:
+  - platform: duco
+    nightboost_time_start:
+      name: "NightBoost Start Time"
+    nightboost_time_stop:
+      name: "NightBoost Stop Time"
+```
+
+Both options use an update interval of `60s` and accept the options from [Text](/components/text/). Values must contain
+exactly five characters and specify a valid time from `00:00` through `23:59`.
+
+## Switch
+
+```yaml
+switch:
+  - platform: duco
+    allow_dangerous_controls:
+      name: "Allow Dangerous Controls"
+    installer_mode:
+      name: "Installer Mode"
+    locator:
+      - name: "Locate Bedroom Sensor"
+        address: 3
+```
+
+- **allow_dangerous_controls** (*Optional*): Enable or disable dangerous controls at runtime. The initial state comes
+  from the `allow_dangerous_controls` option of the Duco component.
+- **installer_mode** (*Optional*): Enable installer mode on node 1. Requires dangerous controls.
+- **locator** (*Optional*): A list of locator switches. Each entry requires an **address** from 1 to 69. Locator
+  switches do not require dangerous controls.
+
+Each option accepts the options from [Switch](/components/switch/).
+
+## Button
+
+The reboot button can reboot the box or a node. Rebooting requires dangerous controls. Address `0`, the default,
+reboots the box.
+
+```yaml
+button:
+  - platform: duco
+    reboot:
+      - name: "Reboot DucoBox"
+      - name: "Reboot Bedroom Sensor"
+        address: 3
+```
+
+Each reboot entry accepts an optional **address** from 0 to 69 and the options from [Button](/components/button/).
+The `type: reboot` single-button configuration remains supported.
 
 ## See Also
 
