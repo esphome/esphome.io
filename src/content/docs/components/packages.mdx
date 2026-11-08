@@ -17,7 +17,7 @@ override substitutions with the same name in a package.
 Dictionaries are merged key-by-key. Lists of components are merged by component ID (if specified). Other lists are
 merged by concatenation. All other configuration values are replaced with the later value.
 
-ESPHome uses `!include` to "bring in" packages from other files; this feature is described in [!include](/guides/yaml#include).
+ESPHome uses `!include` to "bring in" packages from other files; this feature is described in [!include](/guides/yaml/#include).
 
 The `packages:` key may have a value that is:
 
@@ -131,11 +131,11 @@ For each package:
   - list of objects containing `path` and `vars`
 
 - **ref** (*Optional*, string): The Git ref(erence) to be used when pulling content from the repository.
-- **refresh** (*Optional*, [Time](/guides/configuration-types#time)): The interval at which the content from the repository should be refreshed.
+- **refresh** (*Optional*, [Time](/guides/configuration-types/#time)): The interval at which the content from the repository should be refreshed.
 
 ## Packages as Templates
 
-When packages are loaded using the [`!include` tag](/guides/yaml#include), variables can be provided to them. This
+When packages are loaded using the [`!include` tag](/guides/yaml/#include), variables can be provided to them. This
 means that packages can be used as *templates*, allowing complex or repetitive configurations to be stored in a
 package file and then incorporated into the configuration more than once.
 
@@ -180,7 +180,7 @@ if the condition evaluates to true after expanding its substitution expressions.
 
 This example only includes the package for the left garage door if the `enable_extra_door` variable evaluates
 to true. Here the `enable_extra_door` variable has the default value of true and it can also be set from the
-[command line](/components/substitutions#command-line-substitutions).
+[command line](/components/substitutions/#command-line-substitutions).
 
 ```yaml
 # In config.yaml
@@ -200,7 +200,7 @@ the condition in `packages` to merge it into the configuration. Because the pack
 may generate build warnings if the package references undefined substitution variables.
 
 This example loads the content for the left garage door into the `left_garage_door` substitution variable. Then it
-uses a [Jinja expression](/components/substitutions#jinja-expressions) to determine whether to merge it into the
+uses a [Jinja expression](/components/substitutions/#jinja-expressions) to determine whether to merge it into the
 configuration as a package when the `enable_extra_door` variable evaluates to true, as in the previous example.
 
 ```yaml
@@ -246,7 +246,7 @@ esp32:
 
 ESPHome will expand `${platform}` before loading the file, so `device-${platform}.yaml` resolves to
 `device-esp32.yaml` in the example above. Any substitution expression valid in ESPHome — including
-[Jinja expressions](/components/substitutions#jinja-expressions) — can be used in the filename.
+[Jinja expressions](/components/substitutions/#jinja-expressions) — can be used in the filename.
 
 > [!NOTE]
 > Filename substitutions are not supported when using the YAML merge key (`<<: !include filename.yaml`).

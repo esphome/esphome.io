@@ -19,7 +19,23 @@ speaker:
 
 Configuration variables:
 
-- **audio_dac** (*Optional*, [ID](/guides/configuration-types#id)): The [audio DAC](/components/audio_dac/) to use for volume control.
+- **audio_dac** (*Optional*, [ID](/guides/configuration-types/#id) or list of IDs): The
+  [audio DAC](/components/audio_dac/) to use for volume control. Can also be a list of audio DAC IDs that all receive
+  this speaker's audio. Every audio DAC in the list gets the same volume and mute. Each audio DAC can only be listed
+  once.
+
+```yaml
+# Example: two amplifiers on one I²S output
+speaker:
+  - platform: i2s_audio
+    # ...
+    audio_dac: [front_amp, rear_amp]
+```
+
+> [!NOTE]
+> A list of audio DACs must be on the same I²S data line. ESPHome can't detect this from the YAML, because it doesn't
+> know how I²S outputs are physically wired. An audio DAC connected to a different I²S output, or another speaker's
+> data line, would follow this speaker's volume and mute instead of its own.
 
 ## Speaker Actions
 
@@ -48,7 +64,7 @@ on_...:
 
 Configuration variables:
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): The speaker to control. Defaults to the only one in YAML.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The speaker to control. Defaults to the only one in YAML.
 - **data** (**Required**, list of bytes, [templatable](/automations/templates)): The raw audio data to play.
 
 <span id="speaker-stop"></span>
@@ -59,7 +75,7 @@ This action will stop playing audio data from the speaker and discard the unplay
 
 Configuration variables:
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): The speaker to control. Defaults to the only one in YAML.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The speaker to control. Defaults to the only one in YAML.
 
 <span id="speaker-finish"></span>
 
@@ -69,7 +85,7 @@ This action will stop playing audio data from the speaker after all data **is** 
 
 Configuration variables:
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): The speaker to control. Defaults to the only one in YAML.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The speaker to control. Defaults to the only one in YAML.
 
 <span id="speaker-mute_on"></span>
 
@@ -79,7 +95,7 @@ This action will mute the speaker.
 
 Configuration variables:
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): The speaker to control. Defaults to the only one in YAML.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The speaker to control. Defaults to the only one in YAML.
 
 <span id="speaker-mute_off"></span>
 
@@ -89,7 +105,7 @@ This action will unmute the speaker.
 
 Configuration variables:
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): The speaker to control. Defaults to the only one in YAML.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The speaker to control. Defaults to the only one in YAML.
 
 <span id="speaker-volume_set"></span>
 
@@ -128,7 +144,7 @@ This condition will check if the speaker is currently playing audio data.
 
 Configuration variables:
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): The speaker to check. Defaults to the only one in YAML.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The speaker to check. Defaults to the only one in YAML.
 
 <span id="speaker-is_stopped"></span>
 
@@ -142,7 +158,7 @@ Between the time `speaker.is_playing` is false and `speaker.is_stopped` is true 
 
 Configuration variables:
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): The speaker to check. Defaults to the only one in YAML.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The speaker to check. Defaults to the only one in YAML.
 
 ## Platforms
 
