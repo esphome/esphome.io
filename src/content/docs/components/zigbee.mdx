@@ -198,6 +198,9 @@ The following components are exposed over Zigbee if they have a name and if they
 - [Number](/components/number/#config-number): **state**, **name**, **unit_of_measurement**, **min_value**, **max_value**, and **step** are exposed
   over Zigbee. If no unit is given or if it is not supported it will fall back to unitless.
 
+Only on `ESP32`:
+
+- [Light](/components/light/#config-light): All light types are exposed over Zigbee without name and effects.
 
 ## Component Implementation Details
 
@@ -227,12 +230,10 @@ attributes are set if applicable. `cluster: device_class` is supported for `temp
 [Switches](/components/switch/#config-switch) are implemented as binary output clusters with description and present_value attributes.
 On `ESP32`, with `cluster: on_off`, the on_off cluster is used instead.
 
-
 ### Number
 
 [Numbers](/components/number/#config-number) are implemented as analog output clusters with description, engineering_units,
 and present_value attributes. On `ESP32` additionally the application type attribute is set if applicable.
-
 #### Additional configuration variables
 
 - **unit_of_measurement** (*Optional*, string): Manually set the unit. By default, values are unitless.
@@ -244,6 +245,14 @@ and present_value attributes. On `ESP32` additionally the application type attri
   Zigbee max present value attribute.
 - **step** (*Optional*, float): The granularity with which the number can be set. This is exposed
   as the Zigbee resolution attribute.
+
+Only on `ESP32`:
+
+### Light
+
+[Lights](/components/light/#config-light) are implemented as `on_off_light`, `dimmable_light`, or `color_dimmable_light` using
+on_off, level control, and color control clusters. This covers all light types and both directions including reporting. Names
+and effects are currently not exposed. Note that Z2M does not detect all features and does not setup reporting automatically. 
 
 ## See Also
 
