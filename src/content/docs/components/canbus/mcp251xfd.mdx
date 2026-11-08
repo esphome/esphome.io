@@ -34,7 +34,7 @@ canbus:
 
 - **data_bit_rate** (*Optional*, enum): CAN FD data-phase bit rate when bit rate switching is enabled. Accepts the
   nominal `bit_rate` values and `2000KBPS`, `3000KBPS`, `4000KBPS`, `5000KBPS`, `6000KBPS`, `7000KBPS`, and
-  `8000KBPS`. It must be at least `bit_rate`. Defaults to `2000KBPS`.
+  `8000KBPS`. It must be at least `bit_rate`. Defaults to `2000KBPS`. Not available in `CLASSIC` mode.
 
 - **mode** (*Optional*, enum): Operating mode. One of:
 
@@ -52,10 +52,10 @@ canbus:
 - **spi_mode** (*Optional*, enum): SPI mode. The controller supports `MODE0` and `MODE3`. Defaults to `MODE0`.
 
 - **default_fd** (*Optional*, boolean): Send CAN FD frames by default with `canbus.send`. Defaults to `true` in
-  `NORMAL` mode and `false` in other modes. Must be `false` in `CLASSIC` mode.
+  `NORMAL` mode and `false` in other modes. Not available in `CLASSIC` mode.
 
 - **default_bit_rate_switch** (*Optional*, boolean): Enable bit rate switching by default for CAN FD frames sent with
-  `canbus.send`. Defaults to `false` and must be `false` in `CLASSIC` mode.
+  `canbus.send`. Defaults to `false`. Not available in `CLASSIC` mode.
 
 - All other options from [CAN Bus](/components/canbus/#config-canbus).
 
@@ -78,8 +78,8 @@ The maximum rates are limits. Lower rates than the tested minimum can be configu
 constraints allow them.
 
 The configured `clock`, `bit_rate`, and `data_bit_rate` must allow both CAN bit timings to use a common prescaler
-with at most 0.5% error. Unsupported combinations are rejected during configuration validation, including in
-`CLASSIC` mode. For example, `8000KBPS` data rate requires a 4 MHz or 40 MHz oscillator.
+with at most 0.5% error. In `CLASSIC` mode only `bit_rate` is checked. Unsupported combinations are rejected during
+configuration validation. For example, `8000KBPS` data rate requires a 4 MHz or 40 MHz oscillator.
 
 The CAN transceiver also limits the usable bit rates and timing. Choose rates supported by the transceiver and the
 rest of the bus. The MCP251863's integrated transceiver supports up to 5 Mbps, even though the controller can be
