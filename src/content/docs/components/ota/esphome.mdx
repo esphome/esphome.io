@@ -48,7 +48,7 @@ ota:
   [native API](/components/api) uses. See [Encryption](#encryption) below. Cannot be combined with **password**,
   except with **allow_plaintext_upload** for the migration install.
 
-  - **key** (*Optional*, string): The base64 encryption key. Omit it so the [API encryption key](/components/api#configuration-variables) is used and one key protects the device; only set it when there is no `api:` block at all, for example a device that uses MQTT. Next to a static API key it must be the same key, a different one is rejected at validation.
+  - **key** (*Optional*, string): The base64 encryption key. Omit it so the [API encryption key](/components/api/#configuration-variables) is used and one key protects the device; only set it when there is no `api:` block at all, for example a device that uses MQTT. Next to a static API key it must be the same key, a different one is rejected at validation.
   - **allow_plaintext_upload** (*Optional*, boolean): Let the one install that brings encryption to a device travel
     in plaintext when the running firmware does not offer encryption. Only affects the upload; the firmware built
     with it still requires encryption. Remove it once the device encrypts, the CLI says when. See
@@ -64,16 +64,19 @@ ota:
 - **allow_partition_access** (*Optional*, boolean): Only on `esp32`. Allow updating more partition types. Used for updating the partition table and the bootloader. Defaults to `false`.
 
 > [!IMPORTANT]
-> Prefer **encryption** over **password**; it keeps the firmware image confidential in transit, not just authenticated. If you use a password, always use a strong, unique one. See the [Security Best Practices](/guides/security_best_practices#3-ota-encryption) guide for more information.
+> Prefer **encryption** over **password**; it keeps the firmware image confidential in transit, not just authenticated. If you use a password, always use a strong, unique one. See the [Security Best Practices](/guides/security_best_practices/#3-ota-encryption) guide for more information.
 
 - **port** (*Optional*, int): The port to use for OTA updates. Defaults:
 
   - `3232` for the ESP32
   - `8266` for the ESP8266
   - `2040` for the RP2040
+  - `2040` for the RP2350
   - `8892` for Beken chips
+  - `8892` for Realtek RTL87xx chips
+  - `8820` for LN882x chips
   - `8082` for the [host platform](/components/host/)
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation.
 - **version** (*Optional*, int): Version of OTA protocol to use. Version 2 is more stable. To downgrade to legacy
    ESPHome, the device should be updated with OTA version 1 first. Defaults to `2`.
 
@@ -154,7 +157,7 @@ ota:
 
 Only give the OTA block its own `key:` when there is no `api:` block at all, for example a device that talks MQTT.
 Generate a key with the on demand generator in the
-[API component documentation](/components/api#configuration-variables):
+[API component documentation](/components/api/#configuration-variables):
 
 ```yaml
 mqtt:

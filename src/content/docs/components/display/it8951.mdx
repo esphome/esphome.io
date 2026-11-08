@@ -63,18 +63,24 @@ dimensions, VCOM) is preset but can be overridden.
   for options (case is not significant). One of `IT8951`, `m5stack-m5paper`,
   `Seeed-reTerminal-E1003`, `Seeed-EE03`.
 - **cs_pin** (**Required** for generic, _Optional_ for integrated boards,
-  [Pin Schema](/guides/configuration-types#pin-schema)): The SPI chip select pin.
+  [Pin Schema](/guides/configuration-types/#pin-schema)): The SPI chip select pin.
 - **busy_pin** (**Required** for generic, _Optional_ for integrated boards,
-  [Pin Schema](/guides/configuration-types#pin-schema)): The HRDY (host ready) pin.
+  [Pin Schema](/guides/configuration-types/#pin-schema)): The HRDY (host ready) pin.
   The IT8951 uses active-high ready signaling (HIGH = ready, LOW = busy).
 - **reset_pin** (**Required** for generic, _Optional_ for integrated boards,
-  [Pin Schema](/guides/configuration-types#pin-schema)): The hardware reset pin.
+  [Pin Schema](/guides/configuration-types/#pin-schema)): The hardware reset pin.
   Make sure you pull this pin high (by connecting it to 3.3V with a resistor) if
   not connected to a GPIO pin.
-- **enable_pin** (_Optional_, [Pin Schema](/guides/configuration-types#pin-schema)
+- **enable_pin** (_Optional_, [Pin Schema](/guides/configuration-types/#pin-schema)
   or list): One or more GPIOs driven high during setup to power on the panel,
   before reset and initialization. Useful for boards with one or more
   power-enable rails for the display.
+  If `enable_pin` is not set, the model's default enable pins are used, if it
+  has any. A default enable pin that is also used elsewhere in the
+  configuration, for example by a GPIO switch, is left out, so you can control
+  that pin yourself. If every other use of the pin sets
+  `allow_other_uses: true`, the pin is shared with the display instead.
+  Setting `enable_pin` replaces all of the model's default enable pins.
 - **dimensions** (**Required** for generic, _Optional_ for integrated boards):
   Dimensions of the screen, specified either as _width_ **x** _height_
   (e.g. `960x540`) or with separate config keys. The dimensions are in pixels
@@ -149,23 +155,23 @@ dimensions, VCOM) is preset but can be overridden.
   white. Pure black and pure white stay solid. Set to `false` for a hard 50%
   black/white threshold (crisper, stipple-free text at the cost of pale fills
   disappearing).
-- **reset_duration** (_Optional_, [Time](/guides/configuration-types#time)):
+- **reset_duration** (_Optional_, [Time](/guides/configuration-types/#time)):
   Duration of the hardware reset pulse. Defaults to `10ms`. Maximum `500ms`.
 - **lambda** (_Optional_,
-  [lambda](/automations/templates#config-lambda)): The lambda to use for rendering
+  [lambda](/automations/templates/#config-lambda)): The lambda to use for rendering
   content on the display. See
-  [Display Rendering Engine](/components/display#display-engine) for more
+  [Display Rendering Engine](/components/display/#display-engine) for more
   information.
 - **pages** (_Optional_, list): Show pages instead of a single lambda. See
-  [Display Pages](/components/display#display-pages).
+  [Display Pages](/components/display/#display-pages).
 - **update_interval** (_Optional_,
-  [Time](/guides/configuration-types#time)): The interval to re-draw the screen.
+  [Time](/guides/configuration-types/#time)): The interval to re-draw the screen.
   Defaults to `1min`. Use `never` to only manually update the screen via
   `component.update`.
-- **spi_id** (_Optional_, [ID](/guides/configuration-types#id)): Required to
+- **spi_id** (_Optional_, [ID](/guides/configuration-types/#id)): Required to
   specify the ID of the [SPI Component](/components/spi) if your configuration
   defines multiple SPI buses.
-- **id** (_Optional_, [ID](/guides/configuration-types#id)): Manually specify
+- **id** (_Optional_, [ID](/guides/configuration-types/#id)): Manually specify
   the ID used for code generation.
 
 ## Actions
@@ -182,7 +188,7 @@ on_...:
         mode: DU
 ```
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The display to update.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The display to update.
 - **mode** (_Optional_, string): The waveform mode for this update. If omitted,
   uses the configured `update_mode` or defaults to `GC16`. Supports
   [templating](/automations/templates).
@@ -324,6 +330,6 @@ Notes:
 
 ## See Also
 
-- [ESPHome Display Rendering Engine](/components/display#display-engine)
+- [ESPHome Display Rendering Engine](/components/display/#display-engine)
 - [LVGL Graphics](/components/lvgl/)
 - <APIRef text="it8951.h" path="it8951/it8951.h" />
