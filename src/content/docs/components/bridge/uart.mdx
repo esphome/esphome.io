@@ -46,6 +46,14 @@ bridge:
   pieces, so the other direction is still read meanwhile. It can pause while the device is busy elsewhere for longer
   than the transmit FIFO lasts (32 characters on an RP2040 hardware UART: about 2.8 ms at 115200 baud).
 
+## Buffer Sizing
+
+- While a block waits for the other bus, the bridge reads nothing from its source. If the source sends faster than the
+  other bus takes, for example 115200 baud into 9600 baud, the receive buffer of the source fills up and its UART drops
+  the bytes that no longer fit. Frames that come in while a block waits are read together and go out as one frame.
+- For a continuous stream at a high baud rate on ESP32, ESP8266 and RP2040, make `rx_buffer_size` of the sending bus
+  large enough for the longest time the device is busy elsewhere: at 115200 baud, 1024 bytes last about 89 ms.
+
 ## See Also
 
 - [Bridge](/components/bridge/)
