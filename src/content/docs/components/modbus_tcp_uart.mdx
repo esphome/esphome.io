@@ -38,6 +38,8 @@ Modbus Server, a request to an address that no Modbus Server on the hub uses is 
 With `max_connections` above `1` on the `tcp_uart`, the requests of all its connections are served this way, and
 each reply goes to the connection that sent the request. After that wait the next request is read. A later
 reply is still sent until another connection has sent a request, and is dropped after that.
+With `timeout` on the `tcp_uart`, a connection is not closed while its request waits for its turn or for its reply.
+Once the reply is sent or the wait for it is over, the timeout starts again.
 
 ```yaml
 # Example configuration entry
