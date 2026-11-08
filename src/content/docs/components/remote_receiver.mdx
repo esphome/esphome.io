@@ -16,7 +16,7 @@ The component is split into two parts:
 - Individual [remote receiver binary sensors](#binary-sensor) which will activate when their
   respective signal is received.
 
-**See** [Setting up IR Devices](/guides/setting_up_rmt_devices#remote-setting-up-infrared) **and** [Setting up RF Devices](/guides/setting_up_rmt_devices#remote-setting-up-rf) **for details.**
+**See** [Setting up IR Devices](/guides/setting_up_rmt_devices/#remote-setting-up-infrared) **and** [Setting up RF Devices](/guides/setting_up_rmt_devices/#remote-setting-up-rf) **for details.**
 
 ```yaml
 # Example configuration entry
@@ -29,12 +29,12 @@ Multiple remote receivers can be configured as a list of dict definitions within
 
 ## Configuration variables
 
-- **pin** (**Required**, [Pin](/guides/configuration-types#pin)): The pin to receive the remote signal on.
+- **pin** (**Required**, [Pin](/guides/configuration-types/#pin)): The pin to receive the remote signal on.
 - **dump** (*Optional*, list): Decode and dump these remote codes in the logs (at log.level=DEBUG).
   Set to `all` to dump all available codecs:
 
   - **abbwelcome**: Decode and dump ABB-Welcome codes. Messages are sent via copper wires. See
-    [transmitter description](/components/remote_transmitter#remote_transmitter-transmit_abbwelcome) for more details.
+    [transmitter description](/components/remote_transmitter/#remote_transmitter-transmit_abbwelcome) for more details.
 
   - **aeha**: Decode and dump AEHA infrared codes.
   - **aok**: Decode and dump A-OK RF codes.
@@ -61,7 +61,7 @@ Multiple remote receivers can be configured as a list of dict definitions within
   - **nexa**: Decode and dump Nexa (RF) codes.
   - **nexus**: Decode and dump Nexus temperature and humidity sensor (RF) codes.
   - **onkyori**: Decode and dump Onkyo RI codes. See
-    [transmitter description](/components/remote_transmitter#remote_transmitter-transmit_onkyori)
+    [transmitter description](/components/remote_transmitter/#remote_transmitter-transmit_onkyori)
     for wiring and voltage-level details.
   - **panasonic**: Decode and dump Panasonic infrared codes. Both 48-bit and 56-bit codes are decoded. A 56-bit
     remote that an earlier release showed as a 48-bit code needs a fresh dump.
@@ -82,11 +82,11 @@ Multiple remote receivers can be configured as a list of dict definitions within
   - **mirage**: Decode and dump Mirage infrared codes.
   - **toto**: Decode and dump Toto infrared codes.
 
-- **tolerance** (*Optional*, int, [Time](/guides/configuration-types#time) or mapping): The percentage or time that the remote signal lengths
+- **tolerance** (*Optional*, int, [Time](/guides/configuration-types/#time) or mapping): The percentage or time that the remote signal lengths
   can deviate in the decoding process. Defaults to `25%`.
 
   - **type** (**Required**, enum): Set the type of the tolerance. Can be `percentage` or `time`.
-  - **value** (**Required**, int or [Time](/guides/configuration-types#time)): The percentage or time value. Allowed values are in range `0`
+  - **value** (**Required**, int or [Time](/guides/configuration-types/#time)): The percentage or time value. Allowed values are in range `0`
     to `100%` or `0` to `4294967295us`.
 
 - **buffer_size** (*Optional*, int): The size in bytes of the internal buffer for storing the remote codes. On ESP32
@@ -100,10 +100,10 @@ Multiple remote receivers can be configured as a list of dict definitions within
   > same capacity. On ESP32 variants with RMT the default was `10kB`; an explicit `buffer_size: 10kb` copied from that
   > can be removed, since the default now follows `receive_symbols`.
 
-- **filter** (*Optional*, [Time](/guides/configuration-types#time)): Filter any pulses that are shorter than this. Useful for removing
+- **filter** (*Optional*, [Time](/guides/configuration-types/#time)): Filter any pulses that are shorter than this. Useful for removing
   glitches from noisy signals. Allowed values are in range `0` to `4294967295us`. Defaults to `50us`.
 
-- **idle** (*Optional*, [Time](/guides/configuration-types#time)): The amount of time that a signal should remain stable/unchanged for it to
+- **idle** (*Optional*, [Time](/guides/configuration-types/#time)): The amount of time that a signal should remain stable/unchanged for it to
   be considered complete. Defaults to `10ms`. The maximum allowable value is:
 
   - `65536us` on the `ESP32` and `ESP32-S2` variants
@@ -113,8 +113,50 @@ Multiple remote receivers can be configured as a list of dict definitions within
   Note: The ESP32 RMT values listed above assume the default `clock_resolution`. If a different `clock_resolution` is
   used, the values are scaled by 1000000 / `clock_resolution`.
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation. Useful when multiple
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation. Useful when multiple
   receivers are configured on a single device.
+
+### BK72xx Configuration Variables
+
+> [!NOTE]
+> The following options apply only to Beken BK72xx (LibreTiny) chips.
+
+- **sampling** (*Optional*, enum): How the pin is read. Defaults to `edge`.
+
+  - `edge`: a pin interrupt records the time of each edge with `micros()`, which can jump on these chips and make
+    the measured pulse lengths less accurate.
+  - `timer`: a hardware timer interrupt reads the pin every `sample_period` and measures each pulse with the
+    26 MHz system tick counter, which avoids the `micros()` jumps. A late interrupt can still delay edge
+    detection and distort the measured lengths.
+
+- **sample_period** (*Optional*, [Time](/guides/configuration-types/#time)): How often the pin is read with
+  `sampling: timer`. Allowed values are in range `50us` to `1000us`. Defaults to `100us`. Only allowed with
+  `sampling: timer`.
+
+With `sampling: timer`:
+
+- **filter** defaults to 1.5 times `sample_period` (`150us` at the default `100us`), at most `400us`, so a glitch of
+  one sample is removed. A shorter pulse is joined to the pulses around it, so marks and spaces keep alternating.
+  ESPHome warns when `filter` is not longer than `sample_period`.
+- **filter** and **idle** can be at most `1s`.
+- Each received frame can hold up to `buffer_size` / 8 pulses (500 at the default `4000B`). The buffer is split in
+  two halves, so a new frame is captured while the previous one is decoded. A longer frame is dropped and
+  `Buffer overflow` is logged.
+- The timer interrupt runs all the time, also while no signal is received (10000 times per second at the default
+  `sample_period`).
+- Only one `remote_receiver` can be configured.
+- It is not available on the BK7231Q. On the BK7238 it cannot be combined with
+  [remote transmitter](/components/remote_transmitter/), since both need the same hardware timer.
+
+```yaml
+# Example configuration entry
+remote_receiver:
+  pin: GPIOXX  # PXX on LibreTiny
+  sampling: timer
+  dump: all
+```
+
+For NEC codes on P26, the [Beken IR Receiver](/components/beken_irda/) uses the hardware NEC decoder of the chip.
 
 ### ESP32 RMT configuration variables
 
@@ -125,7 +167,8 @@ Multiple remote receivers can be configured as a list of dict definitions within
 - **rmt_symbols** (*Optional*, int): When `use_dma` is enabled, this sets the size of the driver's internal DMA
   buffer. When DMA is disabled, it specifies how much RMT memory is allocated to the component. RMT memory is shared
   across all components and should be allocated in multiples of the block size. On the `ESP32` and `ESP32-S2`
-  variants, RMT memory is shared between RX and TX components. On other variants, RX and TX have dedicated RMT memory.
+  variants, RMT memory is shared between RX and TX components. On other variants, RX and TX have their own RMT
+  memory, but a TX component can also use RX memory that no RX component uses.
 
 | ESP32 Variant | Available Memory | Block Size |
 | ------------- | ---------------- | ---------- |
@@ -134,9 +177,34 @@ Multiple remote receivers can be configured as a list of dict definitions within
 | ESP32-C5      | 96 symbols       | 48 symbols |
 | ESP32-C6      | 96 symbols       | 48 symbols |
 | ESP32-H2      | 96 symbols       | 48 symbols |
+| ESP32-H21     | 96 symbols       | 48 symbols |
+| ESP32-H4      | 96 symbols       | 48 symbols |
 | ESP32-P4      | 192 symbols      | 48 symbols |
 | ESP32-S2      | 256 symbols      | 64 symbols |
 | ESP32-S3      | 192 symbols      | 48 symbols |
+| ESP32-S31     | 192 symbols      | 48 symbols |
+
+Each component uses its own RMT channel: `remote_receiver` uses an RX channel, `remote_transmitter` and
+`esp32_rmt_led_strip` use a TX channel. A channel uses at least one block of memory, so the number of channels is the
+available memory divided by the block size, for example 8 on the `ESP32` and 2 on the `ESP32-C3`. On the `ESP32` and
+`ESP32-S2`, RX and TX components share these channels. On other variants, RX and TX each have this many channels.
+
+ESPHome checks all `esp32_rmt_led_strip`, `remote_transmitter` and `remote_receiver` components together. Validation
+fails if:
+
+- they need more channels than are available
+- more than one RX or more than one TX component sets `use_dma`, since only one channel per direction supports DMA
+- `rmt_symbols` is an odd number or smaller than one block
+- without `use_dma`, `rmt_symbols` is larger than one channel can use. On the `ESP32` and `ESP32-S2` that is all the RMT
+  memory; on other variants it is the RX memory for an RX component, or the TX and RX memory together for a TX component
+
+A component with `use_dma` uses one block. When it compiles, ESPHome also works out which memory each channel gets when
+the components are set up: by `setup_priority`, then in the order of the configuration. A component that refers to
+another component by ID, such as a `power_supply`, can be set up after the ones that follow it. If a channel does not
+fit, ESPHome logs a warning that suggests an `rmt_symbols` value that fits, or a `setup_priority` that sets up the
+smaller ones first. `esphome config` does not show this warning. The order matters because a TX channel can extend into
+memory that the next one would need: on an `ESP32-S3`, a 48 symbol strip followed by a 288 symbol strip fits, but not
+the other way round.
 
 - **receive_symbols** (*Optional*, int): Maximum receive length in symbols. On some variants the maximum receive is
   limited to `rmt_symbols`. Defaults to `192` on every variant; the receive slot size follows this value, while the
@@ -418,15 +486,15 @@ binary_sensor:
 
 ### Configuration variables
 
-- **receiver_id** (*Optional*, [ID](/guides/configuration-types#id)): The remote receiver to receive the remote code with. Required if
+- **receiver_id** (*Optional*, [ID](/guides/configuration-types/#id)): The remote receiver to receive the remote code with. Required if
   multiple receivers configured.
 
-- All other options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
+- All other options from [Binary Sensor](/components/binary_sensor/#config-binary_sensor).
 
 Remote code selection (exactly one of these has to be included):
 
 - **abbwelcome**: Trigger on a decoded ABB-Welcome code with the given data, see the
-  [transmitter description](/components/remote_transmitter#remote_transmitter-transmit_abbwelcome) for more info.
+  [transmitter description](/components/remote_transmitter/#remote_transmitter-transmit_abbwelcome) for more info.
 
   - **source_address** (**Required**, int): The source address to trigger on.
   - **destination_address** (**Required**, int): The destination address to trigger on.
@@ -445,7 +513,7 @@ Remote code selection (exactly one of these has to be included):
 
   - **address** (**Required**, int): The address to trigger on, see dumper output for more info.
   - **data** (**Required**, 3-35 bytes list): The code to listen for, see
-    [transmitter description](/components/remote_transmitter#remote_transmitter-transmit_aeha) for more info. Usually you only need to copy this
+    [transmitter description](/components/remote_transmitter/#remote_transmitter-transmit_aeha) for more info. Usually you only need to copy this
     directly from the dumper output.
 
 - **aok**: Trigger on a decoded A-OK RF remote code with the given data.
@@ -555,7 +623,7 @@ Remote code selection (exactly one of these has to be included):
 - **haier**: Trigger on a Haier remote code with the given code.
 
   - **code** (**Required**, 8 or 13-bytes list): The code to listen for, see
-    [transmitter description](/components/remote_transmitter#remote_transmitter-transmit_haier) for more info. Usually you only need to copy
+    [transmitter description](/components/remote_transmitter/#remote_transmitter-transmit_haier) for more info. Usually you only need to copy
     this directly from the dumper output.
 
 - **ira211**: Trigger on a decoded Siemens IRA211 remote code with the given data. `SYNC` and `POWER` carry the
@@ -587,7 +655,7 @@ Remote code selection (exactly one of these has to be included):
 - **midea**: Trigger on a Midea remote code with the given code.
 
   - **code** (**Required**, 5-bytes list): The code to listen for, see
-    [transmitter description](/components/remote_transmitter#remote_transmitter-transmit_midea) for more info. Usually you only need to copy
+    [transmitter description](/components/remote_transmitter/#remote_transmitter-transmit_midea) for more info. Usually you only need to copy
     first 5 bytes directly from the dumper output.
 
 - **nec**: Trigger on a decoded NEC remote code with the given data.
@@ -625,7 +693,7 @@ Remote code selection (exactly one of these has to be included):
 - **pd_pioneer**: Trigger on a decoded PD Pioneer mini-split remote code with the given data.
 
   - **code** (**Required**, 13- or 14-byte list): The code to listen for, see
-    [transmitter description](/components/remote_transmitter#remote_transmitter-transmit_pd_pioneer-action)
+    [transmitter description](/components/remote_transmitter/#remote_transmitter-transmit_pd_pioneer-action)
     for more info. Usually you only need to copy this directly from the dumper output.
 
 - **pioneer**: Trigger on a decoded Pioneer remote code with the given data.
@@ -635,7 +703,7 @@ Remote code selection (exactly one of these has to be included):
 - **pronto**: Trigger on a Pronto remote code with the given code.
 
   - **data** (**Required**, string): The code to listen for, see
-    [transmitter description](/components/remote_transmitter#remote_transmitter-transmit_pronto) for more info. Usually you only need to copy this
+    [transmitter description](/components/remote_transmitter/#remote_transmitter-transmit_pronto) for more info. Usually you only need to copy this
     directly from the dumper output.
 
   - **delta** (*Optional*, integer): This parameter allows you to manually specify the allowed difference
@@ -644,7 +712,7 @@ Remote code selection (exactly one of these has to be included):
 - **raw**: Trigger on a raw remote code with the given code.
 
   - **code** (**Required**, list): The code to listen for, see
-    [transmitter description](/components/remote_transmitter#remote_transmitter-transmit_raw) for more info. Usually you only need to copy this
+    [transmitter description](/components/remote_transmitter/#remote_transmitter-transmit_raw) for more info. Usually you only need to copy this
     directly from the dumper output.
 
 - **rc5**: Trigger on a decoded RC5 remote code with the given data.
@@ -668,7 +736,7 @@ Remote code selection (exactly one of these has to be included):
   - **code** (**Required**, string): The remote code to listen for, copy this from the dumper output. To ignore a bit
     in the received data, use `x` at that place in the **code**.
 
-  - **protocol** (*Optional*): The RC Switch protocol to use, see [RC Switch Protocol](/components/remote_transmitter#rc-switch-protocol) for
+  - **protocol** (*Optional*): The RC Switch protocol to use, see [RC Switch Protocol](/components/remote_transmitter/#rc-switch-protocol) for
     more info.
 
 - **rc_switch_type_a**: Trigger on a decoded RC Switch Type A remote code with the given data.
@@ -676,7 +744,7 @@ Remote code selection (exactly one of these has to be included):
   - **group** (**Required**, string): The group, binary string.
   - **device** (**Required**, string): The device in the group, binary string.
   - **state** (**Required**, boolean): The on/off state to trigger on.
-  - **protocol** (*Optional*): The RC Switch protocol to use, see [RC Switch Protocol](/components/remote_transmitter#rc-switch-protocol) for
+  - **protocol** (*Optional*): The RC Switch protocol to use, see [RC Switch Protocol](/components/remote_transmitter/#rc-switch-protocol) for
     more info.
 
 - **rc_switch_type_b**: Trigger on a decoded RC Switch Type B remote code with the given data.
@@ -684,7 +752,7 @@ Remote code selection (exactly one of these has to be included):
   - **address** (**Required**, int): The address, int from 1 to 4.
   - **channel** (**Required**, int): The channel, int from 1 to 4.
   - **state** (**Required**, boolean): The on/off state to trigger on.
-  - **protocol** (*Optional*): The RC Switch protocol to use, see [RC Switch Protocol](/components/remote_transmitter#rc-switch-protocol) for
+  - **protocol** (*Optional*): The RC Switch protocol to use, see [RC Switch Protocol](/components/remote_transmitter/#rc-switch-protocol) for
     more info.
 
 - **rc_switch_type_c**: Trigger on a decoded RC Switch Type C remote code with the given data.
@@ -693,7 +761,7 @@ Remote code selection (exactly one of these has to be included):
   - **group** (**Required**, int): The group. Range is 1 to 4.
   - **device** (**Required**, int): The device. Range is 1 to 4.
   - **state** (**Required**, boolean): The on/off state to trigger on.
-  - **protocol** (*Optional*): The RC Switch protocol to use, see [RC Switch Protocol](/components/remote_transmitter#rc-switch-protocol) for
+  - **protocol** (*Optional*): The RC Switch protocol to use, see [RC Switch Protocol](/components/remote_transmitter/#rc-switch-protocol) for
     more info.
 
 - **rc_switch_type_d**: Trigger on a decoded RC Switch Type D remote code with the given data.
@@ -701,7 +769,7 @@ Remote code selection (exactly one of these has to be included):
   - **group** (**Required**, int): The group. Range is 1 to 4.
   - **device** (**Required**, int): The device. Range is 1 to 3.
   - **state** (**Required**, boolean): The on/off state to trigger on.
-  - **protocol** (*Optional*): The RC Switch protocol to use, see [RC Switch Protocol](/components/remote_transmitter#rc-switch-protocol) for
+  - **protocol** (*Optional*): The RC Switch protocol to use, see [RC Switch Protocol](/components/remote_transmitter/#rc-switch-protocol) for
     more info.
 
 - **roomba**: Trigger on a decoded Roomba remote code with the given data.
@@ -737,14 +805,12 @@ Remote code selection (exactly one of these has to be included):
 - **mirage**: Trigger on a Mirage remote code with the given code.
 
   - **code** (**Required**, 14-bytes list): The code to listen for, see
-    [transmitter description](/components/remote_transmitter#remote_transmitter-transmit_mirage) for more info. Usually you only need to copy
+    [transmitter description](/components/remote_transmitter/#remote_transmitter-transmit_mirage) for more info. Usually you only need to copy
     this directly from the dumper output.
 
 - **toto**: Trigger on a decoded Toto remote code with the given data.
 
-  - **command** (**Required**, int): The 1-byte Toto command code to trigger on. Range is 0 to 0xFF.
-  - **rc_code_1** (*Optional*, int): The first 4-bit Toto code (usually a command parameter) to trigger on. Range is 0 to 0xF.
-  - **rc_code_2** (*Optional*, int): The second 4-bit Toto code (usually a command parameter) to trigger on. Range is 0 to 0xF.
+  - **code** (**Required**, int): The 2-byte Toto command code to trigger on. Range is 0 to 0xFFFF.
 
 > [!NOTE]
 > The **CanalSat** and **CanalSatLD** protocols use a higher carrier frequency (56kHz) and are very similar.
@@ -808,8 +874,8 @@ Remote code selection (exactly one of these has to be included):
 ## See Also
 
 - [Remote Transmitter](/components/remote_transmitter/)
-- [Setting up IR Devices](/guides/setting_up_rmt_devices#remote-setting-up-infrared)
-- [Setting up RF Devices](/guides/setting_up_rmt_devices#remote-setting-up-rf)
+- [Setting up IR Devices](/guides/setting_up_rmt_devices/#remote-setting-up-infrared)
+- [Setting up RF Devices](/guides/setting_up_rmt_devices/#remote-setting-up-rf)
 - [RF Bridge Component](/components/rf_bridge/)
 - [RCSwitch](https://github.com/sui77/rc-switch) by [Suat Özgür](https://github.com/sui77)
 - <APIRef text="remote_receiver.h" path="remote/remote_receiver.h" />

@@ -1,0 +1,876 @@
+---
+title: "ESPHome 2026.11.0: Lighter builds and tougher updates"
+description: "ESPHome 2026.11.0 trims RAM across every platform, compiles automations to plain C++, falls back to UDP on lossy OTA uploads and adds over thirty new components."
+date: 2026-11-18
+authors:
+  - jesse
+tags:
+  - Releases
+excerpt: "ESPHome 2026.11.0 trims RAM across every platform, compiles automations to plain C++, falls back to UDP on lossy OTA uploads and adds over thirty new components."
+cover:
+  alt: "ESPHome 2026.11.0: Lighter builds and tougher updates"
+  image: "https://assets.openhomefoundation.org/opengraph?url=https://esphome.io/blog/2026/11/18/esphome-2026-11"
+head:
+  - tag: meta
+    attrs:
+      property: "og:image"
+      content: "https://assets.openhomefoundation.org/opengraph?url=https://esphome.io/blog/2026/11/18/esphome-2026-11"
+  - tag: meta
+    attrs:
+      name: "twitter:image"
+      content: "https://assets.openhomefoundation.org/opengraph?url=https://esphome.io/blog/2026/11/18/esphome-2026-11"
+  - tag: meta
+    attrs:
+      property: "og:image:title1"
+      content: "ESPHome 2026.11.0"
+  - tag: meta
+    attrs:
+      property: "og:image:title2"
+      content: "Lighter builds and tougher updates"
+  - tag: meta
+    attrs:
+      property: "og:image:author"
+      content: "Jesse Hills"
+  - tag: meta
+    attrs:
+      property: "og:image:category"
+      content: "Releases"
+---
+
+> [!NOTE]
+> This is a beta release. Details on this page may change before the stable release is published.
+
+import ImgTable from "@components/ImgTable.astro";
+
+{/* COMPANION_SUMMARY_START */}
+ESPHome publishes a release like this each month, so you can see what's new, what's fixed and anything to be aware of before you update.
+
+## Short on time? Here's the quick version
+
+This is the short, plain-language version for anyone short on time or still finding their way around ESPHome. The full technical post continues below.
+
+- **Sub-devices:** every entry under `esphome: devices:` now needs a `relation:` field – `via` for a separate physical device reached through this node, `child` for a logical part of this node.
+- **HTTP requests in scripts:** `http_request.get`, `.post` and `.send` no longer pause the script, so add `mode: queued` or `mode: parallel` where repeated runs must not be skipped.
+- **ESP-IDF minimum version:** if your ESP32 build pins the ESP-IDF framework to a 5.0 version, move it to 5.1 or newer (or remove the pin).
+
+**New features:** ESPHome uses less memory on every supported chip, especially the ESP8266, and the way automations are built now produces smaller, faster code.
+
+**Also in this release:** over thirty new components plus many smaller fixes and improvements.
+
+If you're running a typical config, there's nothing else you need to check before updating – aside from the items above.
+
+For the full release overview and technical detail – including anything that affects custom lambdas, external components or non-standard setups – keep reading below.
+
+:::note[New to ESPHome?]
+The [ESPHome Starter Kit](/starter-kit/) is the easiest way to start building your own smart home devices – no soldering, breadboarding, or coding required.
+:::
+{/* COMPANION_SUMMARY_END */}
+
+## Components added in this release
+
+{/* MANUAL: Add featured components here */}
+<ImgTable items={[
+  ["ESP32 ULP coprocessor", "/components/esp32_ulp/", "badge:ESP32_ULP"],
+  ["Modem", "/components/modem/", "modem.svg", "dark-invert"],
+  ["EZSP Proxy Tap", "/components/ezsp_proxy_tap/", "badge:ezsp_proxy_tap"],
+  ["Serial Proxy", "/components/serial_proxy/", "badge:UART"],
+  ["BLE MIDI", "/components/ble_midi/", "bluetooth.svg", "dark-invert"],
+  ["Zephyr Coredump", "/components/zephyr_coredump/", "bug-report.svg", "dark-invert"],
+  ["OTA Updates for nRF52 (Adafruit BLE)", "/components/ota/adafruit_ble/", "system-update.svg", "dark-invert"],
+  ["FUSB302B", "/components/fusb302b/", "badge:FUSB302B", "USB-C PD sink"],
+  ["HDMI-CEC Bus", "/components/hdmi_cec/", "badge:HDMI-CEC"],
+  ["TCP UART", "/components/tcp_uart/", "badge:UART"],
+  ["TinyUSB Keyboard", "/components/tinyusb_keyboard/", "usb.svg", "dark-invert"],
+  ["UART Mux", "/components/uart_mux/", "badge:UART"],
+  ["UART TCP", "/components/uart_tcp/", "badge:UART"],
+  ["USB Audio", "/components/usb_audio/", "usb.svg", "dark-invert"],
+  ["PCA9505", "/components/pca9505/", "badge:PCA9505"],
+  ["Modem Signal", "/components/sensor/modem/", "modem.svg", "dark-invert"],
+  ["APC1", "/components/sensor/apc1/", "apc1.webp", "Particulate", "CO2", "Volatile organics", "Temp & Humidity"],
+  ["Aranet BLE", "/components/sensor/aranet/", "bluetooth.svg", "CO2", "Radon", "Radiation", "dark-invert"],
+  ["DFRobot SEN0465 Gas Sensors", "/components/sensor/dfrobot_sen0465/", "dfrobot_sen0465.jpg", "O2 & CO & H2S & NH3 & ..."],
+  ["Ecocomfort2 VMC", "/components/ecocomfort2/", "fan.svg", "Volatile organics", "dark-invert"],
+  ["MiCS-5524", "/components/sensor/mics_5524/", "mics_5524.jpg", "Gas concentration"],
+  ["Renogy Inverter BLE", "/components/sensor/renogy_inverter_ble/", "bluetooth.svg", "dark-invert"],
+  ["VL53L1X", "/components/sensor/vl53l1x/", "vl53l1x.jpg", "IR optical distance"],
+  ["DS3231 RTC", "/components/sensor/ds3231/", "ds3231.jpg", "Temperature"],
+  ["MAX31888", "/components/sensor/max31888/", "badge:MAX31888", "Temperature"],
+  ["Vevor DTX Weather Station", "/components/vevor_dtx/", "weather-sunny.svg", "Weather", "dark-invert"],
+  ["APDS9930", "/components/sensor/apds9930/", "apds9930.jpg", "Light & Proximity"],
+  ["AS7341", "/components/sensor/as7341/", "as7341.jpg", "Spectral Color Sensor (deprecated)"],
+  ["AS7341 / AS7343 / TCS3448", "/components/sensor/as734x/", "as7341.jpg", "Spectral Color Sensor"],
+  ["BH1745", "/components/sensor/bh1745/", "bh1745.jpg", "Lux & RGB colour"],
+  ["VEML6040", "/components/sensor/veml6040/", "badge:VEML6040", "Lux & RGBW colour"],
+  ["MT6701", "/components/sensor/mt6701/", "mt6701.jpg", "14-Bit Magnetic Angle Sensor"],
+  ["BQ27220", "/components/sensor/bq27220/", "bq27220.jpg", "Battery Fuel Gauge"],
+  ["BQ76972", "/components/sensor/bq76972/", "bq76972.jpg", "Battery Monitor"],
+  ["CW2017", "/components/sensor/cw2017/", "badge:CW2017", "Battery fuel gauge"],
+  ["Filter Lifetime", "/components/sensor/filter_lifetime/", "badge:filter_lifetime"],
+  ["MAX17048", "/components/sensor/max17048/", "max17048.webp", "Battery fuel gauge"],
+  ["DFRobot SEN0609 mmWave Radar", "/components/dfrobot_sen0609/", "badge:SEN0609", "Motion & Presence"],
+  ["ICM-20689", "/components/motion/icm20689/", "imu.svg", "Accelerometer & Gyroscope", "dark-invert"],
+  ["LD2410S", "/components/sensor/ld2410s/", "badge:LD2410S", "Motion & Presence"],
+  ["LD2460", "/components/sensor/ld2460/", "ld2460.jpg", "Motion & Presence"],
+  ["LD6004", "/components/sensor/ld6004/", "badge:LD6004", "Motion & Presence"],
+  ["LIS2DW12", "/components/sensor/lis2dw12/", "lis2dw12.jpg", "Accelerometer"],
+  ["LIS3DH", "/components/motion/lis3dh/", "imu.svg", "Accelerometer", "dark-invert"],
+  ["UART Binary Sensor", "/components/binary_sensor/uart/", "badge:UART"],
+  ["TCA8418 Keypad", "/components/tca8418/", "matrix_keypad.jpg"],
+  ["ST25R3916", "/components/st25r/", "badge:ST25R3916"],
+  ["DS3231 RTC Alarms", "/components/binary_sensor/ds3231/", "ds3231.jpg"],
+  ["HUSB238 USB PD Sink", "/components/husb238/", "husb238.jpg"],
+  ["RX8111 RTC Status", "/components/binary_sensor/rx8111/", "clock-outline.svg", "dark-invert"],
+  ["ES7243", "/components/audio_adc/es7243/", "badge:ES7243"],
+  ["ES9038Q2M Katana", "/components/audio_dac/es9038q2m_katana/", "badge:ES9038Q2M"],
+  ["Airton Serial Climate", "/components/climate/airton_serial/", "air-conditioner.svg", "dark-invert"],
+  ["Daikin Madoka", "/components/climate/daikin_madoka/", "daikin.png"],
+  ["Midea PortaSplit", "/components/climate/midea_portasplit/", "midea.svg"],
+  ["APC Proteous Cover", "/components/cover/apc_proteous/", "apc_proteous.svg"],
+  ["VNC Client", "/components/vnc/", "vnc.svg", "dark-invert"],
+  ["HT16K33 Character Display", "/components/display/ht16k33_char/", "badge:HT16K33"],
+  ["SH1122", "/components/display/sh1122/", "sh1122.jpg"],
+  ["ST7305", "/components/display/st7305/", "st7305.jpg"],
+  ["M5Unit-BLDC", "/components/m5stack_unit_bldc/", "motor.png", "dark-invert"],
+  ["TMC2209 Stepper Driver", "/components/stepper/tmc2209/", "badge:TMC2209"],
+  ["Delta AC Wallbox", "/components/delta_wallbox/", "delta-wallbox-ac-max.jpg"],
+  ["Light", "/components/light/homeassistant/", "home-assistant.svg", "dark-invert"],
+  ["I2S Clockless", "/components/light/i2s_clockless_led_strip/", "color_lens.svg", "dark-invert"],
+  ["LN882x SPI", "/components/light/ln882x_spi_led_strip/", "color_lens.svg", "dark-invert"],
+  ["USB Audio Microphone", "/components/microphone/usb_audio/", "usb.svg", "dark-invert"],
+  ["LP5562", "/components/output/lp5562/", "badge:LP5562"],
+  ["Power Management Core", "/components/power_management/", "badge:power_management"],
+  ["ESP32 Power Management", "/components/power_management/esp32_power_management/", "badge:ESP32"],
+  ["Duco Ventilation", "/components/duco/", "duco.svg"],
+  ["Haier Select", "/components/select/haier/", "haier.svg"],
+  ["USB Audio Speaker", "/components/speaker/usb_audio/", "usb.svg", "dark-invert"],
+  ["M5Stack 4-Relay", "/components/switch/m5stack_4relay/", "m5stack_4relay.webp"],
+  ["Seeed Studio Multi-Channel Relay", "/components/switch/seeed_multi_channel_relay/", "seeed_multi_channel_relay.webp"],
+  ["Modem Text Sensor", "/components/text_sensor/modem/", "modem.svg", "dark-invert"],
+  ["RX8111 Timestamp", "/components/text_sensor/rx8111/", "clock-outline.svg", "dark-invert"],
+  ["Systa Bus", "/components/systa_bus/", "systasolar_aqua.png"],
+  ["DS3231 RTC", "/components/time/ds3231/", "ds3231.jpg"],
+  ["RX8111 RTC", "/components/time/rx8111/", "clock-outline.svg", "dark-invert"],
+  ["NS2009", "/components/touchscreen/ns2009/", "mod-lcd2.8rtp.jpg"],
+  ["SPD2010", "/components/touchscreen/spd2010/", "waveshare-lcd-1.46-touch.webp"],
+  ["Haier Water Heater", "/components/water_heater/haier_water_heater/", "badge:Haier_Water_Heater"],
+  ["BQ25186", "/components/bq25186/", "badge:bq25186", "Battery charger IC"],
+  ["Modbus Monitor", "/components/modbus_monitor/", "modbus.png"],
+  ["RTSP Server", "/components/rtsp_server/", "camera.svg", "dark-invert"],
+  // ["Component Name", "/components/path/", "image.png"],
+]} />
+
+## Release overview
+
+{/* RELEASE_OVERVIEW_START */}
+ESPHome 2026.11.0 is a framework release. Another large sweep of entity names, filter tables and lookup strings leaves
+RAM on ESP8266 and lives in flash on every platform. Scheduler timers lose their string names, cover, fan, valve and
+lock traits pack into one byte, and several components switch from heap vectors to fixed buffers. The generated code
+for automations now compiles to plain C++ control flow, saving about 1.6 KB of RAM on ESP8266 and ESP32 IDF for a modest
+configuration.
+
+Codegen gets a wave of shared helpers, so new components and migrations need less boilerplate: new `Apply` entity
+classes for hub-forwarding buttons, switches, numbers and selects, `SUB_*` and `PUBLISH_STATE` macros for child
+entities, and byte, I2C, UART, BLE and modbus helpers that roll out across dozens of drivers. The minimum ESP-IDF rises
+to 5.1, LibreTiny goes to 1.14.0 with BDK 3.0.78 on Beken chips, and `esp_hosted` moves to 3.0.10. Native ESPHome OTA
+now falls back to UDP when the link is lossy, so uploads finish on Wi-Fi that would stall the previous TCP data phase.
+`wifi: ap:` with `web_server:` now serves the interface as a captive portal, the DHCP lease is cached across reboots
+and Wi-Fi Easy Connect lands on ESP32.
+
+OpenThread on ESP32 gains an experimental border router that bridges Thread to Wi-Fi. nRF52 picks up a crash coredump,
+a native toolchain entry, a dongle board, BLE OTA through the Adafruit bootloader and SMP-over-UDP. HTTP requests from
+automations no longer block the main loop, the logger buffers early boot lines for later replay over the API, and the
+web server stops exposing internal entities over REST. This release also adds over thirty new components, including
+Daikin Madoka BLE, USB audio and keyboard, an RTSP server, a VNC client, BLE MIDI, HDMI-CEC and the ESP32 ULP
+coprocessor, twelve new climate IR platforms, and many new sensors, radars and expanders. A short codebase-correctness
+sweep closes memory, event-decoding and REST-visibility bugs.
+{/* RELEASE_OVERVIEW_END */}
+
+## Upgrade checklist
+
+{/* UPGRADE_CHECKLIST_START */}
+- If you use `esphome: devices:` for sub-devices, add `relation: via` (separate physical device) or `relation: child`
+  (logical part of this node) to every entry.
+- If you use OpenThread on ESP32, make sure your build uses ESP-IDF 5.5.5 or newer; remove any pinned
+  `esp32.framework.version` older than that.
+- If you target the ESP32 with ESP-IDF, remove any pin to ESP-IDF 5.0.x; the minimum is now 5.1.
+- If you use `esp32_hosted`, require ESP-IDF 5.5 or newer, add `d1_pin` on a 1-bit SDIO setup, and remove
+  `active_high: false` (use the default; `active_high: true` works with a deprecation warning).
+- If you use OpenThread on ESP32 without anything else that needs IPv4, add `network: enable_ipv4: true` to keep
+  IPv4 on.
+- If you use `http_request` actions inside a script, set `mode: queued` or `mode: parallel` where repeated runs must
+  not be skipped; actions no longer block the script.
+- If you have `clk_mode:` on the `ethernet:` component, move it to the `clk:` block with `mode:` and `pin:`.
+- If you have `provider:` on `dlms_meter:`, drop it; for `provider: netznoe` add the two `custom_patterns` from the
+  release notes.
+- If you have DLMS meter sensors using predefined keys such as `voltage_l1` or `timestamp`, replace each with its
+  own entity using `obis_code`.
+- If you have `update_on_release:` on an LVGL number, replace it with `trigger: on_release`.
+- If you have `dump_device_info:` on `nextion:`, delete it; device info is always logged.
+- If you have `platform: qspi_amoled`, change it to `platform: qspi_dbi`.
+- If you use `delay`, `wait_until` or `script.wait` inside emonTx `on_json`/`on_data`, MQTT `on_json_message`, or
+  Haier `on_status_message`, copy the values you need into globals first and defer from a separate script.
+- If you drive internal entities through the web server REST API by URL, add `include_internal: true` under
+  `web_server:`.
+- If you have NEC `remote_transmitter.transmit_nec` actions with `command_repeats` above 10 or equal to 0, change
+  them to a value between 1 and 10.
+- If you have `on_nec` lambdas comparing `x.command_repeats`, update them - the value is always 1 now and the check
+  no longer works.
+- If you have Panasonic IR configs captured from a 56-bit remote, run the dumper again and update `address_2` and
+  `command`.
+- If you have MagiQuest `on_magiquest` lambdas comparing `x.wand_id` or `x.magnitude`, re-dump and use the new values.
+- If you have a `canbus.send` with a constant payload longer than 8 bytes, shorten it to at most 8 bytes.
+- If you use `esp32_rmt_led_strip`, `remote_transmitter` or `remote_receiver` with a custom `rmt_symbols` or multiple
+  components, re-run validation; conflicts and invalid sizes now fail at config time.
+- If you use `color_bwr` e-paper panels (WeAct 3C, Waveshare B, Waveshare BWR, Inkplate 2), expect color mapping to
+  change; the test card and lambdas on WeAct 3C or Waveshare 7.5" V2 BWR also change because they now report
+  `DISPLAY_TYPE_COLOR`.
+- If you use the CB3S board (LN-CB3S V1.0) with the `D12` alias, update your pin to `D13` or `PA11`; `D12` now
+  drives PA10.
+{/* UPGRADE_CHECKLIST_END */}
+
+{/* FEATURE_HIGHLIGHTS_START */}
+## ESP8266 RAM diet and framework-wide flash tables
+
+ESP8266 keeps on a strict RAM budget, and this release shaves another large chunk off it by moving constant tables and
+strings into flash. Entity names, device classes, icons, log tags, filter tables, effect lists, enum option lookups
+and action payloads now live in flash on every build, and are only copied into RAM when a component actually uses them.
+Led by [@bdraco](https://github.com/bdraco), close to a hundred PRs touch this area, across core helpers like
+`ConstVector`, `PROGMEM_STRING_TABLE`, `cg.extern_progmem_array` and `ESPHOME_LOG_TAG`, and the component rollouts
+that use them.
+
+- **Entity names and icons in flash** - `name:`, `icon:` and device class strings are read straight from flash on
+  ESP8266, and the native API sends them straight from flash too ([#20423](https://github.com/esphome/esphome/pull/20423),
+  [#21106](https://github.com/esphome/esphome/pull/21106), [#21111](https://github.com/esphome/esphome/pull/21111)).
+- **Filter, effect and lookup tables moved to flash** - sensor filter tables, light effect lists, climate presets,
+  alarm codes, switch and button payloads, remote IR codes, radar settings and dozens of per-driver lookup tables now
+  sit in flash and are shared across instances ([#20071](https://github.com/esphome/esphome/pull/20071),
+  [#20074](https://github.com/esphome/esphome/pull/20074), [#20076](https://github.com/esphome/esphome/pull/20076),
+  [#20078](https://github.com/esphome/esphome/pull/20078), [#20080](https://github.com/esphome/esphome/pull/20080),
+  [#20082](https://github.com/esphome/esphome/pull/20082), [#20083](https://github.com/esphome/esphome/pull/20083),
+  [#20204](https://github.com/esphome/esphome/pull/20204), [#20222](https://github.com/esphome/esphome/pull/20222),
+  [#20394](https://github.com/esphome/esphome/pull/20394)).
+- **Web server strings off RAM** - the remaining ESP8266 web server strings, resource tables and entity domain names
+  move to flash ([#20300](https://github.com/esphome/esphome/pull/20300),
+  [#21113](https://github.com/esphome/esphome/pull/21113), [#21115](https://github.com/esphome/esphome/pull/21115)).
+- **Manual IP settings in flash** - manual Wi-Fi and Ethernet IP settings are stored in flash on ESP8266 too
+  ([#21708](https://github.com/esphome/esphome/pull/21708), [#21712](https://github.com/esphome/esphome/pull/21712)).
+- **Shared switch lookup tables** - ESP8266 switch lookup tables leave RAM ([#20398](https://github.com/esphome/esphome/pull/20398)).
+
+## Lower RAM for every component instance
+
+RAM savings continue beyond ESP8266. Scheduler timers no longer carry a per-component name string, several trait flag bytes are packed, and the big automation code generation rewrite below shrinks the framework object graph. Numbers below are from the PR measurements against the current release line.
+
+- **Numeric scheduler IDs** - scheduler timers now match components by small integer IDs rather than string literals, so lookups become integer compares. The change rolls through core, climate, select, Tuya, Dallas, Modbus, speaker, Zigbee, voice_assistant and many sensor drivers ([#20361](https://github.com/esphome/esphome/pull/20361), [#20365](https://github.com/esphome/esphome/pull/20365), [#20367](https://github.com/esphome/esphome/pull/20367), [#20368](https://github.com/esphome/esphome/pull/20368), [#20374](https://github.com/esphome/esphome/pull/20374), [#20375](https://github.com/esphome/esphome/pull/20375), [#20376](https://github.com/esphome/esphome/pull/20376), [#20377](https://github.com/esphome/esphome/pull/20377), [#20378](https://github.com/esphome/esphome/pull/20378), [#20380](https://github.com/esphome/esphome/pull/20380), [#20381](https://github.com/esphome/esphome/pull/20381)).
+- **Trait flag packing** - [Cover](/components/cover/), [fan](/components/fan/), valve and lock traits pack their boolean flags into single bytes, and `esp32_rmt_led_strip` reshuffles members to fit base class padding ([#21339](https://github.com/esphome/esphome/pull/21339), [#21340](https://github.com/esphome/esphome/pull/21340), [#21343](https://github.com/esphome/esphome/pull/21343), [#21344](https://github.com/esphome/esphome/pull/21344), [#21838](https://github.com/esphome/esphome/pull/21838)).
+- **No duplicated storage** - MQTT rebuilds subscription topics on demand instead of storing them, and components such as `bedjet`, `nfc`, `thermopro_ble`, `graph`, `mqtt_subscribe`, `key_collector`, `display_menu_base`, `bme680_bsec` and `tuya` stop copying strings they only read ([#20762](https://github.com/esphome/esphome/pull/20762), [#21204](https://github.com/esphome/esphome/pull/21204), [#21205](https://github.com/esphome/esphome/pull/21205), [#21206](https://github.com/esphome/esphome/pull/21206), [#21207](https://github.com/esphome/esphome/pull/21207), [#21208](https://github.com/esphome/esphome/pull/21208), [#21209](https://github.com/esphome/esphome/pull/21209), [#21210](https://github.com/esphome/esphome/pull/21210), [#21211](https://github.com/esphome/esphome/pull/21211), [#21212](https://github.com/esphome/esphome/pull/21212)).
+- **Fixed-size buffers replace heap allocations** - radar components, GPS listeners, speaker pipelines, usb_uart buffers and the Weikai UART driver use fixed-size storage and ring buffers instead of growing heap vectors ([#20379](https://github.com/esphome/esphome/pull/20379), [#21201](https://github.com/esphome/esphome/pull/21201), [#21203](https://github.com/esphome/esphome/pull/21203), [#21347](https://github.com/esphome/esphome/pull/21347), [#21476](https://github.com/esphome/esphome/pull/21476), [#21478](https://github.com/esphome/esphome/pull/21478)).
+
+## Automations compile to C++ control flow
+
+Led by [@clydebarrow](https://github.com/clydebarrow), the code generator for automations has been rebuilt. `if`, `choose`, `while`, `repeat` and runs of simple actions no longer need an action object per step; they compile straight into the generated function as C++ control flow. On a test config with eight automations of three actions each, the stack of changes saves **1632 bytes of RAM** and **1216 bytes of flash** on ESP8266, and **1632 bytes of RAM** and **1628 bytes of flash** on ESP32 IDF. Lambda and `script.execute` chains no longer grow the stack along the way.
+
+- **Adjacent actions merge** - runs of `register_apply_action` and `lambda:` actions become one generated function and one object ([#21978](https://github.com/esphome/esphome/pull/21978)).
+- **Inline callback automations run directly** - a trigger whose actions are all inline calls the generated function straight from the callback, with no automation object ([#21979](https://github.com/esphome/esphome/pull/21979)).
+- **Control flow turns into C++** - `if`, `choose`, `while` and `repeat` with inline bodies become `if`, `switch`, `while` and `for` in the generated function. The change also fixes a bug where a false condition inside a nested `while` could stop its outer `parallel` script ([#21980](https://github.com/esphome/esphome/pull/21980)).
+
+## Codegen helpers for component authors
+
+A second large framework effort, driven mostly by [@bdraco](https://github.com/bdraco), standardises how components are described in Python. Nine helpers do work that was previously hand-written per component: `new_i2c_component`, `new_uart_component`, `new_spi_component`, `options()` for enum keys, `cg.add_pin`, `cg.add_variable`, `cg.add_optional`, `assign_bits` and `register_parented`. The `SUB_*` macros declare child entities with one line and the `PUBLISH_STATE` macro publishes them with one more, so hub drivers no longer repeat `if (pointer) pointer->publish_state(value)` for each sub-entity. A new [`Apply` entity](https://github.com/esphome/developers.esphome.io/pull/238) family lets a hub forwarding button, switch, number or select ship as a single Python line and no C++ class at all. Component authors can see the new helpers in `AGENTS.md`; these are migration tracks that touch dozens of components and shrink the codebase without changing behaviour.
+
+- **Apply entities** - new `ApplyButton`, `ApplySwitch`, `ApplyNumber`, `ApplySelect`, `ApplyBytes` and `ApplyOutput` classes, plus their roll-out across LD2410, LD2420, LD2450, DFRobot SEN0395/SEN0609, Airton, Haier, Tuya, Micronova and the core safety switches ([#20935](https://github.com/esphome/esphome/pull/20935), [#20937](https://github.com/esphome/esphome/pull/20937), [#20964](https://github.com/esphome/esphome/pull/20964), [#20965](https://github.com/esphome/esphome/pull/20965), [#20966](https://github.com/esphome/esphome/pull/20966), [#20967](https://github.com/esphome/esphome/pull/20967), [#21146](https://github.com/esphome/esphome/pull/21146), [#21147](https://github.com/esphome/esphome/pull/21147), [#21148](https://github.com/esphome/esphome/pull/21148), [#21158](https://github.com/esphome/esphome/pull/21158), [#21162](https://github.com/esphome/esphome/pull/21162), [#21163](https://github.com/esphome/esphome/pull/21163), [#21251](https://github.com/esphome/esphome/pull/21251), [#21252](https://github.com/esphome/esphome/pull/21252), [#21253](https://github.com/esphome/esphome/pull/21253), [#21262](https://github.com/esphome/esphome/pull/21262), [#21263](https://github.com/esphome/esphome/pull/21263), [#21519](https://github.com/esphome/esphome/pull/21519), [#21659](https://github.com/esphome/esphome/pull/21659), [#21662](https://github.com/esphome/esphome/pull/21662), [#21673](https://github.com/esphome/esphome/pull/21673), [#21675](https://github.com/esphome/esphome/pull/21675), [#21677](https://github.com/esphome/esphome/pull/21677)).
+- **Shared I2C, UART and BLE helpers** - `update_register`, `write_registers`, `check_chip_id`, `read_available`, `discard_available`, `LineReader`, `FrameReader`, `encode_uint16`/`24`, `put_be`/`put_le`, `sum_bytes`, `xor_bytes`, `sum16_bytes`, `sign_extend`, the shared BCD and color helpers and `new_ble_component`/`new_modbus_component` migrate 20+ I2C drivers, the whole UART component set, BCD and byte-order code in many RTC and sensor drivers ([#20507](https://github.com/esphome/esphome/pull/20507), [#20855](https://github.com/esphome/esphome/pull/20855), [#20861](https://github.com/esphome/esphome/pull/20861), [#20907](https://github.com/esphome/esphome/pull/20907), [#20909](https://github.com/esphome/esphome/pull/20909), [#20911](https://github.com/esphome/esphome/pull/20911), [#20919](https://github.com/esphome/esphome/pull/20919), [#20920](https://github.com/esphome/esphome/pull/20920), [#20922](https://github.com/esphome/esphome/pull/20922), [#20934](https://github.com/esphome/esphome/pull/20934), [#20938](https://github.com/esphome/esphome/pull/20938), [#20939](https://github.com/esphome/esphome/pull/20939), [#20941](https://github.com/esphome/esphome/pull/20941), [#20943](https://github.com/esphome/esphome/pull/20943), [#20945](https://github.com/esphome/esphome/pull/20945), [#20946](https://github.com/esphome/esphome/pull/20946), [#20948](https://github.com/esphome/esphome/pull/20948), [#20956](https://github.com/esphome/esphome/pull/20956), [#21026](https://github.com/esphome/esphome/pull/21026), [#21080](https://github.com/esphome/esphome/pull/21080), [#21082](https://github.com/esphome/esphome/pull/21082), [#21083](https://github.com/esphome/esphome/pull/21083), [#21084](https://github.com/esphome/esphome/pull/21084), [#22212](https://github.com/esphome/esphome/pull/22212)).
+- **Follow entities from codegen** - the `copy`, `switch`, `number` and `text` follow-entity publishers are now built from codegen expressions instead of hand-formatted strings ([#22103](https://github.com/esphome/esphome/pull/22103), [#21610](https://github.com/esphome/esphome/pull/21610), [#21612](https://github.com/esphome/esphome/pull/21612)).
+- **SUB_* and PUBLISH_STATE rollout** - child entities across ~150 components declare their pointers with `SUB_*` macros and publish through `PUBLISH_STATE` in a single call ([#21726](https://github.com/esphome/esphome/pull/21726), [#21770](https://github.com/esphome/esphome/pull/21770) through [#21777](https://github.com/esphome/esphome/pull/21777), [#21808](https://github.com/esphome/esphome/pull/21808) through [#21810](https://github.com/esphome/esphome/pull/21810), [#21848](https://github.com/esphome/esphome/pull/21848) through [#21852](https://github.com/esphome/esphome/pull/21852)).
+
+## ESP-IDF 5.1 floor and library refresh
+
+The minimum ESP-IDF rises to 5.1 and three major vendor libraries are refreshed, so builds stop configuring with deprecated symbols and devices built on them stop hitting the known bugs. [LibreTiny](/components/libretiny/) now defaults to 1.14.0 with Beken BDK 3.0.78 on BK7231N and BK7231T, which fixes WPA3 support on those chips, stops the BK7231T captive portal from losing saved credentials and fixes a watchdog trip during web OTA ([#21531](https://github.com/esphome/esphome/pull/21531)). `esp_hosted` on the ESP32-P4 and Tab5 jumps to 3.0.10, which repairs 1-bit SDIO and no longer erases the co-processor partition at OTA begin ([#21394](https://github.com/esphome/esphome/pull/21394)). `esp-zigbee-sdk` rises to 2.0.5 and `esp-audio-libs` to 4.1.0 ([#20998](https://github.com/esphome/esphome/pull/20998), [#20754](https://github.com/esphome/esphome/pull/20754)). The GCC 12 toolchain that ships with ESP-IDF 5.1 also lets ESPHome drop its 5.0-specific workarounds, so basename debug flags apply everywhere and `CONFIG_SW_COEXIST_ENABLE` is written under its current name ([#21398](https://github.com/esphome/esphome/pull/21398)). `espressif/esp-adf-libs` and `espressif/esp-hosted` binaries are now downloaded and cached rather than carried in the repository ([#20065](https://github.com/esphome/esphome/pull/20065)).
+
+## OTA uploads that finish on bad Wi-Fi
+
+Led by [@bdraco](https://github.com/bdraco), the native ESPHome OTA protocol now falls back to UDP when the TCP handshake shows the link is lossy. The full TCP handshake still runs first, and the data phase moves to UDP only when it is worth it; everything stays encrypted when Noise is configured. On an ESP32 next to the laptop, a clean upload takes 13 to 16 seconds on UDP against 36 to 70 seconds on TCP, and an upload with 65% loss added finishes in just over three minutes where TCP fails every time ([#20498](https://github.com/esphome/esphome/pull/20498)). The companion client adds a few patience changes to match: handshake timeouts rise from 20 to 60 seconds, up to five attempts for a first connection and nine once the device is reached, so a slow Wi-Fi recovery no longer gives up early. `--prompt-ota-key` and `old_key` options let an upload retry with a fresh or previous OTA key when the device has already moved on ([#19397](https://github.com/esphome/esphome/pull/19397), [#19398](https://github.com/esphome/esphome/pull/19398)).
+
+## Networking and provisioning without the cloud
+
+A set of connectivity features make setting up a device easier when there is no router or internet involved. Led by [@bdraco](https://github.com/bdraco), configuring `wifi: ap:` together with [`web_server:`](/components/web_server/) now serves the embedded web interface as a captive portal, with a DNS server that redirects every name to the AP address, so a phone opens the page automatically like a hotel sign-in ([#18517](https://github.com/esphome/esphome/pull/18517)). The [WISP](/components/wifi/#wisp-mode) feature introduced last cycle adds `ap_mode: ALWAYS_ON`, a captive portal option and ESP32 Arduino support ([#20077](https://github.com/esphome/esphome/pull/20077), [#21410](https://github.com/esphome/esphome/pull/21410)), and the WISP AP can be bridged to Ethernet or to a cellular `modem` link ([#7147](https://github.com/esphome/esphome/pull/7147), [#21584](https://github.com/esphome/esphome/pull/21584)).
+
+- **Wi-Fi Easy Connect (DPP)** - QR-code provisioning for ESP32 devices ([#17934](https://github.com/esphome/esphome/pull/17934)).
+- **DHCP lease cache** - keeps the previous lease across reboots to reconnect faster ([#17767](https://github.com/esphome/esphome/pull/17767)).
+- **IPv4 and IPv6 on demand** - `network: enable_ipv4` and `enable_ipv6` default from what components actually need; an OpenThread-only ESP32 builds without the IPv4 stack now ([#14526](https://github.com/esphome/esphome/pull/14526)).
+- **IPv6 for Zephyr and UDP** - UDP gets IPv6 unicast and multicast across platforms, and nRF52 gains IPv6 support ([#17838](https://github.com/esphome/esphome/pull/17838), [#20590](https://github.com/esphome/esphome/pull/20590)).
+
+## OpenThread border router on ESP32
+
+Led by [@pputerla](https://github.com/pputerla), the [`openthread`](/components/openthread/#openthread-border-router) component gains an ESP32 border router mode. An ESP32-C5 or C6 bridges its native 802.15.4 radio to Wi-Fi, and the other Wi-Fi ESP32 variants bridge an external radio co-processor over UART. Thread starts at boot, border routing starts once Wi-Fi has an address, and the SDK is driven from a single OpenThread task under one lock so clean reboots work. OpenThread on ESP32 now needs ESP-IDF 5.5.5 or newer, which has been the default for a few releases ([#18104](https://github.com/esphome/esphome/pull/18104)). The feature is marked experimental: the native radio ran for two weeks without a restart in testing, while the external RCP mode hung occasionally during a three-week soak.
+
+## nRF52 catches up
+
+[nRF52](/components/nrf52/) devices gain several platform-level features. Led by [@tomaszduda23](https://github.com/tomaszduda23), the new [`zephyr_coredump`](/components/zephyr_coredump/) component stores a crash dump in flash and prints it hex-encoded once a log reader connects; Zephyr's tooling then turns the log into a GDB backtrace. [@swoboda1337](https://github.com/swoboda1337) moves `sdk-nrf` into the native toolchain list, so nRF52 builds no longer write an unused `platformio.ini`, `esphome idedata` works, memory analysis has one less code path and `platformio_options` behave like on ESP-IDF ([#21704](https://github.com/esphome/esphome/pull/21704)). The [nRF52840 dongle](https://github.com/esphome/esphome/pull/19009) is a supported board ([#19009](https://github.com/esphome/esphome/pull/19009)), nRF52 can now be flashed and updated over BLE with the [Adafruit bootloader](/components/ota/adafruit_ble/) in addition to MCUboot ([#20481](https://github.com/esphome/esphome/pull/20481)), [`zephyr_mcumgr`](/components/ota/zephyr_mcumgr/) adds an SMP-over-UDP OTA transport ([#17245](https://github.com/esphome/esphome/pull/17245)), the logger adds CDC UART through `usb_cdc_acm` on nRF52 ([#11634](https://github.com/esphome/esphome/pull/11634)) and `debug` logs per-thread CPU usage ([#13938](https://github.com/esphome/esphome/pull/13938)). The [`esp32_ble_server`](/components/zephyr_ble_server/) gets secure connections with numeric comparison ([#17562](https://github.com/esphome/esphome/pull/17562)).
+
+## Developer infrastructure
+
+Several changes make ESPHome itself easier to build and debug. CodSpeed benchmarks ride along with the Python code, so component import time, entity validation, image and runtime image decoding, and sensor platform setup are all tracked over time ([#20603](https://github.com/esphome/esphome/pull/20603), [#20637](https://github.com/esphome/esphome/pull/20637), [#20648](https://github.com/esphome/esphome/pull/20648), [#20649](https://github.com/esphome/esphome/pull/20649), [#20763](https://github.com/esphome/esphome/pull/20763)). The CI's hardware-test skill picks up new flows that cover SEN0395, LD2412, LD2450, LD24xx variants, Xiaomi BLE, MQTT TLS and WebSocket, GPIO hold, BLE light sleep, HTTP-request OTA, manual IP, web OTA, LD2450 zones and more ([#21160](https://github.com/esphome/esphome/pull/21160), [#21229](https://github.com/esphome/esphome/pull/21229), [#21264](https://github.com/esphome/esphome/pull/21264), [#21356](https://github.com/esphome/esphome/pull/21356), [#21414](https://github.com/esphome/esphome/pull/21414), [#21549](https://github.com/esphome/esphome/pull/21549), [#21636](https://github.com/esphome/esphome/pull/21636), [#21724](https://github.com/esphome/esphome/pull/21724)). Each build path ESPHome ships is now compiled on a Windows runner and an ESP8266 native config also builds on Windows ([#20467](https://github.com/esphome/esphome/pull/20467), [#21791](https://github.com/esphome/esphome/pull/21791)). `esphome upload` works without a configuration file, so a prebuilt image can be flashed from the CLI ([#21738](https://github.com/esphome/esphome/pull/21738)). clang-tidy 23 is clean across the tree after a cleanup pass by [@swoboda1337](https://github.com/swoboda1337) ([#21301](https://github.com/esphome/esphome/pull/21301), [#21334](https://github.com/esphome/esphome/pull/21334), [#21335](https://github.com/esphome/esphome/pull/21335), [#21336](https://github.com/esphome/esphome/pull/21336), [#21338](https://github.com/esphome/esphome/pull/21338)).
+
+## Non-blocking HTTP requests and boot log replay
+
+Two automation-side features let devices do more work in the background. [@clydebarrow](https://github.com/clydebarrow) reworked `http_request.get`, `.post` and `.send` into asynchronous actions driven by the component's `loop()`. On an ESP32-S3, the main loop stall for a plain HTTPS GET drops from 2.4 to 3.6 seconds to about 0.3 seconds, and for a 70 KB LAN download from 3.6 seconds to tens of milliseconds. Up to four extra requests queue, so overlapping triggers no longer run back to back. A script containing one of these actions is still running while the request is in flight, so a `mode: single` script that used to fit inside `execute()` now has to use `mode: queued` or `mode: parallel` when it needs to overlap ([#21486](https://github.com/esphome/esphome/pull/21486)). A per-request `timeout:` option lands in the same area ([#20821](https://github.com/esphome/esphome/pull/20821)).
+
+The [logger](/components/logger/) also gains an optional `boot_log_buffer_size:` and a matching `logger.replay_boot_logs:` action. Lines captured from the moment the logger starts are replayed over the native API when the first client connects, so a warning that fired before Wi-Fi came up is still visible later ([#17666](https://github.com/esphome/esphome/pull/17666)). The buffer is a compile-time member, nothing allocates on the heap, and the option compiles out entirely when unset. `boot_log_level:` and per-tag `boot_logs:` tune what is kept, and dropped lines are counted so the summary says how much was lost.
+
+## New components: sensors and GPIO expanders
+
+Many new sensor and expander components ship this release. All are listed with short notes; configuration lives in their own documentation.
+
+- **[Aranet BLE sensor](/components/sensor/aranet/)** by [@patrickod](https://github.com/patrickod) - passive Bluetooth LE advertisement reader for Aranet4, Aranet2, Aranet Radiation, Aranet Radon Plus and Aranet Radon One monitors.
+- **[APDS9930](/components/sensor/apds9930/)** by [@iyesin](https://github.com/iyesin) - Broadcom ambient-light and proximity I2C sensor.
+- **[APC1](/components/sensor/apc1/)** by [@ademuri](https://github.com/ademuri) - ScioSense APC1 air-quality sensor on UART.
+- **[AS734x spectral hub](https://github.com/esphome/esphome/pull/17038)** by [@latonita](https://github.com/latonita) - AS7341, AS7343 and TCS3448 spectral sensors in one driver, with counts, illuminance, PAR, PPFD, colour temperature and RGB.
+- **[BH1745](/components/sensor/bh1745/)** by [@latonita](https://github.com/latonita) - ROHM colour sensor with illuminance and colour-temperature output and an LED driver output.
+- **[BQ25186](/components/bq25186/)** by [@Rapsssito](https://github.com/Rapsssito) - TI 1-cell linear battery charger with status sensors, buttons, a PG/GPO switch and a watchdog option.
+- **[BQ27220 fuel gauge](/components/sensor/bq27220/)** by [@rggammon](https://github.com/rggammon) - TI single-cell Li-Ion fuel gauge with eight optional sensors.
+- **[BQ76972 BMS monitor](/components/sensor/bq76972/)** by [@limpkin](https://github.com/limpkin) - TI monitor for cell voltages, pack voltage and thermistor temperatures.
+- **[CW2017 fuel gauge](/components/sensor/cw2017/)** by [@exciton](https://github.com/exciton) - CellWise fuel gauge; a `battery_profile` describes the cell.
+- **[DFRobot SEN0465](/components/sensor/dfrobot_sen0465/)** by [@tzabbi](https://github.com/tzabbi) - DFRobot SEN0465 to SEN0476 electrochemical gas probes with I2C and UART.
+- **[DFRobot SEN0609 radar](/components/dfrobot_sen0609/)** by [@remcom](https://github.com/remcom) - C4001-based 25 m and 12 m mmWave radars (SEN0609 and SEN0610) with presence and speed-and-distance modes.
+- **[Delta AC wallbox](/components/delta_wallbox/)** by [@epicRE](https://github.com/epicRE) - BLE driver reading model, state, power and energy and starting or stopping charging sessions; max charging current configurable at runtime.
+- **[DS3231 RTC](/components/ds3231/)** by [@linkedupbits](https://github.com/linkedupbits) and [@miloit](https://github.com/miloit) - Maxim real-time clock with time platform, alarms, 32 kHz/square-wave outputs and temperature sensor.
+- **[FUSB302B PD sink](/components/fusb302b/)** by [@remcom](https://github.com/remcom) - full USB Power Delivery sink with state, contract and automations.
+- **[HUSB238 PD controller](/components/husb238/)** by [@latonita](https://github.com/latonita) - Hynetek USB PD sink controller hub with binary sensors for attach and CC direction.
+- **[ICM-20689](/components/sensor/icm20689/)** by [@lboue](https://github.com/lboue) - TDK InvenSense 6-axis accelerometer and gyroscope over SPI, with on-chip temperature.
+- **[LD2410S radar](/components/sensor/ld2410s/)** by [@NovakIrs](https://github.com/NovakIrs) - HI-LINK LD2410S presence radar with distance sensor and firmware version.
+- **[LD2460 radar](/components/sensor/ld2460/)** by [@jesusvallejo](https://github.com/jesusvallejo) - Hi-Link multi-target tracking 24 GHz radar.
+- **[LD6004 radar](https://github.com/esphome/esphome/pull/19840)** by [@wolph](https://github.com/wolph) - Hi-Link 60 GHz presence radar on the new shared `ld600x` base.
+- **[LIS2DW12](/components/sensor/lis2dw12/)** by [@latonita](https://github.com/latonita) - ST 3-axis accelerometer with tap, double-tap, free-fall, activity and 6D orientation events.
+- **[LIS3DH](/components/sensor/lis3dh/)** by [@Zebble](https://github.com/Zebble) - ST 3-axis accelerometer built on the shared `motion` platform.
+- **[MAX17048 fuel gauge](/components/sensor/max17048/)** by [@B48D81EFCC](https://github.com/B48D81EFCC) and the shared [`max170xx`](https://github.com/esphome/esphome/pull/18594) helper by [@ryansch](https://github.com/ryansch) - Analog Devices Li-ion fuel gauge.
+- **[MAX31888](/components/sensor/max31888/)** by [@JiriPrchal](https://github.com/JiriPrchal) - Analog Devices 1-Wire temperature sensor.
+- **[MICS-5524](/components/sensor/mics_5524/)** by [@nliaudat](https://github.com/nliaudat) - DFRobot MEMS multi-gas module that converts an existing ADC sampler into gas concentrations.
+- **[MT6701](/components/sensor/mt6701/)** by [@slimcdk](https://github.com/slimcdk) - MagnTek magnetic encoder over I2C or SPI.
+- **[NS2009](/components/touchscreen/ns2009/)** by [@tchilov](https://github.com/tchilov) - Nsiway resistive touchscreen controller.
+- **[PCA9505 expander](https://github.com/esphome/esphome/pull/20667)** by [@ajfriesen](https://github.com/ajfriesen) - NXP PCA9505 and PCA9506 40-channel GPIO expander with optional interrupt pin.
+- **[Renogy inverter BLE](/components/sensor/renogy_inverter_ble/)** by [@emilioaray-dev](https://github.com/emilioaray-dev) - reads a Renogy inverter with built-in Bluetooth over `ble_client` and publishes AC and battery values.
+- **[RX8111CE RTC](/components/time/rx8111/)** by [@techdregs](https://github.com/techdregs) - Epson I2C real-time clock as a `time` platform, with alarm and wake-up timer, FOUT and EVIN events, binary sensors and a backup-power status text sensor.
+- **[ST25R3916 NFC reader](/components/st25r/)** by [@JohnMcLear](https://github.com/JohnMcLear) - ISO 14443A tag reader over SPI, firing the shared `on_tag` and `on_tag_removed` automations.
+- **[TCA8418 keypad](/components/tca8418/)** by [@Zebble](https://github.com/Zebble) - TI I2C keypad scanner with matrix and direct inputs.
+- **[TMC2209 stepper driver](/components/stepper/tmc2209/)** by [@remcom](https://github.com/remcom) - Trinamic UART stepper driver with current and chopper tuning actions and stall detection.
+- **[TMP102](/components/sensor/tmp102/)** by [@techdregs](https://github.com/techdregs) - TI digital temperature sensor with thermostat thresholds, alert pin and diagnostics text sensor.
+- **[VEML6040](/components/sensor/veml6040/)** by [@aalaei](https://github.com/aalaei) - Vishay RGBW colour sensor.
+- **[VL53L1X](/components/sensor/vl53l1x/)** by [@will-tm](https://github.com/will-tm) - ST time-of-flight distance sensor with ROI and multiple-sensor support.
+- **M5Stack units** by [@KoenBreeman](https://github.com/KoenBreeman) and [@lboue](https://github.com/lboue) - [M5Stack 4-Relay](/components/switch/m5stack_4relay/), the [Seeed Grove multi-channel relay](/components/switch/seeed_multi_channel_relay/) boards and the [M5Stack M5Unit-BLDC](/components/m5stack_unit_bldc/) brushless DC motor driver.
+
+## New major components
+
+Beyond new sensors, several components open up new capabilities.
+
+- **[Daikin Madoka BRC1H climate](/components/climate/daikin_madoka/)** by [@Petapton](https://github.com/Petapton) - BLE control of the Daikin BRC1H (Madoka) wall controller: modes, setpoint, fan speed and reported temperatures, with MITM pairing and TLV response decoding.
+- **[HDMI-CEC bus](/components/hdmi_cec/)** by [@JosVanEijndhoven](https://github.com/JosVanEijndhoven) - puts an ESPHome device on the HDMI-CEC bus of a TV, with `on_message` automations and a `hdmi_cec.send` action.
+- **[USB audio](/components/usb_audio/)** by [@ab-tools](https://github.com/ab-tools) - USB Audio Class host for ESP32 chips with USB OTG; plays audio on USB sound cards and DACs through [`speaker: platform: usb_audio`](/components/speaker/usb_audio/) and captures from USB mics through [`microphone: platform: usb_audio`](/components/microphone/usb_audio/).
+- **[TinyUSB keyboard](/components/tinyusb_keyboard/)** by [@FrederikBolding](https://github.com/FrederikBolding) - ESP32 with USB OTG appears as a HID keyboard with media keys.
+- **[Cellular modem networking](/components/modem/)** by [@oarcher](https://github.com/oarcher) - PPPoS over a UART cellular modem on ESP32, so `api`, `mqtt` and `ota` work on LTE; signal sensors and a network-type text sensor land alongside ([#6721](https://github.com/esphome/esphome/pull/6721), [#14683](https://github.com/esphome/esphome/pull/14683)).
+- **[RTSP server](/components/rtsp_server/)** by [@max246](https://github.com/max246) - streams the `esp32_camera` picture as Motion JPEG over RTSP, playable in VLC, ffplay, go2rtc and Frigate without anything ESPHome-specific.
+- **[VNC client](/components/vnc/)** by [@MindFreeze](https://github.com/MindFreeze) - shows a VNC server's screen on an ESPHome display, with Hextile encoding, password authentication, input actions and touchscreen forwarding.
+- **[BLE MIDI](/components/ble_midi/)** by [@bogdanr](https://github.com/bogdanr) - connects to a BLE MIDI device such as a pad controller, keyboard or foot switch, surfaces note, control-change and SysEx events as automations and can send MIDI back.
+- **[ESP32 ULP coprocessor](/components/esp32_ulp/)** by [@swoboda1337](https://github.com/swoboda1337) - builds a user C program for the ESP32-S2/S3 RISC-V ULP or the C5/C6/P4 LP core, embeds it in the firmware and exposes its globals to lambdas as `ulp_<name>`.
+- **[OpenThread border router](/components/openthread/#openthread-border-router)** - covered in its own section above.
+- **[Zigbee improvements](/components/zigbee/)** by [@luar123](https://github.com/luar123) - sleepy end device (SED) support on ESP32, a `zigbee.report` action and a configurable basic cluster with manufacturer and application version ([#20487](https://github.com/esphome/esphome/pull/20487), [#20488](https://github.com/esphome/esphome/pull/20488), [#20519](https://github.com/esphome/esphome/pull/20519)).
+- **[Power management](/components/power_management/esp32_power_management/)** by [@rwrozelle](https://github.com/rwrozelle) - new `power_management` domain with an ESP-IDF dynamic frequency scaling platform and optional automatic light sleep.
+- **[Haier water heater](/components/water_heater/haier_water_heater/)** by [@TheLexus](https://github.com/TheLexus) - controls Haier hOn water heaters such as the VH3W over UART in place of the original Wi-Fi module.
+- **[Fantini Cosmi Ecocomfort 2.0 VMC](/components/ecocomfort2/)** by [@gledian](https://github.com/gledian) - BLE control of Fantini Cosmi Aspirvelo Air Ecocomfort 2.0 Smart ventilation units, as a hub with a fan platform, read-only sensors and configuration entities ([#17092](https://github.com/esphome/esphome/pull/17092), [#15447](https://github.com/esphome/esphome/pull/15447), [#20783](https://github.com/esphome/esphome/pull/20783)).
+- **[Duco heat recovery ventilation](/components/duco/)** by [@kokx](https://github.com/kokx) - Duco Energy Comfort D325 ventilation system with mode select, serial, CO2 and flow sensors.
+- **[Modbus monitor](/components/modbus_monitor/)** by [@Bascht74](https://github.com/Bascht74) - `on_request` and `on_response` triggers for Modbus server and client hubs.
+- **packet_interface** by [@clydebarrow](https://github.com/clydebarrow) - a layered packet framework with UART and UDP links, HDLC reliability, session and XXTEA encryption layers.
+- **New climate IR platforms** - [Airton](/components/climate/climate_ir/#airton) by [@Procsiab](https://github.com/Procsiab), [Friedrich MW12Y3H](/components/climate/climate_ir/#friedrich) by [@rwrozelle](https://github.com/rwrozelle), [Haier Tundra](/components/climate/climate_ir/#haier_tundra) by [@fauxpark](https://github.com/fauxpark), [Islandaire PTAC](/components/climate/climate_ir/#islandaire) by [@ipopov](https://github.com/ipopov), [Midea PortaSplit](/components/climate/midea_portasplit/) by [@Fexiven](https://github.com/Fexiven), [Mistral MHFE1126A](/components/climate/climate_ir/#mistral_ir) by [@lerhum](https://github.com/lerhum), [Panasonic](/components/climate/climate_ir/#panasonic_ir) by [@Duckle29](https://github.com/Duckle29), [Pioneer mini-split](/components/climate/climate_ir/#pd_pioneer_ir) by [@martinsah](https://github.com/martinsah), [Remko AR-715](/components/climate/climate_ir/#remko_ar715) by [@naKruul](https://github.com/naKruul), [Samsung](/components/climate/climate_ir/#samsung) by [@jorofi](https://github.com/jorofi), [Siemens IRA211](/components/climate/climate_ir/#siemens_ira211) by [@fonix232](https://github.com/fonix232), plus a separate [Airton serial](/components/climate/airton_serial/) platform by [@guiguid](https://github.com/guiguid).
+- **New display controllers** - [SH1122 OLED](/components/display/sh1122/) by [@pl4nkton](https://github.com/pl4nkton), [ST7305 reflective LCD](/components/display/st7305/) by [@clydebarrow](https://github.com/clydebarrow), [HT16K33 character displays](/components/display/ht16k33_char/) by [@ilikecake](https://github.com/ilikecake), the [SPD2010 touchscreen](/components/touchscreen/spd2010/) by [@grischard](https://github.com/grischard) and many new [epaper_spi](/components/display/epaper_spi/) panels (GDEY0213F51, GDEY029Z95, GDEY029T94, Waveshare 2.13" G/B V3, Xteink X4 Pro, UC8151D, XSRUPB-7.5in-bwr) by various contributors.
+- **New LED strip drivers** - [`i2s_clockless_led_strip`](/components/light/i2s_clockless_led_strip/) for WS281x/SK6812 strips via I2S DMA by [@j9brown](https://github.com/j9brown), and [`ln882x_spi_led_strip`](/components/light/ln882x_spi_led_strip/) for LN882x chips by [@sebo-b](https://github.com/sebo-b).
+- **Other new components** - [APC Proteous gate motors](/components/cover/apc_proteous/) by [@clydebarrow](https://github.com/clydebarrow), the [`ezsp_proxy_tap`](/components/ezsp_proxy_tap/) component by [@puddly](https://github.com/puddly), the [Vevor DTX weather station](/components/vevor_dtx/) by [@Bofr5555](https://github.com/Bofr5555), the [LP5562 4-channel LED driver](/components/output/lp5562/) by [@DennisGaida](https://github.com/DennisGaida), and a [`filter_lifetime`](/components/sensor/filter_lifetime/) sensor by [@tuct](https://github.com/tuct).
+
+## Other notable features
+
+- **[Switch initial state](/components/switch/)** - `initial_state:` and `restore_state:` work with flash or RTC storage for platforms whose switches do not have their own restore ([#20978](https://github.com/esphome/esphome/pull/20978)).
+- **[Light initial effect](/components/light/)** - `initial_state:` can now name an `effect:`, so a strip boots into its startup animation ([#18795](https://github.com/esphome/esphome/pull/18795)).
+- **Globals in RTC memory** - a persistent `global` can live in RTC RAM instead of flash, preserved across deep sleep without wearing out the flash ([#13954](https://github.com/esphome/esphome/pull/13954)).
+- **[Addressable light power estimation](/components/light/#addressable-light-power-estimation)** - LED strips can report the estimated current draw and limit it on the fly ([#15348](https://github.com/esphome/esphome/pull/15348)).
+- **Sendspin as a source** - the [`sendspin`](/components/sendspin/#source) speaker protocol gains a source role, so a device can stream a microphone to a Music Assistant server ([#21696](https://github.com/esphome/esphome/pull/21696)).
+- **[`i2s_audio` full duplex](/components/i2s_audio/#full-duplex)** - single-chip speakers and microphones can share one bus ([#19959](https://github.com/esphome/esphome/pull/19959)).
+- **ESP32 OTA security** - new `signed_ota_verification` and NVS encryption options in the [`esp32`](/components/esp32/#security) block prepare devices for stronger OTA signing ([#17562](https://github.com/esphome/esphome/pull/17562)).
+- **[MQTT over WebSocket](/components/mqtt/#mqtt-over-websocket)** - WebSocket transport on ESP32 IDF and TLS option expansion ([#14318](https://github.com/esphome/esphome/pull/14318), [#16056](https://github.com/esphome/esphome/pull/16056)), plus MQTT session persistence and a crash reporting channel ([#12426](https://github.com/esphome/esphome/pull/12426), [#17935](https://github.com/esphome/esphome/pull/17935)).
+- **[Online image progressive decode](/components/image/online_image/)** - decode a JPEG as it downloads, with download start and progress triggers ([#21342](https://github.com/esphome/esphome/pull/21342), [#21355](https://github.com/esphome/esphome/pull/21355)).
+- **Runtime image speed-ups** by [@clydebarrow](https://github.com/clydebarrow) - JPEG decoding writes opaque RGB565 frames straight into the buffer, uses integer maths for grayscale and resize, and decodes at the smallest JPEGDEC scale that fits ([#19454](https://github.com/esphome/esphome/pull/19454), [#21386](https://github.com/esphome/esphome/pull/21386), [#21387](https://github.com/esphome/esphome/pull/21387), [#21390](https://github.com/esphome/esphome/pull/21390), [#21393](https://github.com/esphome/esphome/pull/21393), [#21784](https://github.com/esphome/esphome/pull/21784)).
+- **ESP32 RMT seat check** - ESPHome checks at compile time that every `esp32_rmt_led_strip`, `remote_transmitter` and `remote_receiver` fits the chip's RMT channels together, so a second strip no longer silently fails to start at boot ([#22172](https://github.com/esphome/esphome/pull/22172)).
+
+## Codebase correctness
+
+Alongside the memory and codegen work, this cycle closes several real correctness gaps.
+
+- **Deferring actions rejected where they would read freed memory** - [`emontx`](https://github.com/esphome/esphome/pull/20516), [`mqtt` `on_json_message`](https://github.com/esphome/esphome/pull/20538) and [`haier` `on_status_message`](https://github.com/esphome/esphome/pull/20539) now reject automations that contain `delay`, `wait_until` or `script.wait`. The received frame is only valid while the automation runs, so a deferring action used to read freed memory at runtime; configs now fail validation with a message pointing at the fix.
+- **`esp32_hosted` co-processor update** - updates size their OTA chunks from the host's per-RPC limit, so the previous fixed 1500-byte chunk no longer fails every co-processor update ([#21394](https://github.com/esphome/esphome/pull/21394)).
+- **[`libretiny`](/components/libretiny/) crash reports** - BK7238, BK7231N, LN882H and RTL8710B report the previous boot's crash on reboot, following the ESP32 and ESP8266 crash handlers ([#21007](https://github.com/esphome/esphome/pull/21007), [#21012](https://github.com/esphome/esphome/pull/21012), [#21648](https://github.com/esphome/esphome/pull/21648), [#21728](https://github.com/esphome/esphome/pull/21728), [#21752](https://github.com/esphome/esphome/pull/21752)).
+- **Remote protocol frame boundaries** - NEC `command_repeats` now sends real NEC repeat frames, MagiQuest reads the full 56 bit frame and checks its checksum, and 56 bit Panasonic frames are decoded in full ([#17663](https://github.com/esphome/esphome/pull/17663), [#10622](https://github.com/esphome/esphome/pull/10622), [#20260](https://github.com/esphome/esphome/pull/20260)).
+- **Web server numbers without state** - a number that has not published a state yet is reported as unknown instead of `0`, so the web UI matches what Home Assistant already shows ([#20973](https://github.com/esphome/esphome/pull/20973)).
+- **`web_server` internal entities** - the REST endpoints match the page and the API: an internal entity is no longer reachable by a guessed URL unless `include_internal: true` is set ([#20883](https://github.com/esphome/esphome/pull/20883)).
+{/* FEATURE_HIGHLIGHTS_END */}
+
+## Thank you, contributors
+
+{/* CONTRIBUTORS_START */}
+This release includes 1357 pull requests from over 230 contributors. A huge thank you to everyone who made 2026.11.0 possible:
+
+- [@bdraco](https://github.com/bdraco) - 697 PRs including the self-contained AP mode web interface served as a captive portal, OTA key rotation and a UDP fallback for lossy links, crash reports on five more LibreTiny chips, a boot log buffer replayed over the API, moving strings and lookup tables across hundreds of components into flash, numeric scheduler ids, new shared bus, codegen and Apply entity helpers rolled out across the component tree, and a large expansion of codegen, unit and integration test coverage
+- [@swoboda1337](https://github.com/swoboda1337) - 88 PRs including the clang-tidy 23 sweep, ESP-IDF 6 preparation, native Windows build support, and a broad fill-in of component test coverage
+- [@clydebarrow](https://github.com/clydebarrow) - 52 PRs including the new `runtime_image` streaming JPEG decoder, the LVGL 9.6 migration with the color picker and menu widgets, the new `packet_interface` component and XXTEA/HDLC layers, and merging simple actions into inline control flow
+- [@jesserockz](https://github.com/jesserockz) - 21 PRs including the component `DOMAIN` constants rollout, new `mipi_spi` and `epaper_spi` panel models, and the move to `gh actions-lock` for workflow pinning
+- [@FredM67](https://github.com/FredM67) - 21 PRs including the deferring-action validators and their adoption across `modbus_client`, `mqtt`, `haier` and `nextion`, and the `emontx` reboot lock and firmware-version read
+- [@remcom](https://github.com/remcom) - 17 PRs including the new `tmc2209` stepper driver, the `fusb302b` USB PD sink, the DFRobot SEN0609/SEN0610 radar and `i2s_audio` full duplex
+- [@Bascht74](https://github.com/Bascht74) - 14 PRs including the new `modbus_monitor` component, KeeLoq suffix bits and the Jarolift TDEF group frame, and the `TcpClientLink` idle timeout
+- [@luar123](https://github.com/luar123) - 12 PRs including zigbee sleepy-end-device support on ESP32, the zigbee report action, and GPIO hold during (deep) sleep
+- [@albert-canfield](https://github.com/albert-canfield) - 12 PRs including power-loss handling and weekday conversion fixes across `pcf8563`, `pcf85063` and `bm8563`, dry-only thermostat support and better compile-error line numbers for lambdas
+- [@kahrendt](https://github.com/kahrendt) - 12 PRs including the new `sendspin` source role that streams a microphone to the server, the `AudioCapture` microphone buffer rework and the original-ESP32 i2s playback fixes
+- [@rwrozelle](https://github.com/rwrozelle) - 10 PRs including the new `friedrich` climate IR component, the `power_management` domain with `esp32_power_management`, UDP IPv6 unicast and multicast, and the Thread-sized UDP OTA
+- [@tomaszduda23](https://github.com/tomaszduda23) - 10 PRs including CDC-UART on nRF52, the `zephyr_coredump` flash store and LVGL build fixes on nRF52
+- [@wolph](https://github.com/wolph) - 10 PRs including the new Hi-Link LD6004 radar across every platform and the shared `LD600X` base used by ld6002b
+- [@exciton](https://github.com/exciton) - 10 PRs including SSD1681 differential partial refresh and other `epaper_spi` performance work, and the new `cw2017` battery fuel gauge
+- [@bharvey88](https://github.com/bharvey88) - 9 PRs including the `sen6x` CO2, temperature compensation, PM number concentration, actions and status sensors, and user-defined API action variables with defaults
+- [@techdregs](https://github.com/techdregs) - 9 PRs including the new `rx8111` real-time clock with alarms, wake-up timer and event timestamps, and `tmp102` hardware configuration and alert entities
+- [@fallenmi](https://github.com/fallenmi) - 9 PRs including correctness fixes across the HLK radar family (`ld2410`, `ld2410s`, `ld2420`, `ld2450`, `ld2460`), `tfluna` and `dfrobot_sen0395`
+- [@huangkongsheng](https://github.com/huangkongsheng) - 8 PRs including a config-validator sweep across cron ranges, `cv.entity_id`, `cv.dimensions`, `cv.percentage_int` and UTF-8 SSID length
+- [@MindFreeze](https://github.com/MindFreeze) - 7 PRs including the new `vnc` client component with Hextile encoding, password authentication and touchscreen input forwarding
+- [@kbx81](https://github.com/kbx81) - 7 PRs including `esp-idf-sbom` manifest emission with `esphome.project.sbom` supplier info, and interface-change notifications for network listeners
+- [@latonita](https://github.com/latonita) - 6 PRs including the new `bh1745` colour sensor, `lis2dw12` accelerometer, `husb238` USB PD controller and the three-part `as734x` spectral sensor
+- [@Rapsssito](https://github.com/Rapsssito) - 5 PRs including MQTT session persistence and expanded TLS options, the new `bq25186` charger and RTC memory for `globals`
+- [@j9brown](https://github.com/j9brown) - 5 PRs including the new `i2s_clockless_led_strip` DMA driver and the `ESPColorView` / addressable-light refactor
+- [@mrtoy-me](https://github.com/mrtoy-me) - 5 PRs including the `tas58xx` fault, activate and mixer-mode options and support for multiple audio DACs on one speaker
+- [@oarcher](https://github.com/oarcher) - 4 PRs including the new `modem` PPPoS cellular networking component with signal sensors and the WiFi-to-ethernet WISP bridge
+- [@ab-tools](https://github.com/ab-tools) - 4 PRs including the new `usb_audio` UAC host support and USB host FIFO sizing on ESP32-S2/S3
+- [@gledian](https://github.com/gledian) - 4 PRs building the new `ecocomfort2` component for Fantini Cosmi VMC units over BLE
+- [@n-IA-hane](https://github.com/n-IA-hane) - 4 PRs including a configurable TTS playback start timeout and the `micro_wake_word` inference core selection
+- [@nliaudat](https://github.com/nliaudat) - 4 PRs including the new `mics_5524` gas sensor, WiFi `ap_mode: ALWAYS_ON` and `esp32_camera` digital zoom
+- [@epicRE](https://github.com/epicRE) - 4 PRs including the new `delta_wallbox` AC wallbox component with current-set support
+- [@dcb](https://github.com/dcb) - 4 PRs including `ld2450` polygon-zone flash writes, lost-radar-link detection and multicast-bit MAC reporting
+- [@fornellas](https://github.com/fornellas) - 3 PRs including on-device `ld2450` polygon zones with per-target position text sensor and extra `cse7761` sensors
+- [@RaHehl](https://github.com/RaHehl) - 3 PRs including `esp32_camera` single-image `capture_delay` and triggers, and the hoermann_hcp actuator-error binary sensor
+- [@puddly](https://github.com/puddly) - 3 PRs including the new `ezsp_proxy_tap` SiLabs EZSP auto-ACK bridge and `usb_uart` modem pin control with hardware flow control
+- [@porelli](https://github.com/porelli) - 3 PRs including switch `initial_state` with flash or RTC storage, per-entity preference storage selection and LibreTiny RTC preferences on BK7231/BK7238
+- [@KoenBreeman](https://github.com/KoenBreeman) - 2 PRs: the new Seeed Studio Grove multi-channel relay and M5Stack 4-relay switches
+- [@NovakIrs](https://github.com/NovakIrs) - 2 PRs building the new HLK-LD2410S presence radar
+- [@ilikecake](https://github.com/ilikecake) - 2 PRs: the new `ht16k33_char` character display and the pca9554 device-option expansion
+- [@egormanga](https://github.com/egormanga) - 2 PRs: the new `homeassistant` light platform and WiFi Easy Connect (DPP) provisioning
+- [@zigboi](https://github.com/zigboi) - 2 PRs: Mitsubishi multi-vane control and fahrenheit_compatibility mode
+- [@felipecrs](https://github.com/felipecrs) - 2 PRs: WiFi access-point WISP mode and cover-toggle support in the native API
+- [@tuct](https://github.com/tuct) - 2 PRs: the new `filter_lifetime` component and `pmsx003` Luftmy LD15 support
+- [@CircuitSetup](https://github.com/CircuitSetup) - 2 PRs: configurable `atm90e32` thresholds and gain-calibration write verification
+- [@mvoss96](https://github.com/mvoss96) - 2 PRs: addressable LED strip power estimation / current limiting and `cse7766` low-load power behaviour
+- [@bughaver](https://github.com/bughaver) - 2 PRs: `heatpumpir` Eco and Boost presets and the ZMP IR receiver
+- [@PolarGoose](https://github.com/PolarGoose) - 2 PRs: `dlms_meter` Landis+Gyr E450 HDLC Cyprus support and a parser refresh
+- [@Ardumine](https://github.com/Ardumine) - 2 PRs: the new `zephyr_mcumgr` SMP UDP OTA transport for nRF52 and Zephyr/nRF52 UDP IPv6
+- [@Zebble](https://github.com/Zebble) - 2 PRs: the new `lis3dh` accelerometer and `tca8418` keypad components
+- [@david-collett](https://github.com/david-collett) - 2 PRs: `esp32_ble_server` secure connection support
+- [@lboue](https://github.com/lboue) - 2 PRs: the new M5Unit-BLDC and ICM-20689 components
+- [@aalaei](https://github.com/aalaei) - 2 PRs: nRF52 hardware SPI support and the new `veml6040` RGBW colour sensor
+- [@eoleedi](https://github.com/eoleedi) - 2 PRs: `hitachi_ac344` quiet, vertical swing and mildew-proof modes
+- [@juriyivanov](https://github.com/juriyivanov) - 2 PRs: gree IR receiver support and YX1FF/YAC frame fixes
+- [@DennisGaida](https://github.com/DennisGaida) - 2 PRs: `bmi270` BMM150 magnetometer aux support and the new `lp5562` LED driver output
+- [@ikruglov](https://github.com/ikruglov) - 2 PRs: `bl0939` internal temperature sensor and `pcf8574` output preservation across MCU reboots
+- [@Gunni](https://github.com/Gunni) - 2 PRs: clearer `yaml_util` package errors and cached `esp32_hosted` firmware downloads
+- [@candrews](https://github.com/candrews) - 2 PRs: new `epaper_spi` panels (XSRUPB-7.5in-bwr and Good Display GDEY029Z95)
+- [@bboe](https://github.com/bboe) - 2 PRs: media_player constant bitrate and shared `CONF_BITRATE`
+- [@guillempages](https://github.com/guillempages) - 2 PRs: image RGB111 format and a Pillow deprecation fix
+- [@piitaya](https://github.com/piitaya) - 2 PRs: cover stop-tilt in the core and MQTT
+- [@Mat931](https://github.com/Mat931) - 2 PRs: the `systa_bus` text_sensor and an `esp32_camera` compile warning
+- [@mbrudka](https://github.com/mbrudka) - 2 PRs: `micro_wake_word` internal RAM placement and configurable capture buffer duration
+- [@jeroen85](https://github.com/jeroen85) - 2 PRs: four-decimal fast value formatting and a bigger `web_server_idf` task stack
+- [@sebo-b](https://github.com/sebo-b) - 2 PRs: `web_server` internal-entity URL handling and the new `ln882x_spi_led_strip`
+- [@gongloo](https://github.com/gongloo) - 2 PRs: `mipi_rgb` direct-to-PSRAM rotated blitting and HA state-subscription vector reservation
+- [@labodj](https://github.com/labodj) - 2 PRs: vbus P1 telegram checksum handling and shared `CONF_VALUE_TYPE`
+- [@andytrofimov](https://github.com/andytrofimov) - 2 PRs: audio HTTP partial-read release and reduced speaker announcement buffering
+- [@Kubuxu](https://github.com/Kubuxu) - 2 PRs: `ledc` hardware duty dithering and a PWM duty-scaling fix
+- [@javitonino](https://github.com/javitonino) - 2 PRs: voice_assistant microphone stop handling at STT_END and before speech
+- [@randybb](https://github.com/randybb) - 2 PRs: OTA and voice_assistant builds with IPv4 disabled
+- [@GiorgioAresu](https://github.com/GiorgioAresu) - 2 PRs: the new `mipi_rgb` GC9503V and ZX3D95CE01S-TR-4848 panel support
+- [@adamsthws](https://github.com/adamsthws) - 2 PRs: an api responding-action array-arg compile fix and `cse7766` verbose power-factor logging
+- [@crnjan](https://github.com/crnjan) - 2 PRs: `mitsubishi_cn105` horizontal vane direction control
+- [@chunckus-aurelius](https://github.com/chunckus-aurelius) - 2 PRs: shared tap and double-tap support via the new `motion` component
+- [@iskyguy](https://github.com/iskyguy) - 2 PRs: the `sht4x` serial-number text sensor with a longer response wait
+
+Also thank you to [@Petapton](https://github.com/Petapton), [@Procsiab](https://github.com/Procsiab), [@mick96](https://github.com/mick96), [@kokx](https://github.com/kokx), [@jorofi](https://github.com/jorofi), [@CzBiX](https://github.com/CzBiX), [@JosVanEijndhoven](https://github.com/JosVanEijndhoven), [@peter-valkov](https://github.com/peter-valkov), [@jzucker2](https://github.com/jzucker2), [@GilDev](https://github.com/GilDev), [@DAVe3283](https://github.com/DAVe3283), [@tchilov](https://github.com/tchilov), [@ificator](https://github.com/ificator), [@patagonaa](https://github.com/patagonaa), [@marshn](https://github.com/marshn), [@iyesin](https://github.com/iyesin), [@endemics](https://github.com/endemics), [@AchilleGR](https://github.com/AchilleGR), [@amateescu](https://github.com/amateescu), [@JiriPrchal](https://github.com/JiriPrchal), [@philpem](https://github.com/philpem), [@B48D81EFCC](https://github.com/B48D81EFCC), [@will-tm](https://github.com/will-tm), [@tjhorner](https://github.com/tjhorner), [@mrene](https://github.com/mrene), [@wiiaam](https://github.com/wiiaam), [@minorOffense](https://github.com/minorOffense), [@GioMez](https://github.com/GioMez), [@t2bottom](https://github.com/t2bottom), [@fonix232](https://github.com/fonix232), [@AnilDaoud](https://github.com/AnilDaoud), [@pl4nkton](https://github.com/pl4nkton), [@joshuaboniface](https://github.com/joshuaboniface), [@nullable-eth](https://github.com/nullable-eth), [@JohnMcLear](https://github.com/JohnMcLear), [@ankur-paan](https://github.com/ankur-paan), [@FrederikBolding](https://github.com/FrederikBolding), [@paveldn](https://github.com/paveldn), [@rwalker777](https://github.com/rwalker777), [@cociweb](https://github.com/cociweb), [@dmik](https://github.com/dmik), [@e28eta](https://github.com/e28eta), [@RobertH1993](https://github.com/RobertH1993), [@emilioaray-dev](https://github.com/emilioaray-dev), [@functionpointer](https://github.com/functionpointer), [@naKruul](https://github.com/naKruul), [@mikesmitty](https://github.com/mikesmitty), [@Bofr5555](https://github.com/Bofr5555), [@mkhrulov](https://github.com/mkhrulov), [@arpena](https://github.com/arpena), [@SebiGo](https://github.com/SebiGo), [@MatiasFernandez](https://github.com/MatiasFernandez), [@RuedigerMueller](https://github.com/RuedigerMueller), [@slimcdk](https://github.com/slimcdk), [@Siddharthsinghkumar](https://github.com/Siddharthsinghkumar), [@martinsah](https://github.com/martinsah), [@rggammon](https://github.com/rggammon), [@limpkin](https://github.com/limpkin), [@happydasch](https://github.com/happydasch), [@bootc](https://github.com/bootc), [@sourabhjaiswal](https://github.com/sourabhjaiswal), [@lerhum](https://github.com/lerhum), [@longerCZE](https://github.com/longerCZE), [@opcod3](https://github.com/opcod3), [@AndreKR](https://github.com/AndreKR), [@max246](https://github.com/max246), [@profplump](https://github.com/profplump), [@Fexiven](https://github.com/Fexiven), [@jrvd007](https://github.com/jrvd007), [@pputerla](https://github.com/pputerla), [@fredkotze](https://github.com/fredkotze), [@Aptimex](https://github.com/Aptimex), [@ptr727](https://github.com/ptr727), [@patrickod](https://github.com/patrickod), [@damib](https://github.com/damib), [@polyfloyd](https://github.com/polyfloyd), [@bogdanr](https://github.com/bogdanr), [@bkbartk](https://github.com/bkbartk), [@ryansch](https://github.com/ryansch), [@c0nsumer](https://github.com/c0nsumer), [@MayorBug](https://github.com/MayorBug), [@andreuSignes](https://github.com/andreuSignes), [@mfishma](https://github.com/mfishma), [@mkucharek](https://github.com/mkucharek), [@backcountrymountains](https://github.com/backcountrymountains), [@linkedupbits](https://github.com/linkedupbits), [@ljungqvist](https://github.com/ljungqvist), [@matt123p](https://github.com/matt123p), [@danepowell](https://github.com/danepowell), [@jesusvallejo](https://github.com/jesusvallejo), [@adminy](https://github.com/adminy), [@jlmeredith](https://github.com/jlmeredith), [@PeterLinuxOSS](https://github.com/PeterLinuxOSS), [@grischard](https://github.com/grischard), [@ademuri](https://github.com/ademuri), [@Chorty](https://github.com/Chorty), [@pleasantone](https://github.com/pleasantone), [@willumpie82](https://github.com/willumpie82), [@jcianci12](https://github.com/jcianci12), [@Marvinthebored](https://github.com/Marvinthebored), [@zerafachris](https://github.com/zerafachris), [@cosmicDustOfLightLength](https://github.com/cosmicDustOfLightLength), [@ipopov](https://github.com/ipopov), [@rupayon123](https://github.com/rupayon123), [@dbuezas](https://github.com/dbuezas), [@toups](https://github.com/toups), [@CReimer](https://github.com/CReimer), [@Firat17aze](https://github.com/Firat17aze), [@fauxpark](https://github.com/fauxpark), [@omersiar](https://github.com/omersiar), [@TheZoc](https://github.com/TheZoc), [@k7hpn](https://github.com/k7hpn), [@jaaviercr](https://github.com/jaaviercr), [@ajfriesen](https://github.com/ajfriesen), [@steamEngineer](https://github.com/steamEngineer), [@KD5RYN](https://github.com/KD5RYN), [@jhenkens](https://github.com/jhenkens), [@TheLexus](https://github.com/TheLexus), [@DavidWAbrahams](https://github.com/DavidWAbrahams), [@p1ngb4ck](https://github.com/p1ngb4ck), [@tzabbi](https://github.com/tzabbi), [@HugoPeters1024](https://github.com/HugoPeters1024), [@r3wretrhy](https://github.com/r3wretrhy), [@nagisa](https://github.com/nagisa), [@dhoeben](https://github.com/dhoeben), [@daeho-ro](https://github.com/daeho-ro), [@miloit](https://github.com/miloit), [@elpollodiablo](https://github.com/elpollodiablo), [@Cat-Ion](https://github.com/Cat-Ion), [@tommat01](https://github.com/tommat01), [@thomasfw](https://github.com/thomasfw), [@bbbert](https://github.com/bbbert), [@Komzpa](https://github.com/Komzpa), [@ishai-levy](https://github.com/ishai-levy), [@magnusoverli](https://github.com/magnusoverli), [@samsonovss](https://github.com/samsonovss), [@bhuveshm29](https://github.com/bhuveshm29), [@christophmertins](https://github.com/christophmertins), [@cpruijsen](https://github.com/cpruijsen), [@glmnet](https://github.com/glmnet), [@manuelm](https://github.com/manuelm), [@FuNK3Y](https://github.com/FuNK3Y), [@Korkuttum](https://github.com/Korkuttum), [@JoHoenk](https://github.com/JoHoenk), [@Duckle29](https://github.com/Duckle29), [@kboone](https://github.com/kboone), [@AdamVig](https://github.com/AdamVig), [@chbgdn](https://github.com/chbgdn), [@heythisisnate](https://github.com/heythisisnate), [@Doridian](https://github.com/Doridian), [@lobo67](https://github.com/lobo67), [@b84330808](https://github.com/b84330808), [@rusitschka](https://github.com/rusitschka), [@arthurkomatsu](https://github.com/arthurkomatsu), [@gcormier](https://github.com/gcormier), [@guiguid](https://github.com/guiguid), [@abmantis](https://github.com/abmantis), [@koszoaron](https://github.com/koszoaron), [@syssi](https://github.com/syssi), [@kVinsom](https://github.com/kVinsom), [@francescopace](https://github.com/francescopace), [@zeroflow](https://github.com/zeroflow) for their contributions, and to everyone who reported issues, tested pre-releases, and helped in the community.
+{/* CONTRIBUTORS_END */}
+
+## Breaking changes
+
+{/* BREAKING_CHANGES_USERS_START */}
+### Component changes
+
+- **MagiQuest**: The decoder now reads the full 56-bit frame and checks its checksum, so `x.wand_id` and `x.magnitude`
+  in `on_magiquest` lambdas change. Old binary sensor matches still work; run the dumper again for lambda values.
+  [#10622](https://github.com/esphome/esphome/pull/10622)
+- **NEC remote**: `command_repeats` now sends real NEC repeat frames and is clamped to 1 to 10. Received
+  `x.command_repeats` is always 1; detect a held button from the frame cadence.
+  [#17663](https://github.com/esphome/esphome/pull/17663)
+- **Panasonic remote**: Frames of 56 bits or more now decode as `nbits: 56` with the new `address_2` byte. Update
+  configs captured from 56-bit remotes with a fresh dump.
+  [#20260](https://github.com/esphome/esphome/pull/20260)
+- **CAN bus**: A constant `canbus.send` payload longer than 8 bytes now fails validation instead of being silently
+  truncated. Fix also stops sending the wrong length for lambda payloads of 256 bytes or more.
+  [#20309](https://github.com/esphome/esphome/pull/20309)
+- **Ethernet**: Removed the deprecated `clk_mode` option. Use the `clk:` block with `mode:` and `pin:`.
+  [#20384](https://github.com/esphome/esphome/pull/20384)
+- **DLMS meter**: Removed the deprecated `provider` option. Most configs can drop the key; `provider: netznoe` users
+  add the two `custom_patterns` it used to inject.
+  [#20385](https://github.com/esphome/esphome/pull/20385)
+- **DLMS meter**: Removed the deprecated predefined sensor and text_sensor keys such as `voltage_l1` and `timestamp`.
+  Each value is now its own entity with `obis_code`.
+  [#20386](https://github.com/esphome/esphome/pull/20386)
+- **LVGL**: Removed the deprecated number `update_on_release` option. Use `trigger: on_release`.
+  [#20387](https://github.com/esphome/esphome/pull/20387)
+- **Nextion**: Removed the deprecated `dump_device_info` option. Device info is always logged; delete the key.
+  [#20388](https://github.com/esphome/esphome/pull/20388)
+- **QSPI AMOLED**: Removed the legacy renamed component stub. Use `platform: qspi_dbi`.
+  [#20396](https://github.com/esphome/esphome/pull/20396)
+- **emonTx**: `on_json` and `on_data` reject deferring actions (`delay`, `wait_until`, `script.wait`) at validation.
+  Copy the values you need into globals first, then defer from a separate script. `data` and `raw_json` are now
+  `StringRef` instead of `std::string`.
+  [#20516](https://github.com/esphome/esphome/pull/20516)
+- **MQTT**: `on_json_message` rejects deferring actions at validation. Copy the values you need into globals first,
+  then defer from a separate script.
+  [#20538](https://github.com/esphome/esphome/pull/20538)
+- **Haier**: `on_status_message` rejects deferring actions at validation. Copy the values you need into globals
+  first, then defer from a separate script.
+  [#20539](https://github.com/esphome/esphome/pull/20539)
+- **Web server**: REST endpoints no longer match `internal` entities by URL unless `include_internal: true` is set.
+  This matches the native API and MQTT behaviour.
+  [#20883](https://github.com/esphome/esphome/pull/20883)
+- **Web server**: A number entity that has not published a state yet is now reported as unknown instead of `0`. In
+  the REST and event-stream JSON it is sent as `"state":"NA","value":"NaN"`.
+  [#20973](https://github.com/esphome/esphome/pull/20973)
+- **E-paper SPI**: Refactored `color_bwr` handling; WeAct 3C, Waveshare B, Waveshare BWR and Inkplate 2 panels now
+  map colors to the nearest of black, white or red in RGB space. Waveshare 7.5" V2 BWR and WeAct 3C panels now
+  report `DISPLAY_TYPE_COLOR` instead of `BINARY`, so the test card and `get_display_type()` lambdas change.
+  [#19654](https://github.com/esphome/esphome/pull/19654)
+- **HTTP request**: `http_request.get`, `post` and `send` actions are now asynchronous and run from the component
+  loop. Scripts containing these actions keep running until the response arrives; set `mode: queued` or
+  `mode: parallel` where repeated runs must not be skipped. New `max_concurrent_requests` option (1 to 4) allows more
+  than one request in flight.
+  [#21486](https://github.com/esphome/esphome/pull/21486)
+- **API sub-devices**: `relation:` is now required on every entry under `esphome: devices:`. Add `relation: via` to
+  keep today's behaviour for a physical device reached through this node, or `relation: child` for a logical part of
+  this node.
+  [#21232](https://github.com/esphome/esphome/pull/21232)
+
+### Platform changes
+
+- **Network**: Added `network: enable_ipv4` (default `true`). An `openthread` config on `esp32` without anything
+  else requiring IPv4 now defaults IPv4 off; add `network: enable_ipv4: true` to opt back in. `enable_ipv6` now
+  resolves automatically when a component requires it, so `openthread` no longer needs `enable_ipv6: true`.
+  [#14526](https://github.com/esphome/esphome/pull/14526)
+- **OpenThread**: Added Border Router support on ESP32. Requires ESP-IDF 5.5.5 or newer, for plain Thread devices as
+  well as border routers. Remove a pinned `esp32.framework.version` or raise it to 5.5.5.
+  [#18104](https://github.com/esphome/esphome/pull/18104)
+- **esp32_hosted**: Moved to `esp_hosted` 3.0.10. Requires ESP-IDF 5.5 or newer. A 1-bit SDIO setup must now set
+  `d1_pin` (the pin wired to DAT1). `active_high: false` is no longer accepted; `active_high: true` works with a
+  deprecation warning.
+  [#21394](https://github.com/esphome/esphome/pull/21394)
+- **ESP32**: Minimum ESP-IDF version is now 5.1. A build pinned to 5.0.x fails validation.
+  [#21398](https://github.com/esphome/esphome/pull/21398)
+- **LibreTiny**: Bumped to 1.14.0 with BK7231N and BK7231T built on Beken BDK 3.0.78. Fixes STA+AP captive portal
+  credential saving, OTA watchdog resets and Wi-Fi-less reboot loops. LN-CB3S V1.0 configs that use the `D12` alias
+  now drive PA10 instead of PA11; the old pin is `D13` or `PA11`. ADC readings on BK7231N and BK7231T are now
+  correct (they previously read about half the true voltage).
+  [#21531](https://github.com/esphome/esphome/pull/21531)
+- **ESP32 RMT**: ESPHome now checks at validation that `esp32_rmt_led_strip`, `remote_transmitter` and
+  `remote_receiver` fit the chip's RMT channels together. Configs with too many components, with more than one
+  `use_dma` in a direction, or with an invalid `rmt_symbols` value now fail validation instead of failing at boot.
+  [#22172](https://github.com/esphome/esphome/pull/22172)
+{/* BREAKING_CHANGES_USERS_END */}
+
+### Undocumented API changes
+
+{/* UNDOCUMENTED_API_CHANGES_START */}
+Many components reorganized internal C++ APIs this release. These changes are not covered by the formal breaking
+change policy, but lambda users and external component maintainers may need to adjust. Grouped by theme:
+
+### Entity names and strings moved to flash
+
+- **EntityBase names**: `EntityBase::name_` is now a `ProgmemStringRef` on ESP8266. `get_name()` is deprecated and
+  returns a `const StringRef &` with a RAM copy made on first use (removal in 2027.5.0). Use `get_log_name()` for log
+  lines and `get_name_to(buffer)` or `name_equals(other)` where you need the value.
+  ```cpp
+  // Before
+  ESP_LOGD(TAG, "'%s' updated", this->name_.c_str());
+
+  // After
+  ESP_LOGD(TAG, "'%s' updated", LOG_STR_ARG(this->get_log_name()));
+  ```
+  [#20423](https://github.com/esphome/esphome/pull/20423)
+  [#20615](https://github.com/esphome/esphome/pull/20615)
+
+- **API action strings**: The `(progmem)` proto option now also applies to string fields.
+  `HomeassistantActionRequest.service` and `HomeassistantServiceMap.key`/`value` carry `ProgmemStringRef` values.
+  Code that fills a `HomeassistantActionRequest` assigns `ProgmemStringRef`, for example
+  `resp.service = ProgmemStringRef(StringRef(name));`.
+  [#20425](https://github.com/esphome/esphome/pull/20425)
+
+### Component names and payloads kept in fixed buffers or StringRef
+
+- **BedJet**: `BedJetHub::get_name()` now returns `const char *` from a fixed 24-byte buffer instead of
+  `std::string`. Pass it directly to `%s` log arguments.
+  [#21204](https://github.com/esphome/esphome/pull/21204)
+
+- **NFC binary sensor**: `set_ndef_match_string()` / `set_tag_name()` now take `const char *`. `match_string_` is
+  stored as a `StringRef`.
+  [#21208](https://github.com/esphome/esphome/pull/21208)
+
+- **key_collector**: The five key lists (`start_keys`, `end_keys`, `back_keys`, `clear_keys`, `allowed_keys`) are
+  stored as `StringRef` views of the YAML literals; the setters take `const char *`.
+  [#21210](https://github.com/esphome/esphome/pull/21210)
+
+- **graph**: `GraphTrace::get_name()` now returns `StringRef` instead of `std::string`. Lambdas comparing with `==`,
+  calling `.c_str()`, or assigning to `std::string` keep working.
+  [#21211](https://github.com/esphome/esphome/pull/21211)
+
+### Flash tables for internal lookup strings
+
+- **Haier**: The hOn alarm message table (`HON_ALARM_MESSAGES`, `HON_ALARM_COUNT`) is removed from `hon_packet.h`
+  and kept as a `PROGMEM_STRING_TABLE`. On ESP8266, the `message` passed to `on_alarm_start` / `on_alarm_end` is a
+  static buffer overwritten by the next alarm change; use `code` instead if an automation waits.
+  [#20641](https://github.com/esphome/esphome/pull/20641)
+
+- **Nextion**: `get_queue_type_string()` is no longer virtual and returns `const LogString *` instead of
+  `const char *`. Wrap with `LOG_STR_ARG()` to pass it to `%s` log arguments.
+  [#20658](https://github.com/esphome/esphome/pull/20658)
+
+- **NFC URI prefixes**: `PAYLOAD_IDENTIFIERS` and `PAYLOAD_IDENTIFIERS_COUNT` are removed from `ndef_record_uri.h`.
+  The table is now a `PROGMEM_STRING_TABLE` in `ndef_record_uri.cpp`.
+  [#20709](https://github.com/esphome/esphome/pull/20709)
+
+### Hub forwarding entities (Apply pattern)
+
+Many hub components replaced their per-entity C++ classes with codegen-only `Apply*` entities. The hub gains a
+public method that takes the state, index or value. External code that inherited from the removed classes should
+switch to `ApplyButton` / `ApplyNumber` / `ApplySelect` / `ApplySwitch` / `ApplyFloatOutput` / `ApplyBinaryOutput`.
+The generated entity's auto-generated id changes; entity names and object ids do not.
+
+- **Hub buttons**: ld2410, ld2412, ld2420, ld2450, seeed_mr24hpc1, seeed_mr60fda2, haier, hoermann_hcp,
+  dfrobot_sen0609, bq25186, espectre, tfluna.
+  [#20964](https://github.com/esphome/esphome/pull/20964)
+
+- **Hub numbers**: ld2410, ld2412, ld2450, seeed_mr24hpc1, dfrobot_sen0609. `set_gate_threshold` on ld2410 now takes
+  the number entity itself.
+  [#20965](https://github.com/esphome/esphome/pull/20965)
+
+- **Hub selects**: ld2410, ld2412, ld2420, ld2450, seeed_mr24hpc1, seeed_mr60fda2, haier, es8388, espectre.
+  [#20966](https://github.com/esphome/esphome/pull/20966)
+
+- **Hub switches**: ld2410, ld2412, ld2450, seeed_mr24hpc1, at581x.
+  [#20967](https://github.com/esphome/esphome/pull/20967)
+
+- **Hub channel outputs**: tlc59208f, dac7678, gp8403, my9231, sm2135, sm2235, sm2335, bp1658cj, lp5562, mcp4728,
+  pca9685, sm16716, tlc5947, tlc5971, tm1638, bh1745, emc2101, waveshare_io_ch32v003. The hubs gain
+  `write_channel(channel, state)` instead of per-channel classes.
+  [#21257](https://github.com/esphome/esphome/pull/21257)
+
+- **pipsolar**: `PipsolarSwitch` class removed; switches use Apply entities. `Pipsolar::queue_command` now takes
+  `const char *` (a `std::string` overload remains for lambdas).
+  [#21659](https://github.com/esphome/esphome/pull/21659)
+
+- **sendspin**: `SendspinEnabledSwitch` class removed.
+  [#21673](https://github.com/esphome/esphome/pull/21673)
+
+- **bq25186**: `BQ25186PgGpoSwitch` class removed; the generated code uses `publish="on_success"`.
+  [#21675](https://github.com/esphome/esphome/pull/21675)
+
+- **pcm5122**: `PCM5122PowerSwitch` class removed; the generated body calls `set_standby(state)` or
+  `set_powerdown(state)` directly.
+  [#21677](https://github.com/esphome/esphome/pull/21677)
+
+- **mitsubishi_cn105**: `MitsubishiCN105VerticalVaneDirectionSelect` replaced with `select::ApplySelect`. Both vane
+  direction selects now live in one `select:` entry per hub. `WideVaneMode` enumerators renamed from `FAR_LEFT` to
+  `POSITION_1` etc.
+  [#21863](https://github.com/esphome/esphome/pull/21863)
+
+### Copy / follow entity platforms
+
+- **copy, switch, number, text**: `copy::CopySensor`, `copy::CopyTextSensor`, `switch_::SwitchBinarySensor`,
+  `number::NumberSensor` and `text::TextTextSensor` are removed. The entities are now plain `sensor::Sensor`,
+  `binary_sensor::BinarySensor` and `text_sensor::TextSensor` that follow a source through a callback registered
+  before `setup()`. `setup_priority` is no longer accepted on these entities.
+  [#21610](https://github.com/esphome/esphome/pull/21610)
+  [#21612](https://github.com/esphome/esphome/pull/21612)
+
+### Remote transmitter actions
+
+- **Per-protocol action classes removed**: `NECAction`, `SonyAction`, `PanasonicAction`, `KeeloqAction`,
+  `MagiQuestAction`, `HaierAction`, `MideaAction`, `MirageAction`, `AEHAAction`, `ABBWelcomeAction`, `ProntoAction`,
+  `RC6Action` and 20+ others. Codegen now produces stateless functions through `register_protocol_action`.
+  External protocols still work through the unchanged Python `register_action`.
+  [#20549](https://github.com/esphome/esphome/pull/20549)
+  [#20564](https://github.com/esphome/esphome/pull/20564)
+  [#20568](https://github.com/esphome/esphome/pull/20568)
+
+- **Byte payload actions**: `uart.write`, `udp.write`, `sx127x`, `sx126x` and `cc1101` send-packet actions use
+  `ApplyBytes` instead of per-component `TEMPLATABLE_BYTES` action classes. `SendPacketAction`, `UDPWriteAction`
+  and `UARTWriteAction` are removed.
+  [#21263](https://github.com/esphome/esphome/pull/21263)
+
+- **UART switch and button payloads**: Payload setters now take a pointer and a length. The vector and initializer
+  list overloads used by codegen are removed.
+  [#20082](https://github.com/esphome/esphome/pull/20082)
+
+### Triggers built from callbacks
+
+- **display `on_page_change`**: `DisplayOnPageChangeTrigger` is removed and `Display::add_on_page_change_trigger`
+  no longer exists. The storage is compiled out when no `on_page_change` is configured. The generated
+  `trigger_id` key is gone.
+  [#20456](https://github.com/esphome/esphome/pull/20456)
+
+- **graphical_display_menu `on_redraw`**: `GraphicalDisplayMenuOnRedrawTrigger` removed.
+  `add_on_redraw_callback()` now passes `const GraphicalDisplayMenu *`.
+  [#20452](https://github.com/esphome/esphome/pull/20452)
+
+- **Callback automations with inline actions**: When every action in a callback automation is inline, no
+  `Automation` or action object is generated. `ScriptExecuteAction` and `Script::execute_tuple` are removed; use
+  `script.execute` through the apply path.
+  [#21979](https://github.com/esphome/esphome/pull/21979)
+
+### Numeric scheduler ids and heap-free command queues
+
+- **dallas_temp / one_wire**: `OneWireDevice::get_address_name()` is removed. Format the address with
+  `format_hex_prefixed_to(buf, this->address_)` for log lines; `LOG_ONE_WIRE_DEVICE` still works.
+  ```cpp
+  // Before
+  this->set_timeout(this->get_address_name().c_str(), 750, [this] { ... });
+
+  // After
+  static constexpr uint32_t CONVERSION_TIMEOUT_ID = 0;
+  this->set_timeout(CONVERSION_TIMEOUT_ID, 750, [this] { ... });
+  ```
+  [#20361](https://github.com/esphome/esphome/pull/20361)
+
+- **dfrobot_sen0395**: The `Command` class hierarchy and `enqueue(std::unique_ptr<Command>)` are gone; commands are
+  now 2-byte values in a `StaticRingBuffer`. The documented `dfrobot_sen0395.reset` and `dfrobot_sen0395.settings`
+  actions and the switches are unchanged.
+  [#20906](https://github.com/esphome/esphome/pull/20906)
+
+### Other API changes
+
+- **Light HSV on addressable strips**: `ESPColorSettable::set_hsv()` now also clears the white channel. A lambda
+  that relied on a previous white value being kept must set it explicitly after `set_hsv()`.
+  [#20265](https://github.com/esphome/esphome/pull/20265)
+
+- **AddressableLight refactor**: `ESPColorView` and related types were refactored.
+  `ESPColorSettable::set(ESPHSVColor)` and `ESPColorRange::set(ESPHSVColor)` are deprecated; use `set_hsv()`.
+  External `AddressableLight` subclasses need small changes - see
+  [the developer blog post](https://developers.esphome.io/blog/2026/11/18/addressable-light-now-backed-by-a-color-accessor/).
+  [#21577](https://github.com/esphome/esphome/pull/21577)
+
+- **I2C little-endian helpers**: 36 sensor components now use the shared `read_byte_16_le`, `write_byte_16_le`,
+  `read_bytes_16_le`, `encode_value_le<>` helpers. External components can follow suit; see the helper PR
+  [#20938](https://github.com/esphome/esphome/pull/20938).
+  [#20939](https://github.com/esphome/esphome/pull/20939)
+
+- **heatpumpir**: `set_protocol()` is gone. The climate is constructed with a `ProtocolTag<P>` so only the
+  configured protocol's class is linked.
+  [#20707](https://github.com/esphome/esphome/pull/20707)
+
+- **atm90e32**: The public `using_saved_calibrations_` field, the `OffsetRestoreState` type,
+  `resolve_offset_restore_state` and `prepare_offset_rollback` helpers are removed. Gain, offset and power offset
+  calibration share one save/rollback path.
+  [#18731](https://github.com/esphome/esphome/pull/18731)
+
+- **ld6002b / ld600x**: `LD6002BComponent` is now a thin subclass of `ld600x::LD600XComponent`. The twelve
+  per-axis area sensor setters collapse into `set_area_sensor(kind, area, axis, sensor)`.
+  [#19837](https://github.com/esphome/esphome/pull/19837)
+
+- **pulse_counter**: The software interrupt is now attached to the counted edges only when `internal_filter: 0us`.
+  Edge mode setters log an error and ignore a change made after `setup()`.
+  [#21271](https://github.com/esphome/esphome/pull/21271)
+
+- **micro_wake_word**: Internal RAM placement is now opt-in through `prefer_internal_ram: true`; disabled models
+  release their arena and weight copy.
+  [#20529](https://github.com/esphome/esphome/pull/20529)
+
+- **speaker**: `AudioPipeline::start_url()` and `start_file()` take an optional announcement boolean. Existing
+  one-argument calls remain valid. Announcements start once the raw buffer has not changed for 1.5 s, in addition
+  to the normal startup threshold.
+  [#21091](https://github.com/esphome/esphome/pull/21091)
+{/* UNDOCUMENTED_API_CHANGES_END */}
+
+### Breaking changes for developers
+
+{/* BREAKING_CHANGES_DEVELOPERS_START */}
+- **Entity names in flash on ESP8266**: `EntityBase::name_` is now a `ProgmemStringRef`. Its `c_str()` is deprecated
+  and `get_name()` is deprecated; use `get_log_name()` with `LOG_STR_ARG()` for log calls and `get_name_to(buffer)`
+  or `name_equals()` where you need the value. Removal in 2027.5.0.
+  [#20423](https://github.com/esphome/esphome/pull/20423)
+  [#20615](https://github.com/esphome/esphome/pull/20615)
+- **API action strings**: `(progmem)` proto option now applies to string fields. `HomeassistantActionRequest.service`
+  and `HomeassistantServiceMap.key`/`value` take a `ProgmemStringRef`. The 384 byte user-action text limit is gone.
+  [#20425](https://github.com/esphome/esphome/pull/20425)
+- **ESPColorView refactor**: `AddressableLight` and related types were refactored. `ESPColorSettable::set(ESPHSVColor)`
+  and `ESPColorRange::set(ESPHSVColor)` are deprecated; use `set_hsv()`. External `AddressableLight` subclasses need
+  small changes - see the developer blog post.
+  [#21577](https://github.com/esphome/esphome/pull/21577)
+- **AddressableLight HSV**: `ESPColorSettable::set_hsv()` now clears the white channel.
+  [#20265](https://github.com/esphome/esphome/pull/20265)
+- **Display color order**: `draw_pixels_at()` and `ColorUtil` no longer take a color order argument; RGB 888 pixel
+  blocks are always `b, g, r` in memory.
+  [#20884](https://github.com/esphome/esphome/pull/20884)
+- **InternalGPIOPin**: Now binds to the platform pin class instead of a virtual base.
+  [#20455](https://github.com/esphome/esphome/pull/20455)
+- **RingBuffer alias**: Removed the deprecated `esphome::RingBuffer` alias.
+  [#20390](https://github.com/esphome/esphome/pull/20390)
+- **alloc_helpers.h**: `helpers.h` no longer re-exports `alloc_helpers.h`; include it directly.
+  [#20389](https://github.com/esphome/esphome/pull/20389)
+- **Numeric scheduler ids**: Many components moved from string scheduler ids to numeric ids. External components
+  using `set_timeout()`/`set_interval()` with strings should migrate to `constexpr uint32_t` ids.
+  [#20361](https://github.com/esphome/esphome/pull/20361)
+- **Component DOMAIN constants**: Every component now has a `DOMAIN` constant used instead of name literals in code
+  generation.
+- **LVGL 9.6.0**: Internal LVGL bump may affect external components calling LVGL APIs directly.
+  [#20257](https://github.com/esphome/esphome/pull/20257)
+- **Light effect list**: Light effect list is kept in a flash `ConstVector`.
+  [#20204](https://github.com/esphome/esphome/pull/20204)
+- **Climate/Fan traits**: `custom_fan_modes`, `custom_presets` and `preset_modes` are kept in `ConstVector`;
+  deprecated traits setters removed.
+  [#20213](https://github.com/esphome/esphome/pull/20213)
+  [#20214](https://github.com/esphome/esphome/pull/20214)
+- **Event types**: Kept in a shared flash table.
+  [#20217](https://github.com/esphome/esphome/pull/20217)
+- **BedJet/Xiaomi**: `BedJetHub::get_name()` returns `const char *` instead of `std::string`.
+  [#21204](https://github.com/esphome/esphome/pull/21204)
+  Xiaomi sensors share a new `XiaomiDevice` base.
+  [#21483](https://github.com/esphome/esphome/pull/21483)
+- **Remote transmitter actions**: Per-protocol `...Action` C++ classes (NECAction, PanasonicAction,
+  HaierAction, MideaAction and many more) removed; codegen now produces stateless functions through
+  `register_protocol_action`.
+  [#20549](https://github.com/esphome/esphome/pull/20549)
+  [#20564](https://github.com/esphome/esphome/pull/20564)
+  [#20568](https://github.com/esphome/esphome/pull/20568)
+- **Remote dumpers**: Stateless dumpers kept in flash.
+  [#21563](https://github.com/esphome/esphome/pull/21563)
+- **Callback automations**: `build_callback_automation` / `build_trigger_callback` now run directly without
+  `Automation` or action objects when every action is inline. `ScriptExecuteAction` and `Script::execute_tuple`
+  are removed; use `script.execute` through the apply path.
+  [#21979](https://github.com/esphome/esphome/pull/21979)
+- **ApplyEntity helpers**: Many hub buttons, numbers, selects, switches and outputs moved to codegen-only `Apply*`
+  entities. Per-component entity classes such as `PipsolarSwitch`, `PCM5122PowerSwitch`, `TLC59208FChannel`,
+  `BQ25186PgGpoSwitch` are removed; the hubs gain public methods that take the state or channel.
+  [#20964](https://github.com/esphome/esphome/pull/20964)
+  [#20965](https://github.com/esphome/esphome/pull/20965)
+  [#20966](https://github.com/esphome/esphome/pull/20966)
+  [#20967](https://github.com/esphome/esphome/pull/20967)
+  [#21257](https://github.com/esphome/esphome/pull/21257)
+- **Copy entity platforms**: `copy::CopySensor`, `copy::CopyTextSensor`, `switch_::SwitchBinarySensor`,
+  `number::NumberSensor` and `text::TextTextSensor` are removed; entities are now plain base-class entities with a
+  follow callback.
+  [#21610](https://github.com/esphome/esphome/pull/21610)
+  [#21612](https://github.com/esphome/esphome/pull/21612)
+- **Weikai**: Base classes marked `final`.
+  [#17292](https://github.com/esphome/esphome/pull/17292)
+
+For detailed migration guides and API documentation, see the
+[ESPHome Developers Documentation](https://developers.esphome.io/).
+{/* BREAKING_CHANGES_DEVELOPERS_END */}
+
+## Full list of changes
+
+For the complete list of every merged pull request in this release, see the
+[full 2026.11.0 changelog](/changelog/2026.11.0/).

@@ -60,10 +60,10 @@ at581x:
 
 ### Configuration variables
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation. Necessary if you want
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation. Necessary if you want
   to define multiple instances of this component.
 
-- **i2c_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [I2C](/components/i2c/) if you want
+- **i2c_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the [I2C](/components/i2c/) if you want
   to use multiple I2C buses.
 
 <span id="at581x-binary_sensor"></span>
@@ -79,11 +79,11 @@ binary_sensor:
     pin: GPIOXX
 ```
 
-- Refer to other options from [Binary Sensor](/components/binary_sensor#config-binary_sensor) and [GPIO Binary Sensor](/components/binary_sensor/gpio/).
+- Refer to other options from [Binary Sensor](/components/binary_sensor/#config-binary_sensor) and [GPIO Binary Sensor](/components/binary_sensor/gpio/).
 
 ## Switch
 
-[Switch components](/components/switch#config-switch) are used to enable/disable radio frequency hardware.
+[Switch components](/components/switch/#config-switch) are used to enable/disable radio frequency hardware.
 
 ```yaml
 switch:
@@ -94,10 +94,10 @@ switch:
 
 ### Configuration variables
 
-- **at581x_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the AT581x component defined above.
+- **at581x_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the AT581x component defined above.
   Required when multiple instances of the `at581x` component are defined.
 
-- All other options from [Switch](/components/switch#config-switch).
+- All other options from [Switch](/components/switch/#config-switch).
 
 ## Actions
 
@@ -132,8 +132,8 @@ on_...:
 
 #### Configuration variables
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the sensor on which settings should be
-  changed. If only one radar is defined, this is optional.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the sensor on which settings should be
+  changed.
 
 - **hw_frontend_reset** (*Optional*, boolean, [templatable](/automations/templates)): If set to true, a reset of the analog frontend will be performed before
   changing other options. Ignored if not set or set to `false`. Upon applying the settings a frontend reset
@@ -154,16 +154,17 @@ Restart the sensor.
 
 ```yaml
 on_...:
-  at581x.reset:
+  - at581x.reset:
+      id: "Waveradar"
 ```
 
 #### Configuration variables
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the AT581x component. Useful when multiple instances of this component are defined.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the AT581x component to reset.
 
 ## See Also
 
 - [I2C bus](/components/i2c)
-- [Binary Sensor Component](/components/binary_sensor#config-binary_sensor)
+- [Binary Sensor Component](/components/binary_sensor/#config-binary_sensor)
 - [GPIO Binary Sensor](/components/binary_sensor/gpio/)
-- [ID](/guides/configuration-types#id)
+- [ID](/guides/configuration-types/#id)
