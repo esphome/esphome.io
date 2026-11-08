@@ -26,7 +26,7 @@ submit a feature request (see FAQ).
 | [Delonghi](#delonghi_ir) | `delonghi`                         | yes |
 | Emmeti | `emmeti`                           | yes |
 | [Friedrich](#friedrich)                   | `friedrich`                        | yes               |
-| Fujitsu General | `fujitsu_general`                  | yes |
+| [Fujitsu General](#fujitsu_general) | `fujitsu_general`                  | yes |
 | [GREE](#gree_ir) | `gree`                             | yes |
 | [Haier Tundra](#haier_tundra) | `haier_tundra` | yes |
 | Hitachi | `hitachi_ac344`, `hitachi_ac424` | yes |
@@ -73,9 +73,9 @@ climate:
 
 ## Configuration Variables
 
-- **sensor** (*Optional*, [ID](/guides/configuration-types#id)): The sensor that is used to measure the ambient
+- **sensor** (*Optional*, [ID](/guides/configuration-types/#id)): The sensor that is used to measure the ambient
   temperature. This is only for reporting the current temperature in the frontend.
-- **humidity_sensor** (*Optional*, [ID](/guides/configuration-types#id)): The sensor that is used to measure the ambient
+- **humidity_sensor** (*Optional*, [ID](/guides/configuration-types/#id)): The sensor that is used to measure the ambient
   humidity. This is only for reporting the current humidity in the frontend.
 
 - **supports_cool** (*Optional*, boolean): Enables setting cooling mode for this climate device. Defaults to `true`.
@@ -85,10 +85,10 @@ climate:
   automatically only if both `supports_cool` and `supports_heat` are enabled. Set it to `true` to advertise the mode
   regardless (e.g. cool-only units that still expose an auto mode), or to `false` to hide it even on units that
   support both heating and cooling but have no usable auto mode.
-- **receiver_id** (*Optional*, [ID](/guides/configuration-types#id)): The id of the remote_receiver if this platform supports
+- **receiver_id** (*Optional*, [ID](/guides/configuration-types/#id)): The id of the remote_receiver if this platform supports
   receiver. see: [Using a Receiver](#ir-receiver_id).
 
-- All other options from [Climate](/components/climate#config-climate).
+- All other options from [Climate](/components/climate/#config-climate).
 
 > [!NOTE]
 > Older versions offered the heat/cool mode on every device. If `supports_cool` or `supports_heat` is set to `false`
@@ -96,7 +96,7 @@ climate:
 
 ### Advanced Options
 
-- **transmitter_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the remote transmitter.
+- **transmitter_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the remote transmitter.
 
 ### `airton`
 
@@ -113,17 +113,17 @@ flash and restored at boot. Nothing is transmitted at boot; the stored settings 
 The `airton` switch platform exposes the display light and sleep mode. Both switches are configuration entities and
 keep their state through the climate's own storage, so they do not need a `restore_mode`.
 
-- **airton_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the `airton` climate. Only needed with
+- **airton_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `airton` climate. Only needed with
   more than one.
-- **display** (*Optional*, [Switch](/components/switch#config-switch)): The display light of the indoor unit.
-- **sleep_mode** (*Optional*, [Switch](/components/switch#config-switch)): Sleep mode. The unit ignores it in fan-only
+- **display** (*Optional*, [Switch](/components/switch/#config-switch)): The display light of the indoor unit.
+- **sleep_mode** (*Optional*, [Switch](/components/switch/#config-switch)): Sleep mode. The unit ignores it in fan-only
   mode and in the automatic heat/cool mode.
 
 The `airton` select platform exposes the vertical air outlet direction.
 
-- **airton_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the `airton` climate. Only needed with
+- **airton_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `airton` climate. Only needed with
   more than one.
-- **vertical_direction** (*Optional*, [Select](/components/select#config-select)): The vertical direction, with the
+- **vertical_direction** (*Optional*, [Select](/components/select/#config-select)): The vertical direction, with the
   options of the climate's `vertical_direction`. `swing` and the climate's vertical swing mode are the same setting,
   so changing one updates the other.
 
@@ -160,11 +160,11 @@ on_...:
 
 ### `climate_ir_lg`
 
-- **header_high** (*Optional*, [Time](/guides/configuration-types#time)): time for the high part of the header for the LG protocol. Defaults to `8000us`
-- **header_low** (*Optional*, [Time](/guides/configuration-types#time)): time for the low part of the header for the LG protocol. Defaults to `4000us`
-- **bit_high** (*Optional*, [Time](/guides/configuration-types#time)): time for the high part of any bit in the LG protocol. Defaults to `600us`
-- **bit_one_low** (*Optional*, [Time](/guides/configuration-types#time)): time for the low part of a '1' bit in the LG protocol. Defaults to `1600us`
-- **bit_zero_low** (*Optional*, [Time](/guides/configuration-types#time)): time for the low part of a '0' bit in the LG protocol. Defaults to `550us`
+- **header_high** (*Optional*, [Time](/guides/configuration-types/#time)): time for the high part of the header for the LG protocol. Defaults to `8000us`
+- **header_low** (*Optional*, [Time](/guides/configuration-types/#time)): time for the low part of the header for the LG protocol. Defaults to `4000us`
+- **bit_high** (*Optional*, [Time](/guides/configuration-types/#time)): time for the high part of any bit in the LG protocol. Defaults to `600us`
+- **bit_one_low** (*Optional*, [Time](/guides/configuration-types/#time)): time for the low part of a '1' bit in the LG protocol. Defaults to `1600us`
+- **bit_zero_low** (*Optional*, [Time](/guides/configuration-types/#time)): time for the low part of a '0' bit in the LG protocol. Defaults to `550us`
 - **advanced_commands_support** (*Optional*, boolean): enables an advanced control mode for newer units, allowing temperature regulation in `Heat/Cool` mode and vertical airflow adjustment.  Only up and down swing are supported.  The 6 fixed position settings are treated as off.  Swing mode is remembered after powering off as well. Defaults to `false`.
 
 ```yaml
@@ -264,6 +264,40 @@ climate:
   - platform: friedrich
     name: "AC"
 ```
+
+### `fujitsu_general`
+
+The Fujitsu General remote has buttons that send a command on their own and change no
+climate state: stepping the vertical or horizontal vane one position, and toggling economy
+mode. The `fujitsu_general` button platform sends these commands through the climate's
+transmitter.
+
+```yaml
+# Example configuration entry
+climate:
+  - platform: fujitsu_general
+    id: living_room_ac
+    name: "Living Room AC"
+
+button:
+  - platform: fujitsu_general
+    fujitsu_general_id: living_room_ac
+    step_vertical:
+      name: "Step Vertical Vane"
+    step_horizontal:
+      name: "Step Horizontal Vane"
+    economy:
+      name: "Toggle Economy Mode"
+```
+
+- **fujitsu_general_id** (**Required**, [ID](/guides/configuration-types/#id)): The `fujitsu_general` climate
+  whose transmitter sends the command.
+- **step_vertical** (*Optional*): A button that steps the vertical vane. All options from
+  [Button](/components/button/).
+- **step_horizontal** (*Optional*): A button that steps the horizontal vane. All options from
+  [Button](/components/button/).
+- **economy** (*Optional*): A button that toggles economy mode. All options from
+  [Button](/components/button/).
 
 <span id="gree_ir"></span>
 
@@ -508,7 +542,7 @@ climate:
 ```
 
 > [!NOTE]
-> - See [Transmit Midea](/components/remote_transmitter#remote_transmitter-transmit_midea) to send custom commands, including Follow Me mode.
+> - See [Transmit Midea](/components/remote_transmitter/#remote_transmitter-transmit_midea) to send custom commands, including Follow Me mode.
 > - See [Toshiba](#toshiba) below if you are looking for compatibility with Midea model MAP14HS1TBL or similar.
 
 ### `mistral_ir`
@@ -655,7 +689,7 @@ select:
 
 The `panasonic_ir` select platform adds a [Select](/components/select/) for the vertical vane:
 
-- **panasonic_ir_id** (*Optional*, [ID](/guides/configuration-types#id)): The `panasonic_ir` climate to control.
+- **panasonic_ir_id** (*Optional*, [ID](/guides/configuration-types/#id)): The `panasonic_ir` climate to control.
   Only needed with more than one.
 - **vane_position** (**Required**): The options are `Auto`, then `1` (highest) to `5` (lowest). Setting a position
   also sets the swing mode to Off, and `Auto` sets it to Vertical. When the remote sets the vane, the select follows it.
@@ -1009,7 +1043,7 @@ Additional configuration must be specified for this platform:
 - **vertical_default** (**Required**, string): What to default to when the AC unit's vertical direction is *not* set to swing. Options are: `down`, `mdown`, `middle`, `mup`, `up`, `auto`
 - **max_temperature** (**Required**, float): The maximum temperature that the AC unit supports being set to.
 - **min_temperature** (**Required**, float): The minimum temperature that the AC unit supports being set to.
-- **sensor** (*Optional*, [ID](/guides/configuration-types#id)): The sensor that is used to measure the ambient temperature.
+- **sensor** (*Optional*, [ID](/guides/configuration-types/#id)): The sensor that is used to measure the ambient temperature.
 
 > [!NOTE]
 > The `greeyac` protocol in `heatpumpir` supports a feature Gree calls "I-Feel". The handheld remote control

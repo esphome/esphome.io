@@ -37,29 +37,29 @@ deep_sleep:
 
 ## Configuration variables
 
-- **run_duration** (*Optional*, [Time](/guides/configuration-types#time)): The time duration the node should be active, i.e. run code.
+- **run_duration** (*Optional*, [Time](/guides/configuration-types/#time)): The time duration the node should be active, i.e. run code.
 
   Only on ESP32, instead of time, it is possible to specify run duration according to the wakeup reason from deep-sleep:
 
-  - **default** (**Required**, [Time](/guides/configuration-types#time)): default run duration for timer wakeup and any unspecified wakeup reason.
-  - **gpio_wakeup_reason** (*Optional*, [Time](/guides/configuration-types#time)): run duration if woken up by GPIO.
-  - **touch_wakeup_reason** (*Optional*, [Time](/guides/configuration-types#time)): run duration if woken up by touch.
+  - **default** (**Required**, [Time](/guides/configuration-types/#time)): default run duration for timer wakeup and any unspecified wakeup reason.
+  - **gpio_wakeup_reason** (*Optional*, [Time](/guides/configuration-types/#time)): run duration if woken up by GPIO.
+  - **touch_wakeup_reason** (*Optional*, [Time](/guides/configuration-types/#time)): run duration if woken up by touch.
 
-- **sleep_duration** (*Optional*, [Time](/guides/configuration-types#time)): The time duration to stay in deep sleep mode. On BK72xx, the maximum is 36 hours. On Zephyr, the maximum is 49 days.
+- **sleep_duration** (*Optional*, [Time](/guides/configuration-types/#time)): The time duration to stay in deep sleep mode. On BK72xx, the maximum is 36 hours. On Zephyr, the maximum is 49 days.
 - **touch_wakeup** (*Optional*, boolean): Only on ESP32. Use a touch event to wakeup from deep sleep. To be able
-  to wakeup from a touch event, [Binary Sensor](/components/binary_sensor/esp32_touch#binary-sensor) must be configured properly.
+  to wakeup from a touch event, [Binary Sensor](/components/binary_sensor/esp32_touch/#binary-sensor) must be configured properly.
 
-- **wakeup_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema) / list): Only on ESP32/BK72xx. A single pin to wake up to once
+- **wakeup_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema) / list): Only on ESP32/BK72xx. A single pin to wake up to once
   in deep sleep mode. Use the inverted property to wake up to LOW signals.
   If you want to specify multiple wake-up pins (BK72xx only) specify them under `wakeup_pin` using a list of entries consisting of:
-  - **pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema))
+  - **pin** (**Required**, [Pin Schema](/guides/configuration-types/#pin-schema))
   - **wakeup_pin_mode** (*Optional*) see below
 - **wakeup_pin_mode** (*Optional*): Only on ESP32/BK72xx. Specify how to handle waking up from a `wakeup_pin` if
   the wakeup pin is already in the state with which it would wake up when attempting to enter deep sleep.
   See [Wakeup Pin Mode](#deep_sleep-esp32_wakeup_pin_mode). Defaults to `IGNORE`
 - **on_wake** (*Optional*, [Automation](/automations)): An automation to run when the device boots after waking
   from deep sleep. Only on ESP32, ESP8266 and BK72xx. See [`on_wake` Trigger](#on_wake-trigger).
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation.
 
 Advanced features:
 
@@ -67,8 +67,8 @@ Advanced features:
   wake up on multiple pins. This cannot be used together with wakeup pin.
 
   - **pins** (**Required**, list): The pins to wake up on. Each entry is either a
-    [Pin Schema](/guides/configuration-types#pin-schema) directly, or a mapping of:
-    - **pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin to wake up on.
+    [Pin Schema](/guides/configuration-types/#pin-schema) directly, or a mapping of:
+    - **pin** (**Required**, [Pin Schema](/guides/configuration-types/#pin-schema)): The pin to wake up on.
     - **on_wake** (*Optional*, [Automation](/automations)): An automation to run when this specific pin
       woke the device from deep sleep. See [`on_wake` Trigger](#on_wake-trigger).
   - **mode** (**Required**): The mode to use for the wakeup source. Must be one of:
@@ -240,9 +240,9 @@ on_...:
 
 Configuration options:
 
-- **sleep_duration** (*Optional*, [templatable](/automations/templates), [Time](/guides/configuration-types#time)): The time duration to stay in deep sleep mode. If a template is used, it should return a value in milliseconds.
+- **sleep_duration** (*Optional*, [templatable](/automations/templates), [Time](/guides/configuration-types/#time)): The time duration to stay in deep sleep mode. If a template is used, it should return a value in milliseconds.
 - **until** (*Optional*, string): The time of day to wake up. Only on ESP32.
-- **time_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the time component to use for the `until` option. Only on ESP32.
+- **time_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the time component to use for the `until` option. Only on ESP32.
 
 ## `deep_sleep.prevent` Action
 
@@ -299,8 +299,8 @@ on_...:
 ## Deep Sleep and OTA Rollback
 
 On platforms with bootloader OTA rollback support enabled — the default on ESP32 with the `esp-idf` framework and on
-nRF52, see `enable_ota_rollback` for [ESP32](/components/esp32#advanced-configuration) and
-[nRF52](/components/nrf52#advanced-configuration) — firmware installed by an OTA update must be confirmed as working,
+nRF52, see `enable_ota_rollback` for [ESP32](/components/esp32/#advanced-configuration) and
+[nRF52](/components/nrf52/#advanced-configuration) — firmware installed by an OTA update must be confirmed as working,
 otherwise the bootloader reverts to the previous version on the next reset. The [safe_mode](/components/safe_mode)
 component confirms the new firmware once it considers the boot successful.
 
@@ -323,7 +323,7 @@ bootloader reverts it instead.
 >
 > - Set `boot_is_good_after` in the [safe_mode](/components/safe_mode) configuration to a value shorter than the
 >   device's awake time, e.g. `boot_is_good_after: 10s`.
-> - Run the [`safe_mode.mark_successful`](/components/safe_mode#safe_mode-mark_successful-action) action (available
+> - Run the [`safe_mode.mark_successful`](/components/safe_mode/#safe_mode-mark_successful-action) action (available
 >   since ESPHome 2026.3.0) before entering deep sleep, for example in `on_boot`.
 > - Disable rollback entirely with `enable_ota_rollback: false` under `esp32: framework: advanced:`
 >   (or `nrf52: framework: advanced:`).
