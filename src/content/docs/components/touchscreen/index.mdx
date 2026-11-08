@@ -39,15 +39,15 @@ touchscreen:
 
 ### Configuration variables
 
-- **display** (**Required**, [ID](/guides/configuration-types#id)): The display to use this touchscreen with.
+- **display** (**Required**, [ID](/guides/configuration-types/#id)): The display to use this touchscreen with.
 - **transform** (*Optional*): Transform the touchscreen presentation using hardware. All defaults are `false`.
 
   - **swap_xy** (*Optional*, boolean): If true, exchange the x and y axes.
   - **mirror_x** (*Optional*, boolean): If true, mirror the x axis.
   - **mirror_y** (*Optional*, boolean): If true, mirror the y axis.
 
-- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The touchscreen polling interval - used only if an interrupt pin is not in use. Defaults to `50ms`.
-- **touch_timeout** (*Optional*, [Time](/guides/configuration-types#time)): A timeout for touchscreens that do not report the end of touch. The default varies depending on the touchscreen.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The touchscreen polling interval - used only if an interrupt pin is not in use. Defaults to `50ms`.
+- **touch_timeout** (*Optional*, [Time](/guides/configuration-types/#time)): A timeout for touchscreens that do not report the end of touch. The default varies depending on the touchscreen.
 - **calibration** (*Optional*): Some touchscreens require calibration on a per-device basis.
 
   - **x_min** (**Required**, int): The raw value corresponding to the left
@@ -96,7 +96,7 @@ The integer members for the touch positions below are in relation to the display
 ## Calibration
 
 For most touchscreen drivers the dimensions of the touchscreen are automatically set from the display driver to match the screen size.
-In some cases such as the [XPT2046](/components/touchscreen/xpt2046#xpt2046-component) (a resistive touch screen) the reported values bear no relation to the actual screen size.
+In some cases such as the [XPT2046](/components/touchscreen/xpt2046/#xpt2046-component) (a resistive touch screen) the reported values bear no relation to the actual screen size.
 The `calibration` configuration can be used to manually calibrate the touchscreen.
 
 To match the point of the touch to the display coordinates the touch screen has to be calibrated.
@@ -105,7 +105,7 @@ as the `x_raw` and `y_raw` member variables. The goal of the calibration is to i
 to the edges of the screen.
 
 The calibration assumes a display oriented in a way that you will be using it, i.e. your
-[Display Rendering Engine](/components/display#display-engine) component has to have the [0,0] logical coordinate at the top left.
+[Display Rendering Engine](/components/display/#display-engine) component has to have the [0,0] logical coordinate at the top left.
 
 ```yaml
 # Touchscreen
@@ -265,32 +265,34 @@ binary_sensor:
 
 ### Configuration variables
 
-- **touchscreen_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the touchscreen.
+- **touchscreen_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the touchscreen.
 - **x_min** (**Required**, int): Left coordinate of the screen area to be detected as the virtual button.
 - **x_max** (**Required**, int): Right coordinate of the screen area to be detected as the virtual button.
 - **y_min** (**Required**, int): Top coordinate of the screen area to be detected as the virtual button.
 - **y_max** (**Required**, int): Bottom coordinate of the screen area to be detected as the virtual button.
-- **page_id** (*Optional*, [ID](/guides/configuration-types#id)): Only trigger this binary sensor if the display is showing this page.
+- **page_id** (*Optional*, [ID](/guides/configuration-types/#id)): Only trigger this binary sensor if the display is showing this page.
   Cannot be used with `pages`.
 
-- **pages** (*Optional*, list of [ID](/guides/configuration-types#id)): Only trigger this binary sensor if the display is showing one of these pages.
+- **pages** (*Optional*, list of [ID](/guides/configuration-types/#id)): Only trigger this binary sensor if the display is showing one of these pages.
   Cannot be used with `page_id`.
 
 - **use_raw** (*Optional*, boolean): Some touch screens are larger than the underlying screen, and use this extra
   area for touch buttons. To allow the sensor to register touches outside the display area set this to `true`.
   The calibration values as above should be set to the display bounds.
 
-- All other options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
+- All other options from [Binary Sensor](/components/binary_sensor/#config-binary_sensor).
 
 ## See Also
 
-- [Binary Sensor Filters](/components/binary_sensor#binary-sensor-filters)
+- [Binary Sensor Filters](/components/binary_sensor/#binary-sensor-filters)
 - [Inkplate 6 Plus](/components/display/inkplate/)
 - [EKTF2232 Touchscreen Controller](/components/touchscreen/ektf2232/)
 - [XPT2046 Touch Screen Controller (Updated version)](/components/touchscreen/xpt2046/)
 - [TT21100 Touch Screen Controller](/components/touchscreen/tt21100/)
 - [GSL3670 Touch Screen Controller](/components/touchscreen/gsl3670/)
+- [ICNT86 Touch Screen Controller](/components/touchscreen/icnt86/)
 - [gt911 Touch Screen Controller](/components/touchscreen/gt911/)
+- [SPD2010 Touchscreen Controller](/components/touchscreen/spd2010/)
 - [ST7123 Touch Screen Controller](/components/touchscreen/st7123/)
 - <APIRef text="touchscreen.h" path="touchscreen/touchscreen.h" />
 - <APIRef text="touchscreen_binary_sensor.h" path="touchscreen/binary_sensor/touchscreen_binary_sensor.h" />

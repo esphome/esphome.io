@@ -35,12 +35,19 @@ media_player:
 
 - **sample_rate** (*Optional*, positive integer): The sample rate, in Hz, advertised to the Sendspin
   server. Must be between `16000` and `96000`. Defaults to `48000`.
+- **bits_per_sample** (*Optional*, positive integer): The bits per sample advertised to the Sendspin
+  server for the `flac` and `pcm` codecs. Either `16` or `24`. `opus` is always advertised at 16 bits
+  per sample. Defaults to `16`.
+- **codecs** (*Optional*, list of strings): The audio codecs advertised to the Sendspin server, in
+  order of preference. Each entry is one of `flac`, `opus`, or `pcm`, and a codec may only be listed
+  once. The list must include `flac` or `pcm`. Defaults to `[flac, opus, pcm]`, or `[flac, pcm]` when
+  `sample_rate` is not `48000`, since `opus` only supports 48 kHz audio.
 - **buffer_size** (*Optional*, positive integer): The size of the audio buffer in bytes. Must be at
   least `25000`. Defaults to `1000000`.
-- **fixed_delay** (*Optional*, [Time](/guides/configuration-types#time)): A constant, known playback
+- **fixed_delay** (*Optional*, [Time](/guides/configuration-types/#time)): A constant, known playback
   delay to compensate for; for example, the processing time introduced by the on-board DAC. Must be
   no greater than `10ms`. Defaults to `0us`.
-- **initial_static_delay** (*Optional*, [Time](/guides/configuration-types#time)): An initial static
+- **initial_static_delay** (*Optional*, [Time](/guides/configuration-types/#time)): An initial static
   delay that is tunable at runtime from the Sendspin server. Used to compensate for delays that are
   not known at configuration time and that may change with the device's runtime setup. Updates made
   from the Sendspin server are persisted to flash. Must be no greater than `5000ms`. Defaults to
@@ -74,7 +81,7 @@ media_player:
 
 ### `sendspin.media_source.enable_static_delay_adjustment` Action
 
-This [action](/automations/actions#all-actions) enables runtime adjustment of the static delay from
+This [action](/automations/actions/#all-actions) enables runtime adjustment of the static delay from
 the Sendspin server and applies the currently configured static delay value to playback.
 
 ```yaml
@@ -86,7 +93,7 @@ on_...:
 
 ### `sendspin.media_source.disable_static_delay_adjustment` Action
 
-This [action](/automations/actions#all-actions) disables runtime adjustment of the static delay.
+This [action](/automations/actions/#all-actions) disables runtime adjustment of the static delay.
 The configured static delay is no longer applied to playback, and the Sendspin server cannot tune
 it.
 

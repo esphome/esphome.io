@@ -1,0 +1,28 @@
+---
+/**
+ * Forwards dead section anchors to the page their section moved to, for pages that declare
+ * `anchorRedirects` in their frontmatter. Renders nothing on every other page.
+ *
+ * The script has to be inline and unbundled: Astro defers a bundled script, so the redirect
+ * would only fire once the reader was already looking at the wrong page.
+ */
+const { anchorRedirects } = Astro.locals.starlightRoute.entry.data;
+
+// `<` is escaped so that a target containing `</script>` cannot break out of the tag.
+const table = JSON.stringify(anchorRedirects ?? {}).replace(/</g, "\\u003c");
+
+// Resolving through `URL` keeps a target's own query string and anchor intact; a query on the
+// dead link is carried over so that campaign parameters survive the redirect. Targets are
+// constrained to site-relative paths by the collection schema, so this cannot leave the origin.
+const script =
+  anchorRedirects && Object.keys(anchorRedirects).length > 0
+    ? `const t = ${table}[location.hash.slice(1)];
+if (t) {
+  const u = new URL(t, location.origin);
+  if (!u.search) u.search = location.search;
+  location.replace(u.href);
+}`
+    : null;
+---
+
+{script && <script is:inline set:html={script} />}

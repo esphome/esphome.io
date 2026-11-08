@@ -6,6 +6,7 @@ keywords: [cc1101]
 ---
 
 import { Image } from 'astro:assets';
+import EnumValues from '@components/EnumValues.astro';
 
 The **CC1101** component provides a driver for the **Texas Instruments CC1101** Sub-1 GHz RF Transceiver
 ([datasheet](https://www.ti.com/lit/ds/symlink/cc1101.pdf)). The CC1101 is a low-cost, low-power radio
@@ -97,8 +98,19 @@ signals of varying strength. These settings control how aggressively and quickly
 See the [CC1101 Datasheet](https://www.ti.com/lit/ds/symlink/cc1101.pdf) for detailed information.
 
 - **magn_target** (*Optional*, dB): Target signal amplitude for the AGC loop. Higher values increase
-  sensitivity but may cause clipping on strong signals.
-  Range: `24dB` to `42dB` in increments of 3 (e.g., `33dB`). Defaults to `42dB`.
+  sensitivity but may cause clipping on strong signals. One of:
+
+  <EnumValues values={[
+    { value: "24dB" },
+    { value: "27dB" },
+    { value: "30dB" },
+    { value: "33dB" },
+    { value: "36dB" },
+    { value: "38dB" },
+    { value: "40dB" },
+    { value: "42dB", default: true },
+  ]} />
+
 - **max_lna_gain** (*Optional*, dB): Limits the maximum LNA (Low Noise Amplifier) gain. Use to prevent
   saturation in high-signal environments. Defaults to `Default`.
   Options: `Default`, `2.6dB`, `6.1dB`, `7.4dB`, `9.2dB`, `11.5dB`, `14.6dB`, `17.1dB`.
@@ -185,23 +197,23 @@ cc1101:
 
 ### `cc1101.begin_tx` Action
 
-This [action](/automations/actions#all-actions) puts the radio into TX mode and switches `gdo0_pin` to output mode.
+This [action](/automations/actions/#all-actions) puts the radio into TX mode and switches `gdo0_pin` to output mode.
 
 ### `cc1101.begin_rx` Action
 
-This [action](/automations/actions#all-actions) puts the radio into RX mode and switches `gdo0_pin` to input mode.
+This [action](/automations/actions/#all-actions) puts the radio into RX mode and switches `gdo0_pin` to input mode.
 
 ### `cc1101.set_idle` Action
 
-This [action](/automations/actions#all-actions) puts the radio into an idle state.
+This [action](/automations/actions/#all-actions) puts the radio into an idle state.
 
 ### `cc1101.reset` Action
 
-This [action](/automations/actions#all-actions) resets the CC1101 chip and re-applies configuration.
+This [action](/automations/actions/#all-actions) resets the CC1101 chip and re-applies configuration.
 
 ### `cc1101.send_packet` Action
 
-This [action](/automations/actions#all-actions) transmits a packet. Only available when `packet_mode` is enabled.
+This [action](/automations/actions/#all-actions) transmits a packet. Only available when `packet_mode` is enabled.
 
 #### Configuration variables
 
@@ -215,7 +227,7 @@ on_...:
 
 ### `cc1101.set_frequency` Action
 
-This [action](/automations/actions#all-actions) changes the operating frequency at runtime.
+This [action](/automations/actions/#all-actions) changes the operating frequency at runtime.
 
 #### Configuration variables
 
@@ -231,7 +243,7 @@ on_...:
 
 ### `cc1101.set_output_power` Action
 
-This [action](/automations/actions#all-actions) changes the transmission power at runtime.
+This [action](/automations/actions/#all-actions) changes the transmission power at runtime.
 
 #### Configuration variables
 
@@ -239,7 +251,7 @@ This [action](/automations/actions#all-actions) changes the transmission power a
 
 ### `cc1101.set_modulation_type` Action
 
-This [action](/automations/actions#all-actions) changes the modulation type at runtime.
+This [action](/automations/actions/#all-actions) changes the modulation type at runtime.
 
 #### Configuration variables
 
@@ -256,7 +268,7 @@ on_...:
 
 ### `cc1101.set_symbol_rate` Action
 
-This [action](/automations/actions#all-actions) changes the symbol rate at runtime.
+This [action](/automations/actions/#all-actions) changes the symbol rate at runtime.
 
 #### Configuration variables
 
@@ -264,7 +276,7 @@ This [action](/automations/actions#all-actions) changes the symbol rate at runti
 
 ### `cc1101.set_rx_attenuation` Action
 
-This [action](/automations/actions#all-actions) changes the internal RX attenuation at runtime.
+This [action](/automations/actions/#all-actions) changes the internal RX attenuation at runtime.
 
 #### Configuration variables
 
@@ -281,7 +293,7 @@ on_...:
 
 ### `cc1101.set_dc_blocking_filter` Action
 
-This [action](/automations/actions#all-actions) enables or disables the DC blocking filter at runtime.
+This [action](/automations/actions/#all-actions) enables or disables the DC blocking filter at runtime.
 
 #### Configuration variables
 
@@ -289,7 +301,7 @@ This [action](/automations/actions#all-actions) enables or disables the DC block
 
 ### `cc1101.set_manchester` Action
 
-This [action](/automations/actions#all-actions) enables or disables Manchester encoding at runtime.
+This [action](/automations/actions/#all-actions) enables or disables Manchester encoding at runtime.
 
 #### Configuration variables
 
@@ -297,7 +309,7 @@ This [action](/automations/actions#all-actions) enables or disables Manchester e
 
 ### `cc1101.set_filter_bandwidth` Action
 
-This [action](/automations/actions#all-actions) changes the receive filter bandwidth at runtime.
+This [action](/automations/actions/#all-actions) changes the receive filter bandwidth at runtime.
 
 #### Configuration variables
 
@@ -306,7 +318,7 @@ This [action](/automations/actions#all-actions) changes the receive filter bandw
 
 ### `cc1101.set_fsk_deviation` Action
 
-This [action](/automations/actions#all-actions) changes the FSK/GFSK frequency deviation at runtime.
+This [action](/automations/actions/#all-actions) changes the FSK/GFSK frequency deviation at runtime.
 
 #### Configuration variables
 
@@ -315,7 +327,7 @@ This [action](/automations/actions#all-actions) changes the FSK/GFSK frequency d
 
 ### `cc1101.set_msk_deviation` Action
 
-This [action](/automations/actions#all-actions) changes the MSK deviation index at runtime.
+This [action](/automations/actions/#all-actions) changes the MSK deviation index at runtime.
 
 #### Configuration variables
 
@@ -323,7 +335,7 @@ This [action](/automations/actions#all-actions) changes the MSK deviation index 
 
 ### `cc1101.set_channel` Action
 
-This [action](/automations/actions#all-actions) changes the channel number at runtime.
+This [action](/automations/actions/#all-actions) changes the channel number at runtime.
 
 #### Configuration variables
 
@@ -331,7 +343,7 @@ This [action](/automations/actions#all-actions) changes the channel number at ru
 
 ### `cc1101.set_channel_spacing` Action
 
-This [action](/automations/actions#all-actions) changes the channel spacing at runtime.
+This [action](/automations/actions/#all-actions) changes the channel spacing at runtime.
 
 #### Configuration variables
 
@@ -340,7 +352,7 @@ This [action](/automations/actions#all-actions) changes the channel spacing at r
 
 ### `cc1101.set_if_frequency` Action
 
-This [action](/automations/actions#all-actions) changes the intermediate frequency at runtime.
+This [action](/automations/actions/#all-actions) changes the intermediate frequency at runtime.
 
 #### Configuration variables
 

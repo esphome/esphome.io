@@ -27,7 +27,7 @@ Configuration variables:
 - **name** (*Optional*, string): The name of the switch. At least one of **id** and **name** must be specified.
 
 > [!NOTE]
-> If you have a [friendly_name](/components/esphome#configuration-variables) set for your device and
+> If you have a [friendly_name](/components/esphome/#configuration-variables) set for your device and
 > you want the switch to use that name, you can set `name: None`.
 
 - **icon** (*Optional*, icon): Manually set the icon to use for the
@@ -56,11 +56,52 @@ Configuration variables:
   - `DISABLED` - Does nothing and leaves it up to the downstream platform component to decide. For example, the component could read hardware and determine the state, or have a specific configuration option to regulate initial state.
 
   Unless a specific platform defines another default value, the default is `ALWAYS_OFF`.
+  Mutually exclusive with **restore_state**.
 
-- **on_turn_on** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform
+- **initial_state** (*Optional*, boolean): The state (`ON` or `OFF`) the switch starts in when nothing is
+  restored: on the first boot, and after a power cut when the state is kept in RTC memory
+  (`restore_state: {storage: rtc}`), where restarts and OTA updates keep the last state instead. Can't be combined
+  with **restore_mode**; use **restore_state** instead. Defaults to `OFF`.
+
+  > [!NOTE]
+  > Without **restore_state**, the switch starts in **initial_state** at every boot, unless the platform's default
+  > **restore_mode** restores the state (see the platform's page); then **initial_state** is only used when nothing
+  > is saved. Set `restore_state: none` to always start in **initial_state**.
+
+- **restore_state** (*Optional*): Save the switch's state and restore it on bootup. Mutually exclusive with
+  **restore_mode**. If nothing has been saved yet, the switch starts in **initial_state**. Accepts a mapping, or
+  the shorthand `all` (restore the saved state as-is) or `none` (nothing is restored and the switch starts in
+  **initial_state**).
+
+  - **state** (*Optional*, string): `KEEP` (default) to restore the saved state as-is, `INVERT` to restore it
+    inverted, or `INITIAL` to always start in **initial_state** instead. Unlike lights, a switch can't restore and
+    then force `ON` or `OFF`; to always start in a fixed state, set **initial_state** with `restore_state: none`.
+  - **storage** (*Optional*, string): Where the state is saved. `flash` survives power loss. `rtc` stores it in
+    RTC memory, which survives software reboots (restarts, OTA updates, crashes) and deep sleep but **not**
+    power loss. When not set, the platform's usual storage is used: flash on ESP32, and on ESP8266 RTC memory
+    unless `restore_from_flash` is enabled. `rtc` is available on ESP32 (except the C2 and C61 variants, which
+    have no RTC memory), ESP8266 and the Beken BK7231T, BK7231N and BK7238; elsewhere only `flash` is available and
+    `rtc` is rejected. These Beken chips have no RTC memory: there `rtc` keeps the state in flash and forgets it after
+    a power cut, so it does not avoid flash wear. Not allowed with `state: INITIAL`, which never restores anything.
+
+  ```yaml
+  # On after a power cut; an OTA update or a restart keeps the previous state.
+  # Suits a load that is also switched by a wall switch or power strip upstream.
+  switch:
+    - platform: gpio
+      pin: GPIOXX
+      name: "Lamp"
+      initial_state: ON
+      restore_state:
+        storage: rtc
+  ```
+
+  After changing **storage**, the first restart may find nothing saved yet and start in **initial_state**.
+
+- **on_turn_on** (*Optional*, [Action](/automations/actions/#all-actions)): An automation to perform
   when the switch is turned on. See [`switch.on_turn_on` / `switch.on_turn_off` Trigger](#switch-on_turn_on_off_trigger).
 
-- **on_turn_off** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform
+- **on_turn_off** (*Optional*, [Action](/automations/actions/#all-actions)): An automation to perform
   when the switch is turned off. See [`switch.on_turn_on` / `switch.on_turn_off` Trigger](#switch-on_turn_on_off_trigger).
 
 - **disabled_by_default** (*Optional*, boolean): If true, then this entity should not be added to any client's frontend,
@@ -76,8 +117,8 @@ Configuration variables:
   See [https://www.home-assistant.io/integrations/switch/#device-class](https://www.home-assistant.io/integrations/switch/#device-class)
   for a list of available options.
 
-- If MQTT enabled, All other options from [MQTT Component](/components/mqtt#config-mqtt-component).
-- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](/components/web_server#config-webserver-version-3-options).
+- If MQTT enabled, All other options from [MQTT Component](/components/mqtt/#config-mqtt-component).
+- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](/components/web_server/#config-webserver-version-3-options).
 
 ### `switch.toggle` Action
 
@@ -130,7 +171,7 @@ on_...:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the switch to control.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the switch to control.
 - **state** (**Required**, boolean, [templatable](/automations/templates)):
   The state to set the switch to. `true` turns the switch on, `false` turns it off.
 
@@ -139,7 +180,7 @@ Configuration variables:
 
 ### `switch.is_on` / `switch.is_off` Condition
 
-This [Condition](/automations/actions#all-conditions) checks if the given switch is ON (or OFF).
+This [Condition](/automations/actions/#all-conditions) checks if the given switch is ON (or OFF).
 
 ```yaml
 # In some trigger:
@@ -152,7 +193,7 @@ on_...:
 
 ### lambda calls
 
-From [lambdas](/automations/templates#config-lambda), you can call several methods on all switches to do some
+From [lambdas](/automations/templates/#config-lambda), you can call several methods on all switches to do some
 advanced stuff (see the full API Reference for more info).
 
 - `publish_state()`  : Manually cause the switch to publish a new state and store it internally.

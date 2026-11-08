@@ -67,8 +67,15 @@ sensor:
 
   - All other options from [Sensor](/components/sensor).
 
-- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval to check the
   sensor. Defaults to `60s`.
+
+> [!NOTE]
+> The pressure sensor publishes values in **pascals (Pa)**. Most other ESPHome pressure sensors publish
+> hectopascals (hPa), so a `multiply: 0.01` [filter](/components/sensor/#sensor-filters) is required when feeding
+> this sensor to something that expects hPa. One example is the [SCD4x](/components/sensor/scd4x) component's
+> `ambient_pressure_compensation_source`, which expects hPa and will report incorrect CO₂ values if given pascals.
+> Set `unit_of_measurement: hPa` on the sensor as well, so the converted value is recorded under the correct unit.
 
 ### I²C
 
@@ -77,7 +84,7 @@ sensor:
 
 ### SPI
 
-- **cs_pin** (*Required*, [Pin Schema](/guides/configuration-types#pin-schema)): The SPI CS pin connected to the BMP581 sensor.
+- **cs_pin** (*Required*, [Pin Schema](/guides/configuration-types/#pin-schema)): The SPI CS pin connected to the BMP581 sensor.
 
 <span id="bmp581-oversampling"></span>
 
@@ -128,11 +135,11 @@ The BMP581's Infinite Impulse Response filter reduces noise in measurement value
 - `128x`
 
 > [!WARNING]
-> The BMP581's deep standby mode is disabled when you enable an IIR filter, which increases power consumption. Consider using a mathematically equivalent ESPHome exponential moving average filter instead, especially if you configure a long update interval. See the [exponential moving average filter](/components/sensor/filter/sliding_window_moving_average#sensor-filter-exponential_moving_average) for implementation information.
+> The BMP581's deep standby mode is disabled when you enable an IIR filter, which increases power consumption. Consider using a mathematically equivalent ESPHome exponential moving average filter instead, especially if you configure a long update interval. See the [exponential moving average filter](/components/sensor/filter/sliding_window_moving_average/#sensor-filter-exponential_moving_average) for implementation information.
 
 ## See Also
 
-- [Sensor Filters](/components/sensor#sensor-filters)
+- [Sensor Filters](/components/sensor/#sensor-filters)
 - [BME280 Temperature+Pressure+Humidity Sensor](/components/sensor/bme280/)
 - [BMP280 Temperature+Pressure Sensor](/components/sensor/bmp280/)
 - [BMP388 / BMP390 Temperature+Pressure Sensor](/components/sensor/bmp3xx/)

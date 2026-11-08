@@ -15,16 +15,16 @@ See [Modbus](/components/modbus/#hardware-setup) for RS485 hardware setup instru
 
 ## Configuration variables
 
-- **modbus_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the `modbus` hub.
+- **modbus_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the `modbus` hub.
 
 - **address** (*Optional*, int): The Modbus device address (can be decimal or hexadecimal). `1`-`247` is the standard
-  device range. `0` is the broadcast address and is now **rejected at validation** - an existing config using
-  `address: 0` will fail to compile; a broadcast never returns a response, so use the
-  [Modbus Client](/components/modbus_client/) component for broadcast or other ad-hoc frames. Values from `248` to
+  device range. `0` is the broadcast address and is **rejected at validation** unless `allow_broadcast_read` is
+  set, since a broadcast never returns a response; use the [Modbus Client](/components/modbus_client/) component
+  for broadcast or other ad-hoc frames. Values from `248` to
   `255` are still accepted but fall outside the standard range; the field is a single byte, so `255` is the maximum. Defaults
   to `0x01`.
 
-- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval that the sensors should be checked.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval that the sensors should be checked.
   Defaults to 60 seconds.
 
 <span id="modbus_controller-offline_skip_updates"></span>
@@ -38,6 +38,14 @@ See [Modbus](/components/modbus/#hardware-setup) for RS485 hardware setup instru
 
 - **continuous** (*Optional*, boolean): Poll as fast as the bus allows instead of once per update interval. Defaults
   to `false`. See [Continuous polling](#modbus_controller-continuous-polling) below.
+
+- **allow_broadcast_read** (*Optional*, boolean): Allow `address: 0` and poll it as if it were a unicast address, for
+  a device that doesn't follow the Modbus spec and replies to the broadcast address. Only accepted together with
+  `address: 0`. Every read this controller
+  sends waits for its reply with the normal timeout and retry ladder; the device must answer as address `0`.
+  Writes from this controller's entities stay fire-and-forget broadcasts unless the entity sets
+  `expect_broadcast_write_response`, and a `custom_pdu` whose function code can be broadcast (a write or a vendor
+  code) is rejected, since it would never be answered. Defaults to `false`.
 
 Multiple `modbus_controller` instances can share the same `address` — for example, to poll different registers on
 the same device at different `update_interval`s.
@@ -572,7 +580,7 @@ The response is mapped to the sensor based on each sensor's register width and o
 
 This automation will be triggered when a command has been transmitted by the `modbus` hub. It fires once per wire
 transmission, so a command that is retried triggers it again on each attempt.
-In [Lambdas](/automations/templates#config-lambda) you can get the function code in `function_code` and the
+In [Lambdas](/automations/templates/#config-lambda) you can get the function code in `function_code` and the
 register address in `address`.
 
 ```yaml
@@ -588,7 +596,7 @@ modbus_controller:
 
 ### `on_online`
 
-This automation will be triggered when a `modbus_controller` goes `online`, after been `offline`. In [Lambdas](/automations/templates#config-lambda)
+This automation will be triggered when a `modbus_controller` goes `online`, after been `offline`. In [Lambdas](/automations/templates/#config-lambda)
 you can get the function code in `function_code` and the register address in `address`.
 
 ```yaml
@@ -605,7 +613,7 @@ modbus_controller:
 ### `on_offline`
 
 This automation will be triggered when a `modbus_controller` goes `offline`
-(see [Offline behavior](#modbus_controller-offline-behavior)). In [Lambdas](/automations/templates#config-lambda)
+(see [Offline behavior](#modbus_controller-offline-behavior)). In [Lambdas](/automations/templates/#config-lambda)
 you can get the function code in `function_code` and the register address in `address`.
 
 ```yaml
