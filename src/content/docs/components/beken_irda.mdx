@@ -1,0 +1,120 @@
+---
+description: "Instructions for setting up the hardware NEC infrared decoder of Beken BK72xx chips."
+title: "Beken IR Receiver"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `beken_irda` component receives NEC infrared remote control codes with the hardware NEC decoder of Beken
+BK72xx (LibreTiny) chips. The decoder captures complete NEC frames in hardware and passes them to the standard
+[remote receiver](/components/remote_receiver/) decoders and triggers.
+
+The decoder has no pin matrix, so it works on **P26 only**. To receive on another pin, or to receive protocols other
+than NEC, use [remote receiver](/components/remote_receiver/) with
+[`sampling: timer`](/components/remote_receiver/#bk72xx-configuration-variables) instead.
+
+## Usage
+
+Connect a 3.3 V 38 kHz demodulating IR receiver module to P26. Its output idles high and goes low during a mark. The
+receiver module removes the 38 kHz carrier, so the chip only sees the envelope.
+
+```yaml
+# Example configuration entry
+beken_irda:
+  dump: nec
+```
+
+On BK7231T/N and BK7251/BK7252, P26 is also PWM5. Do not use PWM on P26 while IR reception is active.
+
+## Configuration Variables
+
+- **pin** (*Optional*, [Pin](/guides/configuration-types/#pin)): The input pin. Defaults to `P26`, the only pin the
+  decoder supports. The decoder sets up the pin itself, so pin modes and `inverted` are not allowed.
+- **dump** (*Optional*, list): Decode and dump these remote codes in the logs (at log.level=DEBUG). Set to `all` to
+  dump all available codecs. See [remote receiver](/components/remote_receiver/#configuration-variables) for the list
+  of decoders. The decoder only receives NEC, so `nec` (or `raw`) is the useful choice.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation.
+
+## Automations
+
+This component provides the same triggers as [remote receiver](/components/remote_receiver/#automations), for example:
+
+- **on_nec** (*Optional*, [Automation](/automations/)): An automation to perform when a NEC remote code has been
+  decoded. A variable `x` is provided.
+- **on_raw** (*Optional*, [Automation](/automations/)): An automation to perform when a raw remote code has been
+  decoded. A variable `x` is provided.
+
+```yaml
+beken_irda:
+  on_nec:
+    then:
+      - logger.log:
+          format: "NEC address=0x%04X command=0x%04X"
+          args: [x.address, x.command]
+```
+
+## Repeat Frames
+
+`remote_base`'s NEC decoder ignores standalone NEC repeat frames, which are a `9ms` mark, a `2.25ms`
+space, and a `560us` mark. `beken_irda` dispatches repeat frames as raw timings so `on_raw` can see them,
+but it does not trigger `on_nec` for a repeat.
+
+If you need to capture repeats (such as for a hold-to-dim feature), you can keep the last complete
+command in a global and match the repeat shape in `on_raw`. This example also ignores the first
+repeat after each full frame, because some remotes emit one during a short tap:
+
+```yaml
+globals:
+  - id: last_ir_command
+    type: uint8_t
+    initial_value: "0xFF"
+  - id: ignore_repeats_remaining
+    type: uint8_t
+    initial_value: "0"
+
+beken_irda:
+  on_nec:
+    - lambda: |-
+        id(last_ir_command) =
+            x.address == 0xEF00 ? (x.command & 0xFF) : 0xFF;
+        id(ignore_repeats_remaining) = 1;
+  on_raw:
+    - if:
+        condition:
+          lambda: |-
+            if (x.size() < 3)
+              return false;
+            if (x[0] < 8000 || x[0] > 10000)
+              return false;
+            if (x[1] > -2000 || x[1] < -2500)
+              return false;
+            if (x[2] < 400 || x[2] > 700)
+              return false;
+            if (id(ignore_repeats_remaining) > 0) {
+              id(ignore_repeats_remaining)--;
+              return false;
+            }
+            return id(last_ir_command) == 0x00 || id(last_ir_command) == 0x01;
+        then:
+          - light.dim_relative:
+              id: my_light
+              relative_brightness: !lambda "return id(last_ir_command) == 0x00 ? 0.1f : -0.1f;"
+              transition_length: 100ms
+```
+
+## Limitations
+
+- The decoder handles NEC only, and only on P26.
+- It is not available on the BK7238, which has no IRDA block, on the BK7231Q, whose SDK registers no IRDA interrupt,
+  or on the BK7252N/BK7253, which have a different IRDA block. Use
+  [remote receiver](/components/remote_receiver/) on those chips.
+- `remote_transmitter` on these chips holds interrupts off for a whole frame while it sends, so IR transmit and
+  receive cannot happen at the same time.
+
+## See Also
+
+- [Remote Receiver](/components/remote_receiver/)
+- [Remote Transmitter](/components/remote_transmitter/)
+- [IR/RF Proxy](/components/ir_rf_proxy/)
+- [Setting up IR Devices](/guides/setting_up_rmt_devices/#remote-setting-up-infrared)
+- <APIRef text="remote_base.h" path="remote_base/remote_base.h" />
