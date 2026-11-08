@@ -1,0 +1,153 @@
+---
+description: "Run a program on the ESP32 ULP coprocessor with ESPHome."
+title: "ESP32 ULP Coprocessor"
+---
+import APIRef from '@components/APIRef.astro';
+
+The `esp32_ulp` component builds a program for the ESP32's low power coprocessor, embeds it in the firmware
+and runs it. The coprocessor keeps running while the main CPU is in deep sleep, so it can poll pins, sample
+the ADC or talk to a sensor at very low power and wake the main CPU when something needs attention.
+
+The coprocessor is chosen from the ESP32 variant:
+
+- **ESP32-S2 and ESP32-S3:** the ULP RISC-V core.
+- **ESP32-C5, ESP32-C6 and ESP32-P4:** the LP core.
+
+Both are small RISC-V cores programmed in C against the ESP-IDF `ulp_riscv_*` or `ulp_lp_core_*` APIs. The
+original ESP32's FSM coprocessor and variants without a coprocessor are not supported. This component requires
+the ESP-IDF framework with the native ESP-IDF toolchain (the default); the PlatformIO toolchain is not supported.
+
+```yaml
+# Example configuration entry
+esp32_ulp:
+  id: my_ulp
+  sources:
+    - ulp/main.c
+  wakeup_period: 100ms
+
+sensor:
+  - platform: template
+    name: ULP Counter
+    lambda: return ulp_counter;
+    update_interval: 1s
+```
+
+```c
+// ulp/main.c
+#include <stdint.h>
+
+uint32_t counter = 0;
+
+int main(void) {
+  counter++;
+  return 0;
+}
+```
+
+## Configuration Variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation.
+  Needed for the lambda calls below.
+- **sources** (**Required**, list of files): The C (`.c`) and assembly (`.S`) files that make up the program,
+  relative to the YAML file. Header files (`.h`) may be listed too; they are copied next to the sources so the
+  program can include them. File names must be unique.
+- **wakeup_period** (**Required** on the ESP32-S2/S3, *Optional* on the LP core when `wakeup_sources` is set,
+  [Time](/guides/configuration-types/#time)): How often the timer starts the program, from `1us` to about
+  71 minutes. The program runs to completion each time; returning from `main` halts the coprocessor until the
+  next period.
+- **wakeup_sources** (*Optional*, list): LP core only (ESP32-C5/C6/P4). Additional events that start the program:
+  `hp_cpu` (started once by the main CPU), `lp_io` (LP IO interrupt), `lp_uart` (LP UART activity) or `etm`
+  (ETM event). The LP timer is used automatically when `wakeup_period` is set.
+- **reserve_memory** (*Optional*, int): Bytes of RTC slow memory (LP memory) reserved for the program, its
+  variables and its stack. Defaults to `4096`. The maximum is `8176` on the S2/S3, `16352` on the C5/C6 and
+  `31088` on the P4. On the S2/S3 the value must be a multiple of 16, as the stack starts at its end.
+- **run_on_boot** (*Optional*, boolean): Load and start the program during setup. Defaults to `true`. When
+  `false`, call `load_and_run()` from a lambda. However it was started, a running program is left alone after a
+  deep-sleep wake and its variables keep their values.
+- **wakeup_from_sleep** (*Optional*, boolean): Allow the program to wake the main CPU from deep sleep. Defaults to
+  `true`.
+
+## Sharing Data With the Program
+
+Every global variable in the program is visible to lambdas on the main CPU as `ulp_<name>`. A `uint32_t counter`
+in the program becomes `ulp_counter` in a lambda. ESP-IDF declares every shared symbol as `uint32_t` (or an array
+of `uint32_t`) regardless of its type in the program, so keep shared variables `uint32_t` or `int32_t`. Reading
+a shared `float` through its symbol gives the bit pattern, and writing through the symbol of a `uint8_t` or
+`uint16_t` overwrites the neighbouring bytes; for such types take the symbol's address and cast it to the real
+type. A signed value must be cast back on the main CPU, or `-1` reads as `4294967295`:
+
+```yaml
+sensor:
+  - platform: template
+    name: ULP Temperature
+    lambda: return (int32_t) ulp_temperature;
+```
+
+The main CPU can read and write shared variables at any time; the coprocessor keeps running while it does, so
+prefer single-word values or have the program write a value only when it is complete.
+
+To wake the main CPU from deep sleep, the program calls `ulp_riscv_wakeup_main_processor()` on the S2/S3 or
+`ulp_lp_core_wakeup_main_processor()` on the LP core. When the main CPU is awake the call does nothing. Use the
+[Deep Sleep](/components/deep_sleep/) component to put the main CPU to sleep; the coprocessor keeps running
+through it, and the next boot reports the wake cause. The Deep Sleep component does not currently build for the
+ESP32-P4; on that chip call ESP-IDF's `esp_deep_sleep_start()` from a lambda instead, which enters deep sleep
+with the wakeup sources the component has enabled.
+
+```c
+// ulp/main.c: wake the main CPU every 50 runs
+#include <stdint.h>
+#include "sdkconfig.h"
+#if CONFIG_ULP_COPROC_TYPE_LP_CORE
+#include "ulp_lp_core_utils.h"
+#define WAKE_MAIN() ulp_lp_core_wakeup_main_processor()
+#else
+#include "ulp_riscv_utils.h"
+#define WAKE_MAIN() ulp_riscv_wakeup_main_processor()
+#endif
+
+uint32_t counter = 0;
+
+int main(void) {
+  counter++;
+  if (counter % 50 == 0) {
+    WAKE_MAIN();
+  }
+  return 0;
+}
+```
+
+## Lambda Calls
+
+The calls go through the component's `id`, so the `esp32_ulp` block needs an `id:`.
+
+- `load_and_run()`: Load the program into the coprocessor memory and start it. Only needed with
+  `run_on_boot: false`.
+- `timer_stop()`: On the ESP32-S2/S3, stop the timer so the program is not started again; a run in progress
+  finishes. On the LP core this puts the core to sleep and disables all of its wakeup sources, including
+  `lp_io`, `lp_uart` and `etm`.
+- `timer_resume()`: On the ESP32-S2/S3, start the timer again. On the LP core, start the core again with its
+  configured wakeup sources.
+
+```yaml
+on_...:
+  then:
+    - lambda: id(my_ulp).timer_stop();
+```
+
+## Notes
+
+- Building a program for the ESP32-S2/S3 needs the RISC-V compiler, which ESPHome does not normally install for
+  these chips. The first build with this component downloads it (about 290 MB) next to the Xtensa toolchain.
+- The program can only use the RTC-domain peripherals: RTC GPIOs, the SAR ADC, RTC I2C and the RTC timer on the
+  S2/S3, or the LP peripherals on the C5/C6/P4. See the ESP-IDF ULP documentation for the available APIs and
+  examples.
+- The coprocessor and the main CPU share the ADC. If the program reads the ADC, do not use the
+  [ADC](/components/sensor/adc/) component on any channel of that ADC unit; the main CPU's driver reconfigures the
+  whole unit when it starts.
+
+## See Also
+
+- [Deep Sleep](/components/deep_sleep/)
+- [ULP RISC-V](https://docs.espressif.com/projects/esp-idf/en/latest/esp32s3/api-reference/system/ulp-risc-v.html)
+- [LP core](https://docs.espressif.com/projects/esp-idf/en/latest/esp32c6/api-reference/system/ulp-lp-core.html)
+- <APIRef text="esp32_ulp.h" path="esp32_ulp/esp32_ulp.h" />
