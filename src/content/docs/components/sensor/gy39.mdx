@@ -1,0 +1,71 @@
+---
+description: "Instructions for setting up the GY-39 environment sensor module with ESPHome"
+title: "GY-39 Environment Sensor"
+---
+
+import Figure from '@components/Figure.astro';
+import gy39TopImg from './images/gy39_top.webp';
+import gy39BottomImg from './images/gy39_bottom.webp';
+import gy39ModesImg from './images/gy39_modes.webp';
+import APIRef from '@components/APIRef.astro';
+
+The `gy39` sensor platform reads the GY-39 module ([datasheet](https://www.gysensor.cn/gy39-esphome/)): illuminance from
+its MAX44009 and temperature, pressure, humidity and altitude from its BME280, all through the module's own
+microcontroller. [I²C](/components/i2c/) is required.
+
+<Figure
+  src="/images/gy39.webp"
+  alt="GY-39 module"
+  caption="GY-39 environment sensor module."
+  layout="constrained"
+  width={640}
+  height={538}
+/>
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: gy39
+    temperature:
+      name: GY-39 Temperature
+    humidity:
+      name: GY-39 Humidity
+```
+
+## Configuration Variables
+
+- **illuminance** (*Optional*): Illuminance in lux. All options from [Sensor](/components/sensor/).
+- **temperature** (*Optional*): Temperature in °C. All options from [Sensor](/components/sensor/).
+- **pressure** (*Optional*): Air pressure in Pa. All options from [Sensor](/components/sensor/).
+- **humidity** (*Optional*): Relative humidity in %. All options from [Sensor](/components/sensor/).
+- **altitude** (*Optional*): Altitude in metres, as calculated by the module. All options from
+  [Sensor](/components/sensor/).
+- **address** (*Optional*, int): The I²C address of the module. Defaults to `0x5B`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval to read the module.
+  Defaults to `60s`.
+
+## Wiring
+
+<Figure src={gy39TopImg} alt="GY-39 top side" caption="Top side, facing the light" layout="constrained" />
+<Figure src={gy39BottomImg} alt="GY-39 bottom side" caption="Bottom side" layout="constrained" />
+
+The module supports several modes. ESPHome uses the I²C mode of its microcontroller, which reads both chips for
+you. Select it by connecting pin `S0` to `GND` (mode 2, `MCU_IIC`):
+
+<Figure
+  src={gy39ModesImg}
+  alt="GY-39 jumper settings for the three modes"
+  caption="Modes of operation"
+  layout="constrained"
+/>
+
+The `CT` and `DR` pins are then the I²C bus:
+
+- `CT` → `SCL`
+- `DR` → `SDA`
+
+## See Also
+
+- [Sensor Filters](/components/sensor/#sensor-filters)
+- [BME280 Temperature+Pressure+Humidity Sensor](/components/sensor/bme280/)
+- <APIRef text="gy39.h" path="gy39/gy39.h" />

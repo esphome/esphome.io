@@ -67,14 +67,14 @@ interval:
 ### Configuration variables
 
 - **address** (*Optional*, int): Manually specify the [I²C](/components/i2c) address of the display. Defaults to 0x3F.
-- **i2c_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [I²C Component](/components/i2c) if you want
+- **i2c_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the [I²C Component](/components/i2c) if you want
   to use multiple I²C buses.
 
-- **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The RESET pin. Defaults to not connected.
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
-- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to re-draw the screen. Defaults to `1s`.
-- **pages** (*Optional*, list): Show pages instead of a single lambda. See [Display Pages](/components/display#display-pages).
-- **lambda** (*Optional*, [lambda](/automations/templates#config-lambda)): The lambda to use for rendering the content on the display.
+- **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The RESET pin. Defaults to not connected.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval to re-draw the screen. Defaults to `1s`.
+- **pages** (*Optional*, list): Show pages instead of a single lambda. See [Display Pages](/components/display/#display-pages).
+- **lambda** (*Optional*, [lambda](/automations/templates/#config-lambda)): The lambda to use for rendering the content on the display.
 - **invert_colors** (*Optional*, boolean): Display hardware color invesion. Defaults to `false`.
 - **rotation** (*Optional*): Set the rotation of the display. Everything you draw in `lambda:` will be rotated
   by this option. One of `0°` (default), `90°`, `180°`, `270°`.
@@ -118,13 +118,14 @@ Optionally you can also connect the `RESET` pin to a pin on the ESP which may im
 ```yaml
 # Example minimal configuration entry
 spi:
-  clk_pin: D1
-  mosi_pin: D2
+  clk_pin: GPIOXX
+  mosi_pin: GPIOXX
 
 display:
   - platform: st7567_spi
     id: my_display
-    dc_pin: D3
+    dc_pin: GPIOXX
+    cs_pin: GPIOXX
     lambda: |-
       it.print(0, 0, id(my_font), "Hello World!");
 
@@ -136,17 +137,17 @@ interval:
 
 ### Configuration variables
 
-- **dc_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The DC pin.
-- **cs_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The Chip Select (CS) pin.
-- **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The RESET pin. Defaults to not connected.
-- **spi_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [SPI Component](/components/spi) if you want
+- **dc_pin** (**Required**, [Pin Schema](/guides/configuration-types/#pin-schema)): The DC pin.
+- **cs_pin** (**Required**, [Pin Schema](/guides/configuration-types/#pin-schema)): The Chip Select (CS) pin.
+- **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The RESET pin. Defaults to not connected.
+- **spi_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the [SPI Component](/components/spi) if you want
   to use multiple SPI buses.
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
-- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to re-draw the screen. Defaults to `1s`.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval to re-draw the screen. Defaults to `1s`.
 
-- **pages** (*Optional*, list): Show pages instead of a single lambda. See [Display Pages](/components/display#display-pages).
-- **lambda** (*Optional*, [lambda](/automations/templates#config-lambda)): The lambda to use for rendering the content on the display.
+- **pages** (*Optional*, list): Show pages instead of a single lambda. See [Display Pages](/components/display/#display-pages).
+- **lambda** (*Optional*, [lambda](/automations/templates/#config-lambda)): The lambda to use for rendering the content on the display.
 - **invert_colors** (*Optional*, boolean): Display hardware color invesion. Defaults to `false`.
 - **rotation** (*Optional*): Set the rotation of the display. Everything you draw in `lambda:` will be rotated
   by this option. One of `0°` (default), `90°`, `180°`, `270°`.
@@ -173,8 +174,8 @@ display:
 ## See Also
 
 - [Display Component](/components/display/)
-- [Display Rendering Engine](/components/display#display-engine)
-- [Display Menu](/components/display_menu#display_menu)
+- [Display Rendering Engine](/components/display/#display-engine)
+- [Display Menu](/components/display_menu/#display_menu)
 - [I²C Bus](/components/i2c)
 - [SPI Bus](/components/spi)
 - <APIRef text="st7567.h" path="st7567/st7567.h" />

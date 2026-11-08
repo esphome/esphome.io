@@ -43,29 +43,29 @@ addresses. Check the schematic of your driver module, as some boards tie these p
 
 ## Configuration Variables
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): Specify the ID of the stepper so that you can control
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): Specify the ID of the stepper so that you can control
   it.
 
-- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the [UART bus](/components/uart/) the
+- **uart_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the [UART bus](/components/uart/) the
   driver is connected to. Required if you have multiple UART buses.
 
 - **address** (*Optional*, int): The UART address of the driver, `0` to `3`. Defaults to `0`.
 
-- **step_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The `STEP` pin of the driver.
+- **step_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The `STEP` pin of the driver.
   Enables STEP/DIR mode. Exactly one of `step_pin` or `index_pin` is required.
 
-- **dir_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The `DIR` pin of the driver.
+- **dir_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The `DIR` pin of the driver.
   Required when `step_pin` is set.
 
-- **index_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The `INDEX` pin of the driver.
+- **index_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The `INDEX` pin of the driver.
   Enables UART speed control mode. Must be a pin that supports interrupts. Exactly one of `step_pin` or `index_pin`
   is required.
 
-- **diag_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The `DIAG` pin of the driver.
+- **diag_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The `DIAG` pin of the driver.
   Must be a pin that supports interrupts. The driver sets this pin high on a driver error or a stall. See
   [Driver Status](#driver-status) and [Stall Detection](#stall-detection).
 
-- **enn_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The `ENN` (enable, active low) pin
+- **enn_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The `ENN` (enable, active low) pin
   of the driver. When not set, the motor outputs are turned on and off over UART.
 
 - **rsense** (*Optional*, resistance): The value of the external sense resistors on the driver module, for example
@@ -271,10 +271,10 @@ sensor:
 
 ### Configuration Variables
 
-- **tmc2209_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the TMC2209 stepper. Required if you
+- **tmc2209_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the TMC2209 stepper. Required if you
   have multiple TMC2209 drivers.
 
-- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to read the sensors.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval to read the sensors.
   Defaults to `60s`.
 
 - **actual_current** (*Optional*): The motor current the driver is set to, in A RMS. This is the run current or the
@@ -325,7 +325,7 @@ on_...:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the stepper.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the stepper.
 
 ## `tmc2209.configure` Action
 
@@ -344,7 +344,7 @@ on_...:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the stepper.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the stepper.
 
 - **inverse_direction** (*Optional*, boolean, [templatable](/automations/templates)): Reverse the direction of the
   motor.
@@ -377,7 +377,7 @@ on_...:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the stepper.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the stepper.
 
 - **run_current** (*Optional*, current, [templatable](/automations/templates)): The motor current while running,
   in A RMS. Cannot be used together with `irun`.
@@ -421,7 +421,7 @@ on_...:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the stepper.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the stepper.
 
 - **threshold** (*Optional*, int, [templatable](/automations/templates)): The `SGTHRS` value, `0` to `255`. A stall
   is reported when the StallGuard result drops below twice this value, so a higher value detects a stall sooner.
@@ -450,7 +450,7 @@ on_...:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the stepper.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the stepper.
 
 - **semin** (*Optional*, int, [templatable](/automations/templates)): The lower StallGuard threshold for raising
   the current, `0` to `15`. The current is raised when the StallGuard result drops below `semin` × 32. `0` disables
@@ -469,6 +469,88 @@ Configuration variables:
 
 - **seimin** (*Optional*, boolean, [templatable](/automations/templates)): The minimum current CoolStep lowers to.
   `false` for half of the run current, `true` for a quarter.
+
+## `tmc2209.chopconf` Action
+
+Change the chopper settings at runtime. `toff` and `tbl` apply in both chopper modes, `hstrt` and `hend` set the
+SpreadCycle hysteresis. The driver defaults work for most motors. See the `CHOPCONF` register and the SpreadCycle
+section in the datasheet for tuning.
+
+The power-up values below are the values of a driver as shipped. The driver reads them from its OTP memory, so they
+can differ when that memory was programmed. These are not the reset values in the datasheet's register table.
+
+```yaml
+on_...:
+  then:
+    - tmc2209.chopconf:
+        id: my_stepper
+        toff: 5
+        tbl: 1
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the stepper.
+
+- **toff** (*Optional*, int, [templatable](/automations/templates)): The chopper off time, `1` to `15`. The slow
+  decay phase lasts 24 + 32 × `toff` clock cycles. `1` only works with `tbl` set to `2` or higher. This is checked
+  when both are set to fixed values in the same action. Without an `enn_pin`, the driver is disabled by setting the
+  off time to `0`. While the motor is disabled, the new value is stored and written on the next enable. The power-up
+  value is `3`.
+
+- **tbl** (*Optional*, int, [templatable](/automations/templates)): The comparator blank time, `0` to `3`, for 16,
+  24, 32 or 40 clock cycles. The datasheet recommends `0` or `1` for most motors. The power-up value is `2`.
+
+- **hstrt** (*Optional*, int, [templatable](/automations/templates)): The hysteresis start value added to `hend`,
+  `0` to `7`, for 1 to 8. The power-up value is `5` (6).
+
+- **hend** (*Optional*, int, [templatable](/automations/templates)): The hysteresis end value, `0` to `15`, for -3
+  to 12. The power-up value is `0` (-3). The sum of `hstrt` and `hend` (as the datasheet values) must not exceed 16.
+  This is checked when both are set to fixed values in the same action.
+
+## `tmc2209.pwmconf` Action
+
+Change the StealthChop PWM settings at runtime. The driver defaults work for most motors. See the `PWMCONF`
+register and the StealthChop section in the datasheet for tuning. The power-up values are those of a driver as
+shipped, see the [`tmc2209.chopconf` action](#tmc2209-chopconf-action).
+
+```yaml
+on_...:
+  then:
+    - tmc2209.pwmconf:
+        id: my_stepper
+        pwm_freq: 2
+        pwm_reg: 4
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the stepper.
+
+- **pwm_ofs** (*Optional*, int, [templatable](/automations/templates)): The PWM amplitude offset, `0` to `255`.
+  With `pwm_autoscale`, this is the start value for the automatic tuning. The power-up value is `36`.
+
+- **pwm_grad** (*Optional*, int, [templatable](/automations/templates)): The velocity dependent PWM amplitude
+  gradient, `0` to `255`. With `pwm_autograd`, this is the start value for the automatic tuning. The power-up value
+  is `14`.
+
+- **pwm_freq** (*Optional*, int, [templatable](/automations/templates)): The PWM frequency, `0` to `3`, for 2/1024,
+  2/683, 2/512 or 2/410 of the clock frequency (about 23.4, 35.1, 46.9 or 58.5 kHz at 12 MHz). The power-up value
+  is `1`.
+
+- **pwm_autoscale** (*Optional*, boolean, [templatable](/automations/templates)): Regulate the PWM amplitude to
+  the motor current automatically. When `false`, `pwm_ofs` and `pwm_grad` set the amplitude directly. The power-up
+  value is `true`.
+
+- **pwm_autograd** (*Optional*, boolean, [templatable](/automations/templates)): Tune the PWM amplitude gradient
+  automatically. Requires `pwm_autoscale`. The power-up value is `true`.
+
+- **pwm_reg** (*Optional*, int, [templatable](/automations/templates)): The regulation loop gradient for
+  `pwm_autoscale`, `1` to `15`. This is the maximum change of the PWM amplitude per half wave, from 0.5 for `1` to
+  7.5 for `15`. A higher value adapts faster to load changes. The power-up value is `8`.
+
+- **pwm_lim** (*Optional*, int, [templatable](/automations/templates)): The limit for the PWM amplitude when
+  switching from SpreadCycle back to StealthChop, `0` to `15`, in units of 16. The power-up value is `12`.
 
 ## See Also
 
