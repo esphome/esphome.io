@@ -120,8 +120,9 @@ id(my_canopen).read_sdo<uint32_t>(0x01, 0x1018, 1, [](void *context, const canop
 // value write
 id(my_canopen).write_sdo<uint16_t>(0x01, 0x1017, 0, 2000);
 
-// buffer read (strings, domains; up to 1024 bytes)
-id(my_canopen).read_sdo_data(0x01, 0x1008, 0, [](void *context, const canopen::SDOReply &reply) {
+// buffer read (strings, domains); the buffer must stay valid until the callback
+static uint8_t name[64];
+id(my_canopen).read_sdo_data(0x01, 0x1008, 0, name, sizeof(name), [](void *context, const canopen::SDOReply &reply) {
   if (reply.ok())
     ESP_LOGI("main", "name: %.*s", (int) reply.len, (const char *) reply.data);
 }, nullptr);
@@ -129,8 +130,10 @@ id(my_canopen).read_sdo_data(0x01, 0x1008, 0, [](void *context, const canopen::S
 
 - `read_sdo<T>(node_id, index, subindex, callback, context)` and `write_sdo<T>(node_id, index, subindex, value,
   callback, context)` for values of 1, 2 or 4 bytes. `SDOReply::as<T>()` sign-extends for signed types.
-- `read_sdo_data()` and `write_sdo_data(node_id, index, subindex, data, len, callback, context)` for buffers.
-  `write_sdo_data()` doesn't copy the data: it must stay valid until the callback.
+- `read_sdo_data(node_id, index, subindex, data, capacity, callback, context)` and `write_sdo_data(node_id, index,
+  subindex, data, len, callback, context)` for buffers. The buffer belongs to the caller and must stay valid until the
+  callback, so it can't be a local variable. A read of an object longer than `capacity` is aborted. Requests run one
+  at a time, so queued reads can share a buffer if each callback uses the data before it returns.
 
 ## See Also
 
