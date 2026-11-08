@@ -38,8 +38,13 @@ bridge:
   A pause inside a frame longer than 1.5 characters (longer than three quarters of the 50 ms for a UART with packets)
   can end the frame early.
 - A block that starts a frame is sent once the destination line has been quiet for a frame gap.
+- A frame longer than 256 bytes goes out in blocks and can pause between them.
 - Bytes for a side that is not connected, or that takes nothing for one second, are dropped with a warning.
 - On ESP32, a pause inside a frame of about `rx_timeout` characters or longer can split the frame in two.
+- On a serial line whose UART cannot report how much it can take, for example on RP2040 and LibreTiny (not on
+  ESP8266), a frame of up to 255 bytes goes out in one piece. Anything longer goes out at the line rate in small
+  pieces, so the other direction is still read meanwhile. It can pause while the device is busy elsewhere for longer
+  than the transmit FIFO lasts (32 characters on an RP2040 hardware UART: about 2.8 ms at 115200 baud).
 
 ## See Also
 
