@@ -40,24 +40,24 @@ sensor:
 
 ## Configuration Variables
 
-- **packet_interface** (**Required**, [ID](/guides/configuration-types#id)): The
+- **packet_interface** (**Required**, [ID](/guides/configuration-types/#id)): The
   [packet interface](/components/packet_interface/) to send and receive states on.
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation. Needed
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation. Needed
   when there is more than one entity transport.
 - **sensors** (*Optional*, list): The sensors whose states are sent. Each entry is either the ID of a sensor, or:
 
-  - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the sensor.
+  - **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the sensor.
   - **broadcast_id** (*Optional*, string): The ID that other devices use for this sensor. Defaults to `id`.
 
 - **binary_sensors** (*Optional*, list): The binary sensors whose states are sent, in the same form as `sensors`.
 
   There can be up to 255 sensors and 255 binary sensors.
-- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): Send the dictionary and the states of
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): Send the dictionary and the states of
   all sensors and binary sensors at this interval, as well as when they change. At least `1s`, or `never`. Defaults
   to `never` if the packet interface has both a [reliability layer](/components/packet_interface/#reliability) and a
   [session layer](/components/packet_interface/#session), or a link that does their job, such as
   [TCP](/components/packet_interface/tcp/), and to `15s` otherwise.
-- **timeout** (*Optional*, [Time](/guides/configuration-types#time)): The sensors and binary sensors that show states
+- **timeout** (*Optional*, [Time](/guides/configuration-types/#time)): The sensors and binary sensors that show states
   from other devices lose their state when no state arrives for them for this long. Use a time longer than the other
   device's `update_interval`, so that a sensor that has not changed is sent again within it, and do not set that
   `update_interval` to `never`. At least `1s`. By default the last state is kept, so without a session layer, a
@@ -119,7 +119,7 @@ binary_sensor:
   `esphome:` section.
 - **remote_id** (*Optional*, string): The ID of the sensor on the other device, or its `broadcast_id` if it has
   one. Required unless `id` is given, in which case it defaults to `id`.
-- **entity_transport_id** (*Optional*, [ID](/guides/configuration-types#id)): The entity transport to receive the
+- **entity_transport_id** (*Optional*, [ID](/guides/configuration-types/#id)): The entity transport to receive the
   state from. Needed when there is more than one.
 - All other options from [Sensor](/components/sensor/#config-sensor) or
   [Binary Sensor](/components/binary_sensor/#config-binary_sensor).

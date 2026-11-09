@@ -51,7 +51,7 @@ packet_interface:
 These options are common to all platforms:
 
 - **platform** (**Required**, string): The type of channel to use, for example `uart` or `udp`.
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation. Use
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation. Use
   this to refer to the interface from another component.
 - **max_packet_size** (*Optional*, int): The largest packet, in bytes, that a user of this interface may send. The
   range and default depend on the platform.
@@ -108,7 +108,7 @@ packet_interface:
 - **peers** (*Optional*, list): Talk to several devices on the channel, each with its own layers. See
   [Several Devices on One Channel](#several-devices-on-one-channel). Each entry has:
 
-  - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID that components such as
+  - **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID that components such as
     [entity transport](/components/entity_transport/) use to send to and receive from this device.
   - **destination** (**Required**, int): The address of the device, or `broadcast`. Each entry must have a
     different destination.
@@ -244,9 +244,9 @@ packet_interface:
 
 - **type** (*Optional*, string): The reliability method. Only `hdlc` is available, which uses the acknowledgement
   and resend method of the HDLC protocol. Defaults to `hdlc`.
-- **timeout** (*Optional*, [Time](/guides/configuration-types#time)): How long to wait for an acknowledgement before
+- **timeout** (*Optional*, [Time](/guides/configuration-types/#time)): How long to wait for an acknowledgement before
   resending. At least `50ms`. Defaults to `200ms`.
-- **ack_delay** (*Optional*, [Time](/guides/configuration-types#time)): How long to wait before acknowledging a
+- **ack_delay** (*Optional*, [Time](/guides/configuration-types/#time)): How long to wait before acknowledging a
   packet, so that one acknowledgement can cover several packets, or a reply can carry it. Useful on radio links,
   which cannot receive while they send; about the time one packet takes to send is a good value. Must be shorter than
   `timeout`. Defaults to `0ms`, which acknowledges at once.
@@ -360,9 +360,9 @@ packet_interface:
 ```
 
 - **type** (*Optional*, string): The session method. Only `basic` is available. Defaults to `basic`.
-- **keep_alive** (*Optional*, [Time](/guides/configuration-types#time)): How often to send a keep-alive packet. From
+- **keep_alive** (*Optional*, [Time](/guides/configuration-types/#time)): How often to send a keep-alive packet. From
   `1s` to `1h`. Defaults to `10s`.
-- **timeout** (*Optional*, [Time](/guides/configuration-types#time)): How long without receiving anything before the
+- **timeout** (*Optional*, [Time](/guides/configuration-types/#time)): How long without receiving anything before the
   other device is considered lost. Must be longer than `keep_alive`, and at most `3h`. Defaults to three times
   `keep_alive`.
 - **binary_sensor** (*Optional*): A [binary sensor](/components/binary_sensor/) that is ON while the other device

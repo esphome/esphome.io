@@ -49,11 +49,11 @@ packet_interface:
 - **port** (**Required**, int): The TCP port the server listens on.
 - **allowed_ips** (*Optional*, list, server only): The networks, such as `192.168.1.0/24`, from which a client may
   connect. By default any client may connect.
-- **reconnect_interval** (*Optional*, [Time](/guides/configuration-types#time)): How long to wait before connecting,
+- **reconnect_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How long to wait before connecting,
   or listening, again after a failure. Defaults to `5s`.
-- **keep_alive** (*Optional*, [Time](/guides/configuration-types#time)): How often to send an empty packet when
+- **keep_alive** (*Optional*, [Time](/guides/configuration-types/#time)): How often to send an empty packet when
   nothing else is sent. From `1s` to `1h`. Defaults to `10s`.
-- **timeout** (*Optional*, [Time](/guides/configuration-types#time)): How long the link waits without receiving
+- **timeout** (*Optional*, [Time](/guides/configuration-types/#time)): How long the link waits without receiving
   anything before it closes the connection. It must be longer than the other device's `keep_alive`, as that sets how
   often packets arrive on an idle link; set it when the two devices have different `keep_alive` values. At most `3h`.
   Defaults to three times `keep_alive`.
@@ -62,7 +62,7 @@ packet_interface:
   All options from [Binary Sensor](/components/binary_sensor/#config-binary_sensor).
 - **max_packet_size** (*Optional*, int): The largest packet, in bytes, that can be sent or received. Range is 16 to
   1022. Defaults to `1022`. Use a [fragmentation layer](/components/packet_interface/#fragmentation) for larger packets.
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation.
 
 A server accepts only one client at a time. If the client restarts, the server closes the old connection when it
 finds the client gone, and then accepts the new one.
