@@ -60,7 +60,8 @@ another device to a request the hub has seen. A reply that is dropped does not r
 >
 > A reply from another device is paired with the last request by address and function code only, so a late reply
 > to an earlier request can arrive with a newer one. If that is a concern, compare the reply's length with what
-> the request asked for, as the example under [Listening Only](#listening-only-sniffer) does.
+> the request asked for, as the example under [Listening Only](#listening-only-sniffer) does. A late reply of the
+> same length cannot be told apart.
 
 ### Client Hub
 
@@ -95,14 +96,15 @@ modbus_monitor:
 ```
 
 To decode register values, check that the reply carries the registers the request asked for, so that a late reply
-to an earlier read is not taken for the newer one's. The [Modbus Monitor Sensor](/components/sensor/modbus_monitor/)
-makes this check before it publishes. For example, to log each register read on the bus:
+to an earlier read is not taken for the newer one's. A late reply of the same length cannot be told apart. The
+[Modbus Monitor Sensor](/components/sensor/modbus_monitor/) makes this check before it publishes. For example, to
+log each register read on the bus:
 
 ```yaml
 modbus_monitor:
   - on_response:
       - lambda: |-
-          // Register reads only. A client hub also passes exception replies, which have bit 7 set.
+          // Register reads only. An exception reply has bit 7 set, so response[0] differs and it is skipped.
           if ((request[0] != 0x03 && request[0] != 0x04) || response[0] != request[0] || request.size() < 5)
             return;
           const uint16_t start = encode_uint16(request[1], request[2]);
