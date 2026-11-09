@@ -41,6 +41,13 @@ bridge:
 - A frame longer than 256 bytes goes out in blocks and can pause between them.
 - Bytes for a side that is not connected, or that takes nothing for one second, are dropped with a warning.
 - On ESP32, a pause inside a frame of about `rx_timeout` characters or longer can split the frame in two.
+- On ESP32, the UART driver hands over received bytes in batches of `rx_full_threshold` bytes, or after a pause of
+  `rx_timeout` characters. A frame that ends on a full batch, such as an 8-byte frame when `rx_full_threshold` is 8,
+  ends only when the next batch would be due. At 9600 baud, where the default `rx_full_threshold` is about 8, that is
+  about 15 ms after its last byte. A frame that starts within that time can be joined to it.
+- To keep such frames apart, set `rx_full_threshold: 120` on the bus they come from. Then only a frame that ends on a
+  full batch of 120 bytes waits: about 132 ms after its last byte at 9600 baud, 145 ms with parity or two stop bits.
+  A pause inside a frame splits it more often with this setting.
 - On a serial line whose UART cannot report how much it can take, for example on RP2040 and LibreTiny (not on
   ESP8266), a frame of up to 255 bytes goes out in one piece. Anything longer goes out at the line rate in small
   pieces, so the other direction is still read meanwhile. It can pause while the device is busy elsewhere for longer
