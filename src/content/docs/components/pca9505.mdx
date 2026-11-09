@@ -1,0 +1,79 @@
+---
+description: "Instructions for setting up PCA9505 and PCA9506 40-bit I/O expanders in ESPHome."
+title: "PCA9505 I/O Expander"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The PCA9505 component lets you use the NXP **PCA9505** and **PCA9506** I/O expanders in ESPHome using the
+[I²C Bus](/components/i2c/) for communication. Both chips provide **40** I/O pins and share the same command
+interface, so either can be used with this component.
+
+Once configured, the 40 pins can be used anywhere ESPHome accepts a
+[Pin Schema](/guides/configuration-types/#pin-schema). Within ESPHome they behave like internal GPIO pins, so
+they work with components such as the GPIO binary sensor and the GPIO switch.
+
+> [!NOTE]
+> The pins are numbered `0` to `39`. The chip groups them into five ports of eight: pins 0-7 are port 0,
+> pins 8-15 are port 1, and so on up to pins 32-39 on port 4. ESPHome hides this grouping, so you only ever
+> refer to a pin by its number.
+>
+> The 7 bit I²C device address ranges from `0x20` to `0x27`, selected by the three address pins. Up to eight
+> of these devices can therefore share one I²C bus. Refer to the datasheet linked below for the address pin
+> wiring.
+>
+> Any option accepting a [Pin Schema](/guides/configuration-types/#pin-schema) can theoretically be used, but
+> some more complicated components that do communication through this I/O expander will not work.
+
+```yaml
+# Example configuration entry
+pca9505:
+  - id: 'pca9505_device'
+    interrupt_pin: GPIOXX
+
+# Individual output
+switch:
+  - platform: gpio
+    name: "PCA9505 Pin #0"
+    pin:
+      pca9505: pca9505_device
+      number: 0
+      mode:
+        output: true
+
+# Individual input
+binary_sensor:
+  - platform: gpio
+    name: "PCA9505 Pin #39"
+    pin:
+      pca9505: pca9505_device
+      number: 39
+      mode:
+        input: true
+```
+
+## Configuration Variables
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The id to use for this `pca9505` component.
+- **address** (*Optional*, int): The I²C address of the expander. Defaults to `0x20`.
+- **interrupt_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The pin
+  connected to the INT output of the expander. When configured, the component only reads the chip
+  after a pin actually changes, instead of polling it on every loop, which cuts I²C traffic
+  considerably. INT is active low and open drain, so a pull-up resistor is required. Must be an
+  internal GPIO pin, not another expander pin.
+
+## Pin Configuration Variables
+
+- **pca9505** (**Required**, [ID](/guides/configuration-types/#id)): The id of the `pca9505` component of the pin.
+- **number** (**Required**, int): The pin number, `0` to `39`.
+- **inverted** (*Optional*, boolean): If all read and written values should be treated as inverted.
+  Defaults to `false`.
+- **mode** (*Optional*, string): A pin mode to set for the pin. One of `INPUT` or `OUTPUT`.
+
+## See Also
+
+- [I²C Bus](/components/i2c/)
+- [GPIO Switch](/components/switch/gpio/)
+- [GPIO Binary Sensor](/components/binary_sensor/gpio/)
+- [PCA9505/PCA9506 datasheet](https://www.nxp.com/docs/en/data-sheet/PCA9505_9506.pdf)
+- <APIRef text="pca9505.h" path="pca9505/pca9505.h" />

@@ -14,7 +14,7 @@ The SX127x component allows you to configure the SX1276, SX1277, SX1278 and SX12
 ESPHome. Transceivers are connected via the [SPI Bus](/components/spi). Supported frequencies range from
 137 MHz to 1020 MHz, including the popular 315 MHz, 433 MHz, 868 MHz, and 915 MHz ISM bands.
 Supported modulations include LoRa, OOK, FSK, GFSK, MSK and GMSK. The SX127x
-component may be used as a platform for the [Packet Transport Component](/components/packet_transport#packet-transport) component, enabling sensor data
+component may be used as a platform for the [Packet Transport Component](/components/packet_transport/#packet-transport) component, enabling sensor data
 to be sent directly from one ESPHome node to another.
 
 <Image src={sx127xFullImg} layout="constrained" alt="" />
@@ -34,9 +34,9 @@ sx127x:
 
 ## Configuration variables
 
-- **cs_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): SPI chip select pin.
-- **rst_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): Reset pin.
-- **dio0_pin** (**Optional**, [Pin Schema](/guides/configuration-types#pin-schema)): Digital IO pin 0.
+- **cs_pin** (**Required**, [Pin Schema](/guides/configuration-types/#pin-schema)): SPI chip select pin.
+- **rst_pin** (**Required**, [Pin Schema](/guides/configuration-types/#pin-schema)): Reset pin.
+- **dio0_pin** (**Optional**, [Pin Schema](/guides/configuration-types/#pin-schema)): Digital IO pin 0.
 - **auto_cal** (**Optional**, bool): Enable automatic image calibration on temperature changes. Defaults to `true`.
 - **frequency** (**Required**, frequency): Frequency in Hz of the transceiver.
 - **modulation** (**Required**, enum): Modulation can be `OOK`, `FSK` or `LORA`  `.
@@ -75,6 +75,13 @@ sx127x:
   `5_2kHz`, `6_3kHz`, `7_8kHz`, `10_4kHz`, `12_5kHz`, `15_6kHz`, `20_8kHz`, `25_0kHz`,
   `31_3kHz`, `41_7kHz`, `50_0kHz`, `62_5kHz`, `83_3kHz`, `100_0kHz`, `125_0kHz`,
   `166_7kHz`, `200_0kHz` or `250_0kHz`.
+
+- **afc_bandwidth** (*Optional*, enum): Receiver bandwidth used while the automatic frequency
+  correction (AFC) locks onto the carrier at the start of a packet, before `bandwidth` is used for the
+  payload. FSK only. Accepts the same values as `bandwidth`, `2_6kHz` to `250_0kHz`. It must cover the
+  signal bandwidth plus the expected carrier offset between transmitter and receiver, so it is normally
+  the same as or wider than `bandwidth`. Wideband links such as wM-Bus need a wider value than the
+  default. Defaults to `50_0kHz`.
 
 - **packet_mode** (*Optional*, bool): In packet mode bytes are sent via the `send_packet`
   automation and received with the `on_packet` trigger. If not enabled continuous mode is
@@ -140,7 +147,7 @@ sx127x:
 
 ### `sx127x.run_image_cal` Action
 
-This [action](/automations/actions#all-actions) runs the `sx127x` image calibration, must be in standby mode.
+This [action](/automations/actions/#all-actions) runs the `sx127x` image calibration, must be in standby mode.
 
 ```yaml
 interval:
@@ -153,7 +160,7 @@ interval:
 
 ### `sx127x.set_mode_tx` Action
 
-This [action](/automations/actions#all-actions) sets the `sx127x` mode to tx.
+This [action](/automations/actions/#all-actions) sets the `sx127x` mode to tx.
 
 ```yaml
 on_...:
@@ -162,7 +169,7 @@ on_...:
 
 ### `sx127x.set_mode_rx` Action
 
-This [action](/automations/actions#all-actions) sets the `sx127x` mode to rx.
+This [action](/automations/actions/#all-actions) sets the `sx127x` mode to rx.
 
 ```yaml
 on_...:
@@ -171,7 +178,7 @@ on_...:
 
 ### `sx127x.set_mode_sleep` Action
 
-This [action](/automations/actions#all-actions) sets the `sx127x` mode to sleep.
+This [action](/automations/actions/#all-actions) sets the `sx127x` mode to sleep.
 
 ```yaml
 on_...:
@@ -180,7 +187,7 @@ on_...:
 
 ### `sx127x.set_mode_standby` Action
 
-This [action](/automations/actions#all-actions) sets the `sx127x` mode to standby.
+This [action](/automations/actions/#all-actions) sets the `sx127x` mode to standby.
 
 ```yaml
 on_...:
@@ -189,7 +196,7 @@ on_...:
 
 ### `sx127x.send_packet` Action
 
-This [action](/automations/actions#all-actions) sends a packet, the `sx127x` needs to be in packet mode.
+This [action](/automations/actions/#all-actions) sends a packet, the `sx127x` needs to be in packet mode.
 
 ```yaml
 on_...:

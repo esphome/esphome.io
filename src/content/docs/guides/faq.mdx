@@ -97,7 +97,7 @@ If you prefer the more manual way:
      1. Select "Install"
      1. Choose "Manual download"
 
-1. On some boards, you may need to force the microcontroller into its [programming mode](/guides/physical_device_connection#esphome-phy-con-prg).
+1. On some boards, you may need to force the microcontroller into its [programming mode](/guides/physical_device_connection/#esphome-phy-con-prg).
    This often isn't necessary on most modern boards/devices, but it's worth trying if you're experiencing difficulties.
 
 1. Finally, to install a firmware file, you can use:
@@ -106,7 +106,7 @@ If you prefer the more manual way:
 
        browser that supports WebSerial, like Firefox, Google Chrome or Microsoft Edge.
 
-       1. Connect the board to your computer, make sure it's detected as a [serial port](/guides/physical_device_connection#esphome-phy-con-drv) and
+       1. Connect the board to your computer, make sure it's detected as a [serial port](/guides/physical_device_connection/#esphome-phy-con-drv) and
           click **Connect**.
 
        1. If prompted, allow your browser the requested permission in the pop-up box that appears.
@@ -163,7 +163,7 @@ There are a number of reasons this may happen.
   they are not capable of establishing the data connection required to communicate with your board.
 
 - ESPHome depends on your computer's operating system (OS) to enable the programming tool (`esptool.py`, for example)
-  to communicate with your microcontroller board; you may need to [install appropriate drivers](/guides/physical_device_connection#esphome-phy-con-drv).
+  to communicate with your microcontroller board; you may need to [install appropriate drivers](/guides/physical_device_connection/#esphome-phy-con-drv).
 
 - If you're trying to install ESPHome onto your device from within a Docker container, be sure you are mounting the
   device into your container using `--device=/dev/ttyUSB0`.
@@ -205,40 +205,10 @@ If you *still* can't get it to work, you might want to revisit
   as long as this file is in the same directory as your ESPHome configuration file.
 
   We've enhanced ESPHome's `!include` directive such that it accepts a list of variables that can be substituted
-  within the included file. For example:
+  within the included file. It also supports conditional expressions to determine whether the file should be loaded.
+  This feature is described in [!include](/guides/yaml/#include).
 
 [ha-docs-split]: https://www.home-assistant.io/docs/configuration/splitting_configuration/
-
-```yaml
-    binary_sensor:
-      - platform: gpio
-        id: button1
-        pin: GPIOXX
-        on_multi_click: !include { file: on-multi-click.yaml, vars: { id: 1 } } # inline syntax
-      - platform: gpio
-        id: button2
-        pin: GPIOXX
-        on_multi_click: !include
-          # multi-line syntax
-          file: on-multi-click.yaml
-          vars:
-            id: 2
-```
-
-  `on-multi-click.yaml`  :
-
-```yaml
-    - timing: !include click-single.yaml
-      then:
-        - mqtt.publish:
-            topic: ${device_name}/button${id}/status
-            payload: single
-    - timing: !include click-double.yaml
-      then:
-        - mqtt.publish:
-            topic: ${device_name}/button${id}/status
-            payload: double
-```
 
 - You can use [Substitutions](/components/substitutions/) to build on the examples above and reduce repetition in your
   configuration files.
@@ -264,8 +234,11 @@ If you *still* can't get it to work, you might want to revisit
 That's no good. Here are some steps that resolve some problems:
 
 - **If you're having Wi-Fi problems**: See [My node keeps reconnecting randomly](#wifi-problems).
-- [Enable verbose logs](/components/logger#log-levels) in your ESPHome device's `logger:` section.
+- [Enable verbose logs](/components/logger/#log-levels) in your ESPHome device's `logger:` section.
 - **If your device is crashing**: See the [Troubleshooting](/guides/troubleshooting/) guide for how to get a backtrace.
+- **If the problem happens before the network is up**: See
+  [Seeing Logs From Before the Network Came Up](/guides/troubleshooting/#seeing-logs-from-before-the-network-came-up)
+  for how to keep those messages and replay them over the API.
 - **Still seeing an error?** Check if there is a known issue in the
   [ESPHome issue tracker](https://github.com/esphome/esphome/issues). If not, you can create a new issue to describe
   your problem there. We will take a look at it as soon as we can. Thanks!
@@ -290,7 +263,7 @@ If you want the issue you're experiencing to be fixed quickly:
   Please read [How to create a Minimal, Complete, and Verifiable example](https://stackoverflow.com/help/mcve).
 
 - If it's a hardware communication issue (such as with an I²C or SPI device), try setting the
-  [log level](/components/logger#log-levels) to `VERY_VERBOSE` as it may provide better insight into what is going on.
+  [log level](/components/logger/#log-levels) to `VERY_VERBOSE` as it may provide better insight into what is going on.
 
 - Please describe what troubleshooting steps you've already tried as that may also help us track down the issue.
 
@@ -404,9 +377,9 @@ Here are some steps that may help mitigate the issue:
 - If you're using a hidden Wi-Fi network, make sure to enable `fast_connect` mode in your device's Wi-Fi
   configuration. Note that this may help with non-hidden networks, as well.
 
-- Give your ESPHome device a [static IP](/components/wifi#wifi-manual_ip).
+- Give your ESPHome device a [static IP](/components/wifi/#wifi-manual_ip).
 - Set the `power_save_mode` to `light` in your `wifi:` configuration. Note, however, that this may exacerbate the
-  problem in some situations. See [Power Save Mode](/components/wifi#power-save-mode).
+  problem in some situations. See [Power Save Mode](/components/wifi/#power-save-mode).
 
 - The issue seems to happen with "cheap" boards more frequently -- especially the "cheap" NodeMCU boards from eBay
   which sometimes have bad antennas.
@@ -508,7 +481,7 @@ passthrough, and the host networking that mDNS depends on.
 > work, because the Device Builder retries the bare hostname without the suffix, which your DNS may serve. Devices
 > that resolve no other way are shown as offline.
 >
-> To give a device an address that doesn't depend on mDNS, [`manual_ip`](/components/wifi#wifi-manual_ip) assigns it
+> To give a device an address that doesn't depend on mDNS, [`manual_ip`](/components/wifi/#wifi-manual_ip) assigns it
 > a static IP, and [`use_address`](/components/wifi/) overrides the address used to connect to it.
 >
 > If your router supports Avahi, you can make mDNS work across subnets. For example, in OpenWRT or pfSense:
@@ -523,7 +496,7 @@ passthrough, and the host networking that mDNS depends on.
 Some of ESPHome's functionality relies on [mDNS](/components/mdns/), so, naturally, disabling it will
 cause these features to stop working.
 
-Generally speaking, disabling mDNS without setting a [static IP address](/components/wifi#wifi-manual_ip) (or a static DHCP lease)
+Generally speaking, disabling mDNS without setting a [static IP address](/components/wifi/#wifi-manual_ip) (or a static DHCP lease)
 is bound to cause problems -- mDNS is used to determine the IP address of each ESPHome node.
 
 If you disable mDNS, expect the following repercussions:

@@ -44,7 +44,7 @@ display:
 
 ## Configuration variables
 
-- **cs_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin you have the CS line hooked up to.
+- **cs_pin** (**Required**, [Pin Schema](/guides/configuration-types/#pin-schema)): The pin you have the CS line hooked up to.
 - **num_chips** (*Optional*, int): The number of chips you wish to use for daisy chaining. Defaults to
   `4`.
 
@@ -60,23 +60,23 @@ display:
 
   - `STOP`  : When text is over it waits the `scroll_dwell` time and scroll is set back to the start.
 
-- **scroll_speed** (*Optional*, [Time](/guides/configuration-types#time)): Set scroll speed. Defaults to `250ms`
-- **scroll_delay** (*Optional*, [Time](/guides/configuration-types#time)): Set delay time before scroll starts. Defaults to `1s`.
-- **scroll_dwell** (*Optional*, [Time](/guides/configuration-types#time)): Sets the wait time at the end of the scroll before starting
+- **scroll_speed** (*Optional*, [Time](/guides/configuration-types/#time)): Set scroll speed. Defaults to `250ms`
+- **scroll_delay** (*Optional*, [Time](/guides/configuration-types/#time)): Set delay time before scroll starts. Defaults to `1s`.
+- **scroll_dwell** (*Optional*, [Time](/guides/configuration-types/#time)): Sets the wait time at the end of the scroll before starting
   over. This is only used in mode `STOP`. Defaults to `1s`.
 
 - **reverse_enable** (*Optional*, boolean): For some displays the order of the displays is reversed ("DCBA"). This option will reverse the display to ("ABCD") again. Defaults to `false`.
 - **intensity** (*Optional*, int): The intensity with which the MAX7219 should drive the outputs. Range is
   from `0`, least intense to `15` the brightest. Defaults to `15`.
 
-- **lambda** (*Optional*, [lambda](/automations/templates#config-lambda)): The lambda to use for rendering the content on the
+- **lambda** (*Optional*, [lambda](/automations/templates/#config-lambda)): The lambda to use for rendering the content on the
   MAX7219. See [Rendering Lambda](#display-max7219digit_lambda) for more information.
 
-- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to re-draw the screen. Defaults to `1s`.
-- **spi_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [SPI Component](/components/spi) if you want
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval to re-draw the screen. Defaults to `1s`.
+- **spi_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the [SPI Component](/components/spi) if you want
   to use multiple SPI buses.
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation.
 - **num_chip_lines** (*Optional*, int): Number of lines if you want to use the displays in Multiline Mode. Defaults to `1` Example: [https://github.com/esphome/esphome/pull/1622#issue-836179156](https://github.com/esphome/esphome/pull/1622#issue-836179156)
 - **chip_lines_style** (*Optional*): How are the lines in Multiline Mode connected? Possible values are `zigzag` and `snake`. Defaults to `snake`
 - **flip_x** (*Optional*, boolean): Flip the horizontal axis on the screen. Defaults to `false`.
@@ -110,7 +110,7 @@ The intensity of the screen can be set "dynamically" with this action.
 
 ## Rendering Lambda
 
-The MAX7219 digit is based on the fully fledged [Display Rendering Engine](/components/display#display-engine), as it has a concept of individual pixels 8 X 8
+The MAX7219 digit is based on the fully fledged [Display Rendering Engine](/components/display/#display-engine), as it has a concept of individual pixels 8 X 8
 per max7219 chip. In the lambda you're passed a variable called `it` as with all other displays. Some "Special"
 commands have been added to the basic display set.
 
@@ -205,7 +205,7 @@ display:
       it.invert_on_off(true);
       // Print Hello at position 0 (left)
       it.print(0,0, id(digit_font), "Hello!");
-      it.line(0, 0, 31, 7, COLOR_OFF);
+      it.line(0, 0, 31, 7, Color::BLACK);
 ```
 
 This code will only affect the line drawn on the screen. The line will wipe the pixels from top left to right bottom.
@@ -240,8 +240,8 @@ For a quick display some additional commands are embedded in the code with a rel
 display a single character. So not very space efficient. The format of the command is: `it.printdigit("1234");` or
 `it.printdigitf("%s","1234")`  ;
 
-Please see [Formatted Text](/components/display#display-printf) for a quick introduction into the `printf` formatting rules and
-[Displaying Time](/components/display#display-strftime) for an introduction into the `strftime` time formatting.
+Please see [Formatted Text](/components/display/#display-printf) for a quick introduction into the `printf` formatting rules and
+[Displaying Time](/components/display/#display-strftime) for an introduction into the `strftime` time formatting.
 
 ## See Also
 

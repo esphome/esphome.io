@@ -1,0 +1,75 @@
+---
+description: "Instructions for setting up SH1122 OLED display drivers."
+title: "SH1122 OLED Display"
+---
+
+import Figure from '@components/Figure.astro';
+import APIRef from '@components/APIRef.astro';
+
+## `sh1122_spi` Component
+
+The `sh1122_spi` display platform allows you to use SH1122
+([datasheet](https://www.displayfuture.com/Display/datasheet/controller/SH1122.pdf)) 256x64 pixel, 16 level greyscale
+OLED displays with ESPHome. This component is for displays connected via the 4-wire [SPI bus](/components/spi/).
+
+<Figure
+  src="/images/sh1122.jpg"
+  alt="SH1122 256x64 OLED display module"
+  caption="SH1122 OLED Display"
+  layout="constrained"
+  width={800}
+  height={242}
+/>
+
+Connect CLK, DIN and DC to pins on your ESP. CS and RST are optional: tie CS low when the display is the only
+device on the SPI bus, and leave RST unconnected if the module has its own reset circuit. For power, connect VCC to
+3.3V and GND to GND.
+
+```yaml
+# Example configuration entry
+spi:
+  clk_pin: GPIOXX
+  mosi_pin: GPIOXX
+
+display:
+  - platform: sh1122_spi
+    reset_pin: GPIOXX
+    cs_pin: GPIOXX
+    dc_pin: GPIOXX
+    lambda: |-
+      it.print(0, 0, id(font), "Hello World!");
+```
+
+## Configuration Variables
+
+- **dc_pin** (**Required**, [Pin Schema](/guides/configuration-types/#pin-schema)): The DC pin.
+- **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The RESET pin.
+- **cs_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The CS pin.
+- **model** (*Optional*): The model of the display. At present, only `SH1122 256x64` exists, which is the default.
+- **brightness** (*Optional*, percentage): The initial brightness of the display. Defaults to `100%`.
+- **lambda** (*Optional*, [lambda](/automations/templates/#config-lambda)): The lambda to use for rendering the content
+  on the display. See [Display Rendering Engine](/components/display/#display-engine) for more information.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval to re-draw the screen.
+  Defaults to `1s`.
+- **pages** (*Optional*, list): Show pages instead of a single lambda. See
+  [Display Pages](/components/display/#display-pages).
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation.
+
+## Lambda Calls
+
+From [lambdas](/automations/templates/#config-lambda), you can call the following methods on the display:
+
+- `set_brightness(float)`: set the brightness from `0.0` to `1.0`.
+- `turn_on()` and `turn_off()`: switch the panel on or off; `is_on()` returns the current state.
+
+```yaml
+on_...:
+  - lambda: |-
+      id(my_display).set_brightness(0.5);
+```
+
+## See Also
+
+- [Display Component](/components/display/)
+- [SSD1322 OLED Display](/components/display/ssd1322/)
+- <APIRef text="sh1122_base/sh1122_base.h" path="sh1122_base/sh1122_base.h" />
