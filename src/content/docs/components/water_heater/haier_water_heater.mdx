@@ -1,0 +1,170 @@
+---
+title: "Haier Water Heater"
+description: "Configure local control and monitoring of Haier hOn water heaters over UART."
+---
+
+The `haier_water_heater` water heater platform controls a Haier water heater over UART,
+replacing its original Wi-Fi module.
+It uses hOn automatically and supports power, operating mode, target temperature, and status monitoring.
+SmartAir2 is not supported.
+
+Hardware testing has only been performed with a VH3W. Compatibility with other models is unverified.
+For air conditioners, use [Haier Climate](/components/climate/haier/).
+
+## Connection
+
+Configure a [UART bus](/components/uart/) with RX and TX, a baud rate of `9600`, eight data bits,
+no parity, and one stop bit. Disconnect the original Wi-Fi module before connecting the ESP controller.
+Connect the heater's TX to the controller's RX, the heater's RX to the controller's TX, and a common ground.
+Verify the connector pinout and signal voltage for your appliance; the climate-device pinout is not a
+water-heater wiring reference.
+
+### VH3W Connector
+
+The tested VH3W has a **4-pin JST XH connector located at the heater's display**.
+The original cable uses wires in the order **Red, Black, Yellow, White**.
+The table identifies connections by the original cable's wire colours.
+
+| Wire Colour | Heater Connection | ESP Controller Connection |
+| --- | --- | --- |
+| Red | 5 V supply | Board power input rated for 5 V |
+| Black | Ground | GND |
+| Yellow | Heater TX | UART RX |
+| White | Heater RX | UART TX |
+
+The TX and RX names above are relative to the heater. Configure the GPIO connected to the yellow wire
+as `rx_pin` and the GPIO connected to the white wire as `tx_pin` in the UART configuration.
+Connect the red wire only to a board power input rated for 5 V, not to a GPIO or the 3.3 V pin.
+The 5 V supply does not establish the UART signal voltage; verify signal-level compatibility with your board.
+
+## Configuration
+
+```yaml
+water_heater:
+  - platform: haier_water_heater
+    name: "Water Heater"
+```
+
+## Configuration Variables
+
+- **uart_id** (*Optional*, ID): The UART bus to use. Required if multiple UART buses are configured.
+- **communication_timeout** (*Optional*, Time): Time without a valid heater status before communication is
+  reported as disconnected. Defaults to `20s`. Shorter values may cause false disconnects during periodic
+  device-information requests. This setting also controls the component warning when no communication sensor
+  is configured.
+- All other options from [Water Heater](/components/water_heater/). The platform has no `supported_modes`
+  option: its modes are fixed to Off, Electric, Eco and Performance.
+
+### Optional Sensors
+
+Each entity is created only when configured, under its own `sensor`, `binary_sensor` or `text_sensor` entry
+with `platform: haier_water_heater` (see the example below). Every one of those entries accepts:
+
+- **haier_water_heater_id** (*Optional*, ID): The water heater to read from. Required if more than one
+  `haier_water_heater` is configured.
+
+These go under `sensor:` and support all options from [Sensor](/components/sensor/):
+
+- **primary_temperature** (*Optional*): The current temperature shown on the heater's display, in degrees Celsius.
+  This is also the main water-heater entity's current temperature.
+- **secondary_temperature** (*Optional*): A second reported temperature, in degrees Celsius. Its physical sensor
+  location is not confirmed.
+- **target_temperature** (*Optional*): A read-only copy of the reported target temperature, in degrees Celsius.
+  Use the main water-heater entity to change the target.
+- **estimated_heating_time** (*Optional*): The heater's estimated remaining heating time. The unit is assumed to
+  be minutes and has not been independently confirmed. The value may remain nonzero while the heater is off.
+- **available_water** (*Optional*): Estimated usable hot water as `0%`, `33%`, `66%`, or `100%`.
+  This is not the tank fill level. Unexpected raw values publish an unknown sensor value.
+
+These go under `binary_sensor:` and support all options from [Binary Sensor](/components/binary_sensor/):
+
+- **communication** (*Optional*): A diagnostic connectivity sensor. Starts disconnected, becomes connected after
+  a valid heater status, and becomes disconnected after `communication_timeout` without another valid status.
+- **power** (*Optional*): Whether the heater is powered on rather than in standby.
+- **heating** (*Optional*): Whether the heater reports heating activity.
+
+The **mode** (*Optional*) entry goes under `text_sensor:`, supports all options from
+[Text Sensor](/components/text_sensor/), and reports `Normal`, `ECO`, `BPS`, or `Unknown`.
+
+## Operating Modes And Temperature Control
+
+| ESPHome mode | Heater mode |
+| --- | --- |
+| Off | Standby |
+| Electric | Normal |
+| Eco | ECO |
+| Performance | BPS |
+
+Selecting an active mode also powers on an off heater. Power-on alone preserves the heater's selected mode.
+Manual target temperatures are whole degrees from 35 to 75 degrees Celsius in Normal mode.
+Select Electric and wait for the reported mode to change before adjusting the target in ECO or BPS.
+BPS reports its own target; the tested VH3W reports 80 degrees Celsius. ECO manages its target automatically.
+
+In Home Assistant, use the main water-heater entity's controls to change temperature and mode.
+The optional target-temperature sensor only displays the reported target.
+
+Commands require a status received within the last 15 seconds. Off is an exception: it cancels unsent commands,
+ignores an accompanying target temperature, and waits for the current exchange to finish or time out before
+being sent. Other requests are rejected while a command sequence is in progress. Controls are confirmed from
+received status rather than published optimistically. Failed commands are not automatically retried.
+
+If an unknown mode is received, a warning is logged and the mode text sensor reports `Unknown`.
+While the heater is on, the main entity retains the last recognized active mode, or uses Electric as a display
+fallback if none is known. This does not send a mode command or allow temperature writes in an unknown mode.
+
+## Communication And Network Indication
+
+The controller polls the heater every five seconds when no other exchange takes priority, and periodically
+requests device information. Communication loss and recovery are logged. Sensor readings retain their last
+values during communication loss; use the communication sensor to determine whether status is current.
+An acknowledgement alone does not establish communication health.
+
+The controller automatically updates the heater's network indicator. Wi-Fi or Ethernet connected with an IP
+address reports network-ready; no network connection reports not-ready. This indicates local network readiness,
+not internet access, a cloud connection, or a connection to Home Assistant. There is no manual network selector.
+
+## Example With Optional Sensors
+
+```yaml
+water_heater:
+  - platform: haier_water_heater
+    id: heater
+    name: "Water Heater"
+    communication_timeout: 20s
+
+sensor:
+  - platform: haier_water_heater
+    haier_water_heater_id: heater
+    primary_temperature:
+      name: "Primary temperature zone"
+    secondary_temperature:
+      name: "Secondary temperature zone"
+    target_temperature:
+      name: "Heater Target Temperature"
+    estimated_heating_time:
+      name: "Heater Estimated Heating Time"
+    available_water:
+      name: "Heater Available Water"
+
+binary_sensor:
+  - platform: haier_water_heater
+    haier_water_heater_id: heater
+    communication:
+      name: "Heater Communication"
+    power:
+      name: "Heater Power"
+    heating:
+      name: "Heater Heating"
+
+text_sensor:
+  - platform: haier_water_heater
+    haier_water_heater_id: heater
+    mode:
+      name: "Heater Mode"
+```
+
+## See Also
+
+- [Water Heater](/components/water_heater/)
+- [UART Bus](/components/uart/)
+- [Haier Climate](/components/climate/haier/)

@@ -35,19 +35,13 @@ pn7150_i2c:
 
 ### Configuration variables
 
-- **dwl_req_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The pin connected to the PN7150's
-  `DWL_REQ` line. Used to invoke the PN7150's firmware update mode; may be used in a future release.
-
-- **irq_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin connected to the PN7150's `IRQ` line.
-- **ven_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin connected to the PN7150's `VEN` line.
-- **wkup_req_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The pin connected to the PN7150's
-  `WKUP_REQ` line. May be used to improve power management in a future release.
-
+- **irq_pin** (**Required**, [Pin Schema](/guides/configuration-types/#pin-schema)): The pin connected to the PN7150's `IRQ` line.
+- **ven_pin** (**Required**, [Pin Schema](/guides/configuration-types/#pin-schema)): The pin connected to the PN7150's `VEN` line.
 - **emulation_message** (*Optional*, string): When scanned by another NFC card/tag reader (such as a smartphone), this
   string is used as the content for an NDEF-formatted response. This allows the PN7150 to act as a tag in addition to a
   tag reader/writer.
 
-- **tag_ttl** (*Optional*, [Time](/guides/configuration-types#time)): The duration that must elapse after the PN7150 is no longer able to
+- **tag_ttl** (*Optional*, [Time](/guides/configuration-types/#time)): The duration that must elapse after the PN7150 is no longer able to
   "see" a tag before it is considered to have been removed from the reader.
 
 - **on_tag** (*Optional*, [Automation](/automations)): An automation to perform when a tag is first read. See
@@ -58,11 +52,13 @@ pn7150_i2c:
 
 - **on_emulated_tag_scan** (*Optional*, [Automation](/automations)): An automation to perform when the PN7150 is
   scanned by another tag reader (such as a smartphone). See [`on_emulated_tag_scan` Trigger](#pn7150-on_emulated_tag_scan).
+- **on_finished_write** (*Optional*, [Automation](/automations)): An automation to perform when an NDEF write attempt finishes,
+  whether successful or not. Standalone clean/format operations and failures during pre-write formatting do not trigger it.
 
-- **i2c_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [I²C Component](/components/i2c) if you need
+- **i2c_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the [I²C Component](/components/i2c) if you need
   to use multiple I²C buses.
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this component.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID for this component.
 
 ## Actions
 
@@ -238,7 +234,7 @@ pn7150_i2c:
 ```
 
 A tag scanned event can also be sent to the Home Assistant tag component
-using [`homeassistant.tag_scanned` Action](/components/api#api-homeassistant_tag_scanned_action).
+using [`homeassistant.tag_scanned` Action](/components/api/#api-homeassistant_tag_scanned_action).
 
 ```yaml
 pn7150_i2c:
@@ -308,7 +304,7 @@ The PN7150 supports reading NDEF messages from and writing NDEF messages to card
 ### NDEF Reading
 
 Given an NFC tag formatted and written using the Home Assistant Companion App, the following example will send the tag
-ID contained within its NDEF message to Home Assistant using the [`homeassistant.tag_scanned` Action](/components/api#api-homeassistant_tag_scanned_action).
+ID contained within its NDEF message to Home Assistant using the [`homeassistant.tag_scanned` Action](/components/api/#api-homeassistant_tag_scanned_action).
 If no NDEF record is found with a tag ID, the tag's UID will be sent to Home Assistant, instead.
 
 The `tag` variable is available to any actions that run within the `on_tag` and `on_tag_removed` triggers.
@@ -318,7 +314,7 @@ pn7150_i2c:
   # ...
   on_tag:
     then:
-      - homeassistant.tag_scanned: !lambda "return tag.has_ha_tag_id() ? tag.get_ha_tag_id() : x;"
+      - homeassistant.tag_scanned: !lambda "return nfc::has_ha_tag_ndef(tag) ? nfc::get_ha_tag_ndef(tag) : x;"
 ```
 
 ### NDEF Writing

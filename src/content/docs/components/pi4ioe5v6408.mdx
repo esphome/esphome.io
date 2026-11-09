@@ -41,24 +41,26 @@ binary_sensor:
 
 ## Configuration variables
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The id to use for this `pi4ioe5v6408` component.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The id to use for this `pi4ioe5v6408` component.
 - **address** (*Optional*, int): The I²C address of the device. Defaults to `0x43`.
 - **reset** (*Optional*, boolean): Whether to reset the device state during setup. When `true` (default),
   all pins are configured as inputs with high impedance during setup. When `false`, the component will
   read the current state from the device registers. Defaults to `true`.
-- **interrupt_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The pin connected to the
+- **interrupt_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The pin connected to the
   INT output of the PI4IOE5V6408. When configured, the component becomes interrupt-driven instead of
   polling — it only reads the chip when a pin actually changes state, significantly reducing I²C bus traffic
   and CPU usage. Must be an internal GPIO pin (not another expander pin).
 
 ## Pin configuration variables
 
-- **pi4ioe5v6408** (**Required**, [ID](/guides/configuration-types#id)): The id of the `pi4ioe5v6408` component of the pin.
+- **pi4ioe5v6408** (**Required**, [ID](/guides/configuration-types/#id)): The id of the `pi4ioe5v6408` component of the pin.
+  Instead of an id, an `address:` can be given to select the hub by its I²C address; see
+  [Selecting an I2C Expander by Address](/guides/configuration-types/#selecting-an-i2c-expander-by-address).
 - **number** (**Required**, int): The pin number. Valid range is 0-7.
 - **inverted** (*Optional*, boolean): If all read and written values should be treated as inverted.
   Defaults to `false`.
 
-- **mode** (*Optional*, [Pin Mode](/guides/configuration-types#pin-schema)): A pin mode to set for the pin. One of:
+- **mode** (*Optional*, [Pin Mode](/guides/configuration-types/#pin-schema)): A pin mode to set for the pin. One of:
 
   - `INPUT` - Configure the pin as an input.
   - `OUTPUT` - Configure the pin as an output.

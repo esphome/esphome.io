@@ -5,7 +5,7 @@ title: "LVGL Animations"
 
 ## LVGL Animations
 
-An animation smoothly changes one or more [style properties](/components/lvgl#lvgl-styling) of
+An animation smoothly changes one or more [style properties](/components/lvgl/#lvgl-styling) of
 one or more widgets over a period of time. Each animation interpolates every configured property
 from a `from` value to a `to` value across its `duration`, optionally applying a [timing
 function](#timing-functions) to shape the progression.
@@ -43,11 +43,11 @@ lvgl:
 
 ## Configuration variables
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the animation, used to
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the animation, used to
   reference it from the [`lvgl.animation.start`](#lvgl-animation-start-action) action.
-- **duration** (*Optional*, [Time](/guides/configuration-types#time)): How long one run of the
+- **duration** (*Optional*, [Time](/guides/configuration-types/#time)): How long one run of the
   animation takes. Defaults to `5s`.
-- **start_delay** (*Optional*, [Time](/guides/configuration-types#time)): A delay between the
+- **start_delay** (*Optional*, [Time](/guides/configuration-types/#time)): A delay between the
   animation being started and the first value change. Defaults to `0s`.
 - **auto_start** (*Optional*, boolean): Start the animation automatically when the device boots.
   Defaults to `false`.
@@ -57,7 +57,7 @@ lvgl:
   order. Defaults to none (linear interpolation).
 - **widgets** (**Required**, list): The widgets to animate, and the properties to animate on each.
   Each entry has:
-  - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the widget to animate.
+  - **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the widget to animate.
   - One or more [animatable properties](#animatable-properties), each given as a `from`/`to` pair:
     - **from** (**Required**): The starting value of the property.
     - **to** (**Required**): The ending value of the property.
@@ -72,7 +72,7 @@ When several properties or widgets are listed, they are all animated together ov
 
 ## Animatable properties
 
-The following [style properties](/components/lvgl#lvgl-styling) can be animated:
+The following [style properties](/components/lvgl/#lvgl-styling) can be animated:
 
 - **Position and size**: `x`, `y`, `translate_x`, `translate_y`, `translate_radial`, `min_width`,
   `max_width`, `min_height`, `max_height`, `length`.
@@ -124,6 +124,12 @@ order. Each timing is one of:
     the animation. A value of 50% will mean 50% of the total duration is the pause. Defaults to 0 (no pause.)
 - **ease_in_out**: Eases the value in at the start and out at the end.
   - **weight** (*Optional*, percentage): How strongly the easing is applied - range 0 to 100%. Defaults to `100%`.
+- **ease_in**: Starts slowly and speeds up towards the end.
+  - **weight** (*Optional*, percentage): How strongly the easing is applied - range 0 to 100%. At `0%` the change is
+    linear. Defaults to `100%`.
+- **ease_out**: Starts quickly and slows down towards the end.
+  - **weight** (*Optional*, percentage): How strongly the easing is applied - range 0 to 100%. At `0%` the change is
+    linear. Defaults to `100%`.
 - **gravity**: Accelerates the value as though under gravity, bouncing when it reaches the end.
   - **acceleration** (*Optional*, float): The acceleration applied. Defaults to `0.5`.
   - **bounce** (*Optional*, float, `0`–`1`): The fraction of speed retained on each bounce.
@@ -172,14 +178,14 @@ on_...:
         loop: false
 ```
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the animation to start, or
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the animation to start, or
   a list of IDs.
-- **duration** (*Optional*, [Time](/guides/configuration-types#time)): Override the animation's
+- **duration** (*Optional*, [Time](/guides/configuration-types/#time)): Override the animation's
   `duration`.
-- **start_delay** (*Optional*, [Time](/guides/configuration-types#time)): Override the animation's
+- **start_delay** (*Optional*, [Time](/guides/configuration-types/#time)): Override the animation's
   `start_delay`.
 - **loop** (*Optional*, boolean): Override the animation's `loop` setting.
-- **lvgl_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the LVGL instance the
+- **lvgl_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the LVGL instance the
   animations belong to. Only required when more than one LVGL instance is configured.
 
 <span id="lvgl-animation-stop-action"></span>
@@ -202,14 +208,14 @@ on_...:
         - fade
 ```
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the animation to stop, or a
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the animation to stop, or a
   list of IDs.
-- **lvgl_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the LVGL instance the
+- **lvgl_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the LVGL instance the
   animations belong to. Only required when more than one LVGL instance is configured.
 
 ## See Also
 
 - [LVGL Graphics](/components/lvgl/)
 - [LVGL Widgets](/components/lvgl/widgets/)
-- [LVGL Style properties](/components/lvgl#lvgl-styling)
+- [LVGL Style properties](/components/lvgl/#lvgl-styling)
 - [LVGL external docs](https://docs.lvgl.io/)
