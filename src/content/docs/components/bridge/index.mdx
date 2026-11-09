@@ -1,0 +1,26 @@
+---
+description: "Instructions for setting up a bridge between two interfaces in ESPHome"
+title: "Bridge Component"
+sidebar:
+  label: "Bridge Component"
+---
+
+The `bridge` component forwards data between two interfaces on the device, so that whatever is connected to one side
+can talk to whatever is connected to the other. Each pairing of interfaces is provided by a platform; the following are
+available:
+
+- [CDC-ACM UART Bridge](/components/bridge/cdc_acm_uart/): presents a UART to a computer as a USB serial port.
+
+```yaml
+# Example configuration entry
+bridge:
+  - platform: cdc_acm_uart
+    uart_id: uart_bus
+    usb_cdc_acm_id: cdc_interface
+```
+
+See the platform's page for its configuration variables.
+
+## See Also
+
+- [CDC-ACM UART Bridge](/components/bridge/cdc_acm_uart/)

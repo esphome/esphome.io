@@ -1,11 +1,10 @@
-import Slugger from "github-slugger";
 import { visit } from "unist-util-visit";
 
-// ESPHome action/condition/trigger headings contain dots (e.g. `light.turn_on`).
-// github-slugger drops `.` entirely, producing mashed anchors like `lightturn_on`.
-// This plugin pre-assigns heading ids with `.` mapped to `-` so the anchor becomes
-// `light-turn_on`. It runs before Astro's rehypeHeadingIds, which then reuses the
-// id we set for both the element and the table-of-contents metadata.
+import { createHeadingSlugger } from "./heading-slugs.mjs";
+
+// This plugin pre-assigns heading ids using the shared slug rules in
+// src/lib/heading-slugs.mjs. It runs before Astro's rehypeHeadingIds, which then
+// reuses the id we set for both the element and the table-of-contents metadata.
 //
 // Text extraction mirrors @astrojs/markdown-remark's rehype-collect-headings so the
 // only difference from the default slug is the `.` -> `-` mapping.
@@ -16,7 +15,7 @@ const codeTagNames = new Set(["code", "pre"]);
 export function rehypeHeadingSlugs() {
   return function (tree, file) {
     const isMDX = Boolean(file.history[0]?.endsWith(".mdx"));
-    const slugger = new Slugger();
+    const slugHeading = createHeadingSlugger();
     visit(tree, (node) => {
       if (node.type !== "element") return;
       const { tagName } = node;
@@ -36,7 +35,7 @@ export function rehypeHeadingSlugs() {
       });
       node.properties = node.properties || {};
       if (typeof node.properties.id !== "string") {
-        node.properties.id = slugger.slug(text.replace(/\./g, "-"));
+        node.properties.id = slugHeading(text);
       }
     });
   };

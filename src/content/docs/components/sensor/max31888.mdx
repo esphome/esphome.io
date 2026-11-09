@@ -1,0 +1,40 @@
+---
+description: "Instructions for setting up the MAX31888 1-Wire temperature sensor"
+title: "MAX31888 Temperature Sensor"
+---
+import APIRef from '@components/APIRef.astro';
+
+The `max31888` sensor platform allows you to use the Analog Devices MAX31888
+([datasheet](https://www.analog.com/media/en/technical-documentation/data-sheets/max31888.pdf))
+1-Wire temperature sensor with ESPHome. A [1-Wire bus](/components/one_wire/) is
+required to be set up in your configuration for this sensor to work.
+
+```yaml
+# Example configuration entries
+sensor:
+  # only one device
+  - platform: max31888
+    name: Temperature
+  # specific address
+  - platform: max31888
+    address: 0x1C0000031EDD2A54
+    name: Temperature 2
+```
+
+## Configuration Variables
+
+- **address** (*Optional*, int): The address of the sensor. Required if there is more than one device on the bus
+  and index is not specified.
+- **index** (*Optional*, byte): The index (0-based) of the sensor. Required if there is more than one device on the
+  bus and address is not specified. *Note this index is based on the hardware addresses of the sensors and the order
+  can change if sensors are changed, added, or removed.*
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval that the sensor should be
+  checked. Defaults to `60s`.
+- **one_wire_id** (*Optional*, [One Wire](/components/one_wire/)): The ID of the 1-Wire bus to use.
+  Required if there is more than one bus.
+- All other options from [Sensor](/components/sensor/).
+
+## See Also
+
+- [Dallas Temperature Sensor](/components/sensor/dallas_temp/)
+- <APIRef text="max31888.h" path="max31888/max31888.h" />
