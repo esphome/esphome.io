@@ -144,7 +144,7 @@ when it equals the [API](/components/api/) encryption key, also one the API got 
 after an update, is not used after a restart; the connection stays closed until a new key is set.
 
 The action needs the `uart_tcp` to be set up. In [`on_boot`](/components/esphome/#esphome-on_boot), a `priority` of
-`200` or more is rejected; use a lower one, for example `100`.
+`200` (the entry's `setup_priority`, when set) or more is rejected; use a lower one.
 
 On ESP8266, the saved keys share 256 bytes of flash with Wi-Fi and the API. This holds about three `tcp_uart` and
 `uart_tcp` entries without `key`; a further entry cannot save its key and logs `Failed to save encryption key`. With
