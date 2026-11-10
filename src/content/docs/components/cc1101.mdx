@@ -207,6 +207,33 @@ This [action](/automations/actions/#all-actions) puts the radio into RX mode and
 
 This [action](/automations/actions/#all-actions) puts the radio into an idle state.
 
+### `cc1101.power_down` Action
+
+This [action](/automations/actions/#all-actions) puts the radio into SLEEP mode to reduce power consumption when it is not in use.
+
+### `cc1101.wake_up` Action
+
+This [action](/automations/actions/#all-actions) wakes the radio from SLEEP mode into an idle state.
+
+For example, a transmit-only remote can wake the radio before sending a command and put it back to sleep afterwards:
+
+```yaml
+esphome:
+  on_boot:
+    - priority: -100
+      then:
+        - cc1101.power_down
+
+remote_transmitter:
+  on_transmit:
+    then:
+      - cc1101.wake_up
+      - cc1101.begin_tx
+  on_complete:
+    then:
+      - cc1101.power_down
+```
+
 ### `cc1101.reset` Action
 
 This [action](/automations/actions/#all-actions) resets the CC1101 chip and re-applies configuration.
