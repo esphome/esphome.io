@@ -82,8 +82,6 @@ on_...:
   is configured.
 - **channels** (**Required** for `jarolift`, list or int, [templatable](/automations/templates)): The channels to
   pair, see [Jarolift Channels](#jarolift-channels).
-- **legacy** (*Optional*, boolean, [templatable](/automations/templates)): Only for `jarolift`: pairs a motor made
-  before 2010, see [Pairing a Jarolift Motor](#pairing-a-jarolift-motor). Defaults to `false`.
 - **transmitter_id** (*Optional*, [ID](/guides/configuration-types/#id)): The remote transmitter to send with.
 
 ### `keeloq.set_counter` Action
@@ -128,8 +126,8 @@ code `0xA`; to pair a motor, use [`keeloq.learn`](#keeloq-learn-action).
 
 Put the motor into learn mode as its manual describes, then run [`keeloq.learn`](#keeloq-learn-action) with the
 channels to pair while the motor is still in learn mode. The motor vibrates when it has learned the serial; a hand
-remote paired before keeps working. A motor made before 2010 may need **legacy** set to `true`: try it if the motor
-does not vibrate.
+remote paired before keeps working. A motor made before 2010 may not vibrate: pair it with a single
+[`keeloq.send`](#keeloq-send-action) of `command: 0x1` to the same channels instead.
 
 ## See Also
 
