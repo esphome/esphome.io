@@ -25,7 +25,9 @@ there an addressing layer is needed on the broadcast link to drop them. In the s
 receives the broadcasts sent by its peer.
 
 ESP-NOW does not resend lost packets on its own, so add a [reliability layer](/components/packet_interface/#reliability)
-if every packet must arrive. Received packets carry the sender's MAC address and, on ESP32, the RSSI.
+if every packet must arrive. With a `peer_address`, the peer acknowledges each packet it receives; a packet it does not
+acknowledge, because it is off, out of range or has another address, is logged as a warning at most once a minute.
+Received packets carry the sender's MAC address and, on ESP32, the RSSI.
 
 ## Example Configuration
 

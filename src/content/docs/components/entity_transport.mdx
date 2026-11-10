@@ -76,9 +76,10 @@ numbers.
 Each packet is checked in full when it arrives, and a packet that is not well formed is dropped whole, so it changes
 no state. This does not catch damage that leaves a packet well formed, such as a changed value. On a link without
 its own check, such as a UART, add an [encryption layer](/components/packet_interface/#encryption), which drops a
-packet that was changed. A device logs a warning, at most once a minute, when it drops a packet that is not well
-formed, or one from a device whose packet format it does not support. A device ignores the states of entity types it
-does not support, so devices running newer ESPHome versions can send more types without upsetting older ones.
+packet that was changed. A device logs a warning, at most once a minute for each kind of problem, when it drops a
+packet that is not well formed, or one from a device whose packet format it does not support. A device ignores the
+states of entity types it does not support, so devices running newer ESPHome versions can send more types without
+upsetting older ones.
 
 - When a sensor or binary sensor changes, its new state is sent straight away.
 - At boot, the dictionary and all states are sent.
@@ -93,7 +94,8 @@ does not support, so devices running newer ESPHome versions can send more types 
   several packets is lost. A dictionary received in full is not asked for again, even if it names none of the
   device's sensors.
 - When a provider's dictionary has been received in full and does not name a remote sensor that gives that provider,
-  a warning is logged, and the sensor has no state. Check its `provider` and `remote_id`.
+  a warning is logged, and the sensor has no state. Check its `provider` and `remote_id`. The name of each device
+  whose dictionary is received in full is logged at debug level, which shows a misspelled `provider`.
 - When the packet interface refuses a packet, for example while its link is down, sending is tried again a second
   later. Once it has refused every packet for a minute, a warning is logged and the component shows a warning
   status until a packet is accepted again.
