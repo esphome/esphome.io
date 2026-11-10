@@ -31,7 +31,8 @@ keeloq:
 - **manufacturer_key** (**Required**, int): The 64-bit manufacturer key. A key given as two 32-bit halves is written
   MSB first: `0x<MSB><LSB>`.
 - **serial** (**Required**, int): The 28-bit serial number this remote sends. The receiver learns it with
-  [`keeloq.learn`](#keeloq-learn-action).
+  [`keeloq.learn`](#keeloq-learn-action). Each remote of a type needs its own serial, as the counter is stored per
+  serial.
 
 ## Counter
 
@@ -81,7 +82,9 @@ on_...:
 - **id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the remote. Needed when more than one remote
   is configured.
 - **channels** (**Required** for `jarolift`, list or int, [templatable](/automations/templates)): The channels to
-  pair, see [Jarolift Channels](#jarolift-channels).
+  pair, see [Jarolift Channels](#jarolift-channels). Pairing takes about a second, and a `keeloq.learn` started
+  before the previous one has finished is skipped with a warning; to pair several channels, pass them all to one
+  `keeloq.learn`.
 - **transmitter_id** (*Optional*, [ID](/guides/configuration-types/#id)): The remote transmitter to send with.
 
 ### `keeloq.set_counter` Action
@@ -119,7 +122,8 @@ channel 1, so `0x000F` is channels 1 to 4). An empty list or the mask `0` is rej
 | `learn` | `0xA`, up and down together | 2× |
 | `shade` | `0x4`, stop held: moves to the shade position | 20× |
 
-Without **repeat**, a name is sent as the table shows and a button code without a name 2×. `learn` sends only the
+Without **repeat**, a name is sent as the table shows, and a button code or a lambda 2×: `command: 0x4` is a
+stop, so holding it like `shade` needs `repeat` with `times: 20`. `learn` sends only the
 code `0xA`; to pair a motor, use [`keeloq.learn`](#keeloq-learn-action).
 
 ### Pairing a Jarolift Motor
