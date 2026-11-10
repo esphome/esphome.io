@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 370" font-family="system-ui, -apple-system, sans-serif" font-size="14">
+  <title>Wiring diagram: garage door unit USB-B to Wemos S2 Mini USB-C through a level shifter</title>
+  <style>
+    text { fill: #888888; }
+    .title { font-weight: bold; text-anchor: middle; }
+    .sub { font-size: 12px; text-anchor: middle; }
+    .pin { font-size: 12px; }
+    .wirelabel { font-size: 12px; text-anchor: middle; }
+    .box { fill: none; stroke: #888888; stroke-width: 2; }
+    .casing { fill: none; stroke: #888888; stroke-width: 5; stroke-linejoin: round; }
+    .wire { fill: none; stroke-width: 3; stroke-linejoin: round; }
+  </style>
+
+  <!-- boxes -->
+  <rect class="box" x="20" y="50" width="170" height="240" rx="8"/>
+  <rect class="box" x="370" y="50" width="180" height="290" rx="8"/>
+  <rect class="box" x="730" y="50" width="170" height="290" rx="8"/>
+
+  <text class="title" x="105" y="78">Garage door unit</text>
+  <text class="sub" x="105" y="96">USB-B plug</text>
+  <text class="title" x="460" y="78">Level shifter</text>
+  <text class="title" x="815" y="78">ESP32 S2 Mini</text>
+  <text class="sub" x="815" y="96">USB-C plug</text>
+
+  <!-- 5 V: unit to HV, bypass over the shifter to the S2's VBUS -->
+  <path class="casing" d="M190,110 H370"/>
+  <path class="wire" stroke="#d32f2f" d="M190,110 H370"/>
+  <path class="casing" d="M280,110 V25 H660 V110 H730"/>
+  <path class="wire" stroke="#d32f2f" d="M280,110 V25 H660 V110 H730"/>
+  <circle cx="280" cy="110" r="4" fill="#d32f2f"/>
+
+  <!-- D+: unit RX, green -->
+  <path class="casing" d="M190,160 H370"/>
+  <path class="wire" stroke="#2e7d32" d="M190,160 H370"/>
+  <path class="casing" d="M550,160 H730"/>
+  <path class="wire" stroke="#2e7d32" d="M550,160 H730"/>
+
+  <!-- D-: unit TX, white -->
+  <path class="casing" d="M190,210 H370"/>
+  <path class="wire" stroke="#fafafa" d="M190,210 H370"/>
+  <path class="casing" d="M550,210 H730"/>
+  <path class="wire" stroke="#fafafa" d="M550,210 H730"/>
+
+  <!-- GND: passes through the shifter board -->
+  <path class="casing" d="M190,260 H370"/>
+  <path class="wire" stroke="#000000" d="M190,260 H370"/>
+  <path class="casing" d="M550,260 H730"/>
+  <path class="wire" stroke="#000000" d="M550,260 H730"/>
+
+  <!-- 3.3 V reference from the S2's 3V3 header pin -->
+  <path class="casing" d="M550,310 H730"/>
+  <path class="wire" stroke="#ef6c00" d="M550,310 H730"/>
+
+  <!-- unit pins -->
+  <text class="pin" x="182" y="114" text-anchor="end">5 V</text>
+  <text class="pin" x="182" y="164" text-anchor="end">D+ (unit RX)</text>
+  <text class="pin" x="182" y="214" text-anchor="end">D− (unit TX)</text>
+  <text class="pin" x="182" y="264" text-anchor="end">GND</text>
+
+  <!-- shifter pins, HV side -->
+  <text class="pin" x="378" y="114">HV</text>
+  <text class="pin" x="378" y="164">HV2</text>
+  <text class="pin" x="378" y="214">HV1</text>
+  <text class="pin" x="378" y="264">GND</text>
+
+  <!-- shifter pins, LV side -->
+  <text class="pin" x="542" y="164" text-anchor="end">LV2</text>
+  <text class="pin" x="542" y="214" text-anchor="end">LV1</text>
+  <text class="pin" x="542" y="264" text-anchor="end">GND</text>
+  <text class="pin" x="542" y="314" text-anchor="end">LV</text>
+
+  <!-- S2 Mini pins -->
+  <text class="pin" x="738" y="114">5 V</text>
+  <text class="pin" x="738" y="164">D+ · GPIO20 (TX)</text>
+  <text class="pin" x="738" y="214">D− · GPIO19 (RX)</text>
+  <text class="pin" x="738" y="264">GND</text>
+  <text class="pin" x="738" y="314">3V3 header pin</text>
+
+  <!-- wire labels -->
+  <text class="wirelabel" x="470" y="18">5 V</text>
+  <text class="wirelabel" x="235" y="102">red</text>
+  <text class="wirelabel" x="280" y="152">green</text>
+  <text class="wirelabel" x="280" y="202">white</text>
+  <text class="wirelabel" x="280" y="252">black</text>
+  <text class="wirelabel" x="640" y="302">3.3 V</text>
+</svg>
