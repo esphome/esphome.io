@@ -377,11 +377,16 @@ example, `main` or a pre-release tag) — `source: {type: git, ref: main}` alone
 
 ## `modules`
 
-Some components need an additional west module fetched alongside the selected **framework** —
+Some components need an additional Zephyr module on top of the selected **framework** —
 for example, `zigbee:` needs Nordic's `ncs-zigbee` add-on when `framework: type: ncs` is active.
 This happens automatically; no configuration is needed for the common case. `modules` is only for
 two less common cases: pinning a component-requested module to a specific version, or adding your
 own out-of-tree module.
+
+A git module is fetched once into its own folder and added to the build; the framework itself is
+shared with every other configuration of the same version. A module that needs binary blobs, or
+that lists other repositories in its own `west.yml`, can't be used this way and stops the build
+with an error.
 
 Each entry is a list item with:
 
@@ -390,7 +395,13 @@ Each entry is a list item with:
   module's version requires matching its actual name, not the component name.
 - **source** (*Optional*): Where to fetch the module from — a git repository or an already-checked-out
   local directory, same shape as **framework**'s own **source**. Required when **name** doesn't match
-  a module any component already requested (i.e. you're adding a module of your own).
+  a module any component already requested (i.e. you're adding a module of your own). A git source
+  takes:
+  - **url** (*Required*, string): The repository URL.
+  - **ref** (*Optional*, string): A branch, tag or commit. Defaults to `main`.
+  - **refresh** (*Optional*, [Time](/guides/configuration-types#time)): How often to check whether
+    **ref** has moved, and fetch it again if it has. Defaults to `1d`. `never` keeps the first fetch;
+    a commit never moves, so it is never fetched again.
 - **version** (*Optional*, string): Pin the module to a specific version instead of whatever a
   component's request would otherwise resolve to. At least one of **source** or **version** is
   required.
@@ -416,6 +427,7 @@ nrf:
           type: git
           url: https://github.com/me/my-zephyr-module
           ref: main
+          refresh: 1d
 ```
 
 ## `advanced`
