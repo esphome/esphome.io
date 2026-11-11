@@ -310,6 +310,10 @@ Module scripts run after the page has been parsed. On version 2 and 3 the main s
 With `local: true`, version 2 and 3 serve the embedded interface in place of this page. The device still serves
 `/0.js`, but the embedded interface does not load it, so the add-on never runs.
 
+> [!WARNING]
+> An imported add-on runs with the same access as the web interface, so it can read and control the device's
+> entities. Only import code you trust.
+
 > [!NOTE]
 > Browsers fetch module scripts with CORS. The add-on's host must send an `Access-Control-Allow-Origin` header that
 > admits the device's origin. Public CDNs such as jsDelivr send one, but a plain file server on your LAN may not.
