@@ -1,0 +1,26 @@
+---
+/**
+ * SupportedBy Component
+ * Callout for a device that has no dedicated component and is handled by an existing one.
+ * Reuses the markdown alert styles so it matches NOTE/TIP boxes in both themes.
+ *
+ * Usage in MDX:
+ * <SupportedBy name="TSL235R" component="Pulse Counter" path="/components/sensor/pulse_counter/" />
+ */
+
+interface Props {
+  name: string;
+  component: string;
+  path: string;
+}
+
+const { name, component, path } = Astro.props;
+---
+
+<div class="markdown-alert markdown-alert-note">
+  <p class="markdown-alert-title">Supported Device</p>
+  <p>
+    The <strong>{name}</strong> does not need a dedicated component. It is supported by the{" "}
+    <a href={path}>{component}</a> component.
+  </p>
+</div>
