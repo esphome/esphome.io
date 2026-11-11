@@ -209,11 +209,14 @@ This [action](/automations/actions/#all-actions) puts the radio into an idle sta
 
 ### `cc1101.power_down` Action
 
-This [action](/automations/actions/#all-actions) puts the radio into SLEEP mode to reduce power consumption when it is not in use.
+This [action](/automations/actions/#all-actions) puts the radio into SLEEP mode to reduce power consumption
+when it is not in use.
 
 ### `cc1101.wake_up` Action
 
-This [action](/automations/actions/#all-actions) wakes the radio from SLEEP mode into an idle state.
+This [action](/automations/actions/#all-actions) wakes the radio from SLEEP mode into an idle state and restores the
+settings lost in SLEEP, including the output-power table. After `cc1101.power_down`, call this action before
+resuming transmission or reception.
 
 For example, a transmit-only remote can wake the radio before sending a command and put it back to sleep afterwards:
 
@@ -225,6 +228,8 @@ esphome:
         - cc1101.power_down
 
 remote_transmitter:
+  pin: GPIOXX  # Must match GDO0
+  carrier_duty_percent: 100%
   on_transmit:
     then:
       - cc1101.wake_up
