@@ -45,18 +45,18 @@ ln882h_ble_tracker:
   See also [this guide by Texas Instruments](https://dev.ti.com/tirex/explore/content/simplelink_academy_cc2640r2sdk_5_10_02_00/modules/blestack/ble_scan_adv_basic/ble_scan_adv_basic.html#scanning-basics)
   for background reading.
 
-  - **interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval between
+  - **interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval between
     each consecutive scan window. The scanner cycles through the three BLE advertising channels
     at this rate. Defaults to `100ms` — the LN882H SDK's recommended `SCAN_INTERVAL_DEF` (`0xA0`),
     which together with the default `window` gives a 50 % duty cycle (the value the chip is
     designed to scan at). A larger interval lowers the duty cycle and frees more CPU time for WiFi
     on the single-core SoC, at the cost of catching fewer advertisements.
 
-  - **window** (*Optional*, [Time](/guides/configuration-types#time)): The time the receiver is
+  - **window** (*Optional*, [Time](/guides/configuration-types/#time)): The time the receiver is
     actively listening for packets on a channel during each scan interval. Must be ≤ `interval`.
     Defaults to `50ms` — the LN882H SDK's recommended `SCAN_WINDOW_DEF` (`0x50`).
 
-  - **duration** (*Optional*, [Time](/guides/configuration-types#time)): The length of each
+  - **duration** (*Optional*, [Time](/guides/configuration-types/#time)): The length of each
     complete scan session. When `continuous` is `true` the scanner restarts immediately after each
     session ends. Defaults to `5min`.
 
@@ -77,7 +77,7 @@ ln882h_ble_tracker:
     `ln882h_ble_tracker.start_scan`; nothing scans on boot unless an automation starts it.
     Defaults to `true`.
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used to
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used to
   reference this component in lambdas.
 
 Automations:
@@ -197,7 +197,7 @@ ln882h_ble_tracker:
 
 ### `ln882h_ble_tracker.start_scan` Action
 
-Start a Bluetooth scan. The optional [templatable](/automations/templates#config-templatable)
+Start a Bluetooth scan. The optional [templatable](/automations/templates/#config-templatable)
 `continuous` overrides the scan mode until the next `start_scan` or `stop_scan` (the
 YAML-configured value itself is untouched); without it the mode configured under
 `scan_parameters` is restored (a previous `stop_scan` does not stick as "one-shot"). This
@@ -217,7 +217,7 @@ on_...:
 
 #### Configuration variables
 
-- **continuous** (*Optional*, [templatable](/automations/templates#config-templatable), boolean):
+- **continuous** (*Optional*, [templatable](/automations/templates/#config-templatable), boolean):
   Override the scan mode until the next `start_scan` or `stop_scan` (the YAML-configured value
   itself is untouched). When omitted, the mode configured under `scan_parameters` is
   restored — a previous `stop_scan` does not stick as "one-shot".
