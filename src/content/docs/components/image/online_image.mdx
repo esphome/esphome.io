@@ -19,6 +19,8 @@ downloaded, decoded and drawn at runtime.
 > - JPEG images, currently only baseline images (no progressive support)
 >
 > - PNG images
+>
+> - QOI images
 
 > [!WARNING]
 > This component requires a fair amount of RAM; both for downloading the image, and for storing the decoded image. It might work on devices without PSRAM, but there is no guarantee.
@@ -38,18 +40,24 @@ image:
 
 - **url** (**Required**, url): The URL where the image will be downloaded from.
 - **request_headers** (*Optional*, mapping): Map of HTTP headers. Values are [templatable](/automations/templates).
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID with which you will be able to reference the image later
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID with which you will be able to reference the image later
   in your display code.
 
 - **format** (**Required**): The format that the image is encoded with.
 
+  - `AUTO` : The image will be decoded according to the MIME type specified by the server. If the server does not send the content-type header, or the returned MIME-type is not one of the supported types, the decoding will fail (even if the format would be supported otherwise). If you get an error while using `AUTO`, set the image format explicitly.
   - `BMP`  : The image on the server is encoded in BMP format.
   - `JPEG` (or `JPG`) : The image on the server is encoded in JPEG format.
   - `PNG`  : The image on the server is encoded in PNG format.
+  - `QOI`  : The image on the server is encoded in QOI format.
+
+  > [!NOTE]
+  > Using `AUTO` format will add the libraries and functionality required to decode all supported formats; which will increase the binary size. If you know beforehand which format the downloaded images will have, it is better to specify the format explicitly.
+
 - **resize** (*Optional*, string): If set, this will resize the image to fit inside the given dimensions `WIDTHxHEIGHT`
   and preserve the aspect ratio.
 
-- **placeholder** (*Optional*, [ID](/guides/configuration-types#id)): ID of another [image](/components/image/) to display while the downloaded image is not yet ready.
+- **placeholder** (*Optional*, [ID](/guides/configuration-types/#id)): ID of another [image](/components/image/) to display while the downloaded image is not yet ready.
   This placeholder image will **not** be resized; regardless of the `resize` option value for the `online_image`.
 
 - **type** (**Required**): Specifies how to encode image internally.
@@ -60,12 +68,12 @@ image:
   - `GRAYSCALE`  : Full scale grey. Uses 8 bits per pixel, 1 pixel per byte.
   - `RGB565`  : Lossy RGB color stored. Uses 2 bytes per pixel, 3 with an alpha channel
   - `RGB`  : Full RGB color stored. Uses 3 bytes per pixel, 4 with an alpha channel.
-- **transparency** (*Optional*): If set the alpha channel of the input image will be taken into account. The possible values are `opaque` (default), `chroma_key` and `alpha_channel`. See the discussion on transparency in the [image component](/components/image#transparency-options).
+- **transparency** (*Optional*): If set the alpha channel of the input image will be taken into account. The possible values are `opaque` (default), `chroma_key` and `alpha_channel`. See the discussion on transparency in the [image component](/components/image/#transparency-options).
 - **byte_order** (*Optional*, string): For RGB565 images, the pixels are converted to 16 bit values. By default these will be stored in little endian byte order (LSB first),
   but you can override this by setting `byte_order` to `big_endian`. Options are `little_endian` (default) and `big_endian`.
   Not applicable to other image formats.
 
-- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): Redownload the image when the specified time has elapsed. Defaults to `never` (i.e. the update component action needs to be called manually).
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): Redownload the image when the specified time has elapsed. Defaults to `never` (i.e. the update component action needs to be called manually).
 
 Advanced options:
 
@@ -75,7 +83,7 @@ Advanced options:
 
 - **on_download_finished** (*Optional*, [Automation](/automations)): An automation to perform when the image has been successfully downloaded.
 
-The variable `cached` is a boolean available in [lambdas](/automations/templates#config-lambda) that indicates cache status:
+The variable `cached` is a boolean available in [lambdas](/automations/templates/#config-lambda) that indicates cache status:
 
 - `true` if the image was loaded from cache (cache hit).
 - `false` if the image was freshly downloaded (cache miss).
@@ -112,7 +120,7 @@ Change the URL where the image is downloaded from. A re-download will be automat
 
 #### Configuration variables
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The image to update the URL for.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The image to update the URL for.
 - **url** (**Required**, url, [templatable](/automations/templates)): The new URL to download the image from.
 - **update** (*Optional*, bool, [templatable](/automations/templates)): If `true`, the image will be updated (fetched) immediately after setting the new URL. If `false`, the URL will be set but the image will **not** be updated until you call the `update` action. Defaults to `true`
 
@@ -130,7 +138,7 @@ Release the memory currently used by an image. Can be used if different display 
 
 #### Configuration variables
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The image to update the URL for.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The image to update the URL for.
 
 ```yaml
 on_...:
@@ -175,7 +183,7 @@ display:
     lambda: |-
       // Draw the image my_image at position [x=0,y=0]
       // with front color "OFF" and back color "ON"
-      it.image(0, 0, id(my_online_image), COLOR_OFF, COLOR_ON);
+      it.image(0, 0, id(my_online_image), Color::BLACK, Color::WHITE);
 ```
 
 By default the `online_image` platform is configured to not automatically update/download the image; in order to do the initial download, you can either:
@@ -194,7 +202,7 @@ wifi:
 ## Sharing Options Across Files
 
 If you have several `online_image` images that share most of their options,
-see [Setting Defaults](/components/image#setting-defaults)
+see [Setting Defaults](/components/image/#setting-defaults)
 on the [image](/components/image/) component page.
 
 ## See Also

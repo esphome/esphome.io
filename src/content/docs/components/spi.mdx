@@ -70,20 +70,20 @@ spi:
 ## Configuration variables
 
 - **type** (*Optional*): Choose between `single` for standard 1 bit bus SPI (the default), `quad` and `octal`.
-- **clk_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin used for the clock line of the SPI bus.
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this SPI hub if you need multiple SPI hubs.
+- **clk_pin** (**Required**, [Pin Schema](/guides/configuration-types/#pin-schema)): The pin used for the clock line of the SPI bus.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID for this SPI hub if you need multiple SPI hubs.
 - **interface** (*Optional*): Controls which hardware or software SPI implementation should be used.
   Value may be one of `any` (default), `software`, `hardware`, `spi`, `spi2` or `spi3`, depending on
   the type and the particular chip used. See discussion below.
 
 For the conventional `single` bit bus at least one of `miso_pin` or `mosi_pin` is required.
 
-- **mosi_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The pin used for the MOSI line of the SPI bus.
-- **miso_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The pin used for the MISO line of the SPI bus.
+- **mosi_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The pin used for the MOSI line of the SPI bus.
+- **miso_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The pin used for the MISO line of the SPI bus.
 
 For `quad` or `octal` type instead specify `data_pins`  :
 
-- **data_pins** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): Must be a list of exactly 4 pins to be used
+- **data_pins** (**Required**, [Pin Schema](/guides/configuration-types/#pin-schema)): Must be a list of exactly 4 pins to be used
   for the quad SPI output data lines, or exactly 8 pins for octal mode. Not used for single mode.
 
 ## Interface selection
@@ -149,9 +149,18 @@ spi_device:
   See table below for more information
 
 - **bit_order** (*Optional*): Set the bit order - choose one of `msb_first` (default) or `lsb_first`.
-- **cs_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The CS pin.
+- **cs_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The CS pin.
 - **release_device** (*Optional*, boolean): For ESP32, release the bus device between transactions. The default is
   `False`. Setting this to `True` will enable more than 6 devices to be connected to hardware SPI buses.
+
+- **psram_dma** (*Optional*, boolean): Use direct DMA for transmit buffers located in PSRAM instead of copying them
+  through an internal DMA buffer. This can reduce internal memory use for large transfers. The default is `False`.
+  This option requires ESP-IDF 5.5.3 or later and is available on ESP32-S3, ESP32-S31, ESP32-P4, ESP32-C5 and
+  ESP32-C61.
+
+  Direct PSRAM DMA shares memory bandwidth with the MSPI bus. Keep the SPI transfer bandwidth below the available
+  PSRAM bandwidth to avoid data loss. ESPHome logs an error if ESP-IDF reports a transmit underflow. See the
+  [ESP-IDF SPI Master documentation][idf-spi] for details.
 
 - **interface** (*Optional*): Controls which hardware or software SPI implementation should be used.
 
@@ -193,3 +202,5 @@ transactions.
 ## See Also
 
 - <APIRef text="spi.h" path="spi/spi.h" />
+
+[idf-spi]: https://docs.espressif.com/projects/esp-idf/en/latest/esp32s3/api-reference/peripherals/spi_master.html

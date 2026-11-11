@@ -68,7 +68,7 @@ climate:
 ```
 
 > [!WARNING]
-> If you are using the [Logger Component](/components/logger#logger), make sure you are not using the same pins, or disable UART
+> If you are using the [Logger Component](/components/logger/#logger), make sure you are not using the same pins, or disable UART
 > logging with:
 >
 > ```yaml
@@ -78,7 +78,7 @@ climate:
 
 ## Supported features
 
-- Target temperature range: `16 °C` to `31 °C`
+- Target temperature range: `16 °C` to `31 °C`, or `61 °F` to `88 °F` with `use_fahrenheit` enabled
 - Current temperature reporting
 - Modes: `OFF`, `HEAT`, `COOL`, `DRY`, `FAN_ONLY`, `HEAT_COOL` (called `AUTO` by Mitsubishi)
 - Fan modes: `AUTO`, `QUIET`, `LOW`, `MEDIUM`, `MIDDLE`, `HIGH`
@@ -99,13 +99,13 @@ climate:
 
 ### Mitsubishi CN105
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of this Mitsubishi CN105 hub.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of this Mitsubishi CN105 hub.
   Use this ID to reference the hub from climate entities and actions.
-- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): The UART bus to use.
-- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): Interval between status updates.
+- **uart_id** (*Optional*, [ID](/guides/configuration-types/#id)): The UART bus to use.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): Interval between status updates.
   Defaults to `1s`. Lower values provide faster detection of external changes, for example when using the remote
   control.
-- **telemetry_request_min_interval** (*Optional*, [Time](/guides/configuration-types#time)): Minimum time between
+- **telemetry_request_min_interval** (*Optional*, [Time](/guides/configuration-types/#time)): Minimum time between
   consecutive telemetry reads. Defaults to `60s`.
 
   This allows keeping a low `update_interval` (to quickly reflect changes, e.g. when using an IR remote) while avoiding
@@ -116,6 +116,12 @@ climate:
 
   Set to `never` to disable telemetry polling.
 
+- **use_fahrenheit** (*Optional*, boolean): Configure the climate entity to report and accept temperatures in Fahrenheit
+  using Mitsubishi-specific mapping. Defaults to `false`.
+
+  > [!NOTE]
+  > Some indoor units use a temperature encoding that cannot accurately represent Fahrenheit setpoints. If the
+  > component reports an encoding error and fails to initialize, disable `use_fahrenheit`.
 - **vane** (*Optional*): Vane state automation configuration.
   - **on_state** (*Optional*, [Automation](/automations/)): An automation to run whenever the hub publishes its current
     state. The automation receives the current vane state as `x`. See
@@ -123,16 +129,16 @@ climate:
 
 ### Climate
 
-- **mitsubishi_cn105_id** (*Optional*, [ID](/guides/configuration-types#id)): The Mitsubishi CN105 hub to use.
+- **mitsubishi_cn105_id** (*Optional*, [ID](/guides/configuration-types/#id)): The Mitsubishi CN105 hub to use.
 
 - **supported_swing_modes** (*Optional*, enum): Selects which swing modes are exposed by the climate entity. Defaults to `'OFF'`.
 
-  - `'OFF'` — no swing support  
-  - `VERTICAL` — exposes `'OFF'`, `VERTICAL`  
-  - `HORIZONTAL` — exposes `'OFF'`, `HORIZONTAL`  
-  - `BOTH` — exposes `'OFF'`, `VERTICAL`, `HORIZONTAL`, `BOTH`
+  - `OFF`: no swing support. Write it as `'OFF'` in YAML, since a bare `OFF` is read as a boolean.
+  - `VERTICAL`: exposes `'OFF'`, `VERTICAL`
+  - `HORIZONTAL`: exposes `'OFF'`, `HORIZONTAL`
+  - `BOTH`: exposes `'OFF'`, `VERTICAL`, `HORIZONTAL`, `BOTH`
 
-- All other options from [Climate](/components/climate#config-climate).
+- All other options from [Climate](/components/climate/#config-climate).
 
 ### Select
 
@@ -142,7 +148,7 @@ Assistant's generic climate model. Vane controls require a top-level `mitsubishi
 [Migration From Climate-Owned Configuration](#migration-from-climate-owned-configuration) if your configuration still
 defines the hub options on the `climate:` entry.
 
-- **mitsubishi_cn105_id** (*Optional*, [ID](/guides/configuration-types#id)): The Mitsubishi CN105 hub to use.
+- **mitsubishi_cn105_id** (*Optional*, [ID](/guides/configuration-types/#id)): The Mitsubishi CN105 hub to use.
 - **vertical_vane_direction** (*Optional*, [Select](/components/select/)): Exposes the vertical vane direction as a
   select entity.
 
@@ -151,7 +157,7 @@ defines the hub options on the `climate:` entry.
   These are the select option labels exposed to Home Assistant. If referenced from automations or templates, use them
   exactly as shown, including casing.
 
-  All options from [Select](/components/select#config-select) are supported.
+  All options from [Select](/components/select/#config-select) are supported.
 
   Example:
 
@@ -272,6 +278,7 @@ select:
 - **mitsubishi_cn105.set_remote_temperature**
   - Sends an external (remote) room temperature to the indoor unit.
   - Overrides the unit’s internal temperature sensor.
+  - The temperature is always interpreted as Celsius, regardless of `use_fahrenheit`.
   - Supported temperature range: `8.0–39.5 °C`.
 
 - **mitsubishi_cn105.clear_remote_temperature**
