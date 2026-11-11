@@ -210,15 +210,17 @@ This [action](/automations/actions/#all-actions) puts the radio into an idle sta
 ### `cc1101.power_down` Action
 
 This [action](/automations/actions/#all-actions) puts the radio into SLEEP mode to reduce power consumption
-when it is not in use.
+when it is not in use. A sleeping radio receives nothing, so `on_packet` does not fire. Settings changed while it
+sleeps are applied when it wakes up.
 
 ### `cc1101.wake_up` Action
 
 This [action](/automations/actions/#all-actions) wakes the radio from SLEEP mode into an idle state and restores the
-settings lost in SLEEP, including the output-power table. After `cc1101.power_down`, call this action before
-resuming transmission or reception.
+settings lost in SLEEP, including the output-power table. `cc1101.begin_tx`, `cc1101.begin_rx`, `cc1101.set_idle`
+and `cc1101.send_packet` also wake the radio on their own. To receive packets again after `cc1101.wake_up`,
+follow it with `cc1101.begin_rx`.
 
-For example, a transmit-only remote can wake the radio before sending a command and put it back to sleep afterwards:
+For example, a transmit-only remote can sleep between commands; `cc1101.begin_tx` wakes it before each one:
 
 ```yaml
 esphome:
@@ -232,7 +234,6 @@ remote_transmitter:
   carrier_duty_percent: 100%
   on_transmit:
     then:
-      - cc1101.wake_up
       - cc1101.begin_tx
   on_complete:
     then:
