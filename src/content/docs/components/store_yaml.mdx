@@ -94,9 +94,9 @@ listed in the note, so keep your own backup of them.
 ## Recovering the Configuration
 
 Download the stored files with the
-[`recover-yaml` command](/guides/cli/#recover-yaml-command). It asks for the
-device's API encryption key; leave it empty for a device built with
-`allow_unencrypted: true`.
+[`recover-yaml` command](/guides/cli/#recover-yaml-command). It reads the
+device's API encryption key from the `ESPHOME_API_KEY` environment variable, or
+asks for it; leave it empty for a device built with `allow_unencrypted: true`.
 
 ```bash
 esphome recover-yaml --device kitchen.local --output kitchen-recovered
@@ -116,13 +116,15 @@ To finish the configuration:
    `secrets.yaml` that needs them.
 2. Restore anything listed in `store_yaml_uncaptured.yaml`, if it is there,
    and the non-YAML files described in [What Is Not Stored](#what-is-not-stored).
-3. Check it with `esphome config kitchen-recovered/kitchen.yaml`, then install
-   as usual.
+3. Check the main configuration with `esphome config`, then install as usual.
+   The command prints where the main configuration is, here
+   `kitchen-recovered/kitchen.yaml`.
 
 When the configuration included files from a folder above its own, such as
 `!include ../common/wifi.yaml`, the main configuration is put one folder down,
 in a folder named after it, so those files keep their place inside the new
-folder:
+folder. Each further `../` level adds one more folder. The main configuration
+is then `kitchen-recovered/kitchen/kitchen.yaml`:
 
 ```text
 kitchen-recovered/
