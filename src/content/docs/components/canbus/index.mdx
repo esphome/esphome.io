@@ -118,10 +118,14 @@ them, even when set to `false`:
 ### `on_frame` Trigger
 
 This automation will be triggered when a CAN frame is received. The variables `x` (of type
-`std::vector<uint8_t>`  ) containing the frame data, `can_id` (of type `uint32_t`  ) containing the actual
-received CAN ID and `remote_transmission_request` (of type `bool`  ) containing the corresponding field
+`canbus::CanPayload`) containing the frame data, `can_id` (of type `uint32_t`) containing the actual
+received CAN ID and `remote_transmission_request` (of type `bool`) containing the corresponding field
 from the CAN frame are passed to the automation for use in lambdas. On a platform that supports CAN FD, `x` holds
 up to 64 bytes when a CAN FD frame is received.
+
+`x` holds the data without using the heap. It offers `size()`, `empty()`, `x[i]`, `data()`, `begin()` and `end()`
+like a `std::vector<uint8_t>`, and converts to one where a function needs it, for example
+`std::vector<uint8_t> data = x;`. That conversion allocates, so prefer reading `x` directly.
 
 > [!NOTE]
 > Messages this node sends to the same ID will not show up as received messages.
@@ -185,7 +189,7 @@ on_...:
 
   - canbus.send: 'hello'
 
-  # Templated; return type must be std::vector<uint8_t>
+  # Templated; return a list of bytes, a std::vector<uint8_t>, or x from on_frame
   - canbus.send: !lambda return {0x00, 0x20, 0x42};
 
   # CAN FD, on a platform that supports it: 12 bytes with the faster data phase
