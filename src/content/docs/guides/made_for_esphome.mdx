@@ -50,7 +50,7 @@ acceptable; "Acme Widget for ESPHome" is.
 
 - The configuration is open source and published somewhere the public can read it, such as a GitHub repository.
 - Every entity and component (sensor, switch, i2c bus, output, and so on) has an `id`. Users need those ids to
-  [Extend](/components/packages#extend) or [Remove](/components/packages#remove) parts of your configuration when
+  [Extend](/components/packages/#extend) or [Remove](/components/packages/#remove) parts of your configuration when
   they take control.
 - The configuration you ship contains no `!secret` references and no passwords, including the `wifi_ssid` /
   `wifi_password` pair. Users provision their own Wi-Fi credentials, so anything baked in only leaves dummy
@@ -65,7 +65,7 @@ acceptable; "Acme Widget for ESPHome" is.
 Devices always arrive with no Wi-Fi credentials, so the user needs a way to supply them without a computer or a
 configuration file:
 
-- [`esp32_improv`](/components/esp32_improv/) provisions credentials over Bluetooth LE.
+- [`improv_ble`](/components/improv_ble/) provisions credentials over Bluetooth LE.
 - [`improv_serial`](/components/improv_serial/) does the same over USB, and is required if the device exposes a USB
   port.
 
@@ -79,7 +79,7 @@ between them. Only a configuration with no `wifi:` block at all is exempt.
 themselves. That requires:
 
 - [`dashboard_import`](/guides/creators/) with a `package_import_url` pointing at your public configuration.
-- [Project information](/components/esphome#esphome-creators_project) (`esphome` → `project` → `name` and `version`),
+- [Project information](/components/esphome/#esphome-creators_project) (`esphome` → `project` → `name` and `version`),
   which is what the Device Builder matches on when it offers to adopt the device.
 - The [`api`](/components/api/) component, which the adoption flow relies on.
 - The [`esphome` OTA platform](/components/ota/esphome/), so the user can install their own builds over the air.
@@ -93,7 +93,7 @@ Ship updates to devices you have sold using the
 [`http_request` OTA platform](/components/ota/http_request/) alongside it.
 
 The `source` URL must point at a publicly reachable
-[JSON manifest](/components/update/http_request#update_http_request-manifest_format) whose `builds` include a
+[JSON manifest](/components/update/http_request/#update_http_request-manifest_format) whose `builds` include a
 `chipFamily` matching your hardware and an `ota.path` that resolves to a downloadable binary. Our review tooling
 fetches the manifest and the binary, so a dead link or a chip family mismatch will fail the review.
 
@@ -135,7 +135,7 @@ update:
 wifi:
   ap:
 
-esp32_improv:
+improv_ble:
   authorizer: none
 
 logger:

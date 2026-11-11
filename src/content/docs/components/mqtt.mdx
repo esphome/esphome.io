@@ -84,7 +84,7 @@ mqtt:
   The `log_topic` has an additional configuration option:
 
   - **level** (*Optional*, string): The log level to use for MQTT logs. See
-    [Log Levels](/components/logger#log-levels) for options.
+    [Log Levels](/components/logger/#log-levels) for options.
 
 - **birth_message** (*Optional*, [MQTTMessage](#mqtt-message)): The message to send when
   a connection to the broker is established. See [Last Will And Birth Messages](#mqtt-last_will_birth) for more information.
@@ -99,7 +99,7 @@ mqtt:
   [TLS (ESP32)](#mqtt-tls-idf) for more information.
 
 > [!TIP]
-> For MQTT security recommendations including TLS configuration, see the [Security Best Practices](/guides/security_best_practices#mqtt) guide.
+> For MQTT security recommendations including TLS configuration, see the [Security Best Practices](/guides/security_best_practices/#mqtt) guide.
 
 - **client_certificate** (*Optional*, string): Only on `esp32`. Client certificate in PEM format.
 - **client_certificate_key** (*Optional*, string): Only on `esp32`. Client private key in PEM format.
@@ -112,10 +112,10 @@ mqtt:
   The disadvantage is additional memory usage for the thread.
   Set this to true if you need to ensure that mqtt does not block the main thread, especially if you have poor network conditions.
 
-- **reboot_timeout** (*Optional*, [Time](/guides/configuration-types#time)): The amount of time to wait before rebooting when no
+- **reboot_timeout** (*Optional*, [Time](/guides/configuration-types/#time)): The amount of time to wait before rebooting when no
   MQTT connection exists. Can be disabled by setting this to `0s`. Defaults to `15min`.
 
-- **keepalive** (*Optional*, [Time](/guides/configuration-types#time)): The time
+- **keepalive** (*Optional*, [Time](/guides/configuration-types/#time)): The time
   to keep the MQTT socket alive, decreasing this can help with overall stability due to more
   WiFi traffic with more pings. Defaults to 15 seconds.
 
@@ -131,7 +131,7 @@ mqtt:
 - **on_json_message** (*Optional*, [Automation](/automations)): An action to be
   performed when a JSON message on a specific MQTT topic is received. See [`on_json_message` Trigger](#mqtt-on_json_message).
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation.
 - **publish_nan_as_none** (*Optional*, bool): Publish `None` instead of `NaN` to handle Unknown/Unavailable sensor
   states in Home Assistant. Defaults to `false`.
 
@@ -204,22 +204,26 @@ Example Payload:
 }
 ```
 
-JSON keys:
+JSON keys that are always present:
 
-- **ip** (**Required**, ip): The IP address of the ESPHome device.
-- **name** (**Required**, string): Name of the device (`esphome.name`  ).
-- **mac** (**Required**, string): MAC address of the device.
-- **board** (**Required**, string): Board used for the device.
-- **version** (**Required**, string): ESPHome version.
-- **port** (*Optional*, port): Port of the ESPHome API (if enabled).
-- **ipX** (*Optional*, ip): Additional IP addresses (X is a number starting at 1).
-- **friendly_name** (*Optional*, string): Friendly name of the device (`esphome.friendly_name`  ).
-- **platform** (*Optional*, string): Platform of the device (e.g. ESP32 or ESP8266)
-- **network** (*Optional*, string): Network type.
-- **project_name** (*Optional*, string): `esphome.project.name`.
-- **project_version** (*Optional*, string): `esphome.project.version`.
-- **project_version** (*Optional*, string): `dashboard_import.package_import_url`.
-- **api_encryption** (*Optional*, string): API encryption type.
+- `name`: Name of the device (`esphome.name`).
+- `mac`: MAC address of the device.
+- `board`: Board used for the device.
+- `version`: ESPHome version.
+
+JSON keys that are present when applicable:
+
+- `ip`: The IP address of the ESPHome device, once it has one.
+- `port`: Port of the ESPHome API, if enabled.
+- `ipX`: Additional IP addresses (X is a number starting at 1).
+- `friendly_name`: Friendly name of the device (`esphome.friendly_name`).
+- `platform`: Platform of the device (e.g. ESP32 or ESP8266).
+- `network`: Network type.
+- `project_name`: `esphome.project.name`.
+- `project_version`: `esphome.project.version`.
+- `package_import_url`: `dashboard_import.package_import_url`.
+- `api_encryption`: API encryption type, when an API encryption key is configured.
+- `api_encryption_supported`: API encryption type the device supports, when no key is configured yet.
 
 ## Using device discovery with Home Assistant
 
@@ -343,8 +347,9 @@ mqtt:
     payload: offline
 ```
 
-- **birth_message** (*Optional*, [MQTTMessage](#mqtt-message))
-- **will_message** (*Optional*, [MQTTMessage](#mqtt-message))
+- **birth_message** (*Optional*, [MQTTMessage](#mqtt-message)): The message to publish once connected to the broker.
+- **will_message** (*Optional*, [MQTTMessage](#mqtt-message)): The last will message the broker publishes when it loses the
+  connection to the device unexpectedly. A clean shutdown publishes `shutdown_message` instead.
 
 If the birth message and last will message have empty topics or topics
 that are different from each other, availability reporting will be
@@ -483,7 +488,7 @@ command_retain: false
 ### `on_connect` Trigger
 
 This trigger is activated when a connection to the MQTT broker is established. To retrieve if the session is present,
-use a [lambda](/automations/templates#config-lambda) template, it is available under the name `session_present` inside that lambda.
+use a [lambda](/automations/templates/#config-lambda) template, it is available under the name `session_present` inside that lambda.
 `session_present` indicates whether the broker has a persistent session for this client from a previous connection. When `true`,
 the broker retained subscriptions and queued messages. When `false`, the session is new.
 
@@ -504,7 +509,7 @@ mqtt:
 ### `on_disconnect` Trigger
 
 This trigger is activated when a connection to the MQTT broker is dropped. To retrieve the disconnect reason,
-use a [lambda](/automations/templates#config-lambda) template, the reason is available under the name `reason` inside that lambda.
+use a [lambda](/automations/templates/#config-lambda) template, the reason is available under the name `reason` inside that lambda.
 
 ```yaml
 mqtt:
@@ -533,7 +538,7 @@ mqtt:
 ### `on_message` Trigger
 
 With this configuration option you can write complex automations whenever an MQTT
-message on a specific topic is received. To use the message content, use a [lambda](/automations/templates#config-lambda)
+message on a specific topic is received. To use the message content, use a [lambda](/automations/templates/#config-lambda)
 template, the message payload is available under the name `x` inside that lambda.
 
 ```yaml
@@ -572,7 +577,7 @@ mqtt:
 > ```
 
 > [!NOTE]
-> This action can also be used in [lambdas](/automations/templates#config-lambda):
+> This action can also be used in [lambdas](/automations/templates/#config-lambda):
 >
 > ```yaml
 > mqtt:
@@ -591,7 +596,7 @@ mqtt:
 ## `on_json_message` Trigger
 
 With this configuration option you can write complex automations whenever a JSON-encoded MQTT
-message is received. To use the message content, use a [lambda](/automations/templates#config-lambda)
+message is received. To use the message content, use a [lambda](/automations/templates/#config-lambda)
 template, the decoded message payload is available under the name `x` inside that lambda.
 
 The `x` object is of type `JsonObject` by the [ArduinoJson](https://github.com/bblanchon/ArduinoJson)
@@ -638,7 +643,7 @@ mqtt:
 > trigger a compile failure. For example with the `delay` action.
 
 > [!NOTE]
-> This action can also be used in [lambdas](/automations/templates#config-lambda):
+> This action can also be used in [lambdas](/automations/templates/#config-lambda):
 >
 > ```yaml
 > mqtt:
@@ -688,7 +693,7 @@ on_...:
    have a retain flag on or not. Defaults to `false`.
 
 > [!NOTE]
-> This action can also be written in [lambdas](/automations/templates#config-lambda):
+> This action can also be written in [lambdas](/automations/templates/#config-lambda):
 >
 > ```yaml
 > mqtt:
@@ -727,7 +732,7 @@ on_...:
 - **topic** (**Required**, string, [templatable](/automations/templates)):
    The MQTT topic to publish the message.
 
-- **payload** (**Required**, [lambda](/automations/templates#config-lambda)): The message content.
+- **payload** (**Required**, [lambda](/automations/templates/#config-lambda)): The message content.
 - **qos** (*Optional*, int, [templatable](/automations/templates)): The [Quality of Service](https://www.hivemq.com/blog/mqtt-essentials-part-6-mqtt-quality-of-service-levels)
    level of the topic. Defaults to 0.
 
@@ -735,7 +740,7 @@ on_...:
    have a retain flag on or not. Defaults to `false`.
 
 > [!NOTE]
-> This action can also be written in [lambdas](/automations/templates#config-lambda):
+> This action can also be written in [lambdas](/automations/templates/#config-lambda):
 >
 > ```yaml
 > mqtt:
@@ -800,7 +805,7 @@ on_...:
 
 ### `mqtt.connected` Condition
 
-This [Condition](/automations/actions#all-conditions) checks if the MQTT client is currently connected to
+This [Condition](/automations/actions/#all-conditions) checks if the MQTT client is currently connected to
 the MQTT broker.
 
 ```yaml
@@ -813,7 +818,7 @@ on_...:
 ```
 
 > [!NOTE]
-> This action can also be written in [lambdas](/automations/templates#config-lambda):
+> This action can also be written in [lambdas](/automations/templates/#config-lambda):
 >
 > ```yaml
 > mqtt:

@@ -56,14 +56,14 @@ stepper:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): Specify the ID of the stepper so that you can control it.
-- **step_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The `STEP` pin of the A4988
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): Specify the ID of the stepper so that you can control it.
+- **step_pin** (**Required**, [Pin Schema](/guides/configuration-types/#pin-schema)): The `STEP` pin of the A4988
   stepper driver.
 
-- **dir_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The `DIRECTION` pin of the A4988
+- **dir_pin** (**Required**, [Pin Schema](/guides/configuration-types/#pin-schema)): The `DIRECTION` pin of the A4988
   stepper driver.
 
-- **sleep_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): Optionally also use the `SLEEP` pin
+- **sleep_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): Optionally also use the `SLEEP` pin
   of the A4988 stepper driver. If specified, the driver will be put into sleep mode as soon as the stepper
   reaches the target steps.
 
@@ -116,11 +116,11 @@ stepper:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): Specify the ID of the stepper so that you can control it.
-- **pin_a** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin **a** of the stepper control board.
-- **pin_b** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin **b** of the stepper control board.
-- **pin_c** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin **c** of the stepper control board.
-- **pin_d** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin **d** of the stepper control board.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): Specify the ID of the stepper so that you can control it.
+- **pin_a** (**Required**, [Pin Schema](/guides/configuration-types/#pin-schema)): The pin **a** of the stepper control board.
+- **pin_b** (**Required**, [Pin Schema](/guides/configuration-types/#pin-schema)): The pin **b** of the stepper control board.
+- **pin_c** (**Required**, [Pin Schema](/guides/configuration-types/#pin-schema)): The pin **c** of the stepper control board.
+- **pin_d** (**Required**, [Pin Schema](/guides/configuration-types/#pin-schema)): The pin **d** of the stepper control board.
 - **sleep_when_done** (*Optional*, boolean): Whether to turn off all coils when the stepper has
   reached the target position
 
@@ -131,6 +131,27 @@ Configuration variables:
   - `WAVE_DRIVE`
 
 - All other from [Base Stepper Configuration](#base_stepper_config).
+
+### L298N and Other Dual H-Bridges
+
+The `uln2003` platform also drives a bipolar stepper through an L298N or a similar dual H-bridge. Connect coil A
+to `OUT1`/`OUT2` and coil B to `OUT3`/`OUT4`, keep the `ENA` and `ENB` jumpers fitted, and swap the middle two
+pins so that each step energizes the coils in the right order:
+
+```yaml
+stepper:
+  - platform: uln2003
+    id: my_stepper
+    pin_a: GPIOXX  # IN1
+    pin_b: GPIOXX  # IN3
+    pin_c: GPIOXX  # IN2
+    pin_d: GPIOXX  # IN4
+    max_speed: 250 steps/s
+```
+
+With `sleep_when_done: true` all four inputs go low when the target is reached, so the motor draws no current
+from the supply. The jumpers keep both bridges enabled, though, so the shorted coils resist turning; the
+`uln2003` platform does not drive `ENA`/`ENB`.
 
 ## `stepper.set_target` Action
 
@@ -157,7 +178,7 @@ on_...:
 
 Configuration options:
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the stepper.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the stepper.
 - **target** (**Required**, int, [templatable](/automations/templates)): The target position in steps.
 
 > [!WARNING]
@@ -210,12 +231,12 @@ on_...:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the stepper.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the stepper.
 - **position** (**Required**, int, [templatable](/automations/templates)): The position to report in steps.
 
 ## `stepper.set_speed` Action
 
-This [Action](/automations/actions#all-actions) allows you to set the speed of a stepper at runtime.
+This [Action](/automations/actions/#all-actions) allows you to set the speed of a stepper at runtime.
 
 ```yaml
 on_...:
@@ -226,13 +247,13 @@ on_...:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the stepper.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the stepper.
 - **speed** (**Required**, float, [templatable](/automations/templates)): The speed
   in `steps/s` (steps per seconds) to drive the stepper at.
 
 ## `stepper.set_acceleration` Action
 
-This [Action](/automations/actions#all-actions) allows you to set the acceleration of a stepper at runtime.
+This [Action](/automations/actions/#all-actions) allows you to set the acceleration of a stepper at runtime.
 
 ```yaml
 on_...:
@@ -243,13 +264,13 @@ on_...:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the stepper.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the stepper.
 - **acceleration** (**Required**, float, [templatable](/automations/templates)): The acceleration
   in `steps/s^2` (steps per seconds squared) to use when starting to move.
 
 ## `stepper.set_deceleration` Action
 
-This [Action](/automations/actions#all-actions) allows you to set the deceleration of a stepper at runtime.
+This [Action](/automations/actions/#all-actions) allows you to set the deceleration of a stepper at runtime.
 
 ```yaml
 on_...:
@@ -260,7 +281,7 @@ on_...:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the stepper.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the stepper.
 - **deceleration** (**Required**, float, [templatable](/automations/templates)): The same as `acceleration`,
   but for when the motor is decelerating shortly before reaching the set position.
 
@@ -269,7 +290,7 @@ Configuration variables:
 ## Home Assistant Configuration
 
 The easiest way to control your stepper from Home Assistant is to add a `number` to your ESPHome
-configuration. See [Number](/components/number#config-number) for more information.
+configuration. See [Number](/components/number/#config-number) for more information.
 
 ```yaml
 number:
@@ -292,7 +313,7 @@ stepper:
 
 ## lambda calls
 
-From [lambdas](/automations/templates#config-lambda), you can call several methods on stepper motors to do some
+From [lambdas](/automations/templates/#config-lambda), you can call several methods on stepper motors to do some
 advanced stuff (see the full API Reference for more info).
 
 - `set_target`  : Set the target position of the motor as an integer.
