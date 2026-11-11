@@ -19,10 +19,6 @@ needed on the device.
 
 ```yaml
 # Example configuration entry
-api:
-  encryption:
-    key: !secret api_encryption_key
-
 store_yaml:
 ```
 
@@ -41,7 +37,8 @@ override this after acknowledging the risk.
   in the embedded files. Defaults to `false`.
 
   With the default `false`, each file is re-generated from its parsed form
-  with every secret value replaced by a `!secret` reference: values loaded
+  with secret values replaced by `!secret` references (see
+  [What Gets Redacted](#what-gets-redacted) for the exceptions): values loaded
   through `!secret` keep their names, and values written inline in the YAML
   get a name derived from where they appear (for example `wifi_password`).
   The `secrets.yaml` content is replaced with a skeleton listing every
@@ -74,7 +71,11 @@ example in a custom or external component, is embedded as written, so prefer
 If a sensitive value cannot be replaced (for example because it is assembled
 from several substitutions), the build fails rather than embedding it.
 Reference the value with `!secret`, or set `include_secrets: true` to embed
-secrets deliberately.
+secrets deliberately. The one exception is a Wi-Fi SSID loaded with `!secret`
+that also appears inside a longer value, such as a device name: SSIDs are
+broadcast, so the build only warns and that text is embedded as written.
+
+Even with `include_secrets: false`, treat the stored YAML as sensitive.
 
 Some content cannot be captured at build time. It is left out of the
 embedded set, and a `store_yaml_uncaptured.yaml` note listing it is included in
@@ -110,7 +111,10 @@ magic "EHY1" | uint32 file_count
 ```
 
 Recovery tooling decompresses the blob and writes each `(path, content)` pair
-back to disk.
+back to disk. Paths are relative to the directory of the entry YAML and use
+`/` as separator. A file from outside that directory keeps its `..` segments,
+so tooling must write into a new, empty directory and reject any path that,
+after resolving `..` and symbolic links, would land outside it.
 
 ## Memory and Flash Impact
 
