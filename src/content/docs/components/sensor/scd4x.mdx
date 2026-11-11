@@ -50,6 +50,14 @@ sensor:
 - **automatic_self_calibration** (*Optional*, boolean): Whether to enable
   automatic self calibration (ASC). Defaults to `true`.
 
+- **automatic_self_calibration_target** (*Optional*, int): The CO₂ value in ppm that
+  automatic self calibration takes as the lowest level the sensor regularly sees, for
+  example outdoor air when a room is aired. Between `400` and `1000`. If not set, the
+  sensor keeps the target it already has, which is `400` from the factory. Outdoor CO₂
+  is above 400 ppm almost everywhere, and higher near cities, so a target close to the
+  local outdoor air keeps the readings from drifting low. Only allowed with
+  `automatic_self_calibration: true`.
+
 - **ambient_pressure_compensation** (*Optional*, int): Enable compensation
   of measured CO₂ values based on given ambient pressure in mBar.
 

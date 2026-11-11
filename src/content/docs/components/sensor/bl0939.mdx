@@ -130,9 +130,18 @@ sensor:
 - **uart_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the [UART Component](/components/uart) if you want
   to use multiple UART buses.
 
+- **anti_creep_threshold** (*Optional*, int): The active-power threshold in raw `WA_CREEP` register units, from `0` to
+  `255`. Defaults to the chip's reset value `11` (`0x0B`). Set to `0` to disable anti-creep.
+  Both channels share the same threshold, but each channel is checked separately. When a channel's absolute active
+  power is below the threshold, the chip reports zero for that channel's active power and RMS current.
+  Lower values let you measure smaller signals, but readings may include more noise. For current-only measurement
+  without a physical voltage input, set `anti_creep_threshold: 0` so the chip does not force current readings to zero.
+
 ## See Also
 
 - [Sensor Filters](/components/sensor/#sensor-filters)
 - [CSE7761 Power Sensor](/components/sensor/cse7761/)
 - [Belling BL0940 Energy Monitor](/components/sensor/bl0940/)
+- [BL0939 Datasheet](https://www.belling.com.cn/media/file_object/bel_product/BL0939/datasheet/BL0939_V1.3_cn.pdf)
+  (`WA_CREEP`, §2.4)
 - <APIRef text="bl0939.h" path="bl0939/bl0939.h" />
