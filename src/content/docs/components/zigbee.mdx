@@ -63,7 +63,7 @@ zigbee:
 
 - **model** (*Optional*, string): Model Identifier of the Zigbee device. Defaults to the ESPHome node name.
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): The ID to use for this `zigbee` component.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID to use for this `zigbee` component.
 
 - **router** (*Optional*, boolean): If true the Zigbee role will be `router` instead of `end device` and it will
   forward Zigbee packets from other devices. Routers drain more power than end devices and need to be always on
@@ -74,11 +74,11 @@ zigbee:
   sleep behavior. One of `UNKNOWN`, `MAINS_SINGLE_PHASE`, `MAINS_THREE_PHASE`, `BATTERY`,
   `DC_SOURCE`, `EMERGENCY_MAINS_CONST`, or `EMERGENCY_MAINS_TRANSF`. Defaults to `DC_SOURCE`.
 
-- **on_start** (*Optional*, [Automation](/automations#automation)): Automation to run when the Zigbee stack is fully
+- **on_start** (*Optional*, [Automation](/automations/#automation)): Automation to run when the Zigbee stack is fully
   initialized and can be interacted with. It will then try to (re-)join a network.
 
-- **on_join** (*Optional*, [Automation](/automations#automation)): Automation to run when the device joins the network.
-  In [Lambdas](/automations/templates#config-lambda) you can get the join type with `x`. It is `true` for join and `false` for rejoin.
+- **on_join** (*Optional*, [Automation](/automations/#automation)): Automation to run when the device joins the network.
+  In [Lambdas](/automations/templates/#config-lambda) you can get the join type with `x`. It is `true` for join and `false` for rejoin.
 
 Only on `nRF52`:
 
@@ -106,7 +106,7 @@ Only on `nRF52`:
 
 ### `zigbee.factory_reset` Action
 
-This [action](/automations/actions#config-action) triggers a factory reset of the Zigbee device.
+This [action](/automations/actions/#config-action) triggers a factory reset of the Zigbee device.
 It handles leaving the Zigbee network.
 
 ```yaml
@@ -164,15 +164,15 @@ Only on `ESP32`:
 
 The following components are exposed over Zigbee if they have a name and if they are not marked as internal:
 
-- [Binary Sensor](/components/binary_sensor#config-binary_sensor): only **state** and **name** (not with `cluster: device_class`)
+- [Binary Sensor](/components/binary_sensor/#config-binary_sensor): only **state** and **name** (not with `cluster: device_class`)
   are exposed over Zigbee.
 
-- [Sensor](/components/sensor#config-sensor): **state**, **name** (not with `cluster: device_class`) and **unit_of_measurement**
+- [Sensor](/components/sensor/#config-sensor): **state**, **name** (not with `cluster: device_class`) and **unit_of_measurement**
   are exposed over Zigbee. If no unit is given or if it is not supported it will fall back to unitless.
 
-- [Switch](/components/switch#config-switch): only **state** and **name** (not with `cluster: on_off`) are exposed over Zigbee.
+- [Switch](/components/switch/#config-switch): only **state** and **name** (not with `cluster: on_off`) are exposed over Zigbee.
 
-- [Number](/components/number#config-number): **state**, **name**, **unit_of_measurement**, **min_value**, **max_value**, and **step** are exposed
+- [Number](/components/number/#config-number): **state**, **name**, **unit_of_measurement**, **min_value**, **max_value**, and **step** are exposed
   over Zigbee. If no unit is given or if it is not supported it will fall back to unitless.
 
 
@@ -180,14 +180,14 @@ The following components are exposed over Zigbee if they have a name and if they
 
 ### Binary Sensor
 
-[Binary Sensors](/components/binary_sensor#config-binary_sensor) are implemented by default as binary input clusters with
+[Binary Sensors](/components/binary_sensor/#config-binary_sensor) are implemented by default as binary input clusters with
 description and present_value attributes. On `ESP32`, with `cluster: device_class`, the occupancy cluster is used for the `occupancy`
 device class.
 
 
 ### Sensor
 
-[Sensors](/components/sensor#config-sensor) are implemented by default as analog input clusters with description,
+[Sensors](/components/sensor/#config-sensor) are implemented by default as analog input clusters with description,
 engineering_units, and present_value attributes. On `ESP32` additionally the application type and resolution
 attributes are set if applicable. `cluster: device_class` is supported for `temperature`, `humidity`,
 `atmospheric_pressure`, `pressure`, `volume_flow_rate`, `illuminance`, `pm25`, and `carbon_dioxide` device classes.
@@ -201,13 +201,13 @@ attributes are set if applicable. `cluster: device_class` is supported for `temp
 
 ### Switch
 
-[Switches](/components/switch#config-switch) are implemented as binary output clusters with description and present_value attributes.
+[Switches](/components/switch/#config-switch) are implemented as binary output clusters with description and present_value attributes.
 On `ESP32`, with `cluster: on_off`, the on_off cluster is used instead.
 
 
 ### Number
 
-[Numbers](/components/number#config-number) are implemented as analog output clusters with description, engineering_units,
+[Numbers](/components/number/#config-number) are implemented as analog output clusters with description, engineering_units,
 and present_value attributes. On `ESP32` additionally the application type attribute is set if applicable.
 
 #### Additional configuration variables

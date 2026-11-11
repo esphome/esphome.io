@@ -9,7 +9,7 @@ It supports two independent audio pipelines: media and announcement. Each pipeli
 
 Each pipeline maintains its own playlist with support for repeat (off, one, all) and shuffle modes. Volume and mute state are persisted to flash and restored on reboot.
 
-This platform only works on ESP32-based chips using the [ESP-IDF framework](/components/esp32#framework).
+This platform only works on ESP32-based chips using the [ESP-IDF framework](/components/esp32/#framework).
 
 > [!WARNING]
 > Audio and voice components consume a significant amount of resources (RAM, CPU) on the device.
@@ -40,8 +40,8 @@ media_player:
 
 - **media_pipeline** (*Optional*, Pipeline Schema): Configuration settings for the media pipeline. At least one of `media_pipeline` or `announcement_pipeline` is required.
 
-  - **speaker** (**Required**, [ID](/guides/configuration-types#id)): The [speaker](/components/speaker/) to output the audio.
-  - **sources** (**Required**, list of [IDs](/guides/configuration-types#id)): A list of [media source](/components/media_source/) component IDs to use for this pipeline. At least one source is required. When a media URL is received, the pipeline finds the first source that can handle the URI prefix. Each source can only belong to one pipeline; if both pipelines need the same type of source, configure separate instances.
+  - **speaker** (**Required**, [ID](/guides/configuration-types/#id)): The [speaker](/components/speaker/) to output the audio.
+  - **sources** (**Required**, list of [IDs](/guides/configuration-types/#id)): A list of [media source](/components/media_source/) component IDs to use for this pipeline. At least one source is required. When a media URL is received, the pipeline finds the first source that can handle the URI prefix. Each source can only belong to one pipeline; if both pipelines need the same type of source, configure separate instances.
   - **format** (*Optional*, enum): The audio format Home Assistant will transcode audio to before sending it to the device. One of `FLAC`, `MP3`, `OPUS`, `WAV`, or `NONE`. `NONE` disables transcoding in Home Assistant; ESPHome will then compile support for all supported codecs (`FLAC`, `MP3`, `OPUS`, and `WAV`), which increases firmware size. To compile in additional codecs without setting this to `NONE`, use the [Audio](/components/audio/) component. Defaults to `FLAC`.
   - **sample_rate** (*Optional*, positive integer): Sample rate for the transcoded audio. Should be supported by the configured `speaker` component. Defaults to the speaker's sample rate. The `OPUS` codec only supports a `48000` sample rate.
   - **num_channels** (*Optional*, positive integer): Number of channels for the transcoded audio. Must be either `1` or `2`. Defaults to the speaker's number of channels.
@@ -54,7 +54,7 @@ media_player:
 - **on_mute** (*Optional*, [Automation](/automations)): An automation to perform when muted.
 - **on_unmute** (*Optional*, [Automation](/automations)): An automation to perform when unmuted.
 - **on_volume** (*Optional*, [Automation](/automations)): An automation to perform when the volume is changed.
-- All other options from [Media Player](/components/media_player#config-media_player)
+- All other options from [Media Player](/components/media_player/#config-media_player)
 
 <span id="media_player-speaker_source-examples"></span>
 
@@ -133,13 +133,13 @@ on_...:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The speaker source media player to control.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The speaker source media player to control.
 - **pipeline** (**Required**, enum): Which pipeline to set the delay for. One of `media` or `announcement`.
-- **delay** (**Required**, [Time](/guides/configuration-types#time), [templatable](/automations/templates)): The delay between playlist tracks.
+- **delay** (**Required**, [Time](/guides/configuration-types/#time), [templatable](/automations/templates)): The delay between playlist tracks.
 
 ### Base Media Player Actions
 
-This platform supports all [media player actions](/components/media_player#media-player-actions) including `play`, `pause`, `stop`, `toggle`, `volume_set`, `volume_up`, `volume_down`, `mute`, `unmute`, `next`, `previous`, `repeat_off`, `repeat_one`, `repeat_all`, `shuffle`, `unshuffle`, and `clear_playlist`.
+This platform supports all [media player actions](/components/media_player/#media-player-actions) including `play`, `pause`, `stop`, `toggle`, `volume_set`, `volume_up`, `volume_down`, `mute`, `unmute`, `next`, `previous`, `repeat_off`, `repeat_one`, `repeat_all`, `shuffle`, `unshuffle`, and `clear_playlist`.
 
 When using the `media_player.play_media` action, the media URL is routed to the first source in the pipeline that can handle the URI prefix. For example, a URL starting with `audio-file://` is routed to an Audio File media source.
 

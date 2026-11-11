@@ -1422,6 +1422,36 @@ test("a trigger section reaches an inherited trigger through a docs-only copy on
   );
 });
 
+test("an option-less trigger inherited through a docs-only copy on the child still resolves", async () => {
+  const { store, report } = await walk({
+    schema: {
+      esphome: core(["foo"]),
+      foo: {
+        foo: {
+          schemas: {
+            BASE_SCHEMA: schema({ on_event: { key: "Optional", type: "trigger" } }),
+            CONFIG_SCHEMA: {
+              type: "schema",
+              schema: { config_vars: { on_event: { key: "Optional", docs: "x" } }, extends: ["foo.BASE_SCHEMA"] },
+            },
+          },
+        },
+      },
+    },
+    pages: {
+      "foo.mdx": ["Foo.", "## `on_event` Trigger", "Fires on an event.", ""].join("\n\n"),
+    },
+  });
+  assert.deepEqual(
+    report.findings.filter((f) => f.kind === "unresolved_trigger"),
+    [],
+  );
+  // The local copy is what a consumer reading CONFIG_SCHEMA sees; the base is the page component's own
+  const schemas = store.files.get("foo").foo.schemas;
+  assert.match(schemas.CONFIG_SCHEMA.schema.config_vars.on_event.docs, /^Fires on an event\./);
+  assert.match(schemas.BASE_SCHEMA.schema.config_vars.on_event.docs, /^Fires on an event\./);
+});
+
 test("options under a trigger heading a component page cannot place are dropped, not written to it", async () => {
   const { docs, report } = await walk({
     schema: {
@@ -2217,6 +2247,92 @@ test("a trigger heading under an action heading reaches the action's own trigger
   );
 });
 
+test("a trigger heading after an unknown action does not fall back to an earlier action's trigger", async () => {
+  const trigger = { key: "Optional", type: "trigger" };
+  const { store, report } = await walk({
+    schema: {
+      esphome: core(["foo"]),
+      foo: {
+        foo: {
+          schemas: { CONFIG_SCHEMA: schema({}) },
+          action: { do: schema({ id: { key: "Required" }, on_done: trigger, on_fail: { ...trigger } }) },
+        },
+      },
+    },
+    pages: {
+      "foo.mdx": [
+        "Foo.",
+        "## `foo.do` Action",
+        "Does it.",
+        "### `on_done` Trigger",
+        "Fires when done.",
+        "### `foo.missing` Action",
+        "Missing.",
+        "#### `on_fail` Trigger",
+        "Fires when the missing action fails.",
+        "",
+      ].join("\n\n"),
+    },
+  });
+  assert.equal(store.files.get("foo").foo.action.do.schema.config_vars.on_fail.docs, undefined);
+  assert.deepEqual(
+    report.findings.filter((f) => f.kind === "unresolved_trigger").map((f) => f.line),
+    [19],
+  );
+});
+
+test("a trigger heading without a paragraph does not take the next heading's", async () => {
+  const trigger = { key: "Optional", type: "trigger" };
+  const { store } = await walk({
+    schema: {
+      esphome: core(["foo"]),
+      foo: { foo: { schemas: { CONFIG_SCHEMA: schema({ on_a: trigger, on_b: { ...trigger } }) } } },
+    },
+    pages: {
+      "foo.mdx": ["Foo.", "## `on_a` Trigger", "## `on_b` Trigger", "Fires on b.", ""].join("\n\n"),
+    },
+  });
+  const vars = store.files.get("foo").foo.schemas.CONFIG_SCHEMA.schema.config_vars;
+  assert.equal(vars.on_a.docs, undefined);
+  assert.match(vars.on_b.docs, /^Fires on b\./);
+});
+
+test("sibling option-less trigger headings under an action both reach the action's triggers", async () => {
+  const trigger = { key: "Optional", type: "trigger" };
+  const { store, report } = await walk({
+    schema: {
+      esphome: core(["foo"]),
+      foo: {
+        foo: {
+          schemas: { CONFIG_SCHEMA: schema({}) },
+          action: { do: schema({ id: { key: "Required" }, on_done: trigger, on_fail: { ...trigger } }) },
+        },
+      },
+    },
+    pages: {
+      "foo.mdx": [
+        "Foo.",
+        "## `foo.do` Action",
+        "Does it.",
+        "### Configuration variables",
+        "- **id** (**Required**, ID): The target.",
+        "### `on_done` Trigger",
+        "Fires when done.",
+        "### `on_fail` Trigger",
+        "Fires on failure.",
+        "",
+      ].join("\n\n"),
+    },
+  });
+  const vars = store.files.get("foo").foo.action.do.schema.config_vars;
+  assert.match(vars.on_done.docs, /^Fires when done\./);
+  assert.match(vars.on_fail.docs, /^Fires on failure\./);
+  assert.deepEqual(
+    report.findings.filter((f) => f.kind === "unresolved_trigger"),
+    [],
+  );
+});
+
 test("a sub-heading under an unknown action does not fall back to the page schema", async () => {
   const options = { key: "Optional", ...schema({ mode: { key: "Optional" } }) };
   const { docs, report } = await walk({
@@ -2546,4 +2662,457 @@ test("an unresolved heading under an action does not leave the action's options 
   });
   assert.match(docs("foo", "foo", "action", "do", "schema", "config_vars", "mode"), /action's mode/);
   assert.equal(report.findings.filter((f) => f.kind === "unresolved_component_heading").length, 1);
+});
+test("a heading naming several triggers documents each, with or without options of their own", async () => {
+  const bare = { key: "Optional", type: "trigger" };
+  const { report } = await walk({
+    schema: {
+      esphome: core(["foo"]),
+      foo: {
+        foo: {
+          schemas: {
+            CONFIG_SCHEMA: schema({ id: { key: "GeneratedID" }, on_turn_on: bare, on_turn_off: bare, on_state: bare }),
+          },
+        },
+      },
+    },
+    pages: {
+      "foo.mdx": [
+        "Foo.",
+        "## Configuration variables",
+        "- **id** (*Optional*, ID): The id.",
+        "## `foo.on_turn_on` / `foo.on_turn_off` Trigger",
+        "Fires when the foo turns on or off.",
+        "- **x** (*Optional*, float): A lambda variable, not an option of the page schema.",
+        "## `on_state` Trigger",
+        "Fires on every state change.",
+        "",
+      ].join("\n\n"),
+    },
+  });
+  assert.deepEqual(
+    report.findings
+      .filter((f) => ["unresolved_trigger", "undocumented_key", "unmatched_key", "orphan_option_list"].includes(f.kind))
+      .map((f) => [f.kind, f.key]),
+    [],
+  );
+});
+test("a combined trigger heading reports the names it cannot place even when another resolves", async () => {
+  const bare = { key: "Optional", type: "trigger" };
+  const { report } = await walk({
+    schema: {
+      esphome: core(["foo"]),
+      foo: { foo: { schemas: { CONFIG_SCHEMA: schema({ id: { key: "GeneratedID" }, on_turn_on: bare }) } } },
+    },
+    pages: {
+      "foo.mdx": [
+        "Foo.",
+        "## Configuration variables",
+        "- **id** (*Optional*, ID): The id.",
+        "## `foo.on_turn_on` / `foo.on_tun_off` Trigger",
+        "Fires when the foo turns on or off.",
+        "",
+      ].join("\n\n"),
+    },
+  });
+  assert.deepEqual(
+    report.findings.filter((f) => f.kind === "unresolved_trigger").map((f) => f.detail),
+    ["trigger 'on_tun_off' not under foo.CONFIG_SCHEMA"],
+  );
+});
+test("a combined trigger heading over several triggers with options writes to neither", async () => {
+  const trigger = (key) => ({
+    key: "Optional",
+    type: "trigger",
+    schema: { config_vars: { [key]: { key: "Optional" } } },
+  });
+  const { store, report } = await walk({
+    schema: {
+      esphome: core(["foo"]),
+      foo: { foo: { schemas: { CONFIG_SCHEMA: schema({ on_a: trigger("delay"), on_b: trigger("count") }) } } },
+    },
+    pages: {
+      "foo.mdx": [
+        "Foo.",
+        "## `on_a` / `on_b` Trigger",
+        "Fires on a or b.",
+        "- **delay** (*Optional*, Time): Only on_a has it.",
+        "",
+      ].join("\n\n"),
+    },
+  });
+  const vars = store.files.get("foo").foo.schemas.CONFIG_SCHEMA.schema.config_vars;
+  assert.equal(vars.on_a.schema.config_vars.delay.docs, undefined);
+  assert.deepEqual(
+    report.findings.filter((f) => ["unroutable_section", "unmatched_key"].includes(f.kind)).map((f) => f.kind),
+    ["unroutable_section"],
+  );
+});
+test("an option-less trigger under an action does not hand its options to the action", async () => {
+  const bare = { key: "Optional", type: "trigger" };
+  const { store } = await walk({
+    schema: {
+      esphome: core(["foo"]),
+      foo: {
+        foo: {
+          schemas: { CONFIG_SCHEMA: schema({}) },
+          action: { do: schema({ x: { key: "Optional" }, on_done: bare }) },
+        },
+      },
+    },
+    pages: {
+      "foo.mdx": [
+        "Foo.",
+        "## `foo.do` Action",
+        "Does it.",
+        "### `on_done` Trigger",
+        "Fires when done.",
+        "#### Configuration variables",
+        "- **x** (*Optional*, float): A lambda variable of the trigger.",
+        "",
+      ].join("\n\n"),
+    },
+  });
+  assert.equal(store.files.get("foo").foo.action.do.schema.config_vars.x.docs, undefined);
+});
+test("a combined trigger heading does not give one trigger's lambda variables to another's options", async () => {
+  const { store, report } = await walk({
+    schema: {
+      esphome: core(["foo"]),
+      foo: {
+        foo: {
+          schemas: {
+            CONFIG_SCHEMA: schema({
+              on_a: { key: "Optional", type: "trigger", schema: { config_vars: { delay: { key: "Optional" } } } },
+              on_b: { key: "Optional", type: "trigger" },
+            }),
+          },
+        },
+      },
+    },
+    pages: {
+      "foo.mdx": [
+        "Foo.",
+        "## `on_a` / `on_b` Trigger",
+        "Fires on a or b.",
+        "- **delay** (float): The lambda variable on_b passes.",
+        "",
+      ].join("\n\n"),
+    },
+  });
+  const vars = store.files.get("foo").foo.schemas.CONFIG_SCHEMA.schema.config_vars;
+  assert.equal(vars.on_a.schema.config_vars.delay.docs, undefined);
+  assert.deepEqual(
+    report.findings.filter((f) => ["unroutable_section", "unresolved_trigger"].includes(f.kind)).map((f) => f.kind),
+    ["unroutable_section"],
+  );
+});
+test("a trigger heading's paragraph follows the option bullet in the trigger key's docs", async () => {
+  const bare = { key: "Optional", type: "trigger" };
+  const { store } = await walk({
+    schema: {
+      esphome: core(["foo"]),
+      foo: { foo: { schemas: { CONFIG_SCHEMA: schema({ on_turn_on: bare, on_turn_off: bare, on_state: bare }) } } },
+    },
+    pages: {
+      "foo.mdx": [
+        "Foo.",
+        "## `on_state` Trigger",
+        "Fires on every state change.",
+        "## Configuration variables",
+        "- **on_turn_on** (*Optional*, Automation): Runs when turned on.",
+        "- **on_state** (*Optional*, Automation): Runs on a change.",
+        "## `foo.on_turn_on` / `foo.on_turn_off` Trigger",
+        "Fires when the foo turns on or off.",
+        "",
+      ].join("\n\n"),
+    },
+  });
+  const vars = store.files.get("foo").foo.schemas.CONFIG_SCHEMA.schema.config_vars;
+  // Bullet first, heading after
+  assert.match(
+    vars.on_turn_on.docs,
+    /^\*\*Automation\*\*: Runs when turned on\.\n\nFires when the foo turns on or off\.\n\n\*See also: .*#configuration-variables\)\*$/,
+  );
+  // Heading only: its paragraph and a link to the heading
+  assert.match(
+    vars.on_turn_off.docs,
+    /^Fires when the foo turns on or off\.\n\n\*See also: .*#foo-on_turn_on--foo-on_turn_off-trigger\)\*$/,
+  );
+  // Heading first, bullet after
+  assert.match(
+    vars.on_state.docs,
+    /^\*\*Automation\*\*: Runs on a change\.\n\nFires on every state change\.\n\n\*See also: /,
+  );
+});
+test("a trigger heading's paragraph reaches both the base key and a bus section's refined copy", async () => {
+  const { store } = await walk({
+    schema: {
+      esphome: core(["foo", "foo_i2c", "foo_spi"]),
+      foo: { foo: { schemas: { BASE_SCHEMA: schema({ on_tag: { key: "Optional", type: "trigger" } }) } } },
+      foo_i2c: {
+        foo_i2c: {
+          schemas: { CONFIG_SCHEMA: schema({}, { schema: { config_vars: {}, extends: ["foo.BASE_SCHEMA"] } }) },
+        },
+      },
+      foo_spi: {
+        foo_spi: {
+          schemas: { CONFIG_SCHEMA: schema({}, { schema: { config_vars: {}, extends: ["foo.BASE_SCHEMA"] } }) },
+        },
+      },
+    },
+    pages: {
+      "foo.mdx": [
+        "Foo.",
+        "## Over SPI",
+        "{/* schema: foo_spi.CONFIG_SCHEMA */}",
+        "### Configuration variables",
+        "- **on_tag** (*Optional*, Automation): Runs on a tag.",
+        "## Over I²C",
+        "{/* schema: foo_i2c.CONFIG_SCHEMA */}",
+        "### Configuration variables",
+        "- **on_tag** (*Optional*, Automation): Runs on a tag.",
+        "### `on_tag` Trigger",
+        "Fires when a tag is read.",
+        "",
+      ].join("\n\n"),
+    },
+  });
+  const base = store.files.get("foo").foo.schemas.BASE_SCHEMA.schema.config_vars.on_tag;
+  const copy = store.files.get("foo_i2c").foo_i2c.schemas.CONFIG_SCHEMA.schema.config_vars.on_tag;
+  assert.match(base.docs, /Runs on a tag\.\n\nFires when a tag is read\./);
+  assert.match(copy.docs, /Runs on a tag\.\n\nFires when a tag is read\./);
+});
+test("a rerun with a changed trigger paragraph updates the base key and a bus section's saved copy", async () => {
+  const bus = { type: "schema", schema: { config_vars: {}, extends: ["foo.BASE_SCHEMA"] } };
+  const page = [
+    "Foo.",
+    "## Over SPI",
+    "{/* schema: foo_spi.CONFIG_SCHEMA */}",
+    "### Configuration variables",
+    "- **on_tag** (*Optional*, Automation): Runs on a tag.",
+    "## Over I²C",
+    "{/* schema: foo_i2c.CONFIG_SCHEMA */}",
+    "### Configuration variables",
+    "- **on_tag** (*Optional*, Automation): Runs on a tag.",
+    "### `on_tag` Trigger",
+    "Fires when a tag is read.",
+    "",
+  ].join("\n\n");
+  const first = await walk({
+    schema: {
+      esphome: core(["foo", "foo_i2c", "foo_spi"]),
+      foo: { foo: { schemas: { BASE_SCHEMA: schema({ on_tag: { key: "Optional", type: "trigger" } }) } } },
+      foo_i2c: { foo_i2c: { schemas: { CONFIG_SCHEMA: structuredClone(bus) } } },
+      foo_spi: { foo_spi: { schemas: { CONFIG_SCHEMA: structuredClone(bus) } } },
+    },
+    pages: { "foo.mdx": page },
+  });
+  const { store } = await walk({
+    schema: Object.fromEntries(first.store.files),
+    pages: { "foo.mdx": page.replace("Fires when a tag is read.", "Fires on every tag read.") },
+  });
+  const base = store.files.get("foo").foo.schemas.BASE_SCHEMA.schema.config_vars.on_tag;
+  const copy = store.files.get("foo_i2c").foo_i2c.schemas.CONFIG_SCHEMA.schema.config_vars.on_tag;
+  for (const prop of [base, copy]) {
+    assert.match(prop.docs, /Runs on a tag\.\n\nFires on every tag read\./);
+    assert.doesNotMatch(prop.docs, /Fires when a tag is read/);
+  }
+});
+test("a trigger paragraph in one bus section reaches the other bus's copy, also on a rerun", async () => {
+  const bus = { type: "schema", schema: { config_vars: {}, extends: ["foo.BASE_SCHEMA"] } };
+  const page = [
+    "Foo.",
+    "## Over SPI",
+    "{/* schema: foo_spi.CONFIG_SCHEMA */}",
+    "### Configuration variables",
+    "- **on_tag** (*Optional*, Automation): Runs on a tag.",
+    "## Over I²C",
+    "{/* schema: foo_i2c.CONFIG_SCHEMA */}",
+    "### Configuration variables",
+    "- **on_tag** (*Optional*, Automation): Runs on a tag.",
+    "### `on_tag` Trigger",
+    "Fires when a tag is read.",
+    "",
+  ].join("\n\n");
+  // Docs the base already carries make each bus section refine its own copy
+  const on_tag = { key: "Optional", type: "trigger", docs: "Earlier text." };
+  const first = await walk({
+    schema: {
+      esphome: core(["foo", "foo_i2c", "foo_spi"]),
+      foo: { foo: { schemas: { BASE_SCHEMA: schema({ on_tag }) } } },
+      foo_i2c: { foo_i2c: { schemas: { CONFIG_SCHEMA: structuredClone(bus) } } },
+      foo_spi: { foo_spi: { schemas: { CONFIG_SCHEMA: structuredClone(bus) } } },
+    },
+    pages: { "foo.mdx": page },
+  });
+  const copies = (store) => [
+    store.files.get("foo_i2c").foo_i2c.schemas.CONFIG_SCHEMA.schema.config_vars.on_tag,
+    store.files.get("foo_spi").foo_spi.schemas.CONFIG_SCHEMA.schema.config_vars.on_tag,
+  ];
+  for (const prop of copies(first.store)) assert.match(prop.docs, /Runs on a tag\.\n\nFires when a tag is read\./);
+  const { store } = await walk({
+    schema: Object.fromEntries(first.store.files),
+    pages: { "foo.mdx": page.replace("Fires when a tag is read.", "Fires on every tag read.") },
+  });
+  for (const prop of copies(store)) {
+    assert.match(prop.docs, /Runs on a tag\.\n\nFires on every tag read\./);
+    assert.doesNotMatch(prop.docs, /Fires when a tag is read/);
+  }
+});
+test("a trigger copy keeps the base page's bullet on a rerun", async () => {
+  const trigger = { key: "Optional", type: "trigger" };
+  const pages = {
+    "sensor/index.mdx": [
+      "Sensors.",
+      "## Configuration variables",
+      "- **on_value** (*Optional*, Automation): Runs on a value.",
+      "",
+    ].join("\n\n"),
+    "sensor/foo.mdx": ["Foo.", "## `on_value` Trigger", "Fires with the foo's reading.", ""].join("\n\n"),
+  };
+  const first = await walk({
+    schema: {
+      esphome: core(["foo"], { sensor: {} }),
+      sensor: { sensor: { schemas: { SENSOR_SCHEMA: schema({ on_value: trigger }) }, components: { foo: {} } } },
+      foo: {
+        "foo.sensor": {
+          schemas: {
+            CONFIG_SCHEMA: { type: "schema", schema: { config_vars: {}, extends: ["sensor.SENSOR_SCHEMA"] } },
+          },
+        },
+      },
+    },
+    pages,
+  });
+  const copy = (store) => store.files.get("foo")["foo.sensor"].schemas.CONFIG_SCHEMA.schema.config_vars.on_value;
+  const docs = copy(first.store).docs;
+  assert.match(docs, /^\*\*Automation\*\*: Runs on a value\.\n\nFires with the foo's reading\./);
+  const { store } = await walk({ schema: Object.fromEntries(first.store.files), pages });
+  assert.equal(copy(store).docs, docs);
+});
+test("a platform page's trigger paragraph describes its own copy, not the shared key of another component", async () => {
+  const trigger = { key: "Optional", type: "trigger" };
+  const { store } = await walk({
+    schema: {
+      esphome: core(["foo"], { sensor: {} }),
+      sensor: { sensor: { schemas: { SENSOR_SCHEMA: schema({ on_value: trigger }) }, components: { foo: {} } } },
+      foo: {
+        "foo.sensor": {
+          schemas: {
+            CONFIG_SCHEMA: { type: "schema", schema: { config_vars: {}, extends: ["sensor.SENSOR_SCHEMA"] } },
+          },
+        },
+      },
+    },
+    pages: {
+      "sensor/foo.mdx": ["Foo.", "## `on_value` Trigger", "Fires with the foo's reading.", ""].join("\n\n"),
+    },
+  });
+  assert.equal(store.files.get("sensor").sensor.schemas.SENSOR_SCHEMA.schema.config_vars.on_value.docs, undefined);
+  const own = store.files.get("foo")["foo.sensor"].schemas.CONFIG_SCHEMA.schema.config_vars.on_value;
+  assert.equal(own.type, "trigger");
+  assert.match(own.docs, /^Fires with the foo's reading\./);
+});
+test("a trigger paragraph reached through the component's own intermediate schema still gets a local copy", async () => {
+  const trigger = { key: "Optional", type: "trigger" };
+  const { store } = await walk({
+    schema: {
+      esphome: core(["foo"], { sensor: {} }),
+      sensor: { sensor: { schemas: { SENSOR_SCHEMA: schema({ on_value: trigger }) }, components: { foo: {} } } },
+      foo: {
+        foo: {
+          schemas: { BASE_SCHEMA: { type: "schema", schema: { config_vars: {}, extends: ["sensor.SENSOR_SCHEMA"] } } },
+        },
+        "foo.sensor": {
+          schemas: {
+            CONFIG_SCHEMA: { type: "schema", schema: { config_vars: {}, extends: ["foo.BASE_SCHEMA"] } },
+          },
+        },
+      },
+    },
+    pages: {
+      "sensor/foo.mdx": ["Foo.", "## `on_value` Trigger", "Fires with the foo's reading.", ""].join("\n\n"),
+    },
+  });
+  assert.equal(store.files.get("sensor").sensor.schemas.SENSOR_SCHEMA.schema.config_vars.on_value.docs, undefined);
+  const own = store.files.get("foo")["foo.sensor"].schemas.CONFIG_SCHEMA.schema.config_vars.on_value;
+  assert.equal(own.type, "trigger");
+  assert.match(own.docs, /^Fires with the foo's reading\./);
+});
+test("a typed variant that inherits a trigger from another component gets a copy beside one that declares it", async () => {
+  const trigger = { key: "Optional", type: "trigger" };
+  const { store } = await walk({
+    schema: {
+      esphome: core(["foo", "bar"]),
+      bar: { bar: { schemas: { BAR_SCHEMA: schema({ on_event: trigger }) } } },
+      foo: {
+        foo: {
+          schemas: {
+            CONFIG_SCHEMA: {
+              type: "typed",
+              typed_key: "model",
+              types: {
+                a: { config_vars: { on_event: { ...trigger } } },
+                b: { config_vars: {}, extends: ["bar.BAR_SCHEMA"] },
+              },
+            },
+          },
+        },
+      },
+    },
+    pages: {
+      "foo.mdx": ["Foo.", "## `on_event` Trigger", "Fires on an event.", ""].join("\n\n"),
+    },
+  });
+  const types = store.files.get("foo").foo.schemas.CONFIG_SCHEMA.types;
+  assert.match(types.a.config_vars.on_event.docs, /^Fires on an event\./);
+  assert.equal(types.b.config_vars.on_event.type, "trigger");
+  assert.match(types.b.config_vars.on_event.docs, /^Fires on an event\./);
+  assert.equal(store.files.get("bar").bar.schemas.BAR_SCHEMA.schema.config_vars.on_event.docs, undefined);
+});
+test("a hub page's trigger paragraph skips a platform schema that inherits the key from another component", async () => {
+  const trigger = { key: "Optional", type: "trigger" };
+  const { store } = await walk({
+    schema: {
+      esphome: core([], { switch: {}, binary_sensor: {} }),
+      binary_sensor: {
+        binary_sensor: {
+          schemas: { _BINARY_SENSOR_SCHEMA: schema({ on_state: trigger }) },
+          components: { switch: {} },
+        },
+      },
+      switch: {
+        switch: { schemas: { _SWITCH_SCHEMA: schema({ on_state: trigger }) }, components: {} },
+        "switch.binary_sensor": {
+          schemas: {
+            CONFIG_SCHEMA: {
+              type: "schema",
+              schema: { config_vars: {}, extends: ["binary_sensor._BINARY_SENSOR_SCHEMA"] },
+            },
+          },
+        },
+      },
+    },
+    pages: {
+      "switch/index.mdx": [
+        "Switches.",
+        "## `switch.on_state` Trigger",
+        "Fires when the switch changes state.",
+        "",
+      ].join("\n\n"),
+    },
+  });
+  assert.match(
+    store.files.get("switch").switch.schemas._SWITCH_SCHEMA.schema.config_vars.on_state.docs,
+    /^Fires when the switch changes state\./,
+  );
+  assert.equal(
+    store.files.get("binary_sensor").binary_sensor.schemas._BINARY_SENSOR_SCHEMA.schema.config_vars.on_state.docs,
+    undefined,
+  );
+  assert.equal(
+    store.files.get("switch")["switch.binary_sensor"].schemas.CONFIG_SCHEMA.schema.config_vars.on_state,
+    undefined,
+  );
 });
