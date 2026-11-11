@@ -82,8 +82,40 @@ themselves. That requires:
 - [Project information](/components/esphome/#esphome-creators_project) (`esphome` → `project` → `name` and `version`),
   which is what the Device Builder matches on when it offers to adopt the device.
 - The [`api`](/components/api/) component, which the adoption flow relies on.
-- The [`esphome` OTA platform](/components/ota/esphome/), so the user can install their own builds over the air.
+- The [`esphome` OTA platform](/components/ota/esphome/), so the user can install their own builds over the air. The
+  only exception is [signed firmware](#signed-firmware).
 - Serial flashing left enabled, as the escape hatch when everything else fails.
+
+#### Signed Firmware
+
+A device that ships with signed firmware and has no network OTA endpoint may leave the `esphome` OTA platform out of
+the configuration it ships. Such a device is updated over USB instead. Every one of these must hold:
+
+- The configuration enables
+  [`signed_ota_verification`](/components/esp32/#signed-ota-verification) under `esp32:` → `framework:` →
+  `advanced:`. The review detects signed firmware from the published YAML.
+- The configuration has no other network OTA endpoint. The [`web_server` OTA platform](/components/ota/web_server/)
+  does not qualify for this exception.
+- The configuration contains [`improv_serial`](/components/improv_serial/). A device without network OTA is updated
+  over USB, so it has a USB port, and a device with a USB port needs `improv_serial`. This only marks the device as
+  having USB; it does not control flashing.
+- The device can be flashed over USB without any keys and without opening the case. A human reviewer confirms this, as
+  it cannot be read from the configuration.
+- The package at `package_import_url` still enables the [`esphome` OTA platform](/components/ota/esphome/), so a user
+  who takes control can update the device over the network. The automated review checks this.
+
+```yaml
+esp32:
+  variant: esp32s3
+  framework:
+    advanced:
+      signed_ota_verification:
+
+improv_serial:
+```
+
+All other requirements on this page still apply, including `dashboard_import` and
+[`improv_ble`](/components/improv_ble/) for Wi-Fi devices.
 
 ### Updates
 
@@ -96,6 +128,9 @@ The `source` URL must point at a publicly reachable
 [JSON manifest](/components/update/http_request/#update_http_request-manifest_format) whose `builds` include a
 `chipFamily` matching your hardware and an `ota.path` that resolves to a downloadable binary. Our review tooling
 fetches the manifest and the binary, so a dead link or a chip family mismatch will fail the review.
+
+The review installs the latest stable ESPHome. If your configuration sets `esphome:` → `min_version` higher than that,
+the review upgrades to the stable release or the newest beta that satisfies it.
 
 ## Example Configuration
 
