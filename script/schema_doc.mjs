@@ -26,12 +26,13 @@ import { existsSync, readFileSync, readdirSync, realpathSync, statSync, writeFil
 import { basename, dirname, join, relative } from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
-import Slugger from "github-slugger";
 import { toString } from "mdast-util-to-string";
 import remarkMath from "remark-math";
 import remarkMdx from "remark-mdx";
 import remarkParse from "remark-parse";
 import { unified } from "unified";
+
+import { createHeadingSlugger } from "../src/lib/heading-slugs.mjs";
 
 const DOCS_ROOT = join("src", "content", "docs");
 const COMPONENTS_ROOT = join(DOCS_ROOT, "components");
@@ -811,7 +812,7 @@ export class Walker {
     this.url = pageUrl(file, docsRoot);
     this.lastHeadingSlug = null;
     this.lastEnumProps = [];
-    this.slugger = new Slugger();
+    this.slugHeading = createHeadingSlugger();
     this.tree = null;
     this.rel = relative(componentsRoot, file).replace(/\\/g, "/");
     this.switchDepth = null; // depth of the heading that re-targeted defaultRef
@@ -1604,7 +1605,7 @@ export class Walker {
     const { store } = this;
     const text = toString(node).trim();
     const line = node.position.start.line;
-    this.lastHeadingSlug = this.slugger.slug(toString(node).replace(/\./g, "-"));
+    this.lastHeadingSlug = this.slugHeading(toString(node));
     this.lastHeadingDepth = node.depth;
     this.lastEnumProps = [];
     if (this.failedSection && node.depth <= this.failedSection.depth) this.failedSection = null;
