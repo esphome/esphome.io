@@ -28,7 +28,8 @@ keeloq:
 
 ## Configuration Variables
 
-- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of this remote, used by the actions.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of this remote, used by the actions. Required
+  without **serial**: what the remote takes over is stored under its ID.
 - **type** (**Required**, enum): The kind of receiver, see [Jarolift](#jarolift). One of `jarolift`.
 - **manufacturer_key** (**Required**, int): The 64-bit manufacturer key. A key given as two 32-bit halves is written
   MSB first: `0x<MSB><LSB>`.
@@ -53,12 +54,10 @@ keeloq:
 ## Counter
 
 The remote writes its 16-bit counter to flash once every 8 frames. After a reboot the counter jumps ahead by at most
-8, which receivers accept, and no counter is used twice. A firmware update keeps the counter; a new **type** or
-**serial** starts a new one. After a flash erase, set it with `keeloq.set_counter`, take it over or pair again. A
-remote without **serial** keeps what it took over while **type** and **id** stay the same. A received frame of the
-remote's own serial that is ahead moves the counter along.
-On the ESP8266 and RP2040/RP2350, which find saved values by their order, an update that adds, removes or reorders
-components that save values in flash can also start the counter at 0; set it or pair again as after a flash erase.
+8, which receivers accept, and no counter is used twice. A new **type** or **serial** starts a new counter. After a
+flash erase, pair again, take the counter over, or use `keeloq.set_counter` with a value above the last counter the
+receiver accepted. A remote without **serial** loses what it took over when its **type** or **id** changes. A
+received frame of the remote's own serial that is ahead moves the counter along.
 
 ## Received Presses
 
