@@ -94,20 +94,44 @@ listed in the note, so keep your own backup of them.
 ## Recovering the Configuration
 
 Download the stored files with the
-[`recover-yaml` command](/guides/cli/#recover-yaml-command):
+[`recover-yaml` command](/guides/cli/#recover-yaml-command). It asks for the
+device's API encryption key; leave it empty for a device built with
+`allow_unencrypted: true`.
 
 ```bash
-esphome recover-yaml --device 192.168.1.50 --output recovered
+esphome recover-yaml --device kitchen.local --output kitchen-recovered
 ```
 
-It asks for the device's API encryption key; leave it empty for a device built
-with `allow_unencrypted: true`. The files are written to the new folder, and
-the command prints which file is the main configuration and which
-`secrets.yaml` files need their values filled in. When the configuration
-included files from a folder above its own, the main configuration is put in a
-folder named after it, so those files keep their place: `kitchen.yaml` with
-`!include ../common/wifi.yaml` comes back as `kitchen/kitchen.yaml` and
-`common/wifi.yaml`.
+For a typical configuration the files come back side by side in the new folder:
+
+```text
+kitchen-recovered/
+  kitchen.yaml
+  secrets.yaml
+```
+
+To finish the configuration:
+
+1. Fill in the values in `secrets.yaml`. The command names every
+   `secrets.yaml` that needs them.
+2. Restore anything listed in `store_yaml_uncaptured.yaml`, if it is there,
+   and the non-YAML files described in [What Is Not Stored](#what-is-not-stored).
+3. Check it with `esphome config kitchen-recovered/kitchen.yaml`, then install
+   as usual.
+
+When the configuration included files from a folder above its own, such as
+`!include ../common/wifi.yaml`, the main configuration is put one folder down,
+in a folder named after it, so those files keep their place inside the new
+folder:
+
+```text
+kitchen-recovered/
+  kitchen/
+    kitchen.yaml
+    secrets.yaml
+  common/
+    wifi.yaml
+```
 
 ## See Also
 
