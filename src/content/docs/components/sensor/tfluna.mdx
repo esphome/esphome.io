@@ -1,0 +1,114 @@
+---
+description: "Instructions for setting up TF-Luna distance sensors in ESPHome."
+title: "TF-Luna LiDAR Distance Sensor"
+---
+
+import Figure from '@components/Figure.astro';
+import tflunaImg from './images/tfluna.jpg';
+import APIRef from '@components/APIRef.astro';
+
+## Component/Hub
+
+The `tfluna` sensor platform allows you to use the TF-Luna distance sensor
+([datasheet](https://files.waveshare.com/upload/a/ac/SJ-PM-TF-Luna_A05_Product_Manual.pdf)) with ESPHome to measure
+distances. The sensor works optically by emitting short infrared pulses and measuring the time it takes the light to be
+reflected back.
+
+The sensor can measure distances in range 20-800 centimeters, though that figure depends significantly on several
+conditions like surface reflectance, field of view, temperature etc.
+
+The [I²C Bus](/components/i2c/) is required to be set up in your configuration for this sensor to work.
+
+<Figure
+  src={tflunaImg}
+  alt="TF-Luna Time Of Flight Distance Sensor"
+  caption="TF-Luna Time Of Flight Distance Sensor."
+  layout="constrained"
+  style="width: 50%; margin: 0 auto; display: block;"
+/>
+
+```yaml
+# Example configuration entry
+tfluna:
+```
+
+### Configuration Variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID for this TF-Luna hub. Use this
+  if you have multiple sensors, so the sensor, button and text sensor platforms can refer to it with `tfluna_id`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval to check the sensor.
+  Defaults to `1s`.
+- **address** (*Optional*, int): Manually specify the I²C address of the sensor. Defaults to `0x10`.
+- **i2c_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the
+  [I²C Component](/components/i2c/). Defaults to the default I²C bus.
+
+## Sensor
+
+The `tfluna` sensor allows you to use your [TF-Luna](#componenthub) to perform different measurements.
+
+```yaml
+sensor:
+  - platform: tfluna
+    distance:
+      name: Distance
+```
+
+### Configuration Variables
+
+- **distance** (*Optional*, int): Distance in cm. Published as unknown when the signal strength shows the
+  reading is unreliable (see below).
+  All options from [Sensor](/components/sensor/#config-sensor).
+- **signal_strength** (*Optional*, int): Signal strength. Below 100 the distance is not reliable; at 65535 the
+  receiver is saturated by ambient light, for instance when the sensor faces the sun outside.
+  All options from [Sensor](/components/sensor/#config-sensor).
+- **temperature** (*Optional*, float): Sensor temperature in degrees Celsius.
+  All options from [Sensor](/components/sensor/#config-sensor).
+- **timestamp** (*Optional*, int): Milliseconds since the TF-Luna booted.
+  All options from [Sensor](/components/sensor/#config-sensor).
+- **tfluna_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID for the
+  [TF-Luna](#componenthub) component if you are using multiple components.
+
+## Button
+
+The `tfluna` button allows you to perform actions on your [TF-Luna](#componenthub).
+
+```yaml
+button:
+  - platform: tfluna
+    factory_reset:
+      name: "factory reset"
+    restart:
+      name: "restart"
+```
+
+### Configuration Variables
+
+- **factory_reset** (*Optional*): This command is used to restore all configuration values to their original values.
+  All options from [Button](/components/button/#config-button).
+- **restart** (*Optional*): Restart the device.
+  All options from [Button](/components/button/#config-button).
+- **tfluna_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID for the
+  [TF-Luna](#componenthub) component if you are using multiple components.
+
+## Text Sensor
+
+The `tfluna` text sensor allows you to get information about your [TF-Luna](#componenthub).
+
+```yaml
+text_sensor:
+  - platform: tfluna
+    version:
+      name: "firmware version"
+```
+
+### Configuration Variables
+
+- **version** (*Optional*): The firmware version.
+  All options from [Text Sensor](/components/text_sensor/#config-text_sensor).
+- **tfluna_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID for the
+  [TF-Luna](#componenthub) component if you are using multiple components.
+
+## See Also
+
+- [Sensor Filters](/components/sensor/#sensor-filters)
+- <APIRef text="tfluna/tfluna.h" path="tfluna/tfluna.h" />

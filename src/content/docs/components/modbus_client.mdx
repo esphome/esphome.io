@@ -49,7 +49,7 @@ on_...:
 
 ### Configuration Variables
 
-- **modbus_id** (*Optional*, [ID](/guides/configuration-types#id)): The Modbus hub to send on. Automatically assigned
+- **modbus_id** (*Optional*, [ID](/guides/configuration-types/#id)): The Modbus hub to send on. Automatically assigned
   when a single hub is configured.
 - **address** (**Required**, templatable, int): The device address the frame is sent to. Accepts `0`-`255`; the valid
   Modbus device range is `1`-`247`, and `0` is broadcast (never answered unless one of the broadcast options below
@@ -169,7 +169,7 @@ handlers, never another action's.
 - **address** (**Required**, templatable, int): The Modbus device address the frame is sent to. Accepts `0`-`255`;
   the valid Modbus device range is `1`-`247`, and `0` is broadcast (never answered unless `allow_broadcast_read` or
   `expect_broadcast_write_response` is set; see [Behavior](#behavior)).
-- **modbus_id** (*Optional*, [ID](/guides/configuration-types#id)): The Modbus hub to send on. Automatically assigned
+- **modbus_id** (*Optional*, [ID](/guides/configuration-types/#id)): The Modbus hub to send on. Automatically assigned
   when a single hub is configured.
 - **start_address** (**Required**, templatable, int): The starting register or coil address. Not used by
   `read_write_multiple_registers`, which takes separate `read_address` and `write_address` instead.
@@ -474,7 +474,7 @@ The poll stops when any of these happens:
   alive for another attempt;
 - the same action (with identical `address` and `PDU`) runs again with `continuous: false` - the poll serves that
   request with one more cycle, then stops;
-- the queue is cleared from a [Lambda Hook Component](#lambda-hook-component) sharing the same `address` -
+- the queue is cleared from a [Lambda Hook Component](#modbus_client-component) sharing the same `address` -
   `id(ad_hoc_client).clear_tx_queue_for_address();` drops every command queued to that Modbus address, the poll
   included (each dropped frame resolves through `on_not_sent`; see the note below on stopping a templated poll).
 
@@ -629,7 +629,7 @@ Handling the error and timeout branches:
       - lambda: 'id(device_online).publish_state(false);'
 ```
 
-## Lambda Hook Component
+## `modbus_client` Component
 
 A simpler alternative to the actions above, for use only inside a lambda - not a YAML automation action. It's
 syntactic sugar over the `id(hub).queue_pdu(address, pdu)` call shown on the [Modbus](/components/modbus/) page: the
@@ -640,11 +640,11 @@ the same lambda is supported.
 
 ### Configuration Variables
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID to use in lambdas. Unlike most components it is
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID to use in lambdas. Unlike most components it is
   not generated for you: the device is only reachable through `id()`, so an entry without one is rejected.
 - **address** (**Required**, int): The Modbus device address every call from this client targets. Unlike
   [Modbus Controller](/components/modbus_controller/), there is no default.
-- **modbus_id** (*Optional*, [ID](/guides/configuration-types#id)): The Modbus hub to send on. Automatically assigned
+- **modbus_id** (*Optional*, [ID](/guides/configuration-types/#id)): The Modbus hub to send on. Automatically assigned
   when a single hub is configured.
 
 Several clients may be configured, each bound to its own device address.

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, test } from "node:test";
-import { resolveImagePath } from "../src/lib/img-table.mjs";
+import { resolveImagePath, resolveLinkPath } from "../src/lib/img-table.mjs";
 
 describe("resolveImagePath", () => {
   test("resolves badges to the generated badge URL", () => {
@@ -18,5 +18,24 @@ describe("resolveImagePath", () => {
 
   test("maps bare filenames under /images/", () => {
     assert.equal(resolveImagePath("foo.svg"), "/images/foo.svg");
+  });
+});
+
+describe("resolveLinkPath", () => {
+  test("adds a trailing slash to a plain page link", () => {
+    assert.equal(resolveLinkPath("/components/dht"), "/components/dht/");
+  });
+
+  test("keeps a link that already ends with a slash", () => {
+    assert.equal(resolveLinkPath("/components/dht/"), "/components/dht/");
+  });
+
+  test("puts the slash before an anchor rather than after it", () => {
+    assert.equal(resolveLinkPath("/components/light#light-effects"), "/components/light/#light-effects");
+    assert.equal(resolveLinkPath("/components/light/#light-effects"), "/components/light/#light-effects");
+  });
+
+  test("leaves a legacy .html link with an anchor alone", () => {
+    assert.equal(resolveLinkPath("/components/api.html#services"), "/components/api.html#services");
   });
 });

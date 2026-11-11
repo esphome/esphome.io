@@ -5,7 +5,7 @@ title: "Grove TB6612FNG Motor Drive"
 
 import { Image } from 'astro:assets';
 
-The Grove TBB6612FNG a runs over I²C bus and has the capability to control DC and Stepper motors.
+The Grove TB6612FNG runs over I²C bus and has the capability to control DC and Stepper motors.
 At the current stage of implementation only DC motor is implemented.
 
 <Image src="/images/grove_tb6612fng.jpg" width={300} height={300} layout="constrained" alt="" />
@@ -19,15 +19,14 @@ grove_tb6612fng:
 
 ## Configuration variables
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The id to use for this TB6612FNG component.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The id to use for this TB6612FNG component.
 - **address** (*Optional*, int): The I²C address of the driver.
   Defaults to `0x14`.
 
-.. grove_tb6612fng.run:
 
 ### `grove_tb6612fng.run` Action
 
-Set the motor to spin by defining the direction and speed of the rotation, speed is a range from 0 to 255
+Set the motor to spin by defining the direction and speed of the rotation.
 
 ```yaml
 on_...:
@@ -39,20 +38,28 @@ on_...:
         id: test_motor
 ```
 
-.. grove_tb6612fng.stop:
+Configuration options:
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The id to use for this TB6612FNG component.
+- **channel** (**Required**, int): The motor channel: `0` for channel A, `1` for channel B.
+- **direction** (**Required**, string): The direction of rotation: `FORWARD` or `BACKWARD`.
+- **speed** (**Required**, int): The speed, in the range from `0` to `255`.
+
+
 
 ### `grove_tb6612fng.stop` Action
 
-Set the motor to stop motion but wont stop to spin in case there is a force pulling down, you would want to use break action if this is your case
+Stop providing power to the motor. This does not stop the motor from spinning, but allows the motor to spin freely. If you want to stop the motor from spinning, use the `grove_tb6612fng.break` action.
 
 ```yaml
 on_...:
   then:
     - grove_tb6612fng.stop:
         channel: 1
+        id: test_motor
 ```
 
-.. grove_tb6612fng.break:
+
 
 ### `grove_tb6612fng.break` Action
 
@@ -66,7 +73,7 @@ on_...:
         id: test_motor
 ```
 
-.. grove_tb6612fng.standby:
+
 
 ### `grove_tb6612fng.standby` Action
 
@@ -75,11 +82,11 @@ Set the board to be on standby when is not used for a long time which reduces po
 ```yaml
 on_...:
   then:
-    - grove_tb6612fng.standby
+    - grove_tb6612fng.standby:
         id: test_motor
 ```
 
-.. grove_tb6612fng.no_standby:
+
 
 ### `grove_tb6612fng.no_standby` Action
 
@@ -88,11 +95,11 @@ Set the board to be awake, every esphome is restarted the default mode is set to
 ```yaml
 on_...:
   then:
-    - grove_tb6612fng.no_standby
+    - grove_tb6612fng.no_standby:
         id: test_motor
 ```
 
-.. grove_tb6612fng.change_address:
+
 
 ### `grove_tb6612fng.change_address` Action
 
