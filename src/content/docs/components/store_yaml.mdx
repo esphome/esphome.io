@@ -93,8 +93,19 @@ listed in the note, so keep your own backup of them.
 
 ## Recovering the Configuration
 
-A command to download the stored files from a device and write them back to your computer will come in a later
-ESPHome release. Until then, keep `store_yaml` enabled so the files are on the device when that tool is available.
+Download the stored files with the
+[`recover-yaml` command](/guides/cli/#recover-yaml-command):
+
+```bash
+esphome recover-yaml --device 192.168.1.50 --output recovered
+```
+
+It asks for the device's API encryption key; leave it empty for a device built
+with `allow_unencrypted: true`. The files are written to the new folder, and
+the command prints which file is the main configuration and which
+`secrets.yaml` files need their values filled in. Files that came from a folder
+above the main configuration keep their place, so the main configuration may
+be one or more `_` folders down.
 
 ## See Also
 

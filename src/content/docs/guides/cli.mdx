@@ -326,6 +326,19 @@ The `esphome wizard <CONFIG>` command starts the ESPHome configuration creation 
 
 The `esphome version` command shows the current ESPHome version and exits.
 
+### `recover-yaml` Command
+
+The `esphome recover-yaml --device <HOST>` command downloads the YAML configuration that the
+[`store_yaml`](/components/store_yaml/) component stored on a device, and writes it to a new folder.
+No configuration file is needed.
+
+- `--device`: the device's IP address or hostname.
+- `--output`: the new folder for the files. Defaults to `<HOST>-recovered`. A folder that is not empty is refused.
+- `--api-port`: the device's API port. Defaults to `6053`.
+
+The API encryption key is read from the `ESPHOME_API_KEY` environment variable, or asked for when it is not set.
+Leave it empty for a device built with `allow_unencrypted: true`.
+
 ### `clean` Command
 
 The `esphome clean <CONFIG>` command cleans all build files and can help with some build issues.
