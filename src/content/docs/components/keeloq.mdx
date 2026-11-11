@@ -32,7 +32,8 @@ keeloq:
 - **manufacturer_key** (**Required**, int): The 64-bit manufacturer key. A key given as two 32-bit halves is written
   MSB first: `0x<MSB><LSB>`.
 - **serial** (*Optional*, int): The 28-bit serial number this remote sends. The receiver learns it with
-  [`keeloq.learn`](#keeloq-learn-action). Without it, the remote takes the serial over from a hand remote, see
+  [`keeloq.learn`](#keeloq-learn-action). Each remote of a type needs its own serial, as the counter is stored per
+  serial. Without it, the remote takes the serial over from a hand remote, see
   [Taking Over a Hand Remote](#taking-over-a-hand-remote); then **receiver_id** is required.
 - **channels** (*Optional*, list or int): Only for `jarolift`: the channels for actions that set none, see
   [Jarolift Channels](#jarolift-channels).
@@ -54,6 +55,8 @@ The remote writes its 16-bit counter to flash once every 8 frames. After a reboo
 **serial** starts a new one. After a flash erase, set it with `keeloq.set_counter`, take it over or pair again. A
 remote without **serial** keeps what it took over while **type** and **id** stay the same. A received frame of the
 remote's own serial that is ahead moves the counter along.
+On the ESP8266 and RP2040/RP2350, which find saved values by their order, an update that adds, removes or reorders
+components that save values in flash can also start the counter at 0; set it or pair again as after a flash erase.
 
 ## Received Presses
 
@@ -120,6 +123,7 @@ on_...:
   is configured.
 - **command** (**Required**, string or int, [templatable](/automations/templates)): The 4-bit button code, `0` to
   `0xF`, or a command name of the type, see [Jarolift Commands](#jarolift-commands).
+  A lambda value is cut to its lowest 4 bits at run time, so `0x18` sends `0x8`.
 - **channels** (*Optional*, list or int, [templatable](/automations/templates)): Only for `jarolift`: the channels
   to send to, see [Jarolift Channels](#jarolift-channels).
 - **repeat** (*Optional*): **times** and **wait_time** as in
@@ -145,9 +149,9 @@ on_...:
 - **id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the remote. Needed when more than one remote
   is configured.
 - **channels** (*Optional*, list or int, [templatable](/automations/templates)): Only for `jarolift`: the channels
-  to pair, see [Jarolift Channels](#jarolift-channels).
-- **legacy** (*Optional*, boolean, [templatable](/automations/templates)): Only for `jarolift`: pairs a motor made
-  before 2010, see [Pairing a Jarolift Motor](#pairing-a-jarolift-motor). Defaults to `false`.
+  to pair, see [Jarolift Channels](#jarolift-channels). Pairing takes about a second, and a `keeloq.learn` started
+  before the previous one has finished is skipped with a warning; to pair several channels, pass them all to one
+  `keeloq.learn`.
 - **transmitter_id** (*Optional*, [ID](/guides/configuration-types/#id)): The remote transmitter to send with.
 
 ### `keeloq.take_over` Action
@@ -188,6 +192,7 @@ on_...:
 
 **channels** takes a list such as `[1, 2, 3, 4]` of channels `1` to `16`, or the 16-bit mask they make (bit 0 is
 channel 1, so `0x000F` is channels 1 to 4). An empty list or the mask `0` is rejected. A lambda returns the mask.
+If it returns `0`, nothing is sent and a warning is logged.
 
 An action without **channels** uses the **channels** of the remote. A remote without **serial** takes the channels
 over from the hand remote, unless it sets **channels** itself. For a remote with **serial** and without
@@ -204,7 +209,8 @@ over from the hand remote, unless it sets **channels** itself. For a remote with
 | `learn` | `0xA`, up and down together | 2× |
 | `shade` | `0x4`, stop held: moves to the shade position | 20× |
 
-Without **repeat**, a name is sent as the table shows and a button code without a name 2×. `learn` sends only the
+Without **repeat**, a name is sent as the table shows, and a button code or a lambda 2×: `command: 0x4` is a
+stop, so holding it like `shade` needs `repeat` with `times: 20` and `wait_time: 0ms`. `learn` sends only the
 code `0xA`; to pair a motor, use [`keeloq.learn`](#keeloq-learn-action).
 In **on_command**, `shade` matches every `stop`.
 
@@ -212,8 +218,8 @@ In **on_command**, `shade` matches every `stop`.
 
 Put the motor into learn mode as its manual describes, then run [`keeloq.learn`](#keeloq-learn-action) with the
 channels to pair while the motor is still in learn mode. The motor vibrates when it has learned the serial; a hand
-remote paired before keeps working. A motor made before 2010 may need **legacy** set to `true`: try it if the motor
-does not vibrate.
+remote paired before keeps working. A motor made before 2010 may not vibrate: pair it with a single
+[`keeloq.send`](#keeloq-send-action) of `command: 0x1` to the same channels instead.
 
 ## See Also
 
