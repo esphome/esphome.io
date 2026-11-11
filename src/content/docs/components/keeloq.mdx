@@ -39,7 +39,8 @@ keeloq:
 - **channels** (*Optional*, list or int): Only for `jarolift`: the channels for actions that set none, see
   [Jarolift Channels](#jarolift-channels).
 - **receiver_id** (*Optional*, [ID](/guides/configuration-types/#id)): The
-  [Remote Receiver](/components/remote_receiver/) to listen to.
+  [Remote Receiver](/components/remote_receiver/) to listen to. A remote without **serial** or with **on_frame** keeps
+  the manufacturer key in its firmware.
 - **on_frame** (*Optional*, [Automation](/automations/)): Runs for each received frame that decrypts with the
   manufacturer key, copies and old counters included. Needs **receiver_id**. The frame is `x` with `x.serial`,
   `x.counter`, `x.channels` (see [Jarolift Channels](#jarolift-channels)) and `x.command`.
@@ -65,7 +66,8 @@ components that save values in flash can also start the counter at 0; set it or 
 the last accepted one does not fire; the press right after it does. Copies of a press and older frames, such as a
 recorded frame played back, never fire. Frames this remote sends count as accepted presses, so hearing them back
 does not fire. The last accepted counter is saved with the [preferences](/components/preferences/) and written to
-flash at once every 8 presses; after a power loss, a recording of the last few presses could fire once more.
+flash at once every 8 presses; after a power loss, a recording of the last few presses or sent frames could fire
+once more.
 
 ```yaml
 keeloq:
@@ -171,7 +173,9 @@ on_...:
 
 ### `keeloq.set_counter` Action
 
-This [action](/automations/actions/#all-actions) sets the counter of the next frame and stores it at once.
+This [action](/automations/actions/#all-actions) sets the counter of the next frame and stores it at once. A remote
+without **serial** that has not taken over a hand remote yet only keeps it in RAM and logs a warning; the take-over
+then sets the counter.
 
 ```yaml
 on_...:
