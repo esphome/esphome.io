@@ -1,0 +1,292 @@
+---
+description: "Instructions for controlling a Fantini Cosmi Ecocomfort 2.0 Smart ventilation unit over BLE in ESPHome."
+title: "Ecocomfort2"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `ecocomfort2` component lets you control a
+[Fantini Cosmi Aspirvelo Air Ecocomfort 2.0 Smart](https://www.fantinicosmi.it/prodotto/aspirvelo-air-ecocomfort-2-0-smart/)
+heat recovery ventilation unit over BLE from an ESP32.
+
+The component has a hub that keeps the BLE connection to one unit, a [Fan](/components/fan/) platform that
+controls the unit's air flow mode and speed, sensor platforms that report what the unit measures, and number,
+switch and select platforms for the unit's settings. One ESP32 can control several units, with one hub per
+unit.
+
+```yaml
+# Example configuration entry
+esp32_ble:
+  io_capability: none
+  auth_req_mode: sc_bond
+  max_key_size: 16
+
+esp32_ble_tracker:
+
+ble_client:
+  - mac_address: "AA:BB:CC:DD:EE:FF"
+    id: vmc_ble
+
+ecocomfort2:
+  - id: vmc_hub
+    ble_client_id: vmc_ble
+
+fan:
+  - platform: ecocomfort2
+    name: "Ventilation"
+```
+
+## BLE Pairing
+
+The unit only accepts an encrypted, bonded BLE connection. The [ESP32 BLE](/components/esp32_ble/) component
+must be configured with these settings, and the configuration is rejected otherwise. `io_capability: none` is
+already the default, so it only matters that it is not changed:
+
+- `io_capability: none`
+- `auth_req_mode: sc_bond`
+- `max_key_size: 16`
+
+The first time the ESP32 connects, put the unit in pairing mode (see the unit's manual). The bond is stored
+on the ESP32 and is kept across reboots and OTA updates, so later connections need no pairing mode. If
+pairing does not finish within 10 seconds, the component disconnects and the BLE client tries again.
+
+See the [BLE Client](/components/ble_client/) page for how to find the MAC address of the unit.
+
+## Hub Configuration
+
+```yaml
+ecocomfort2:
+  - id: vmc_hub
+    ble_client_id: vmc_ble
+```
+
+### Configuration Variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation.
+- **ble_client_id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the
+  [BLE Client](/components/ble_client/) connected to the unit.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often the operating state
+  and the measurements are read from the unit. Defaults to `30s`.
+- **time_id** (*Optional*, [ID](/guides/configuration-types/#id)): A [Time](/components/time/) component to
+  set the unit's clock from. The clock is written once the time is known after each connection, and again
+  whenever the time source syncs.
+
+## Fan
+
+```yaml
+fan:
+  - platform: ecocomfort2
+    name: "Ventilation"
+```
+
+### Configuration Variables
+
+- **ecocomfort2_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `ecocomfort2` hub.
+  Only needed when more than one hub is configured.
+- All other options from [Fan](/components/fan/#base-fan-configuration).
+
+### Speeds and Presets
+
+The fan has speeds `1` to `4`. The preset selects the air flow mode:
+
+- `In`: air flows in only.
+- `Out`: air flows out only.
+- `In-Out`: air flows in both directions.
+- `Sensor`: the unit sets the air flow direction from its sensors.
+- `Auto`: the unit controls the speed itself. Setting a speed while in `Auto` switches to `Sensor`.
+
+Setting only a speed keeps the current preset. Turning the fan off keeps the preset and speed, so turning it
+on again resumes them.
+
+The on/off state always comes from the unit after the first read back. The fan's `restore_mode` only brings
+back the last preset and speed after a reboot; set it to `NO_RESTORE` to skip that. After each change, the
+state is read back from the unit about 300 ms later.
+
+## Sensor
+
+```yaml
+sensor:
+  - platform: ecocomfort2
+    temperature:
+      name: "Ventilation Temperature"
+    humidity:
+      name: "Ventilation Humidity"
+    voc:
+      name: "Ventilation VOC"
+```
+
+### Configuration Variables
+
+- **ecocomfort2_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `ecocomfort2` hub.
+  Only needed when more than one hub is configured.
+- **temperature** (*Optional*): The air temperature measured by the unit, in °C.
+  All options from [Sensor](/components/sensor/).
+- **humidity** (*Optional*): The relative humidity measured by the unit, in %.
+  All options from [Sensor](/components/sensor/).
+- **voc** (*Optional*): The volatile organic compounds reading of the unit, in ppb.
+  All options from [Sensor](/components/sensor/).
+- **direction** (*Optional*): The air flow direction byte from the unit's status, passed through as the unit sends
+  it; the component does not decode it. It shows the unit switching direction in the `In-Out` and `Sensor` presets.
+  All options from [Sensor](/components/sensor/).
+
+## Binary Sensor
+
+```yaml
+binary_sensor:
+  - platform: ecocomfort2
+    connected:
+      name: "Ventilation Connected"
+    boost:
+      name: "Ventilation Boost"
+```
+
+### Configuration Variables
+
+- **ecocomfort2_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `ecocomfort2` hub.
+  Only needed when more than one hub is configured.
+- **connected** (*Optional*): On while the ESP32 is connected and paired to the unit.
+  All options from [Binary Sensor](/components/binary_sensor/).
+- **boost** (*Optional*): On while the unit runs its boost mode.
+  All options from [Binary Sensor](/components/binary_sensor/).
+
+## Text Sensor
+
+```yaml
+text_sensor:
+  - platform: ecocomfort2
+    version:
+      name: "Ventilation Firmware"
+```
+
+### Configuration Variables
+
+- **ecocomfort2_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `ecocomfort2` hub.
+  Only needed when more than one hub is configured.
+- **version** (**Required**): The firmware version of the unit, read once per connection.
+  All options from [Text Sensor](/components/text_sensor/).
+
+## Settings
+
+The number, switch and select platforms change settings stored in the unit, the same ones as in the vendor
+app. The unit holds the settings: they are read from it on every update, so a change made in the app shows up
+too, and a change is read back from the unit right after it is sent. Each change only touches its own setting.
+
+### Number
+
+```yaml
+number:
+  - platform: ecocomfort2
+    humidity_threshold:
+      name: "Ventilation Humidity Threshold"
+    temperature_offset:
+      name: "Ventilation Temperature Offset"
+```
+
+#### Configuration Variables
+
+- **ecocomfort2_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `ecocomfort2` hub.
+  Only needed when more than one hub is configured.
+- **humidity_threshold** (*Optional*): How strongly the unit reacts to humidity, from `0` (off) to `3`.
+  All options from [Number](/components/number/).
+- **luminosity_threshold** (*Optional*): How strongly the unit reacts to light, from `0` (off) to `3`.
+  All options from [Number](/components/number/).
+- **voc_threshold** (*Optional*): How strongly the unit reacts to volatile organic compounds, from `0` (off)
+  to `3`. All options from [Number](/components/number/).
+- **temperature_offset** (*Optional*): A correction added to the unit's temperature reading, from `-5` to
+  `5` °C in steps of `0.1`. It stays in °C even when Home Assistant shows temperatures in °F.
+  All options from [Number](/components/number/).
+- **humidity_offset** (*Optional*): A correction added to the unit's humidity reading, from `-5` to `5` % in
+  steps of `1`. All options from [Number](/components/number/).
+
+### Switch
+
+```yaml
+switch:
+  - platform: ecocomfort2
+    humidity_advanced:
+      name: "Ventilation Humidity Advanced Control"
+```
+
+#### Configuration Variables
+
+- **ecocomfort2_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `ecocomfort2` hub.
+  Only needed when more than one hub is configured.
+- **humidity_advanced** (*Optional*): Advanced control for humidity: as the reading approaches the threshold,
+  the unit raises its speed by one level. It needs `humidity_threshold` above `0`; turning it on while the
+  threshold is `0` is refused with a warning in the log, and the switch stays off.
+  All options from [Switch](/components/switch/).
+- **voc_advanced** (*Optional*): The same for volatile organic compounds, with `voc_threshold`.
+  All options from [Switch](/components/switch/).
+
+Setting a threshold to `0` also turns its advanced control off.
+
+### Select
+
+```yaml
+select:
+  - platform: ecocomfort2
+    season:
+      name: "Ventilation Season"
+    free_cooling:
+      name: "Ventilation Free Cooling"
+```
+
+#### Configuration Variables
+
+- **ecocomfort2_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `ecocomfort2` hub.
+  Only needed when more than one hub is configured.
+- **season** (*Optional*): The season the unit runs in, `Winter` or `Summer`.
+  All options from [Select](/components/select/).
+- **free_cooling** (*Optional*): Free cooling, which cools the home with outside air at night: `Off`, `Low`,
+  `Medium` or `High`. The unit only runs free cooling in summer, so it shows `Off` in winter, and changing it
+  in winter is refused with a warning in the log. The unit keeps the level and uses it again when the season
+  returns to summer.
+  All options from [Select](/components/select/).
+
+## Multiple Units
+
+Add one BLE client, one hub and one fan for each unit. With more than one hub, every `ecocomfort2` platform entry,
+sensors included, names its hub with `ecocomfort2_id`:
+
+```yaml
+ble_client:
+  - mac_address: "AA:BB:CC:DD:EE:FF"
+    id: vmc1_ble
+  - mac_address: "11:22:33:44:55:66"
+    id: vmc2_ble
+
+ecocomfort2:
+  - id: vmc1
+    ble_client_id: vmc1_ble
+  - id: vmc2
+    ble_client_id: vmc2_ble
+
+fan:
+  - platform: ecocomfort2
+    name: "Ventilation 1"
+    ecocomfort2_id: vmc1
+  - platform: ecocomfort2
+    name: "Ventilation 2"
+    ecocomfort2_id: vmc2
+
+sensor:
+  - platform: ecocomfort2
+    ecocomfort2_id: vmc1
+    temperature:
+      name: "Ventilation 1 Temperature"
+```
+
+## See Also
+
+- [ESP32 BLE](/components/esp32_ble/)
+- [ESP32 BLE Tracker](/components/esp32_ble_tracker/)
+- [BLE Client](/components/ble_client/)
+- [Fan Component](/components/fan/)
+- [Sensor Component](/components/sensor/)
+- [Binary Sensor Component](/components/binary_sensor/)
+- [Text Sensor Component](/components/text_sensor/)
+- [Number Component](/components/number/)
+- [Switch Component](/components/switch/)
+- [Select Component](/components/select/)
+- <APIRef text="ecocomfort2_hub.h" path="ecocomfort2/ecocomfort2_hub.h" />
+- <APIRef text="ecocomfort2_fan.h" path="ecocomfort2/ecocomfort2_fan.h" />

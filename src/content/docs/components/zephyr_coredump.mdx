@@ -1,0 +1,94 @@
+---
+description: "Store a crash dump in flash on nRF52 devices and print it at the next boot"
+title: "Zephyr Coredump"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `zephyr_coredump` component helps debug crashes on [nRF52](/components/nrf52/) devices without a
+debug probe. When the firmware crashes, Zephyr saves the CPU registers and the stacks of all threads
+to a 32 KB partition at the top of the application flash. After the restart the stored dump is printed
+in the log as hex-encoded `#CD:` lines and then erased. The Zephyr coredump tools turn that log into
+a GDB session with a full backtrace.
+
+```yaml
+# Example configuration entry
+zephyr_coredump:
+```
+
+The component has no configuration variables.
+
+## Flash Layout
+
+The partition is placed directly below the bootloader: at `0xEC000` with the Adafruit bootloader
+layouts and at `0xD8000` on the nRF52840 dongle. With MCUboot it sits at the end of the 1 MB flash.
+The generic `bootloader: adafruit` setting does not describe where the bootloader lives, so the
+component rejects it; select one of the `adafruit_nrf52_sd*` bootloaders instead.
+
+> [!WARNING]
+> With [OTA updates for nRF52](/components/ota/zephyr_mcumgr/) the image slots end below the coredump
+> partition, so enabling or disabling this component moves them. A device that already runs mcumgr OTA
+> must be flashed over USB once after the change. An OTA update alone leaves the installed MCUboot with
+> the old slot layout, and later OTA updates would silently fail.
+
+## Reading the Dump
+
+The dump is printed once a log reader is present and is erased after it has gone out. With a UART logger
+that is at boot, so keep the serial monitor attached while the device restarts. With USB logging the dump is
+held until the USB port is opened, and a client that subscribes to the logs over the native API or MQTT
+(`esphome logs` over the network) gets it as well, so a dump from a crash that happened hours ago is still
+printed when you connect. Until then it stays in flash, where only the next crash replaces it; closing the
+USB port during the print keeps it for the next reader.
+
+The log looks like this:
+
+```log
+[14:36:08.267][E][zephyr_coredump:052]: #CD:BEGIN#
+[14:36:08.267][E][zephyr_coredump:039]: #CD:5a450100030005001a0000004102004400d0670020b4670020efbeadde00b0ad
+[14:36:08.269][E][zephyr_coredump:039]: #CD:de00000000296201002862010000000001505500200000000000000000000000
+...
+[14:36:08.321][E][zephyr_coredump:087]: #CD:END#
+```
+
+Save the log to a file, for example with `esphome logs device.yaml | tee device.log`. The parser reads
+everything after `#CD:` as hex, so strip the colour codes first. The scripts live in the `scripts/coredump`
+directory of the Zephyr checkout that ESPHome downloaded for the build, and `zephyr.elf` is in the build
+directory (`.esphome/build/<name>/.pioenvs/<name>/zephyr/zephyr/zephyr.elf` with the PlatformIO toolchain).
+GDB is `arm-zephyr-eabi-gdb` from the same toolchain; `gdb-multiarch` works as well.
+
+```bash
+# Remove the colour codes and convert the log into a binary coredump
+perl -pe 's/\e\[[0-9;]*m//g' device.log > plain.log
+python3 coredump_serial_log_parser.py plain.log coredump.bin
+# Serve it to GDB
+python3 coredump_gdbserver.py zephyr.elf coredump.bin
+# In a second terminal
+arm-zephyr-eabi-gdb zephyr.elf
+(gdb) target remote localhost:1234
+(gdb) bt
+```
+
+```gdb
+#0  0x00016228 in esphome::StatelessLambdaAction<>::play() (this=<optimized out>)
+    at src/esphome/core/base_automation.h:231
+#1  0x000163ce in esphome::Action<>::play_complex() (this=0x0 <get_data>)
+    at src/esphome/core/automation.h:268
+#2  0x000163bc in esphome::Action<>::play_next_() (this=<optimized out>)
+    at src/esphome/core/automation.h:299
+...
+#11 0x00003850 in esphome::Application::loop (this=0x20001d98 <esphome::App>)
+    at src/esphome/core/application.cpp:152
+...
+#13 0x00014b38 in main () at src/esphome/components/zephyr/core.cpp:104
+```
+
+The [Zephyr coredump documentation](https://docs.zephyrproject.org/latest/services/debugging/coredump.html)
+describes the tools in more detail. The dump holds every thread's stack with nRF Connect SDK 2.9.2 and
+later; older SDKs store the faulting thread only.
+
+## See Also
+
+- [nRF52 Platform](/components/nrf52/)
+- [Logger Component](/components/logger/)
+- [Debug Component](/components/debug/)
+- <APIRef text="coredump.h" path="zephyr_coredump/coredump.h" />

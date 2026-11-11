@@ -1,0 +1,366 @@
+---
+description: "Instructions for showing a VNC server's screen on an ESPHome display."
+title: "VNC Client"
+---
+
+import APIRef from "@components/APIRef.astro";
+
+The `vnc` component connects to a VNC server and shows its screen on a [display](/components/display/).
+It connects when the device starts, reconnects by itself when the server goes away, and can send touches,
+key presses and pointer clicks back to the server.
+
+A common use is a wall dashboard: a server runs a web browser at the size of the panel, for example with the
+[VNC Web Browser](https://github.com/MindFreeze/ha-vnc-web-browser) Home Assistant add-on, and an ESPHome
+device with an e-paper or LCD screen shows it.
+
+> [!WARNING]
+> VNC sends the picture and your input unencrypted, and the VNC password check is weak. Only use it on a network
+> you trust.
+
+```yaml
+# Example configuration entry
+vnc:
+  host: 192.168.1.20
+```
+
+The component draws every pixel of the display, so the display must not have its own `lambda` or `pages`.
+Set the server's screen size to the size of the display after rotation. The picture is not scaled: if the server
+is larger, only its top-left part is shown.
+
+## Configuration Variables
+
+- **host** (**Required**, string): The IPv4 address or hostname of the VNC server.
+- **port** (_Optional_, int): The port of the VNC server. Defaults to `5900`.
+- **password** (_Optional_, string): The VNC password, if the server asks for one. VNC uses only the first
+  8 bytes: 8 characters for plain letters, digits and symbols, fewer if the password has accented or other
+  special characters.
+- **display_id** (_Optional_, [ID](/guides/configuration-types/#id)): The display to draw on. Only needed if
+  there is more than one display.
+- **reconnect_interval** (_Optional_, [Time](/guides/configuration-types/#time)): How long to wait before the
+  first new connection attempt after a failure. The wait doubles with each further failure, up to 60 seconds or
+  `reconnect_interval`, whichever is longer. Defaults to `5s`. After a configuration problem, for example when the
+  server is not a VNC server or asks for a password that is not set, the client waits 5 minutes instead. After a
+  wrong password it stops retrying until the device restarts or `vnc.connect` runs.
+- **update_delay** (_Optional_, [Time](/guides/configuration-types/#time)): How long the picture must stay
+  unchanged before the display refreshes. This turns an animation into one refresh that shows where the
+  animation ended. Defaults to `200ms`.
+- **max_update_delay** (_Optional_, [Time](/guides/configuration-types/#time)): The longest a change waits for
+  the picture to stop changing. If the picture never stops changing, for example because of a moving background,
+  the display refreshes about this often. Defaults to `1s`. On e-paper, a few seconds often looks better.
+- **pixel_format** (_Optional_, string): The colour format to ask the server for. `rgb565` uses 2 bytes per
+  pixel and shows all grey levels of a 16-level e-paper panel. `rgb332` uses half the data but shows only about
+  8 grey levels. `auto` uses `rgb332` on black and white displays and `rgb565` on all others. Defaults to `auto`.
+- **touchscreen_id** (_Optional_, [ID](/guides/configuration-types/#id)): A
+  [touchscreen](/components/touchscreen/) on the same display. Touches are sent to the server as left mouse
+  button clicks and drags.
+- **on_connect** (_Optional_, [Automation](/automations/)): An automation to run when the client has connected to
+  the server, before the first picture arrives.
+- **on_disconnect** (_Optional_, [Automation](/automations/)): An automation to run when the connection is lost.
+- **id** (_Optional_, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation.
+
+## Supported Displays
+
+The component works with displays that keep a full picture in memory and accept drawing from other
+components:
+
+- [IT8951 E-Paper](/components/display/it8951/), for example the M5Paper.
+- [E-Paper SPI](/components/display/epaper_spi/).
+- LCD drivers such as [ILI9xxx](/components/display/ili9xxx/).
+- [SDL](/components/display/sdl/) and [Snapshot](/components/display/snapshot/) on the host platform, for testing.
+
+The `mipi_spi`, `mipi_rgb` and `mipi_dsi` drivers are not supported yet. The older
+[Waveshare E-Paper](/components/display/waveshare_epaper/) driver draws every colour except pure black as ink,
+so use [E-Paper SPI](/components/display/epaper_spi/) instead.
+
+A display cannot be shared with [LVGL](/components/lvgl/) or with a second `vnc` client.
+
+## How Refreshing Works
+
+The client asks the server for changes, draws them into the display's memory as they arrive, and refreshes the
+display once the picture has stopped changing for `update_delay`. On e-paper this keeps the number of refreshes
+low, which means less flashing.
+
+- Hextile tiles that the server sends again without changes are skipped, so they do not cause a refresh. This
+  works only for tiles that line up with a 16x16 grid. Everything else the server sends is always drawn.
+- For 2 seconds after a touch, key press or pointer action, each change is shown as soon as it arrives, so the
+  screen reacts quickly to your input.
+- While an e-paper panel refreshes, the client waits before asking for the next change.
+
+On e-paper, choose content that changes rarely. Clocks with seconds, blinking text cursors, spinners and moving
+backgrounds keep the panel refreshing. The Home Assistant login page has a moving background, so log in, or use
+a long-lived access token.
+
+For the IT8951, the `GL16` waveform flashes much less than the default `GC16`, while
+[`full_update_every`](/components/display/it8951/) still clears ghosting from time to time.
+
+## Server Setup
+
+The client supports the VNC protocol versions 3.3, 3.7 and 3.8, and the encodings Raw and Hextile. It works
+with servers that offer either no password or a classic VNC password.
+
+- **VNC Web Browser add-on for Home Assistant** (TightVNC): set the display `resolution` to the size of the
+  panel, for example `540x960` for an M5Paper in portrait, and keep the colour depth at `16`. The add-on
+  disconnects other viewers when a new one connects, so the device and a desktop viewer will push each other
+  off.
+- **TigerVNC**: `Xvnc :1 -geometry 540x960 -depth 16 -SecurityTypes None`. For a password, use
+  `-SecurityTypes VncAuth -rfbauth <file>`.
+- **x11vnc**: run it against an X server of the right size, for example `Xvfb :1 -screen 0 540x960x16`, with
+  `-nopw` or `-rfbauth <file>`.
+- **wayvnc**: offers the VNC password only with `allow_broken_crypto` enabled.
+
+> [!IMPORTANT]
+> After a wrong password the client stops trying, because some servers lock out every user after a few
+> failed logins. Fix the password, then restart the device or run the `vnc.connect` action.
+
+## Actions
+
+### `vnc.send_pointer` Action
+
+Sends a mouse event at a position on the server's screen.
+
+```yaml
+on_...:
+  - vnc.send_pointer:
+      x: 270
+      y: 480
+      buttons:
+        - left
+  - vnc.send_pointer:
+      x: 270
+      y: 480
+```
+
+- **x** (**Required**, int, [templatable](/automations/templates/)): The horizontal position.
+- **y** (**Required**, int, [templatable](/automations/templates/)): The vertical position.
+- **buttons** (_Optional_, list or int, [templatable](/automations/templates/)): The buttons held down, as a list
+  of names (`left`, `middle`, `right`, `wheel_up`, `wheel_down`) or a number. A lambda returns the number: the sum
+  of `1` left, `2` middle, `4` right, `8` wheel up and `16` wheel down. Defaults to none, which releases all
+  buttons. A click is one event with the button and one without it. A scroll step is one event with
+  `wheel_up` or `wheel_down` and one without.
+- **id** (_Optional_, [ID](/guides/configuration-types/#id)): The VNC client to use.
+
+### `vnc.send_key` Action
+
+Sends a key press.
+
+```yaml
+on_...:
+  - vnc.send_key: Return
+  # Shift+Tab: hold Shift, press Tab, then let go of Shift
+  - vnc.send_key:
+      key: Shift_L
+      action: down
+  - vnc.send_key: Tab
+  - vnc.send_key:
+      key: Shift_L
+      action: up
+```
+
+- **key** (**Required**, string or int, [templatable](/automations/templates/)): The key: a single character such
+  as `a`, an X11 key name such as `Return`, `Escape`, `Tab`, `BackSpace`, `Up`, `Down`, `Left`, `Right`, `Page_Up`,
+  `Page_Down`, `Home`, `End`, `Delete`, `F1` to `F12`, `Shift_L`, `Control_L` or `Alt_L`, or a key number (keysym).
+  Names are not case sensitive. A lambda returns the keysym as a number, for example `0xff0d` for `Return`.
+- **action** (_Optional_, string): `press` sends the key down and up. `down` or `up` sends only one of them, for
+  holding keys such as Shift. Defaults to `press`.
+- **id** (_Optional_, [ID](/guides/configuration-types/#id)): The VNC client to use.
+
+### `vnc.type_text` Action
+
+Types a text, character by character.
+
+```yaml
+on_...:
+  - vnc.type_text: "Hello world\n"
+```
+
+- **text** (**Required**, string, [templatable](/automations/templates/)): The text to type. A new line is sent as
+  the Return key.
+- **id** (_Optional_, [ID](/guides/configuration-types/#id)): The VNC client to use.
+
+### `vnc.refresh` Action
+
+Asks the server for the whole screen again and redraws all of it. The display then refreshes in its usual
+mode, so on e-paper this does not always clear ghosting. On E-Paper SPI, run
+[`epaper_spi.full_update_next`](/components/display/epaper_spi/#epaper_spi-full_update_next-action) first to
+make that refresh a full one.
+
+```yaml
+on_...:
+  - vnc.refresh:
+```
+
+- **id** (_Optional_, [ID](/guides/configuration-types/#id)): The `vnc` client to refresh. Only needed if there
+  is more than one.
+
+### `vnc.connect` and `vnc.disconnect` Actions
+
+`vnc.disconnect` closes the connection and stops reconnecting, for example before deep sleep. `vnc.connect`
+connects again. It also retries after a wrong password.
+
+```yaml
+# Before deep sleep
+on_...:
+  - vnc.disconnect:
+
+# After fixing the password on the server
+on_...:
+  - vnc.connect:
+```
+
+- **id** (_Optional_, [ID](/guides/configuration-types/#id)): The `vnc` client to connect or disconnect. Only
+  needed if there is more than one.
+
+## Conditions
+
+### `vnc.is_connected` Condition
+
+True while the client is connected to the server. This starts before the first picture arrives. After a
+disconnect, an e-paper display keeps showing the last picture.
+
+```yaml
+on_...:
+  if:
+    condition:
+      vnc.is_connected:
+    then:
+      - logger.log: "VNC connected"
+```
+
+- **id** (_Optional_, [ID](/guides/configuration-types/#id)): The `vnc` client to check. Only needed if there
+  is more than one.
+
+From a [lambda](/automations/templates/#config-lambda), `id(my_vnc).is_connected()` gives the same answer:
+
+```yaml
+binary_sensor:
+  - platform: template
+    name: VNC connected
+    lambda: return id(my_vnc).is_connected();
+```
+
+## M5Paper Example
+
+A dashboard in portrait, with touch, the rocker switch for scrolling and for fetching the whole screen again,
+and an action that Home Assistant can call.
+
+```yaml
+esp32:
+  board: m5stack_paper
+  flash_size: 16MB
+  framework:
+    type: esp-idf
+
+psram:
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  power_save_mode: none
+
+network:
+  enable_high_performance: true
+
+api:
+  actions:
+    - action: vnc_type
+      variables:
+        chars: string
+      then:
+        - vnc.type_text: !lambda return chars;
+
+switch:
+  # Keeps the M5Paper powered when running on battery
+  - platform: gpio
+    id: power_hold
+    pin: GPIO2
+    restore_mode: ALWAYS_ON
+
+spi:
+  clk_pin: GPIO14
+  mosi_pin: GPIO12
+  miso_pin: GPIO13
+
+i2c:
+  sda: GPIO21
+  scl: GPIO22
+
+display:
+  - platform: it8951
+    id: epd
+    model: m5stack-m5paper
+    rotation: 270
+    update_mode: GL16
+    sleep_when_done: false
+
+touchscreen:
+  - platform: gt911
+    id: touch
+    display: epd
+    interrupt_pin:
+      number: GPIO36
+      mode:
+        input: true
+
+vnc:
+  id: my_vnc
+  host: 192.168.1.20
+  port: 5901
+  max_update_delay: 5s
+  touchscreen_id: touch
+
+binary_sensor:
+  - platform: gpio
+    name: Rocker up
+    pin:
+      number: GPIO37
+      inverted: true
+    on_press:
+      - vnc.send_pointer:
+          x: 270
+          y: 480
+          buttons:
+            - wheel_up
+      - vnc.send_pointer:
+          x: 270
+          y: 480
+  - platform: gpio
+    name: Rocker push
+    pin:
+      number: GPIO38
+      inverted: true
+    on_press:
+      - vnc.refresh:
+  - platform: gpio
+    name: Rocker down
+    pin:
+      number: GPIO39
+      inverted: true
+    on_press:
+      - vnc.send_pointer:
+          x: 270
+          y: 480
+          buttons:
+            - wheel_down
+      - vnc.send_pointer:
+          x: 270
+          y: 480
+```
+
+## Troubleshooting
+
+- **Only part of the screen is shown, or there is an empty border:** the server's screen size does not match the
+  display. The log shows both sizes when the client connects.
+- **Taps land in the wrong place:** set `transform` on the [touchscreen](/components/touchscreen/) so that its axes
+  match the display rotation.
+- **"The server requires a password":** set `password`.
+- **"No supported security type":** the server only offers login methods this client does not support, such as
+  TLS. Enable classic VNC authentication or no authentication on the server.
+- Set the [logger](/components/logger/) level to `DEBUG` to see a line for every change the server sends, with
+  its size, how long it took, and how many tiles had to be drawn.
+
+## See Also
+
+- [Display Component](/components/display/)
+- [Touchscreen Component](/components/touchscreen/)
+- [IT8951 E-Paper](/components/display/it8951/)
+- <APIRef text="vnc_client.h" path="vnc/vnc_client.h" />

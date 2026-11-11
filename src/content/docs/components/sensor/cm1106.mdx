@@ -36,17 +36,47 @@ sensor:
 - **co2** (*Optional*): The CO2 data from the sensor in parts per million (ppm).
   All options from [Sensor](/components/sensor).
 
-- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval to check the
   sensor. Defaults to `60s`.
 
-- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [UART Component](/components/uart) if you want
+- **uart_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the [UART Component](/components/uart) if you want
   to use multiple UART buses.
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for actions.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for actions.
+
+- **automatic_baseline_calibration** (*Optional*, boolean or mapping): CM1106 has an automatic
+  baseline calibration procedure (ABC). The sensor refreshes the baseline against the lowest
+  reading observed during each calibration cycle; with the default settings a cycle starts 24 hours
+  after the sensor is powered on and then repeats every 15 days.
+  Set this value to `false` to disable ABC on boot. ABC assumes the sensor sees outdoor air (about 400ppm)
+  at some point in every cycle; a room that stays occupied or poorly ventilated never does, so the baseline
+  drifts and readings end up too low. Disabling it is the safer choice for most indoor sensors.
+  Set this value to `true` to enable ABC on boot.
+  No calibration command is sent if not set (the sensor's stored logic is used).
+
+  - **cycle** (*Optional*, int, [1, 90]): Calibration
+    cycle interval in days. Defaults to `15`.
+  - **baseline** (*Optional*, int, [400, 10000]): The
+    reference concentration the baseline is refreshed against, in ppm. Defaults to `400`.
+
+  Set to `true` to enable ABC on boot with the default cycle and baseline:
+
+  ```yaml
+  automatic_baseline_calibration: true
+  ```
+
+  Alternatively, provide a mapping to customize the cycle and baseline; the mapping implicitly
+  enables ABC:
+
+  ```yaml
+  automatic_baseline_calibration:
+    cycle: 7
+    baseline: 420
+  ```
 
 ## `cm1106.calibrate_zero` Action
 
-This [action](/automations/actions#all-actions) executes zero point calibration command on the sensor with the given ID.
+This [action](/automations/actions/#all-actions) executes zero point calibration command on the sensor with the given ID.
 
 To perform zero-point calibration, the CM1106 sensor must operate in a stable 400ppm CO₂ environment for
 at least 20 minutes before executing this function.
@@ -57,7 +87,7 @@ on_...:
     - cm1106.calibrate_zero: my_cm1106_id
 ```
 
-You can provide an [action](/components/api#api-device-actions) to perform from Home Assistant
+You can provide an [action](/components/api/#api-device-actions) to perform from Home Assistant
 
 ```yaml
 api:
@@ -101,7 +131,43 @@ binary_sensor:
     internal: true
 ```
 
+## `cm1106.abc_enable` Action
+
+This [action](/automations/actions/#all-actions) enables automatic baseline calibration on the sensor with the given ID.
+
+```yaml
+on_...:
+  then:
+    - cm1106.abc_enable: my_cm1106_id
+```
+
+## `cm1106.abc_disable` Action
+
+This [action](/automations/actions/#all-actions) disables automatic baseline calibration on the sensor with the
+given ID.
+
+```yaml
+on_...:
+  then:
+    - cm1106.abc_disable: my_cm1106_id
+```
+
+You can provide a switch to control ABC from Home Assistant. `restore_mode: DISABLED` keeps the switch from sending
+a command at boot, so the `automatic_baseline_calibration` setting above stays in charge of the boot state.
+
+```yaml
+switch:
+  - platform: template
+    name: "CM1106 ABC"
+    optimistic: true
+    restore_mode: DISABLED
+    on_turn_on:
+      cm1106.abc_enable: my_cm1106_id
+    on_turn_off:
+      cm1106.abc_disable: my_cm1106_id
+```
+
 ## See Also
 
-- [Sensor Filters](/components/sensor#sensor-filters)
+- [Sensor Filters](/components/sensor/#sensor-filters)
 - <APIRef text="cm1106.h" path="cm1106/cm1106.h" />
