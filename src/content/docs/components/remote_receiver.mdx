@@ -16,7 +16,7 @@ The component is split into two parts:
 - Individual [remote receiver binary sensors](#binary-sensor) which will activate when their
   respective signal is received.
 
-**See** [Setting up IR Devices](/guides/setting_up_rmt_devices#remote-setting-up-infrared) **and** [Setting up RF Devices](/guides/setting_up_rmt_devices#remote-setting-up-rf) **for details.**
+**See** [Setting up IR Devices](/guides/setting_up_rmt_devices/#remote-setting-up-infrared) **and** [Setting up RF Devices](/guides/setting_up_rmt_devices/#remote-setting-up-rf) **for details.**
 
 ```yaml
 # Example configuration entry
@@ -29,12 +29,12 @@ Multiple remote receivers can be configured as a list of dict definitions within
 
 ## Configuration variables
 
-- **pin** (**Required**, [Pin](/guides/configuration-types#pin)): The pin to receive the remote signal on.
+- **pin** (**Required**, [Pin](/guides/configuration-types/#pin)): The pin to receive the remote signal on.
 - **dump** (*Optional*, list): Decode and dump these remote codes in the logs (at log.level=DEBUG).
   Set to `all` to dump all available codecs:
 
   - **abbwelcome**: Decode and dump ABB-Welcome codes. Messages are sent via copper wires. See
-    [transmitter description](/components/remote_transmitter#remote_transmitter-transmit_abbwelcome) for more details.
+    [transmitter description](/components/remote_transmitter/#remote_transmitter-transmit_abbwelcome) for more details.
 
   - **aeha**: Decode and dump AEHA infrared codes.
   - **beo4**: Decode and dump B&O Beo4 infrared codes.
@@ -47,6 +47,7 @@ Multiple remote receivers can be configured as a list of dict definitions within
   - **dooya**: Decode and dump Dooya RF codes.
   - **drayton**: Decode and dump Drayton Digistat RF codes.
   - **dyson**: Decode and dump Dyson Cool AM7 tower fan codes.
+  - **hob2hood**: Decode and dump AEG Hob2Hood infrared codes.
   - **jvc**: Decode and dump JVC infrared codes.
   - **gobox**: Decode and dump Go-Box infrared codes.
   - **keeloq**: Decode and dump KeeLoq RF codes.
@@ -72,20 +73,28 @@ Multiple remote receivers can be configured as a list of dict definitions within
   - **mirage**: Decode and dump Mirage infrared codes.
   - **toto**: Decode and dump Toto infrared codes.
 
-- **tolerance** (*Optional*, int, [Time](/guides/configuration-types#time) or mapping): The percentage or time that the remote signal lengths
+- **tolerance** (*Optional*, int, [Time](/guides/configuration-types/#time) or mapping): The percentage or time that the remote signal lengths
   can deviate in the decoding process. Defaults to `25%`.
 
   - **type** (**Required**, enum): Set the type of the tolerance. Can be `percentage` or `time`.
-  - **value** (**Required**, int or [Time](/guides/configuration-types#time)): The percentage or time value. Allowed values are in range `0`
+  - **value** (**Required**, int or [Time](/guides/configuration-types/#time)): The percentage or time value. Allowed values are in range `0`
     to `100%` or `0` to `4294967295us`.
 
-- **buffer_size** (*Optional*, int): The size of the internal buffer for storing the remote codes. Defaults to `10kB`
-  on the ESP32 and `1kB` on the ESP8266.
+- **buffer_size** (*Optional*, int): The size in bytes of the internal buffer for storing the remote codes. On ESP32
+  variants with RMT one receive slot is `receive_symbols` x 4 + 16 bytes (784 bytes at the default 192 symbols); the
+  default is four slots, 3136 bytes, and an explicit value below two slots is raised to two. On other platforms each
+  buffered pulse takes 4 bytes; the default is `4000B`, which holds 1000 pulses.
 
-- **filter** (*Optional*, [Time](/guides/configuration-types#time)): Filter any pulses that are shorter than this. Useful for removing
+  > [!WARNING]
+  > Before 2026.10.0 the value was applied as a number of pulses on ESP8266, RP2040, LibreTiny, ESP32-C2 and
+  > ESP32-C61, four times the bytes requested. Multiply an explicit `buffer_size` on those platforms by 4 to keep the
+  > same capacity. On ESP32 variants with RMT the default was `10kB`; an explicit `buffer_size: 10kb` copied from that
+  > can be removed, since the default now follows `receive_symbols`.
+
+- **filter** (*Optional*, [Time](/guides/configuration-types/#time)): Filter any pulses that are shorter than this. Useful for removing
   glitches from noisy signals. Allowed values are in range `0` to `4294967295us`. Defaults to `50us`.
 
-- **idle** (*Optional*, [Time](/guides/configuration-types#time)): The amount of time that a signal should remain stable/unchanged for it to
+- **idle** (*Optional*, [Time](/guides/configuration-types/#time)): The amount of time that a signal should remain stable/unchanged for it to
   be considered complete. Defaults to `10ms`. The maximum allowable value is:
 
   - `65536us` on the `ESP32` and `ESP32-S2` variants
@@ -95,7 +104,7 @@ Multiple remote receivers can be configured as a list of dict definitions within
   Note: The ESP32 RMT values listed above assume the default `clock_resolution`. If a different `clock_resolution` is
   used, the values are scaled by 1000000 / `clock_resolution`.
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation. Useful when multiple
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation. Useful when multiple
   receivers are configured on a single device.
 
 ### ESP32 RMT configuration variables
@@ -121,7 +130,8 @@ Multiple remote receivers can be configured as a list of dict definitions within
 | ESP32-S3      | 192 symbols      | 48 symbols |
 
 - **receive_symbols** (*Optional*, int): Maximum receive length in symbols. On some variants the maximum receive is
-  limited to `rmt_symbols`.
+  limited to `rmt_symbols`. Defaults to `192` on every variant; the receive slot size follows this value, while the
+  longest frame that can be received is limited by `rmt_symbols` where that is lower.
 
 - **filter_symbols** (*Optional*, int): Filter out any data received with a length in symbols less than
   `filter_symbols`. Useful for filtering out short bursts of noise.
@@ -204,6 +214,11 @@ To enable signal demodulation, configure the signal carrier frequency and duty c
 
 - **on_gobox** (*Optional*, [Automation](/automations)): An automation to perform when a
   Go-Box remote code has been decoded. A variable `x` of type <APIStruct text="remote_base::GoboxData" path="remote_base::GoboxData" />
+  is passed to the automation for use in lambdas.
+
+- **on_hob2hood** (*Optional*, [Automation](/automations)): An automation to perform when a
+  Hob2Hood remote code has been decoded. A variable `x` of type
+  <APIStruct text="remote_base::Hob2HoodData" path="remote_base::Hob2HoodData" />
   is passed to the automation for use in lambdas.
 
 - **on_jvc** (*Optional*, [Automation](/automations)): An automation to perform when a
@@ -358,15 +373,15 @@ binary_sensor:
 
 ### Configuration variables
 
-- **receiver_id** (*Optional*, [ID](/guides/configuration-types#id)): The remote receiver to receive the remote code with. Required if
+- **receiver_id** (*Optional*, [ID](/guides/configuration-types/#id)): The remote receiver to receive the remote code with. Required if
   multiple receivers configured.
 
-- All other options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
+- All other options from [Binary Sensor](/components/binary_sensor/#config-binary_sensor).
 
 Remote code selection (exactly one of these has to be included):
 
 - **abbwelcome**: Trigger on a decoded ABB-Welcome code with the given data, see the
-  [transmitter description](/components/remote_transmitter#remote_transmitter-transmit_abbwelcome) for more info.
+  [transmitter description](/components/remote_transmitter/#remote_transmitter-transmit_abbwelcome) for more info.
 
   - **source_address** (**Required**, int): The source address to trigger on.
   - **destination_address** (**Required**, int): The destination address to trigger on.
@@ -385,7 +400,7 @@ Remote code selection (exactly one of these has to be included):
 
   - **address** (**Required**, int): The address to trigger on, see dumper output for more info.
   - **data** (**Required**, 3-35 bytes list): The code to listen for, see
-    [transmitter description](/components/remote_transmitter#remote_transmitter-transmit_aeha) for more info. Usually you only need to copy this
+    [transmitter description](/components/remote_transmitter/#remote_transmitter-transmit_aeha) for more info. Usually you only need to copy this
     directly from the dumper output.
 
 - **beo4**: Trigger on a decoded B&O Beo4 infrared remote code with the given data.
@@ -454,19 +469,30 @@ Remote code selection (exactly one of these has to be included):
 
   - **code** (**Required**, int): The Go-Box code to trigger on, see dumper output for more info.
 
+- **hob2hood**: Trigger on a decoded Hob2Hood remote code with the given data.
+
+  - **command** (**Required**, enum): The Hob2Hood command to trigger on, see dumper output for more info.
+    - `light_off`
+    - `light_on`
+    - `fan_off`
+    - `fan_low`
+    - `fan_medium`
+    - `fan_high`
+    - `fan_max`
+
 - **jvc**: Trigger on a decoded JVC remote code with the given data.
 
   - **data** (**Required**, int): The JVC code to trigger on, see dumper output for more info.
 
 - **keeloq**: Trigger on a decoded KeeLoq RF remote code with the given data.
 
-  - **address** (**Required**, int): The 32-bit ID code to trigger on, see dumper output for more info.
-  - **command** (*Optional*, int): The 8-bit switch/command to listen for. If omitted, will match on any command/button.
+  - **address** (**Required**, int): The 28-bit ID code to trigger on, see dumper output for more info.
+  - **command** (*Optional*, int): The 4-bit switch/command to listen for. If omitted, will match on any command/button.
 
 - **haier**: Trigger on a Haier remote code with the given code.
 
   - **code** (**Required**, 8 or 13-bytes list): The code to listen for, see
-    [transmitter description](/components/remote_transmitter#remote_transmitter-transmit_haier) for more info. Usually you only need to copy
+    [transmitter description](/components/remote_transmitter/#remote_transmitter-transmit_haier) for more info. Usually you only need to copy
     this directly from the dumper output.
 
 - **lg**: Trigger on a decoded LG remote code with the given data.
@@ -483,7 +509,7 @@ Remote code selection (exactly one of these has to be included):
 - **midea**: Trigger on a Midea remote code with the given code.
 
   - **code** (**Required**, 5-bytes list): The code to listen for, see
-    [transmitter description](/components/remote_transmitter#remote_transmitter-transmit_midea) for more info. Usually you only need to copy
+    [transmitter description](/components/remote_transmitter/#remote_transmitter-transmit_midea) for more info. Usually you only need to copy
     first 5 bytes directly from the dumper output.
 
 - **nec**: Trigger on a decoded NEC remote code with the given data.
@@ -511,7 +537,7 @@ Remote code selection (exactly one of these has to be included):
 - **pronto**: Trigger on a Pronto remote code with the given code.
 
   - **data** (**Required**, string): The code to listen for, see
-    [transmitter description](/components/remote_transmitter#remote_transmitter-transmit_pronto) for more info. Usually you only need to copy this
+    [transmitter description](/components/remote_transmitter/#remote_transmitter-transmit_pronto) for more info. Usually you only need to copy this
     directly from the dumper output.
 
   - **delta** (*Optional*, integer): This parameter allows you to manually specify the allowed difference
@@ -520,7 +546,7 @@ Remote code selection (exactly one of these has to be included):
 - **raw**: Trigger on a raw remote code with the given code.
 
   - **code** (**Required**, list): The code to listen for, see
-    [transmitter description](/components/remote_transmitter#remote_transmitter-transmit_raw) for more info. Usually you only need to copy this
+    [transmitter description](/components/remote_transmitter/#remote_transmitter-transmit_raw) for more info. Usually you only need to copy this
     directly from the dumper output.
 
 - **rc5**: Trigger on a decoded RC5 remote code with the given data.
@@ -538,7 +564,7 @@ Remote code selection (exactly one of these has to be included):
   - **code** (**Required**, string): The remote code to listen for, copy this from the dumper output. To ignore a bit
     in the received data, use `x` at that place in the **code**.
 
-  - **protocol** (*Optional*): The RC Switch protocol to use, see [RC Switch Protocol](/components/remote_transmitter#rc-switch-protocol) for
+  - **protocol** (*Optional*): The RC Switch protocol to use, see [RC Switch Protocol](/components/remote_transmitter/#rc-switch-protocol) for
     more info.
 
 - **rc_switch_type_a**: Trigger on a decoded RC Switch Type A remote code with the given data.
@@ -546,7 +572,7 @@ Remote code selection (exactly one of these has to be included):
   - **group** (**Required**, string): The group, binary string.
   - **device** (**Required**, string): The device in the group, binary string.
   - **state** (**Required**, boolean): The on/off state to trigger on.
-  - **protocol** (*Optional*): The RC Switch protocol to use, see [RC Switch Protocol](/components/remote_transmitter#rc-switch-protocol) for
+  - **protocol** (*Optional*): The RC Switch protocol to use, see [RC Switch Protocol](/components/remote_transmitter/#rc-switch-protocol) for
     more info.
 
 - **rc_switch_type_b**: Trigger on a decoded RC Switch Type B remote code with the given data.
@@ -554,7 +580,7 @@ Remote code selection (exactly one of these has to be included):
   - **address** (**Required**, int): The address, int from 1 to 4.
   - **channel** (**Required**, int): The channel, int from 1 to 4.
   - **state** (**Required**, boolean): The on/off state to trigger on.
-  - **protocol** (*Optional*): The RC Switch protocol to use, see [RC Switch Protocol](/components/remote_transmitter#rc-switch-protocol) for
+  - **protocol** (*Optional*): The RC Switch protocol to use, see [RC Switch Protocol](/components/remote_transmitter/#rc-switch-protocol) for
     more info.
 
 - **rc_switch_type_c**: Trigger on a decoded RC Switch Type C remote code with the given data.
@@ -563,7 +589,7 @@ Remote code selection (exactly one of these has to be included):
   - **group** (**Required**, int): The group. Range is 1 to 4.
   - **device** (**Required**, int): The device. Range is 1 to 4.
   - **state** (**Required**, boolean): The on/off state to trigger on.
-  - **protocol** (*Optional*): The RC Switch protocol to use, see [RC Switch Protocol](/components/remote_transmitter#rc-switch-protocol) for
+  - **protocol** (*Optional*): The RC Switch protocol to use, see [RC Switch Protocol](/components/remote_transmitter/#rc-switch-protocol) for
     more info.
 
 - **rc_switch_type_d**: Trigger on a decoded RC Switch Type D remote code with the given data.
@@ -571,7 +597,7 @@ Remote code selection (exactly one of these has to be included):
   - **group** (**Required**, int): The group. Range is 1 to 4.
   - **device** (**Required**, int): The device. Range is 1 to 3.
   - **state** (**Required**, boolean): The on/off state to trigger on.
-  - **protocol** (*Optional*): The RC Switch protocol to use, see [RC Switch Protocol](/components/remote_transmitter#rc-switch-protocol) for
+  - **protocol** (*Optional*): The RC Switch protocol to use, see [RC Switch Protocol](/components/remote_transmitter/#rc-switch-protocol) for
     more info.
 
 - **roomba**: Trigger on a decoded Roomba remote code with the given data.
@@ -607,7 +633,7 @@ Remote code selection (exactly one of these has to be included):
 - **mirage**: Trigger on a Mirage remote code with the given code.
 
   - **code** (**Required**, 14-bytes list): The code to listen for, see
-    [transmitter description](/components/remote_transmitter#remote_transmitter-transmit_mirage) for more info. Usually you only need to copy
+    [transmitter description](/components/remote_transmitter/#remote_transmitter-transmit_mirage) for more info. Usually you only need to copy
     this directly from the dumper output.
 
 - **toto**: Trigger on a decoded Toto remote code with the given data.
@@ -678,8 +704,8 @@ Remote code selection (exactly one of these has to be included):
 ## See Also
 
 - [Remote Transmitter](/components/remote_transmitter/)
-- [Setting up IR Devices](/guides/setting_up_rmt_devices#remote-setting-up-infrared)
-- [Setting up RF Devices](/guides/setting_up_rmt_devices#remote-setting-up-rf)
+- [Setting up IR Devices](/guides/setting_up_rmt_devices/#remote-setting-up-infrared)
+- [Setting up RF Devices](/guides/setting_up_rmt_devices/#remote-setting-up-rf)
 - [RF Bridge Component](/components/rf_bridge/)
 - [RCSwitch](https://github.com/sui77/rc-switch) by [Suat Özgür](https://github.com/sui77)
 - <APIRef text="remote_receiver.h" path="remote/remote_receiver.h" />

@@ -1,0 +1,241 @@
+---
+title: "ESPectre Wi-Fi Motion Detection"
+description: "Detect motion from Wi-Fi channel state information on ESP32 devices."
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `espectre` component uses the [ESPectre SDK](https://espectre.dev/sdk/) to detect motion from Wi-Fi channel
+state information (CSI). Processing runs on the ESP32; no external motion sensor is required.
+
+This component requires [WiFi](/components/wifi/) and an access point. Supported chips are ESP32, ESP32-S2,
+ESP32-S3, ESP32-C3, ESP32-C5, and ESP32-C6. It requires the [ESP-IDF framework](/components/esp32/#esp-idf-framework)
+5.5.3 or newer, or the [Arduino framework](/components/esp32/#arduino-framework) 3.3.7 or newer. ESP32-C5 and
+ESP32-C6 require ESP-IDF, because ESPHome does not support the Arduino framework on these chips.
+The component keeps Wi-Fi power saving off: a `power_save_mode` other than `none` is not applied, and the
+build logs a warning. It also disables Wi-Fi power saving while the device is disconnected from the access
+point, so power use is slightly higher during reconnects.
+
+## Configuration
+
+```yaml
+espectre:
+
+binary_sensor:
+  - platform: espectre
+    motion:
+      name: "Motion"
+```
+
+Only one `espectre` component can use the radio. The component generates traffic to the Wi-Fi gateway
+by default and processes the resulting CSI. Keep the device stationary and the sensing area still during
+Lightweight startup calibration. High Accuracy skips quiet-room calibration but still waits for usable CSI
+and detector warm-up. Motion detection depends on placement, the access point, and the radio environment;
+it does not establish whether a stationary person is present.
+
+On ESP32-C5, the SDK follows the WiFi component's `band_mode`. Start with 2.4 GHz: detection quality on
+5 GHz has not been characterized. The SDK uses a 20 MHz channel width.
+
+The component disables Wi-Fi frame aggregation (AMPDU) in both directions. The radio reports one CSI
+sample per received transmission, so without aggregation more frames carry CSI. This applies to the whole
+firmware and may lower Wi-Fi throughput, so OTA updates, the web server, and audio streaming on the same
+device may be slower. On the original ESP32, the SDK also fixes the device's transmit rate at 6.5 Mbps when
+the access point supports 802.11n.
+
+While the component runs, it pauses [post-connect roaming](/components/wifi/#post-connect-roaming) scans:
+each scan takes the radio off-channel and empties the CSI window. The device still reconnects if it loses
+the access point.
+
+With several access points, set the `bssid` of the one with the strongest signal in the WiFi
+[`networks`](/components/wifi/#connecting-to-multiple-networks) entry; -40 to -70 dBm is a good range.
+The device then connects only to that access point: if it is unavailable, the device does not connect.
+
+If the SDK runtime fails to start or stops with a fault, the component sets its error status, logs the
+fault, and restarts the runtime after 30 seconds. The restarted runtime starts from the default threshold;
+Lightweight detection calibrates again.
+
+### Configuration Variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the component ID.
+- **detection_algorithm** (*Optional*, string): `lightweight` or `high_accuracy`. Defaults to `lightweight`.
+  Lightweight detection calibrates its threshold from the environment and uses less detector CPU and memory.
+  High Accuracy detection uses an on-device neural network with trained weights.
+- **csi_capture_profile** (*Optional*, string): `auto`, `lltf`, or `ht_vht`. Defaults to `auto`, which selects
+  a profile for the chip, band, and traffic source. `lltf` selects the legacy long training field;
+  `ht_vht` selects HT20 or VHT20 according to the Wi-Fi connection.
+- **traffic_generator_mode** (*Optional*, string): `ping`, `dns`, `dns_tcp`, `wifi_raw`, or `external`.
+  Defaults to `ping`. `ping` sends ICMP echo requests. `dns` sends DNS queries over UDP; `dns_tcp` uses TCP.
+  The experimental `wifi_raw` mode sends Wi-Fi Null Data frames to the access point. It is unavailable on
+  ESP32-C6 and requires the `auto` or `lltf` capture profile. `external` sends no traffic: another host sets
+  the pace by sending unicast ICMP echo requests to the device, or UDP datagrams to port 5555 whose payload
+  is the four bytes `F0 9F 91 BB`. The detector expects about 100 packets per second. Broadcast traffic
+  does not give reliable CSI; use unicast or multicast.
+- **traffic_generator_target_ip** (*Optional*, IPv4 address): Destination for generated IP traffic.
+  Defaults to the Wi-Fi gateway. Select a unicast address that responds to the chosen traffic mode.
+  DNS modes require a DNS server on port 53, with TCP support for `dns_tcp`.
+  This option cannot be used with `wifi_raw` or `external`.
+- **csi_traffic_multicast_group** (*Optional*, IPv4 address): Multicast group joined in `external` mode to
+  receive UDP datagrams, in addition to those sent to the device address. Defaults to `239.255.0.1`.
+  An empty string disables the join. Requires `traffic_generator_mode: external`.
+- **motion_on_hits** (*Optional*, int): Consecutive detector evaluations above the threshold required to
+  report motion. Range 1 to 20. Defaults to `4`, about 1 second at the 250 ms evaluation interval.
+- **motion_off_hits** (*Optional*, int): Consecutive detector evaluations below the threshold required to
+  clear motion. Range 1 to 20. Defaults to `3`. Increase `motion_on_hits` if short bursts trigger motion;
+  reduce it if motion is detected too late.
+
+## Binary Sensors
+
+Both binary sensors are optional. Configure at least one per platform entry.
+
+```yaml
+binary_sensor:
+  - platform: espectre
+    motion:
+      name: "Motion"
+    calibrating:
+      name: "Calibrating"
+```
+
+- **espectre_id** (*Optional*, [ID](/guides/configuration-types/#id)): ID of the ESPectre component.
+  Automatically selected when omitted.
+- **motion** (*Optional*): Reports whether the detector detects motion. Its device class is `motion`.
+- **calibrating** (*Optional*): Reports whether calibration is in progress. This is a diagnostic entity.
+
+Both entities support all options from [Binary Sensor](/components/binary_sensor/).
+The motion sensor is unknown while the runtime is warming up, calibrating, or no longer receiving usable CSI;
+this state does not mean that no motion was detected.
+
+## Sensors
+
+Both keys are optional. Configure at least one per platform entry.
+
+```yaml
+sensor:
+  - platform: espectre
+    movement:
+      name: "Movement Score"
+```
+
+- **espectre_id** (*Optional*, [ID](/guides/configuration-types/#id)): ID of the ESPectre component.
+  Automatically selected when omitted.
+- **movement** (*Optional*): The detector's movement score. All options from [Sensor](/components/sensor/).
+  See [Movement Score](#movement-score).
+- **diagnostics** (*Optional*): Diagnostic sensors. See [Diagnostic Sensors](#diagnostic-sensors).
+
+### Movement Score
+
+The movement score ranges from 0 to 1. Scores are specific to the selected algorithm;
+they cannot be compared directly between algorithms. The score publishes after every detector evaluation,
+by default every 250 ms, while the motion binary sensor publishes only when its state changes. If you only
+need motion, leave out the movement score. Otherwise, use [sensor filters](/components/sensor/#sensor-filters)
+such as `throttle` or `delta` to send fewer values.
+
+The movement sensor has no `update_interval`: new values come from detector evaluations. It publishes an
+unknown value when sensing becomes unavailable.
+
+### Diagnostic Sensors
+
+Diagnostic sensors help check the traffic source and CSI capture. They are diagnostic entities, and all
+of them publish together from the same one-second SDK sample.
+
+By default the diagnostic sensors publish only on request, so they stay unknown until something asks for an
+update. Add a button that runs the [`component.update`](/automations/actions/#component-update-action) action
+with the `id` of the diagnostics, as in the example below, or set `update_interval` to publish periodically.
+
+```yaml
+sensor:
+  - platform: espectre
+    diagnostics:
+      id: espectre_diagnostics
+      generator_rate:
+        name: "Generator Rate"
+      traffic_tx_rate:
+        name: "Traffic TX Rate"
+      traffic_rx_rate:
+        name: "Traffic RX Rate"
+      csi_accepted_rate:
+        name: "CSI Accepted Rate"
+      csi_occupancy:
+        name: "CSI Temporal Occupancy"
+
+button:
+  - platform: template
+    name: "Refresh Diagnostics"
+    entity_category: diagnostic
+    on_press:
+      - component.update: espectre_diagnostics
+```
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): ID of the diagnostic sensors group, used by
+  `component.update`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval to publish the
+  diagnostic sensors. Defaults to `never`. The SDK computes a new sample every second, so shorter intervals
+  repeat values.
+- **generator_rate** (*Optional*): Packets per second sent by the internal traffic generator, including
+  `wifi_raw` frames. The rate is 0 in `external` mode. Unit `pps`, one decimal place.
+- **traffic_tx_rate** (*Optional*): Packets per second that the Wi-Fi driver accepted for transmission
+  from the station, including traffic not sent by the generator. Unit `pps`, one decimal place.
+- **traffic_rx_rate** (*Optional*): Packets per second that the Wi-Fi driver delivered to the station.
+  Unit `pps`, one decimal place.
+- **csi_accepted_rate** (*Optional*): CSI packets per second that passed capture validation.
+  Unit `pps`, one decimal place.
+- **csi_occupancy** (*Optional*): Percentage of time slots in the detector window that contain CSI.
+  Detection needs at least 70%. Unit `%`, no decimal places.
+
+Configure at least one sensor under `diagnostics`. Each sensor supports all options from
+[Sensor](/components/sensor/). The sensors publish an unknown value while the SDK runtime is not running.
+
+The component does not report signal strength; use the [WiFi Signal Sensor](/components/sensor/wifi_signal/)
+for RSSI.
+
+## Traffic Source Select
+
+```yaml
+select:
+  - platform: espectre
+    name: "CSI Traffic Source"
+```
+
+The select changes the traffic generator mode at runtime. Its options are the
+[traffic_generator_mode](#configuration-variables) values: `ping`, `dns`, `dns_tcp`, `wifi_raw`, and `external`.
+`wifi_raw` is not offered on ESP32-C6 or with `csi_capture_profile: ht_vht`. This is a configuration entity.
+
+The selected mode is saved and restored after a reboot. Without a saved mode, the select starts on
+`traffic_generator_mode`. Changing `traffic_generator_mode` in the configuration discards the saved mode.
+If the SDK rejects a mode, the component logs a warning and the select keeps the active mode.
+`traffic_generator_target_ip` applies only to `ping`, `dns`, and `dns_tcp`. Changing the mode restarts
+Lightweight calibration; High Accuracy keeps its threshold.
+
+- **espectre_id** (*Optional*, [ID](/guides/configuration-types/#id)): ID of the ESPectre component.
+  Automatically selected when omitted.
+- All options from [Select](/components/select/).
+
+## Button
+
+The button requests recalibration. It is a configuration entity.
+
+```yaml
+button:
+  - platform: espectre
+    name: "Recalibrate"
+```
+
+- **espectre_id** (*Optional*, [ID](/guides/configuration-types/#id)): ID of the ESPectre component.
+  Automatically selected when omitted.
+- All options from [Button](/components/button/).
+
+Keep the sensing area still after pressing Recalibrate until calibration finishes. Lightweight detection
+collects about 10 seconds of quiet input and computes a new threshold; brief movement extends calibration up
+to 30 seconds. High Accuracy detection restores the model's default threshold without an environmental
+threshold calibration. A request made while calibration is already running is ignored. If calibration fails,
+the SDK retains the previous threshold and logs a warning. Until the first calibration succeeds, a failure
+also sets the component's warning status.
+
+Recalibrate after changing the room layout. After moving the device, restart it instead.
+
+## See Also
+
+- [WiFi](/components/wifi/)
+- [ESP32](/components/esp32/)
+- [ESPectre](https://github.com/francescopace/espectre)
+- <APIRef text="espectre.h" path="espectre/espectre.h" />
