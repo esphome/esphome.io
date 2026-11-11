@@ -89,14 +89,16 @@ themselves. That requires:
 #### Signed Firmware
 
 A device that ships with signed firmware and has no network OTA endpoint may leave the `esphome` OTA platform out of
-the configuration it ships. Such a device is updated over USB instead. Every one of these must hold:
+the configuration it ships. The device accepts no firmware uploads over the network, so a user who takes control
+installs their first build over USB. Manufacturer updates still use the
+[`http_request` update platform](#updates) and are signed. Every one of these must hold:
 
 - The configuration enables
   [`signed_ota_verification`](/components/esp32/#signed-ota-verification) under `esp32:` → `framework:` →
   `advanced:`. The review detects signed firmware from the published YAML.
 - The configuration has no other network OTA endpoint. The [`web_server` OTA platform](/components/ota/web_server/)
   does not qualify for this exception.
-- The configuration contains [`improv_serial`](/components/improv_serial/). A device without network OTA is updated
+- The configuration contains [`improv_serial`](/components/improv_serial/). A device without network OTA is flashed
   over USB, so it has a USB port, and a device with a USB port needs `improv_serial`. This only marks the device as
   having USB; it does not control flashing.
 - The device can be flashed over USB without any keys and without opening the case. A human reviewer confirms this, as
