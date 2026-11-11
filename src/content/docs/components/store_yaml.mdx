@@ -22,8 +22,9 @@ store_yaml:
 `store_yaml` depends on the [Native API](/components/api/).
 
 Because the embedded YAML may contain network credentials, `store_yaml`
-requires [API encryption](/components/api/#configuration-variables) to be
-configured. For isolated lab setups you can set `allow_unencrypted: true` to
+requires an [API encryption](/components/api/#configuration-variables) `key`
+in the configuration. A key that is only set later, from Home Assistant, is
+not enough. For isolated lab setups you can set `allow_unencrypted: true` to
 override this after acknowledging the risk.
 
 ## Configuration Variables
@@ -38,7 +39,8 @@ override this after acknowledging the risk.
   get a name derived from where they appear (for example `wifi_password`).
   The `secrets.yaml` content is replaced with a skeleton listing every
   referenced key. To make a recovered configuration flashable, fill in the
-  skeleton's values; nothing else needs to change. Because the files are
+  skeleton's values and restore the files listed under
+  [What Is Not Stored](#what-is-not-stored). Because the files are
   re-generated, comments and formatting are not preserved in this mode.
 
   With `include_secrets: true`, every file, including `secrets.yaml`, is
@@ -84,6 +86,10 @@ recovered files lists them so you know what to restore:
   again to complete the configuration.
 - Directories that were symbolic links. The note lists each link and its
   target so you can recreate them.
+
+Only YAML files are stored. Other files the configuration uses, such as C++
+files under `esphome: includes:`, fonts and images, are not stored and not
+listed in the note, so keep your own backup of them.
 
 ## Recovering the Configuration
 
