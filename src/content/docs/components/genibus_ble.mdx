@@ -46,14 +46,6 @@ The pump only answers on an encrypted link. When the BLE Client connects, this c
 connection counts as up once ESPHome has subscribed to the GENIbus notifications of the pump. Until then, the bus
 sends no requests.
 
-If pairing fails, the log shows a warning and the component sets a warning status. Allow pairing on the pump, then
-let the BLE Client connect again. How to allow pairing depends on the pump model; see the manual of your pump.
-
-> [!WARNING]
-> Do not hold buttons on the pump down for a long time while you try to pair. On a Grundfos ALPHA3, holding the
-> Connect button for 2 seconds or more changes the control mode of the pump. If you did this by accident, check the
-> control mode and set it back.
-
 If the pump does not offer the GENIbus characteristic, or ESPHome cannot subscribe to it, the component logs a
 warning and disconnects. This frees the pump's connection for other devices. The BLE Client connects again later if
 `auto_connect` is on.
@@ -62,22 +54,35 @@ warning and disconnects. This frees the pump's connection for other devices. The
 > The pump allows only one Bluetooth connection at a time. While ESPHome is connected, the Grundfos GO app cannot
 > connect to the pump. To use the app, turn off the ESP32 or disconnect the BLE Client first.
 
-## Known Issue: Reconnects Fail With ESP-IDF 5.5.6
+## Troubleshooting
+
+### Pairing Failed
+
+If pairing fails, the log shows the warning `Pairing failed` and the component sets a warning status.
+
+1. Allow pairing on the pump. How to do this depends on the pump model; see the manual of your pump.
+1. Let the BLE Client connect again, for example by restarting the ESP32.
 
 > [!WARNING]
-> ESP-IDF 5.5.6 has a bonding bug. After the first disconnect, every new connection to the pump fails with
-> `auth fail` until the ESP32 restarts. See [esphome#21880](https://github.com/esphome/esphome/issues/21880).
->
-> Until this is fixed, you can use ESP-IDF 5.5.5 instead:
->
-> ```yaml
-> esp32:
->   framework:
->     type: esp-idf
->     version: 5.5.5
-> ```
->
-> Remove the `version` line again once a fixed ESP-IDF version is available.
+> Do not hold buttons on the pump down for a long time while you try to pair. On a Grundfos ALPHA3, holding the
+> Connect button for 2 seconds or more changes the control mode of the pump. If this happens, check the control mode
+> and set it back.
+
+### Reconnects Fail Until Reboot (ESP-IDF 5.5.6)
+
+The first connection works, but after a disconnect every new connection fails with `auth fail` until the ESP32
+restarts. This is a bonding bug in ESP-IDF 5.5.6, see
+[esphome#21880](https://github.com/esphome/esphome/issues/21880). Until it is fixed, you can use ESP-IDF 5.5.5
+instead:
+
+```yaml
+esp32:
+  framework:
+    type: esp-idf
+    version: 5.5.5
+```
+
+Remove the `version` line again once a fixed ESP-IDF version is available.
 
 ## See Also
 
