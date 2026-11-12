@@ -537,12 +537,12 @@ start the work at the right time, use it instead of waiting:
 
 | Instead of | Use |
 | --- | --- |
-| `wait_until: api.connected` | the `on_client_connected` trigger of the [API](/components/api/) (runs on every connection) |
+| `wait_until: api.connected` | the `on_client_connected` trigger of the [API](/components/api/) |
 | `wait_until: wifi.connected` | the `on_connect` trigger of [Wi-Fi](/components/wifi/) |
 | `wait_until` a binary sensor | that binary sensor's `on_press`, `on_release` or `on_state` trigger |
 | `delay` after `on_press` to ignore short presses | the `delayed_on` [filter](/components/binary_sensor/#delayed_on) |
 | `delay` between light brightness steps | `transition_length` on `light.turn_on` |
-| `while` with a `delay` that polls a value | an [`interval`](/components/interval/) or the component's `update_interval` |
+| `while` with a `delay` that polls a value | an [`interval`](/components/interval/) or `update_interval` |
 | `script.wait` followed by more actions | the same actions at the end of the script |
 
 For example, this waits two seconds on every press, then checks whether the door is still open:
@@ -561,8 +561,8 @@ binary_sensor:
             - switch.turn_on: alarm
 ```
 
-This does the same with a filter, and the automation never waits. The difference is that the sensor itself
-only turns on after two seconds:
+This uses a filter instead, and the automation never waits. The sensor itself turns on only after it has been on
+without a break for two seconds, so a door that closes and opens again starts the two seconds over:
 
 ```yaml
 binary_sensor:
