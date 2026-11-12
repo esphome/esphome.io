@@ -38,7 +38,8 @@ tflite_micro_runtime:
 
 All options are listed per instance below. The helper libraries loaded automatically by this component
 (`tflite_model_source`, `tflite_op_processor`, `tflite_memory_handler`, `tflite_output_processor`,
-`tflite_model_loader` and `tflite_model_debug`) have no configuration variables of their own.
+`tflite_model_loader` and `tflite_model_debug`) have their own pages, linked under [See Also](#see-also);
+none of them needs any configuration for an entry configured here.
 
 ### Common Configuration Variables
 
@@ -52,13 +53,14 @@ All options are listed per instance below. The helper libraries loaded automatic
   - A `github://` shorthand URL (e.g. `github://user/repo/path/to/model.tflite`).
   - An `http://` or `https://` URL pointing to a `.tflite` file, or to a JSON manifest that names it.
 - **tensor_arena_size** (*Optional*, bytes): The tensor arena size in bytes. Supports suffixed strings such
-  as `"110KB"`, `"2MB"`, or raw bytes. If omitted, the size is auto-detected from the `.txt` report file or
-  defaults to 100KB. It is where the arena probe starts: the model is loaded with the smallest arena it fits
-  in, so the boot log reports this size, the size the load asked the allocator for after probing, and the
-  bytes the tensors actually occupy. A probe result above or below this size is logged as a warning.
-- **debug** (*Optional*, boolean): Enable debug logging and diagnostic features. Defaults to `false`. When
-  enabled, the `DEBUG_TFLITE_MICRO_HELPER` define is set, compiling in the loader diagnostics, and this
-  instance reports the model architecture, its input and output tensors, and the memory status.
+  as `"110KB"`, `"2MB"`, or raw bytes. If omitted, the size comes from the model's `.txt` report when it has
+  one, and otherwise from an estimate computed from the model's tensors while the configuration is generated.
+  Either way it is only where the arena probe starts: the model is loaded with the smallest arena it fits in,
+  so the boot log reports this size, the size the load asked the allocator for after probing, and the bytes
+  the tensors actually occupy. A probe result above or below this size is logged as a warning.
+- **debug** (*Optional*, boolean): Enable debug logging and diagnostic features for this instance. Defaults to
+  `false`. The diagnostics are always compiled in; this flag turns them on for this instance, so it reports
+  the model architecture, its input and output tensors, and the memory status.
 
 ### Image Model Configuration Variables
 
@@ -76,14 +78,18 @@ Most of these values are auto-detected from the `.txt` report file (see
 - **input_height** (*Optional*, integer): Input image height in pixels. Same rule as `input_width`.
 - **input_order** (*Optional*, string): Channel order for preprocessing. One of `"RGB"`, `"BGR"`, or `"GRAY"`.
   Defaults to `"RGB"`.
-- **output_processing** (*Optional*, string): Output post-processing strategy. One of:
-  - `"direct_class"` — Use raw output tensor for direct class selection.
-  - `"softmax"` — Apply softmax normalization.
-  - `"argmax"` — Return the index of the maximum value.
-  - `"logits"` — Return raw logits.
-  - `"auto_detect"` — Automatically detect the best strategy.
+- **output_processing** (*Optional*, string): How the raw output tensor is turned into a class and a
+  confidence. One of:
+  - `"argmax"` — The tensor holds scores or probabilities; the largest entry is the class and its own value is
+    the confidence.
+  - `"softmax"` — The tensor holds logits; the confidence is the softmax probability of the winning class.
+  - `"qat_quantized"` — The tensor holds dequantized probabilities; the confidence is the winning probability.
+  - `"auto_detect"` — The shape of the output is derived from the data itself.
 
-  Defaults to `"direct_class"` when a softmax output is present, or `"softmax"` otherwise.
+  When the `.txt` report supplies it, a model whose report contains a `SOFTMAX` operator is read as `argmax`
+  (it already outputs probabilities) and the rest as `softmax`. With neither the YAML nor a report naming a
+  mode, it defaults to `argmax`. The names `direct_class`, `logits`, `logits_jomjol`, `softmax_jomjol` and
+  `experimental_scale` from older configurations still validate; they map onto `argmax` or `softmax`.
 - **scale_factor** (*Optional*, float): Output scale factor for multi-class models. Range `0.1`–`100.0`.
   Defaults to `1.0`.
 - **normalize** (*Optional*, boolean): Normalize input pixels to `[0.0, 1.0]`. Defaults to `false`.
@@ -145,9 +151,9 @@ report file is available next to the model.
 
 This component automatically adds the following ESP-IDF components:
 
-- **`espressif/esp-tflite-micro`** (version 1.3.7): The TensorFlow Lite Micro runtime ported and maintained by
+- **`espressif/esp-tflite-micro`** (version 1.4.1): The TensorFlow Lite Micro runtime ported and maintained by
   Espressif for ESP32-series chips.
-- **`espressif/esp-nn`** (version 1.2.3): Espressif's optimized neural network kernels providing hardware
+- **`espressif/esp-nn`** (version 1.5.0): Espressif's optimized neural network kernels providing hardware
   acceleration for common TFLite operators.
 
 When `model_type: audio` is set, the following additional component is added:
@@ -164,9 +170,9 @@ Build flags:
 
 Global defines (`cg.add_define()`, written to the generated `defines.h`):
 
-- **`TFLITE_MICRO_MAX_OPERATORS`**: Number of model operations plus a safety margin, auto-detected from the
-  `.txt` report file of every configured model (largest value across instances, or `30` when no report is
-  available).
+- **`TFLITE_MICRO_MAX_OPERATORS`**: The number of distinct operators of the widest configured model, which is
+  exactly the number of resolver slots the build needs. It is read from each model's `.tflite` file, not from a
+  report.
 - **`USE_TFLITE_MICRO_HELPER`**: Compiles the TFLite Micro helper sources.
 
 ## Usage as a Dependency
@@ -202,19 +208,20 @@ to show the API; a component configured through YAML receives the instance set u
 
 ### Model Report File (`.txt`)
 
-Consumer components load a `.tflite` model file by referencing its path in their YAML configuration. The model
-file must be accompanied by a `.txt` report file containing the operator list, tensor dimensions, and metadata
-for auto-detection of configuration values. When present, the report file enables automatic configuration of:
+A model is a `.tflite` file, and everything that can be read from it is read from it: the operators it uses and
+an estimate of the tensor arena it needs come from the flatbuffer, so a model works with nothing else next to
+it. A companion `.txt` report is optional and adds the values that only the report carries:
 
-- Input dimensions (`input_width`, `input_height`, `input_channels`)
+- Input dimensions (`input_width`, `input_height`, `input_channels`) — without a report these must be set for
+  `model_type: image`
 - Input data type (`uint8` or `float32`)
-- Recommended tensor arena size
-- Number of model operations (for operator resolver sizing)
+- Recommended tensor arena size, used instead of the estimate
 - Output processing strategy
+- The audio tuning values, for `model_type: audio`
 
-Generate this report using `regenerate_txt_reports.py` from the
-[esphome_ai_component](https://github.com/nliaudat/esphome_ai_component) repository. If no `.txt` report is
-present, the tensor arena size and other parameters must be set manually in the YAML configuration.
+Generate the report with `regenerate_txt_reports.py` from the
+[esphome_ai_component](https://github.com/nliaudat/esphome_ai_component) repository. The values it supplies are
+validated like the YAML options, and a value given in YAML wins over the report.
 
 > [!IMPORTANT]
 > Models using hybrid quantization (float32 I/O + int8 weights) are **not** supported by TFLite Micro on ESP32.
@@ -247,17 +254,18 @@ register, in two forms: `TFLM_OP_AVAILABLE(BuiltinOperator, AddMethod)` for supp
 `TFLM_OP_UNAVAILABLE(BuiltinOperator)` for the rest. The code generator and the device runtime both read that
 table, which keeps the supported operator set in a single place.
 
-- **Build time**: `TFLITE_MICRO_MAX_OPERATORS` is sized automatically from the `.txt` report of every configured model
-  (operator count plus a safety margin, taking the largest value across instances, or `30` when no report is
-  available), so a multi-instance configuration always has enough resolver capacity. When a `.txt` report is
-  present, the code generator also compares the operators it lists with the table and stops config generation,
-  before anything is compiled or flashed, if the model needs an operator that is not available.
+- **Build time**: every configured model's operator codes are read from its `.tflite` file. The resolver is sized
+  to the widest model's distinct operator count, which is exact: one slot is registered per distinct operator
+  code, so there is no margin to spare. The operators are compared with the table as well, and a model that
+  needs one the pinned `esp-tflite-micro` cannot register stops configuration before anything is compiled or
+  flashed. The same set of kernels is compiled in for the whole build through the `TFLM_OP_ENABLED_*` flags, so
+  a multi-instance configuration contains every kernel any of its models needs.
 - **Model loading**: the helper reads the operators the model uses from its flatbuffer operator codes and
   registers only that set through `OpResolverManager`, which maps each operator through the table to the
   matching `Add<Operator>()` method of `MicroMutableOpResolver`. A model that uses few operators therefore
   registers few of them.
 
-The table is verified against `esp-tflite-micro` 1.3.7 and covers operators such as:
+The table is verified against `esp-tflite-micro` 1.4.1 and covers operators such as:
 
 - **Core NN ops**: `CONV_2D`, `DEPTHWISE_CONV_2D`, `FULLY_CONNECTED`, `SOFTMAX`, `AVERAGE_POOL_2D`,
   `MAX_POOL_2D`, `L2_NORMALIZATION`, `UNIDIRECTIONAL_SEQUENCE_LSTM`.
@@ -277,14 +285,14 @@ The table is verified against `esp-tflite-micro` 1.3.7 and covers operators such
 Some operators are shipped as **conditional entries** (`TFLM_OP_CONDITIONAL`): the table names the
 `Add<Operator>()` method they need and `register_ops()` checks for it with `if constexpr`, so the code also
 builds against an `esp-tflite-micro` release that lacks the method (the operator is then reported as
-unsupported instead of failing to compile). In the pinned `esp-tflite-micro` 1.3.7 this covers
+unsupported instead of failing to compile). In the pinned `esp-tflite-micro` 1.4.1 this covers
 `DYNAMIC_UPDATE_SLICE`, `REDUCE_ALL`, `REDUCE_MIN` and `REVERSE_V2`, and the build-time operator check accepts
 them.
 
 Operators marked unavailable in the table (for example `BIDIRECTIONAL_SEQUENCE_LSTM`, `WHERE`, `SELECT` or
-`REDUCE_PROD`) are logged as warnings and cause model loading to fail with a message naming the operator. This
-runtime check is also the safety net for models that ship without a `.txt` report, for which the build-time
-check is skipped.
+`REDUCE_PROD`) are rejected while the configuration is validated, so such a model stops the build before
+anything is flashed. If one still reaches the device, the load logs the reason and fails with a message naming
+the operator.
 
 ## Memory Management
 
@@ -347,7 +355,7 @@ struct ModelSpec {
 struct ModelConfig {
   std::string description;
   std::string tensor_arena_size;    // Size string e.g. "110KB", "2MB", "51200"
-  std::string output_processing;    // Processing strategy: "direct_class", "softmax", etc.
+  std::string output_processing;    // Processing mode: "argmax", "softmax", "qat_quantized" or "auto_detect"
   float scale_factor{1.0f};
   std::string input_type;           // "uint8" or "float32"
   int input_channels{3};
@@ -503,11 +511,10 @@ if (!tflite.load_model()) {
 
 ## Debug Features
 
-When `debug: true` is set in the configuration, the `DEBUG_TFLITE_MICRO_HELPER` preprocessor define is
-activated, enabling:
+When `debug: true` is set on an instance, its diagnostics are turned on at run time; the code that implements
+them is compiled in whenever the component is used, so a build without it behaves the same, it just stays
+quiet. The diagnostics are:
 
-- **CRC32 Model Verification**: The `ModelHandler::verify_model_crc()` method computes and checks the model
-  file CRC32 to detect data corruption. CRC32 is computed from the model binary and stored per-instance.
 - **Model Architecture Inspection**: `debug_model_architecture()` logs operator types, tensor shapes, and
   quantization parameters.
 - **Input/Output Analysis**: Tensor data statistics (min, max, mean), quantization details, and output
@@ -520,8 +527,17 @@ activated, enabling:
 - **Watchdog Feeding**: `feed_watchdog()` is called periodically during long debug operations to prevent
   task watchdog timeouts on ESP32.
 
+Model data integrity is not one of these: the CRC32 is computed at configuration time and verified on every
+load, whatever `debug:` is set to.
+
 ## See Also
 
+- [TFLite Model Source](/components/tflite_model_source/) — `model:` resolution and `.txt` report parsing
+- [TFLite Op Processor](/components/tflite_op_processor/) — operator table and resolver sizing
+- [TFLite Memory Handler](/components/tflite_memory_handler/) — PSRAM-aware arena allocation and probing
+- [TFLite Output Processor](/components/tflite_output_processor/) — how the output tensor becomes a class
+- [TFLite Model Loader](/components/tflite_model_loader/) — interpreter, CRC32 verification and `ModelHandler`
+- [TFLite Model Debug](/components/tflite_model_debug/) — the diagnostics behind `debug:`
 - [ESP32 Component](/components/esp32/)
 - [PSRAM Component](/components/psram/)
 - [TensorFlow Lite Micro](https://www.tensorflow.org/lite/micro)
