@@ -43,8 +43,9 @@ The response timeout of this transport is 1 second, and the quiet period after a
 ## Connection and Pairing
 
 The pump only answers on an encrypted link. When the BLE Client connects, this component starts pairing. The
-connection counts as up once ESPHome has subscribed to the GENIbus notifications of the pump. Until then, the bus
-sends no requests.
+connection counts as up 500 milliseconds after ESPHome has subscribed to the GENIbus notifications of the pump.
+The pump can drop a request that arrives right after the subscription, so the component waits before the first
+request. Until then, the bus sends no requests. You cannot change this wait.
 
 If the pump does not offer the GENIbus characteristic, or ESPHome cannot subscribe to it, the component logs a
 warning and disconnects. This frees the pump's connection for other devices. The BLE Client connects again later if
