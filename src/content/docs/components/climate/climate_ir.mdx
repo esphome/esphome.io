@@ -62,29 +62,38 @@ climate:
 
 ## Configuration Variables
 
-- **sensor** (*Optional*, [ID](/guides/configuration-types#id)): The sensor that is used to measure the ambient
+- **sensor** (*Optional*, [ID](/guides/configuration-types/#id)): The sensor that is used to measure the ambient
   temperature. This is only for reporting the current temperature in the frontend.
-- **humidity_sensor** (*Optional*, [ID](/guides/configuration-types#id)): The sensor that is used to measure the ambient
+- **humidity_sensor** (*Optional*, [ID](/guides/configuration-types/#id)): The sensor that is used to measure the ambient
   humidity. This is only for reporting the current humidity in the frontend.
 
 - **supports_cool** (*Optional*, boolean): Enables setting cooling mode for this climate device. Defaults to `true`.
 - **supports_heat** (*Optional*, boolean): Enables setting heating mode for this climate device. Defaults to `true`.
-- **receiver_id** (*Optional*, [ID](/guides/configuration-types#id)): The id of the remote_receiver if this platform supports
+- **supports_heat_cool** (*Optional*, boolean): Enables setting heat/cool mode for this climate device. Most remotes
+  label this mode "auto", since the unit switches between heating and cooling on its own. When not set, it is enabled
+  automatically only if both `supports_cool` and `supports_heat` are enabled. Set it to `true` to advertise the mode
+  regardless (e.g. cool-only units that still expose an auto mode), or to `false` to hide it even on units that
+  support both heating and cooling but have no usable auto mode.
+- **receiver_id** (*Optional*, [ID](/guides/configuration-types/#id)): The id of the remote_receiver if this platform supports
   receiver. see: [Using a Receiver](#ir-receiver_id).
 
-- All other options from [Climate](/components/climate#config-climate).
+- All other options from [Climate](/components/climate/#config-climate).
+
+> [!NOTE]
+> Older versions offered the heat/cool mode on every device. If `supports_cool` or `supports_heat` is set to `false`
+> and you still use this mode (for example in automations or voice commands), add `supports_heat_cool: true` to keep it.
 
 ### Advanced Options
 
-- **transmitter_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the remote transmitter.
+- **transmitter_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the remote transmitter.
 
 ### `climate_ir_lg`
 
-- **header_high** (*Optional*, [Time](/guides/configuration-types#time)): time for the high part of the header for the LG protocol. Defaults to `8000us`
-- **header_low** (*Optional*, [Time](/guides/configuration-types#time)): time for the low part of the header for the LG protocol. Defaults to `4000us`
-- **bit_high** (*Optional*, [Time](/guides/configuration-types#time)): time for the high part of any bit in the LG protocol. Defaults to `600us`
-- **bit_one_low** (*Optional*, [Time](/guides/configuration-types#time)): time for the low part of a '1' bit in the LG protocol. Defaults to `1600us`
-- **bit_zero_low** (*Optional*, [Time](/guides/configuration-types#time)): time for the low part of a '0' bit in the LG protocol. Defaults to `550us`
+- **header_high** (*Optional*, [Time](/guides/configuration-types/#time)): time for the high part of the header for the LG protocol. Defaults to `8000us`
+- **header_low** (*Optional*, [Time](/guides/configuration-types/#time)): time for the low part of the header for the LG protocol. Defaults to `4000us`
+- **bit_high** (*Optional*, [Time](/guides/configuration-types/#time)): time for the high part of any bit in the LG protocol. Defaults to `600us`
+- **bit_one_low** (*Optional*, [Time](/guides/configuration-types/#time)): time for the low part of a '1' bit in the LG protocol. Defaults to `1600us`
+- **bit_zero_low** (*Optional*, [Time](/guides/configuration-types/#time)): time for the low part of a '0' bit in the LG protocol. Defaults to `550us`
 - **advanced_commands_support** (*Optional*, boolean): enables an advanced control mode for newer units, allowing temperature regulation in `Heat/Cool` mode and vertical airflow adjustment.  Only up and down swing are supported.  The 6 fixed position settings are treated as off.  Swing mode is remembered after powering off as well. Defaults to `false`.
 
 ```yaml
@@ -121,7 +130,7 @@ The `delonghi` climate currently supports the protocol used by some Delonghi por
 
 ### `daikin_arc`
 
-The Daikin ARC remotes (`daikin_arc` climate, `daikin_arc417`, `daikin_arc480` protocols of [Arduino-HeatpumpIR](#heatpumpir)) are used by the japanese model of Daikin.
+The Daikin ARC remotes (`daikin_arc` climate, `daikin_arc417`, `daikin_arc480` protocols of [Arduino-HeatpumpIR](#heatpumpir)) are used by the Japanese model of Daikin.
 
 <span id="gree_ir"></span>
 
@@ -149,11 +158,11 @@ climate:
 
 Models `yan`, `yaa`, `yac` and `yac1fb9` support a couple of additional features which can be controlled with switches:
 
-- **gree_id** (**Required**, [ID](/guides/configuration-types#id)): Specify the ID of the `gree` climate to which these swicthes should belong.
-- **light** (*Optional*, [Switch](/components/switch#config-switch)): To turn off indoor unit display/LED at night for complete room darkness.
-- **turbo** (*Optional*, [Switch](/components/switch#config-switch)): For maximum fan speed and fastest results.
-- **health** (*Optional*, [Switch](/components/switch#config-switch)): Removal of dust and germs from the environment by ionizing the air flowing through the blades.
-- **xfan** (*Optional*, [Switch](/components/switch#config-switch)): Prevention of excess moisture in the machine that cause mold, mildew, and unpleasant odors. Indoor fan will keep running for short period after turning turn off the AC, to dry the blades.
+- **gree_id** (**Required**, [ID](/guides/configuration-types/#id)): Specify the ID of the `gree` climate to which these switches should belong.
+- **light** (*Optional*, [Switch](/components/switch/#config-switch)): To turn off indoor unit display/LED at night for complete room darkness.
+- **turbo** (*Optional*, [Switch](/components/switch/#config-switch)): For maximum fan speed and fastest results.
+- **health** (*Optional*, [Switch](/components/switch/#config-switch)): Removal of dust and germs from the environment by ionizing the air flowing through the blades.
+- **xfan** (*Optional*, [Switch](/components/switch/#config-switch)): Prevention of excess moisture in the machine that cause mold, mildew, and unpleasant odors. Indoor fan will keep running for short period after turning turn off the AC, to dry the blades.
 
 ```yaml
 # Example configuration entry for switches of the climate
@@ -186,7 +195,7 @@ climate:
 ```
 
 > [!NOTE]
-> - See [Transmit Midea](/components/remote_transmitter#remote_transmitter-transmit_midea) to send custom commands, including Follow Me mode.
+> - See [Transmit Midea](/components/remote_transmitter/#remote_transmitter-transmit_midea) to send custom commands, including Follow Me mode.
 > - See [Toshiba](#toshiba) below if you are looking for compatibility with Midea model MAP14HS1TBL or similar.
 
 ### `mitsubishi`
@@ -196,21 +205,17 @@ climate:
 
 - **set_fan_mode** (*Optional*, string): Select the fan modes desired or that are supported on your remote. Defaults to `3levels`
 
-  - Options are: `3levels`, `4levels`, `quiet_4levels`.
-
-    - `3levels`  ; Low [fan speed 1], Medium [2], High [3]
-    - `4levels`  ; Low [1], Middle [2], Medium [3], High [4]
-    - `quiet_4levels`  ; Low [1], Middle [2], Medium [3], High [4], Quiet [5]
+  - `3levels`: Low [fan speed 1], Medium [2], High [3]
+  - `4levels`: Low [1], Middle [2], Medium [3], High [4]
+  - `quiet_4levels`: Low [1], Middle [2], Medium [3], High [4], Quiet [5]
 
 - **supports_dry** (*Optional*, boolean): Enables setting dry mode for this unit. Defaults to `false`.
 - **supports_fan_only** (*Optional*, boolean): Enables setting fan only mode for this unit. Confirm that mode is supported on your remote. Defaults to `false`.
 
-- **horizontal_default** (*Optional*, string): What to default to when the AC unit's horizontal direction is *not* set to swing. Defaults to `middle`.
-
-  - Options are: `left`, `middle-left`, `middle`, `middle-right`, `right`, `auto`
-- **vertical_default** (*Optional*, string): What to default to when the AC unit's vertical direction is *not* set to swing. Defaults to `middle`.
-
-  - Options are: `down`, `middle-down`, `middle`, `middle-up`, `up`, `auto`
+- **horizontal_default** (*Optional*, string): What to default to when the AC unit's horizontal direction is *not* set to swing.
+  One of `left`, `middle-left`, `middle`, `middle-right`, `right`, `auto`. Defaults to `middle`.
+- **vertical_default** (*Optional*, string): What to default to when the AC unit's vertical direction is *not* set to swing.
+  One of `down`, `middle-down`, `middle`, `middle-up`, `up`, `auto`. Defaults to `middle`.
 
 > [!NOTE]
 > - This climate IR component is also known to work with some Stiebel Eltron Units. It has been tested with Stiebel Eltron IR-Remote `KM07F` and unit `ACW 25 i`
@@ -289,7 +294,7 @@ climate:
 
 ### `zhlt01`
 
-The `zhlt01` climate and protocol, based on the ZH/LT-01 remote controller, is used with many locally branded airconditioners, like: Eurom, Chigo, Tristar, Tecnomaster, Elgin, Geant, Tekno, Topair, Proma, Sumikura, JBS, Turbo Air, Nakatomy, Celestial Air, Ager, Blueway, Airlux, etc.
+The `zhlt01` climate and protocol, based on the ZH/LT-01 remote controller, is used with many locally branded air conditioners, like: Eurom, Chigo, Tristar, Tecnomaster, Elgin, Geant, Tekno, Topair, Proma, Sumikura, JBS, Turbo Air, Nakatomy, Celestial Air, Ager, Blueway, Airlux, etc.
 
 <span id="ir-receiver_id"></span>
 
@@ -336,7 +341,7 @@ This platform utilises the library's generic one-size-fits-all API, which might 
 
 Additional configuration must be specified for this platform:
 
-- **protocol** (**Required**, string): Choose one of Arduino-HeatpumpIR's supported protcols:
+- **protocol** (**Required**, string): Choose one of Arduino-HeatpumpIR's supported protocols:
 
     `airway`, `aux`, `ballu`, `bgh_aud`, `carrier_mca`, `carrier_nqv`, `carrier_qlima_1`, `carrier_qlima_1`, `daikin`,
     `daikin_arc417`, `daikin_arc480`, `electroluxyal`, `fuego`, `fujitsu_awyz`, `gree`, `greeyaa`, `greeyac`, `greeyan`,
@@ -350,7 +355,7 @@ Additional configuration must be specified for this platform:
 - **vertical_default** (**Required**, string): What to default to when the AC unit's vertical direction is *not* set to swing. Options are: `down`, `mdown`, `middle`, `mup`, `up`, `auto`
 - **max_temperature** (**Required**, float): The maximum temperature that the AC unit supports being set to.
 - **min_temperature** (**Required**, float): The minimum temperature that the AC unit supports being set to.
-- **sensor** (*Optional*, [ID](/guides/configuration-types#id)): The sensor that is used to measure the ambient temperature.
+- **sensor** (*Optional*, [ID](/guides/configuration-types/#id)): The sensor that is used to measure the ambient temperature.
 
 > [!NOTE]
 > The `greeyac` protocol in `heatpumpir` supports a feature Gree calls "I-Feel". The handheld remote control

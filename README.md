@@ -81,10 +81,15 @@ The ImgTable component creates grids of component cards (commonly used on index 
   ["Title", "/path/to/page/", "image.png"],
   ["Title 2", "/path/to/page2/", "image2.png", "caption"],
   ["Title 3", "/path/to/page3/", "image3.png", "caption", "dark-invert"],
+  ["Title 4", "/path/to/page4/", "badge:Title_4"],
 ]} />
 ```
 
 All images referenced in ImgTable **must** be in `/public/images/` as the component resolves them to `/images/filename.png`.
+
+The exception is `badge:<Name>`, which shows a black and white component name badge generated at build time by
+[component-image-generator](https://github.com/esphome/component-image-generator) and served from
+`/images/badges/<name>.svg`. Names use letters, digits, hyphens and underscores, and underscores are shown as spaces.
 
 ## Starlight Framework
 

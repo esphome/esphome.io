@@ -279,6 +279,24 @@ def test_assemble_writes_blog_post_and_changelog(
     assert "[wifi] Add feature" not in tail
 
 
+def test_assemble_drops_repeated_contributors_heading(
+    grn: ModuleType, workspace: Path
+) -> None:
+    generator = _make_generator(grn)
+    _prepare_assembly_inputs(grn, workspace, generator)
+    (generator.responses_dir / "contributors.md").write_text(
+        "## Thank You, Contributors\n\nThanks to everyone!"
+    )
+
+    assert generator.assemble_changelog() is True
+
+    blog = generator._blog_post_path().read_text()
+    assert "Thanks to everyone!" in blog
+    assert re.findall(r"^## Thank.*$", blog, re.MULTILINE) == [
+        "## Thank you, contributors"
+    ]
+
+
 def test_assemble_creates_blog_post_from_template(
     grn: ModuleType, workspace: Path
 ) -> None:
@@ -716,3 +734,112 @@ def test_main_parses_assemble_blog_only(
 
     assert grn.main() == 0
     assert captured_kwargs == {"assemble_only": True, "blog_only": True}
+
+
+def _fake_gh_pr(number: int) -> dict[str, object]:
+    return {
+        "number": number,
+        "title": f"PR {number}",
+        "body": "",
+        "author": {"login": "alice"},
+        "labels": [],
+        "url": f"https://github.com/esphome/esphome/pull/{number}",
+        "state": "MERGED",
+        "mergedAt": None,
+    }
+
+
+def _patch_gh(
+    grn: ModuleType, monkeypatch: pytest.MonkeyPatch
+) -> list[tuple[str, ...]]:
+    """Answer `gh pr view` calls with a canned PR and record each call."""
+    calls: list[tuple[str, ...]] = []
+
+    def fake_run_gh(self: object, *args: str) -> dict[str, object]:
+        calls.append(args)
+        return _fake_gh_pr(int(args[2]))
+
+    monkeypatch.setattr(grn.ReleaseNotesGenerator, "run_gh", fake_run_gh)
+    return calls
+
+
+def test_fetch_and_cache_prs_reports_progress(
+    grn: ModuleType,
+    workspace: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """Each PR gets a numbered progress line, then a fetched/cached summary."""
+    generator = _make_generator(grn)
+    generator.ensure_dirs()
+    generator.cache_pr(_make_pr(grn, 1, "Cached", "bob", []))
+    calls = _patch_gh(grn, monkeypatch)
+
+    prs = generator.fetch_and_cache_prs(list(range(1, 11)))
+
+    assert [pr.number for pr in prs] == list(range(1, 11))
+    assert len(calls) == 9
+    assert (generator.prs_cache_dir / "10.json").exists()
+    assert capsys.readouterr().out.splitlines() == [
+        "[ 1/10  10%] Using cached PR #1",
+        *(f"[{n:>2}/10 {n * 10:>3}%] Fetching PR #{n}..." for n in range(2, 11)),
+        "Loaded 10 PRs (9 fetched from GitHub, 1 from cache)",
+    ]
+
+
+def test_fetch_and_cache_prs_force_update_skips_cache(
+    grn: ModuleType,
+    workspace: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """--update re-fetches PRs that are already cached."""
+    generator = grn.ReleaseNotesGenerator(
+        version=grn.Version.parse("2026.9.0"), force_update=True
+    )
+    generator.ensure_dirs()
+    generator.cache_pr(_make_pr(grn, 1, "Cached", "bob", []))
+    calls = _patch_gh(grn, monkeypatch)
+
+    prs = generator.fetch_and_cache_prs([1])
+
+    assert prs[0].title == "PR 1"
+    assert len(calls) == 1
+    assert "1 fetched from GitHub, 0 from cache" in capsys.readouterr().out
+
+
+def test_fetch_and_cache_prs_redraws_progress_on_terminal(
+    grn: ModuleType,
+    workspace: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """On a terminal the progress line is redrawn in place, then ended."""
+    generator = _make_generator(grn)
+    generator.ensure_dirs()
+    _patch_gh(grn, monkeypatch)
+    monkeypatch.setattr(sys.stdout, "isatty", lambda: True)
+
+    generator.fetch_and_cache_prs([7, 8])
+
+    assert capsys.readouterr().out == (
+        "\r[1/2  50%] Fetching PR #7...\033[K"
+        "\r[2/2 100%] Fetching PR #8...\033[K"
+        "\nLoaded 2 PRs (2 fetched from GitHub, 0 from cache)\n"
+    )
+
+
+def test_fetch_and_cache_prs_empty_on_terminal(
+    grn: ModuleType,
+    workspace: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """With no PRs there is no progress line to end, only the summary."""
+    generator = _make_generator(grn)
+    monkeypatch.setattr(sys.stdout, "isatty", lambda: True)
+
+    assert generator.fetch_and_cache_prs([]) == []
+    assert capsys.readouterr().out == (
+        "Loaded 0 PRs (0 fetched from GitHub, 0 from cache)\n"
+    )
