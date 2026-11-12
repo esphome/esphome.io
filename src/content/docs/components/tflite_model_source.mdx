@@ -16,9 +16,10 @@ configuration time:
 | GitHub shorthand | `"github://user/repo/path/model.tflite"` | Reads the model file from a repository. |
 | HTTP(S) URL | `"https://example.com/model.tflite"` | Downloads the file, or a JSON manifest naming it. |
 
-The same package also parses the companion `.txt` metadata reports (autodetected input shape, arena size,
-operator count and output processing) and the filename heuristics (`_GRAY`, `_RGB`, `_BGR`, `_10cls`) used
-when no report is available.
+The same package also parses the companion `.txt` metadata reports (autodetected input shape, arena size and
+output processing) and the filename heuristics (`_GRAY`, `_RGB`, `_BGR`, `_10cls`) used when no report is
+available. The report is optional: the operators a model uses and an estimate of the tensor arena come from
+the `.tflite` file itself (see [TFLite Op Processor](/components/tflite_op_processor/)).
 
 ## Example configuration entry
 
@@ -55,7 +56,7 @@ tflite_model_source:
 
 ## See Also
 
-- `tflite_micro_runtime` - the user-facing component that loads this library
-  automatically
+- [TFLite Micro Runtime](/components/tflite_micro_runtime/) - the user-facing component that loads this
+  library automatically
 - [esphome_ai_component Demo](https://github.com/nliaudat/esphome_ai_component) - working demo with pre-trained
   models and camera integration
