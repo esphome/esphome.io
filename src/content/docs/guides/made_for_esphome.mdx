@@ -99,25 +99,19 @@ installs their first build over USB. Manufacturer updates still use the
 - The configuration has no other network OTA endpoint. The [`web_server` OTA platform](/components/ota/web_server/)
   does not qualify for this exception.
 - The configuration contains [`improv_serial`](/components/improv_serial/). A device without network OTA is flashed
-  over USB, so it has a USB port, and a device with a USB port needs `improv_serial`. This only marks the device as
-  having USB; it does not control flashing.
+  over USB, so it has a USB port, and a device with a USB port needs `improv_serial`. It must run on the USB serial
+  connection (the logger's port by default, or the UART given by `uart_id`), so that a user can provision the device
+  through the USB port. It does not control flashing.
 - The device can be flashed over USB without any keys and without opening the case. A human reviewer confirms this, as
   it cannot be read from the configuration.
 - The package at `package_import_url` still enables the [`esphome` OTA platform](/components/ota/esphome/), so a user
   who takes control can update the device over the network. The automated review checks this.
 
-```yaml
-esp32:
-  variant: esp32s3
-  framework:
-    advanced:
-      signed_ota_verification:
-
-improv_serial:
-```
-
-All other requirements on this page still apply, including `dashboard_import` and
-[`improv_ble`](/components/improv_ble/) for Wi-Fi devices.
+> [!NOTE]
+> The `esphome` OTA platform alone does not let a user install their own builds if the imported package still enables
+> `signed_ota_verification`, because the device rejects any update that is not signed with a key it trusts. We suggest
+> the package contains no signing configuration at all. The user then installs their first build over USB, and after
+> that nothing needs signing. See [Signed OTA Verification](/components/esp32/#signed-ota-verification).
 
 ### Updates
 
