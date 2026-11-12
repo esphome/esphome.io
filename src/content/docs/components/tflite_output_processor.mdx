@@ -8,8 +8,12 @@ loaded automatically as a dependency of the `tflite_micro_runtime`
 component and of the third-party components that consume it.
 
 `process_output()` supports `const float *` and `TfLiteTensor *` overloads and handles both float models and
-quantized (`uint8`/`int8`) models with explicit dequantization and scale factors, applying the configured
-processing strategy (`direct_class`, `softmax`, `argmax` or `logits`).
+quantized (`uint8`/`int8`) models with explicit dequantization and scale factors. It implements four modes:
+`argmax` takes the largest entry as the class and its own value as the confidence, `softmax` turns logits into a
+probability for the winning class, `qat_quantized` reads dequantized probabilities, and `auto_detect` derives the
+shape of the output from the data. Which one a model uses is selected with `output_processing` on the
+`tflite_micro_runtime` instance; [its page](/components/tflite_micro_runtime/#image-model-configuration-variables)
+lists the accepted values and how the default is chosen.
 
 ## Example configuration entry
 
@@ -40,7 +44,7 @@ tflite_output_processor:
 
 ## See Also
 
-- `tflite_micro_runtime` - the user-facing component that loads this library
-  automatically
+- [TFLite Micro Runtime](/components/tflite_micro_runtime/) - the user-facing component that loads this
+  library automatically
 - [esphome_ai_component Demo](https://github.com/nliaudat/esphome_ai_component) - working demo with pre-trained
   models and camera integration
