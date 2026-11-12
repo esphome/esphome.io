@@ -425,12 +425,11 @@ button:
   set, apply again, as they do after boot.
   All options from [Button](/components/button/#config-button).
 
-  The filters are fixed when the firmware is built, so without this button the only way to get every position is
-  `filters: []` on the `xy` text sensors. That publishes 10 updates per second all the time, which keeps your network
-  and Home Assistant busy with updates that nobody may be looking at. With the button you keep the default of one
-  update per second, and ask for the full rate only when you need it, for example to draw the path of a target. Press
-  the button again before the `10s` end to keep the full rate for as long as you need it. If you stop pressing, the
-  filters come back by themselves.
+  Needs at least one `xy` [text sensor](#text-sensor) on the same `ld2450`; the configuration is not valid without it.
+
+  The filters are fixed when the firmware is built, so the only other way to get every position is `filters: []`,
+  which publishes 10 updates per second all the time. The button keeps the default of one update per second, and
+  gives the full rate only when you ask for it, for example to draw the path of a target.
 
   A filter that keeps state of its own, such as a [lambda](/components/text_sensor/#lambda) filter that uses a global
   variable, is not reset by the button.
@@ -791,6 +790,8 @@ text_sensor:
     target_1:
       direction:
         name: "Target-1 Direction"
+      xy:
+        name: "Target-1 XY"
     target_2:
       direction:
         name: "Target-2 Direction"
