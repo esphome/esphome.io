@@ -26,8 +26,7 @@ nrf52:
   [pins](#gpio-pin-numbering) are valid. `nrf54lm20dk` and `nrf54l15dk` are short names for the
   Zephyr boards `nrf54lm20dk/nrf54lm20a/cpuapp` and `nrf54l15dk/nrf54l15/cpuapp`; both forms are accepted.
   `adafruit_feather_nrf52832` is built on the Zephyr board `nrf52dk/nrf52832`, see
-  [Adafruit Feather nRF52832](#adafruit-feather-nrf52832). `xiao_nrf54lm20a` is built on the Zephyr board
-  `nrf54lm20dk/nrf54lm20a/cpuapp`, see [Seeed XIAO nRF54LM20A](#seeed-xiao-nrf54lm20a).
+  [Adafruit Feather nRF52832](#adafruit-feather-nrf52832).
 - **bootloader** (*Optional*, string): Bootloader type. Valid options are `mcuboot`, `adafruit`,
   `adafruit_nrf52_sd132`, `adafruit_nrf52_sd132_v6`, `adafruit_nrf52_sd132_v2`, `adafruit_nrf52_sd140_v6`,
   `adafruit_nrf52_sd140_v7`, `nrf`. Default value depends on board type. `adafruit_nrf52_sd132` uses the
@@ -82,9 +81,7 @@ with the J-Link tools. This needs the `sdk-nrf` toolchain (the default); it does
 
 ESPHome resets the chip after flashing, so the new firmware starts straight away.
 
-With the `mcuboot` bootloader, choosing the serial port of a J-Link probe (its virtual COM port) has the same
-effect: ESPHome sees that the port belongs to a J-Link and flashes through that probe, using its serial number.
-This also picks the right probe when more than one is connected.
+With the `mcuboot` bootloader, you can also choose the J-Link's serial port instead of `JLINK`.
 
 If the J-Link output says that the chip is protected, the chip must be erased (recovered) once, for example with
 Nordic's [nRF Connect for Desktop](https://www.nordicsemi.com/Products/Development-tools/nRF-Connect-for-Desktop)
@@ -92,19 +89,10 @@ Programmer or `nrfutil device recover`. Then flash again.
 
 ## Flashing with a CMSIS-DAP Probe
 
-Boards with a CMSIS-DAP probe, such as the debugger built into the Seeed XIAO nRF54LM20A, can be flashed over SWD
-with pyOCD. This needs the `sdk-nrf` toolchain (the default) and the `mcuboot` bootloader. pyOCD is installed
-together with the SDK, so nothing has to be installed by hand.
+Boards with a built-in CMSIS-DAP debugger, such as the Seeed XIAO nRF54LM20A, are flashed through it when you
+run `esphome upload yourfile.yaml` and choose the board's serial port. This needs the `mcuboot` bootloader.
 
-1. Connect the board to the PC through its USB port.
-1. Run `esphome upload yourfile.yaml` and choose the serial port of the probe.
-
-ESPHome sees that the port belongs to a CMSIS-DAP probe and flashes through that probe, whatever firmware the
-device runs. If the first try fails, for example because pyOCD had to unlock and erase a locked chip, ESPHome
-tries once more.
-
-If flashing still fails because the chip is locked, or pyOCD reports a memory transfer fault, unlock and erase
-the chip once, then upload again. For the nRF54LM20A:
+If flashing fails because the chip is locked, erase it once and upload again, for example:
 
 ```bash
 pyocd erase -t nrf54lm20a --mass
@@ -275,29 +263,11 @@ nrf52:
 ```
 
 > [!IMPORTANT]
-> The board has no antenna of its own, only a connector for an external 2.4 GHz antenna. Without an antenna,
-> Bluetooth, Thread and Zigbee signals are not received. ESPHome shows a warning about this when it validates the
-> configuration.
+> The board has no built-in antenna. Connect an external 2.4 GHz antenna, or Bluetooth, Thread and Zigbee will
+> not work.
 
-- sdk-nrf has no board definition for it, so ESPHome builds it on the nRF54LM20 DK and moves the console UART to
-  the pins of the on-board CMSIS-DAP debugger.
-- The same rules as for the [nRF54LM20 DK](#nordic-nrf54lm20-dk) apply: sdk-nrf **3.4.1** or newer and the
-  `sdk-nrf` toolchain are needed, and the hardware watchdog is turned on automatically.
-- Logs go to UART0, which is the USB serial port of the on-board debugger.
-- Flash the board through the on-board debugger, see
-  [Flashing with a CMSIS-DAP Probe](#flashing-with-a-cmsis-dap-probe).
-  Over-the-air updates work with [zephyr_mcumgr](/components/ota/zephyr_mcumgr/).
-
-```yaml
-nrf52:
-  board: xiao_nrf54lm20a
-
-logger:
-  hardware_uart: UART0
-
-ota:
-  - platform: zephyr_mcumgr
-```
+- Logs appear on the board's USB serial port.
+- Flash it over USB, see [Flashing with a CMSIS-DAP Probe](#flashing-with-a-cmsis-dap-probe).
 
 ## Nordic nRF54L15 DK
 
