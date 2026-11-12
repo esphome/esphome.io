@@ -14,10 +14,10 @@ The `max6956` exists in 2 versions 20 or 28 ports, depending on the packaging.
 Once configured, you can use any of the 20 or 28 pins for your projects. Within ESPHome they emulate a real internal GPIO pin
 and can therefore be used with many of ESPHome's components such as the GPIO binary sensor or GPIO switch. Interrupt-on-change for inputs is not possible.
 
-Pins can also be individualy configured as led driver and used with Light components. Current value can be set globaly or for each pin, through 16 possible levels. Driving RGB
+Pins can also be individually configured as led driver and used with Light components. Current value can be set globally or for each pin, through 16 possible levels. Driving RGB
 led requires 3 pins.
 
-Any option accepting a [Pin Schema](/guides/configuration-types#pin-schema) can theoretically be used.
+Any option accepting a [Pin Schema](/guides/configuration-types/#pin-schema) can theoretically be used.
 
 ## Component/Hub
 
@@ -41,7 +41,7 @@ max6956:
 
 ### Configuration variables
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The id to use for this `max6956` component.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The id to use for this `max6956` component.
 - **address** (*Optional*, int): The I²C address of the driver.
   Defaults to `0x40`.
 
@@ -51,20 +51,20 @@ max6956:
 - **brightness_global** (*Optional*): Set the value of the current to be sink by all pins configured as led driver.
   Defaults to `0`
 
-- **brightness_mode** (*Optional*): Define if the current to be sink will be confgured globaly or per pin configured as led driver.
+- **brightness_mode** (*Optional*): Define if the current to be sink will be configured globally or per pin configured as led driver.
   Defaults to `global`
 
 ### Pin configuration variables
 
-- **max6956** (**Required**, [ID](/guides/configuration-types#id)): The id of the `max6956` component of the pin.
+- **max6956** (**Required**, [ID](/guides/configuration-types/#id)): The id of the `max6956` component of the pin.
   Instead of an id, an `address:` can be given to select the hub by its I²C address; see
-  [Selecting an I2C Expander by Address](/guides/configuration-types#selecting-an-i2c-expander-by-address).
+  [Selecting an I2C Expander by Address](/guides/configuration-types/#selecting-an-i2c-expander-by-address).
 - **number** (**Required**, int): The pin number.
 - **inverted** (*Optional*, boolean): If all read and written values
   should be treated as inverted. Defaults to `false`.
 - **mode** (*Optional*, string or mapping): A pin mode to set for the pin. Supports the mapping keys
   `input`, `pullup` and `output`, or the shorthands `INPUT`, `INPUT_PULLUP` and `OUTPUT`; see
-  [Pin Schema](/guides/configuration-types#pin-schema).
+  [Pin Schema](/guides/configuration-types/#pin-schema).
 
 ## Binary Sensor Example
 
@@ -108,7 +108,7 @@ binary_sensor:
 `max6956` can control a constant-current sink to drive leds, with 16 equal steps from 1.5mA to 24mA.
 
 ```yaml
-# Example configuration : pin as led driver, current globaly
+# Example configuration : pin as led driver, current globally
 i2c:
   id: bus_a
   sda: GPIOXX
@@ -160,7 +160,7 @@ light:
 ```
 
 ```yaml
-# Example configuration : pin as led driver, current managed individualy (RBG led)
+# Example configuration : pin as led driver, current managed individually (RBG led)
 i2c:
   id: bus_a
   sda: GPIOXX

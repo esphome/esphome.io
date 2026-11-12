@@ -50,6 +50,7 @@ using an octal SPI bus, so references here to parallel and octal SPI are equival
 | ILI9488     | 320x480            |
 | ILI9488_A   | 320x480            |
 | RM690B0     | 320x240            |
+| SPD2010     | 412x412            |
 | ST7796      | 320x480            |
 | ST7789P     | 240x320            |
 | ST7789V     | 240x320            |
@@ -93,6 +94,7 @@ the pins used to interface to the display to be specified.
 | PICO-RESTOUCH-LCD-3.5                | Waveshare    | [https://www.waveshare.com/pico-restouch-lcd-3.5.htm](https://www.waveshare.com/pico-restouch-lcd-3.5.htm)                         |
 | S3BOX                                | Espressif    | [https://www.espressif.com/en/products/devkits/esp32-s3-box](https://www.espressif.com/en/products/devkits/esp32-s3-box)           |
 | S3BOXLITE                            | Espressif    | [https://www.espressif.com/en/products/devkits/esp32-s3-box-lite](https://www.espressif.com/en/products/devkits/esp32-s3-box-lite) |
+| SEEED-SENSECAP-WATCHER               | Seeed Studio | [Seeed Studio store](https://www.seeedstudio.com/SenseCAP-Watcher-W1-A-p-5979.html) |
 | T-DISPLAY                            | Lilygo       | [https://www.lilygo.cc/products/t-display](https://www.lilygo.cc/products/t-display)                                               |
 | T-DISPLAY-S3                         | Lilygo       | [https://www.lilygo.cc/products/t-display-s3](https://www.lilygo.cc/products/t-display-s3)                                         |
 | T-DISPLAY-S3-AMOLED                  | Lilygo       | [https://www.lilygo.cc/products/t-display-s3-amoled](https://www.lilygo.cc/products/t-display-s3-amoled)                           |
@@ -127,21 +129,21 @@ display:
 
 ### Configuration options
 
-All [graphical display configuration](/components/display#display-configuration) options are available, plus the following. For integrated display boards
+All [graphical display configuration](/components/display/#display-configuration) options are available, plus the following. For integrated display boards
 most of the configuration will be set by default, but can be overridden if needed.
 
 - **model** (**Required**): Chosen from the lists of supported chips and models above, or `CUSTOM` for custom displays.
 - **bus_mode** (*Optional*): Select the SPI bus mode for the display driver. Options are `single` (default), `quad` and `octal`.
-- **dc_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The DC pin. Not required or permitted for quad SPI.
-- **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The RESET pin.
-- **cs_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The CS pin.
+- **dc_pin** (**Required**, [Pin Schema](/guides/configuration-types/#pin-schema)): The DC pin. Not required or permitted for quad SPI.
+- **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The RESET pin.
+- **cs_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The CS pin.
 
 > [!NOTE]
 > A DC pin is required for single SPI and 8 bit parallel, the CS pin and RESET pin will only be needed if the specific board has those
 > pins wired to GPIOs. When using a board with integrated display, the pins will be set to the correct values by
 > default, but can be overridden in the config if needed.
 
-- **enable_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): An optional pin to enable the display, if required. A list of pins can be provided for displays that require multiple enable pins. A full pin configuration may be provided
+- **enable_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): An optional pin to enable the display, if required. A list of pins can be provided for displays that require multiple enable pins. A full pin configuration may be provided
   to set the pin mode and inverted property. By default the pin will be driven high to enable the display.
   If `enable_pin` is not set, the model's default enable pins are used, if it has any. A default enable pin
   that is also used elsewhere in the configuration, for example by a GPIO switch, is left out, so you can
@@ -210,7 +212,7 @@ call the drawing lambda multiple times to draw each chunk of the display. For ex
 This has an effect on performance, and should be considered when setting the buffer size, but it is also important that the drawing lambda does not have
 side effects - this should be avoided in any case, but becomes more critical when using a buffer less than 100%.
 
-## Additional inititialisation sequences
+## Additional initialisation sequences
 
 The `init_sequence` option allows additional configuration of the driver chip. Provided commands will be sent to the
 driver chip in addition to, and after the chosen model's pre-defined commands. It requires a list of byte sequences:

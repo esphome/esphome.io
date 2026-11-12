@@ -35,19 +35,19 @@ light:
 - **name** (*Optional*, string): The name of the light. At least one of **id** and **name** must be specified.
 
 > [!NOTE]
-> If you have a [friendly_name](/components/esphome#configuration-variables) set for your device and you want the light
+> If you have a [friendly_name](/components/esphome/#configuration-variables) set for your device and you want the light
 > to use that name, you can set `name: None`.
 
 - **icon** (*Optional*, icon): Manually set the icon to use for the light in the frontend.
 - **effects** (*Optional*, list): A list of [light effects](#light-effects) to use for this light.
 - **gamma_correct** (*Optional*, float): Apply a [gamma correction factor](https://en.wikipedia.org/wiki/Gamma_correction) to the light channels. Defaults to `2.8`.
-- **default_transition_length** (*Optional*, [Time](/guides/configuration-types#time)): The default transition length to use when no
+- **default_transition_length** (*Optional*, [Time](/guides/configuration-types/#time)): The default transition length to use when no
   transition length is set in the light call. Defaults to `1s`.
 
-- **flash_transition_length** (*Optional*, [Time](/guides/configuration-types#time)): The transition length to use when flash is called.
+- **flash_transition_length** (*Optional*, [Time](/guides/configuration-types/#time)): The transition length to use when flash is called.
   Defaults to `0s`.
 
-- **transition_state_publish_interval** (*Optional*, [Time](/guides/configuration-types#time)): How often to publish
+- **transition_state_publish_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often to publish
   the light's state while a transition or flash is running, so Home Assistant and other clients can follow a long
   fade. The starting state is published when the call is made, intermediate states at this interval, and the final
   state once at the end; the `on_state` trigger fires for each of them. Calls made during the fade still start from
@@ -218,13 +218,13 @@ light:
   counts as the remembered effect. The remembered effect is kept in memory only, so it is lost on reboot. Defaults
   to `false`.
 
-- **on_turn_on** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform when the light is turned on. See
+- **on_turn_on** (*Optional*, [Action](/automations/actions/#all-actions)): An automation to perform when the light is turned on. See
   [`light.on_turn_on` / `light.on_turn_off` Trigger](#light-on_turn_on_off_trigger).
 
-- **on_turn_off** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform when the light is turned off.
+- **on_turn_off** (*Optional*, [Action](/automations/actions/#all-actions)): An automation to perform when the light is turned off.
   See [`light.on_turn_on` / `light.on_turn_off` Trigger](#light-on_turn_on_off_trigger).
 
-- **on_state** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform when the light's set state is
+- **on_state** (*Optional*, [Action](/automations/actions/#all-actions)): An automation to perform when the light's set state is
   changed. See [`light.on_state` Trigger](#light-on_state-trigger).
 
 **Additional configuration variables for addressable lights:**
@@ -233,7 +233,7 @@ light:
   maximum brightness of each channel. For example `[100%, 50%, 100%]` would set the green channel to be at most at
   50% brightness.
 
-- **power_supply** (*Optional*, [ID](/guides/configuration-types#id)): The [Power Supply](/components/power_supply/) to connect to this light. When
+- **power_supply** (*Optional*, [ID](/guides/configuration-types/#id)): The [Power Supply](/components/power_supply/) to connect to this light. When
   the light is turned on, the power supply will automatically be switched on too.
 
 - **power_estimation** (*Optional*): Estimate the strip's current draw and, with `max_current_ma`, keep it
@@ -268,8 +268,8 @@ light:
 - **entity_category** (*Optional*, string): The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-properties) for a list of available options. Set
   to `""` to remove the default entity category.
 
-- If MQTT enabled, all other options from [MQTT Component](/components/mqtt#config-mqtt-component).
-- If Webserver enabled and [version 3](/components/web_server#config-webserver-version-3-options) is selected, all other options from
+- If MQTT enabled, all other options from [MQTT Component](/components/mqtt/#config-mqtt-component).
+- If Webserver enabled and [version 3](/components/web_server/#config-webserver-version-3-options) is selected, all other options from
   [Web Server](/components/web_server/).
 
 ### Light state
@@ -360,12 +360,12 @@ on_...:
 
 **Configuration variables:**
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the light.
-- **transition_length** (*Optional*, [Time](/guides/configuration-types#time), [templatable](/automations/templates)): The length of the
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the light.
+- **transition_length** (*Optional*, [Time](/guides/configuration-types/#time), [templatable](/automations/templates)): The length of the
   transition if the light supports it.
 
 > [!NOTE]
-> This action can also be expressed in [lambdas](/automations/templates#config-lambda):
+> This action can also be expressed in [lambdas](/automations/templates/#config-lambda):
 >
 > ```cpp
 > auto call = id(light_1).toggle();
@@ -406,11 +406,11 @@ on_...:
 
 **Configuration variables:**
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the light.
-- **transition_length** (*Optional*, [Time](/guides/configuration-types#time), [templatable](/automations/templates)): The length of the
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the light.
+- **transition_length** (*Optional*, [Time](/guides/configuration-types/#time), [templatable](/automations/templates)): The length of the
   transition if the light supports it.
 
-- **flash_length** (*Optional*, [Time](/guides/configuration-types#time), [templatable](/automations/templates)): If set, will flash the
+- **flash_length** (*Optional*, [Time](/guides/configuration-types/#time), [templatable](/automations/templates)): If set, will flash the
   given color for this period of time and then go back to the previous state.
 
 - **effect** (*Optional*, string, [templatable](/automations/templates)): If set, will attempt to start an effect
@@ -419,7 +419,7 @@ on_...:
 - All other options from [light state](#light-state).
 
 > [!NOTE]
-> This action can also be expressed in [lambdas](/automations/templates#config-lambda):
+> This action can also be expressed in [lambdas](/automations/templates/#config-lambda):
 >
 > ```cpp
 > auto call = id(light_1).turn_on();
@@ -474,12 +474,12 @@ on_...:
 
 **Configuration variables:**
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the light.
-- **transition_length** (*Optional*, [Time](/guides/configuration-types#time), [templatable](/automations/templates)): The length of the
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the light.
+- **transition_length** (*Optional*, [Time](/guides/configuration-types/#time), [templatable](/automations/templates)): The length of the
   transition if the light supports it.
 
 > [!NOTE]
-> This action can also be expressed in [lambdas](/automations/templates#config-lambda):
+> This action can also be expressed in [lambdas](/automations/templates/#config-lambda):
 >
 > ```cpp
 > auto call = id(light_1).turn_off();
@@ -491,7 +491,7 @@ on_...:
 
 ### `light.control` Action
 
-This [Action](/automations/actions#all-actions) is a generic call to change the state of a light - it is essentially just a
+This [Action](/automations/actions/#all-actions) is a generic call to change the state of a light - it is essentially just a
 combination of the turn_on and turn_off calls.
 
 ```yaml
@@ -504,13 +504,13 @@ on_...:
 
 **Configuration variables:**
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the light.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the light.
 - **state** (*Optional*, [templatable](/automations/templates), boolean): Change the ON/OFF state of the light.
 - All other options from [light state](#light-state).
 
 ### `light.dim_relative` Action
 
-This [Action](/automations/actions#all-actions) allows you to dim a light that supports brightness by a relative amount.
+This [Action](/automations/actions/#all-actions) allows you to dim a light that supports brightness by a relative amount.
 
 ```yaml
 on_...:
@@ -523,11 +523,11 @@ on_...:
 
 **Configuration variables:**
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the light.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the light.
 - **relative_brightness** (**Required**, [templatable](/automations/templates), percentage): The relative brightness
   to dim the light by.
 
-- **transition_length** (*Optional*, [Time](/guides/configuration-types#time), [templatable](/automations/templates)): The length of the
+- **transition_length** (*Optional*, [Time](/guides/configuration-types/#time), [templatable](/automations/templates)): The length of the
   transition.
 
 - **brightness_limits** (*Optional*): Limits in the brightness range.
@@ -564,7 +564,7 @@ on_...:
 
 ### `light.effect.next` / `light.effect.previous` Action
 
-These [Actions](/automations/actions#all-actions) cycle through the effects configured for a light. `light.effect.next`
+These [Actions](/automations/actions/#all-actions) cycle through the effects configured for a light. `light.effect.next`
 advances to the next effect; `light.effect.previous` steps back to the previous one. The cycle wraps around at either
 end.
 
@@ -582,7 +582,7 @@ on_...:
 
 **Configuration variables:**
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the light.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the light.
 - **include_none** (*Optional*, boolean): If `true`, "None" (no effect) is included as a step in the cycle, so the light
   passes through an un-effected state when wrapping around. If `false`, only the configured effects are cycled and
   "None" is skipped. Defaults to `false`.
@@ -598,7 +598,7 @@ on_...:
 
 ### `light.addressable_set` Action
 
-This [Action](/automations/actions#all-actions) allows you to manually set a range of LEDs on an addressable light to a specific
+This [Action](/automations/actions/#all-actions) allows you to manually set a range of LEDs on an addressable light to a specific
 color.
 
 ```yaml
@@ -626,7 +626,7 @@ on_...:
 
 **Configuration variables:**
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the addressable light to control.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the addressable light to control.
 - **range_from** (*Optional*, [templatable](/automations/templates), int): The beginning of the range of LEDs to
   control, inclusive, using zero-based indexing. Defaults to 0 (the beginning of the strip).
 
@@ -731,7 +731,7 @@ values for common chipsets:
 
 ### `light.is_on` / `light.is_off` Condition
 
-This [Condition](/automations/actions#all-conditions) checks if the given light is ON or OFF. OFF means that the light is completely
+This [Condition](/automations/actions/#all-conditions) checks if the given light is ON or OFF. OFF means that the light is completely
 OFF, and ON means that the light is emitting at least a bit of light.
 
 ```yaml
@@ -879,12 +879,12 @@ light:
 **Configuration variables:**
 
 - **name** (*Optional*, string): The name of the effect. Defaults to `Pulse`.
-- **transition_length** (*Optional*, [Time](/guides/configuration-types#time)): The duration of each transition. Defaults to `1s`. Can be a
+- **transition_length** (*Optional*, [Time](/guides/configuration-types/#time)): The duration of each transition. Defaults to `1s`. Can be a
   single time or split for on and off using these nested options.
 
-  - **on_length** (**Required**, [Time](/guides/configuration-types#time)): The duration of the transition when the light is turned on.
-  - **off_length** (**Required**, [Time](/guides/configuration-types#time)): The duration of the transition when the light is turned off.
-- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval when the new transition is started. Defaults to
+  - **on_length** (**Required**, [Time](/guides/configuration-types/#time)): The duration of the transition when the light is turned on.
+  - **off_length** (**Required**, [Time](/guides/configuration-types/#time)): The duration of the transition when the light is turned off.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval when the new transition is started. Defaults to
   `1s`.
 
 - **min_brightness** (*Optional*, percentage): The minimum brightness value. Defaults to `0%`
@@ -910,8 +910,8 @@ light:
 **Configuration variables:**
 
 - **name** (*Optional*, string): The name of the effect. Defaults to `Random`.
-- **transition_length** (*Optional*, [Time](/guides/configuration-types#time)): The duration of each transition to start. Defaults to `5s`.
-- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval with which a new color is selected and
+- **transition_length** (*Optional*, [Time](/guides/configuration-types/#time)): The duration of each transition to start. Defaults to `5s`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval with which a new color is selected and
   transitioned to.
 
 ### Strobe Effect
@@ -968,8 +968,8 @@ light:
 
   - **cold_white** (*Optional*, percentage): The cold white channel of the light, if applicable. Defaults to `100%`.
   - **warm_white** (*Optional*, percentage): The warm white channel of the light, if applicable. Defaults to `100%`.
-  - **duration** (**Required**, [Time](/guides/configuration-types#time)): The duration this color should be active.
-  - **transition_length** (*Optional*, [Time](/guides/configuration-types#time)): The duration of each transition. Defaults to `0s`.
+  - **duration** (**Required**, [Time](/guides/configuration-types/#time)): The duration this color should be active.
+  - **transition_length** (*Optional*, [Time](/guides/configuration-types/#time)): The duration of each transition. Defaults to `0s`.
 
 See [light state](#light-state) for more information on the various color fields.
 
@@ -998,7 +998,7 @@ light:
 
 ### Lambda Effect
 
-This effect allows you to write completely custom light effects yourself using [lambdas](/automations/templates#config-lambda).
+This effect allows you to write completely custom light effects yourself using [lambdas](/automations/templates/#config-lambda).
 
 Available variables in the lambda:
 
@@ -1038,10 +1038,10 @@ light:
 **Configuration variables:**
 
 - **name** (*Optional*, string): The name of the custom effect. Defaults to `Lambda`.
-- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval with which the lambda code is executed. A value of
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval with which the lambda code is executed. A value of
   `0ms` means that the lambda is always executed, without a cool-down. Defaults to `0ms`.
 
-- **lambda** (**Required**, [lambda](/automations/templates#config-lambda)): The code to execute. `static` variables are especially
+- **lambda** (**Required**, [lambda](/automations/templates/#config-lambda)): The code to execute. `static` variables are especially
   useful.
 
 <span id="light-effect-get_name"></span>
@@ -1152,7 +1152,7 @@ light:
   - **gradient** (*Optional*, boolean): If `true` the current color will transition with a gradient over `num_leds`
     to the next color. Defaults to `false`.
 
-- **add_led_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval with which to shift in new LEDs at the beginning
+- **add_led_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval with which to shift in new LEDs at the beginning
   of the strip. Defaults to `100ms`.
 
 - **reverse** (*Optional*, boolean): Whether to reverse the direction of the color wipe. Defaults to `false`.
@@ -1177,7 +1177,7 @@ light:
 **Configuration variables:**
 
 - **name** (*Optional*, string): The name of the effect. Defaults to `Scan`.
-- **move_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval with which to move the dot/line one LED forward.
+- **move_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval with which to move the dot/line one LED forward.
   Defaults to `100ms`.
 
 - **scan_width** (*Optional*, int): The number of LEDs to use. Defaults to `1`.
@@ -1205,7 +1205,7 @@ light:
 - **twinkle_probability** (*Optional*, percentage): The percentage with which, at any time step, a randomly-chosen LED
   should start its twinkle animation.
 
-- **progress_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval with which to progress the effect. This affects
+- **progress_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval with which to progress the effect. This affects
   the duration of a twinkle animation. Defaults to `4ms`.
 
 ### Addressable Random Twinkle Effect
@@ -1230,7 +1230,7 @@ light:
 - **twinkle_probability** (*Optional*, percentage): The percentage with which, at any time step, a randomly-chosen LED
   should start its twinkle animation.
 
-- **progress_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval with which to progress the effect. This affects
+- **progress_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval with which to progress the effect. This affects
   the duration of a twinkle animation. Defaults to `4ms`.
 
 ### Addressable Fireworks Effect
@@ -1255,7 +1255,7 @@ light:
 **Configuration variables:**
 
 - **name** (*Optional*, string): The name of the effect. Defaults to `Fireworks`.
-- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval with which to progress the effect. Defaults to
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval with which to progress the effect. Defaults to
   `32ms`.
 
 - **spark_probability** (*Optional*, percentage): The probability to start a new firework spark at a randomly-chosen
@@ -1288,7 +1288,7 @@ light:
 **Configuration variables:**
 
 - **name** (*Optional*, string): The name of the effect. Defaults to `Addressable Flicker`.
-- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The time interval for updating the random offsets. Defaults to
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The time interval for updating the random offsets. Defaults to
   `16ms`.
 
 - **intensity** (*Optional*, percentage): The intensity of the effect, basically how much the random values can offset
@@ -1397,7 +1397,7 @@ light:
 **Configuration variables:**
 
 - **name** (*Optional*, string): The name of the effect.
-- **sequence** (**Required**, [Action](/automations/actions#all-actions)): The actions to perform in sequence until the effect is
+- **sequence** (**Required**, [Action](/automations/actions/#all-actions)): The actions to perform in sequence until the effect is
   stopped.
 
 <span id="e131-light-effect"></span>
@@ -1479,7 +1479,7 @@ light:
 
 **Configuration variables:**
 
-- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [UART Component](/components/uart). Useful if
+- **uart_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the [UART Component](/components/uart). Useful if
   you've configured multiple UARTs.
 
 ### WLED Effect
@@ -1489,6 +1489,9 @@ creation of realtime ambient lighting effects.
 
 [Prismatik](https://github.com/psieg/Lightpack) and/or [LedFx](https://github.com/LedFx/LedFx) can be used to control addressable lights over the network on ESPHome. Use the connection type
 `udp` on the default port and add the data prefix `0201`.
+
+The effect works on every platform with a network connection, with both the Arduino and ESP-IDF frameworks. Each WLED
+effect uses one UDP socket while it runs.
 
 ```yaml
 wled:
@@ -1506,7 +1509,7 @@ light:
 **Configuration variables:**
 
 - **port** (*Optional*, int): The port to run the UDP server on. Defaults to `21324`.
-- **blank_on_start** (*Optional*, boolean): Whether or not to blank all LEDs when effect starts. Deaults to `True`.
+- **blank_on_start** (*Optional*, boolean): Whether or not to blank all LEDs when effect starts. Defaults to `True`.
 - **sync_group_mask** (*Optional*, int): Used with WLED Notifier. The Sync Group mask value that specifies which WLED
   Sync Groups to listen to. Defaults to `0` (All Sync Groups). Sync Groups 1, 2, 3, 4, 5, 6, 7, 8 use masks 1, 2, 4,
   8, 16, 32, 64, 128. Combine mask values to listen to multiple Sync Groups.
