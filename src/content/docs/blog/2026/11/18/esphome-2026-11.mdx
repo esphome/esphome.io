@@ -52,6 +52,10 @@ This is the short, plain-language version for anyone short on time or still find
 - **Sub-devices:** every entry under `esphome: devices:` now needs a `relation:` field – `via` for a separate physical device reached through this node, `child` for a logical part of this node.
 - **HTTP requests in scripts:** `http_request.get`, `.post` and `.send` no longer pause the script, so add `mode: queued` or `mode: parallel` where repeated runs must not be skipped.
 - **ESP-IDF minimum version:** if your ESP32 build pins the ESP-IDF framework to a 5.0 version, move it to 5.1 or newer (or remove the pin).
+- **Power meters on Beken chips:** on BK72xx, `hlw8012` power meters with short pulses, such as the BL0937, on inverted
+  pins previously double counted each pulse. They now count each pulse once and match ESP32, so if a plug calibrated on
+  an older release reads half after updating, double `voltage_divider` and the current calibration (see the checklist
+  below).
 
 **New features:** ESPHome uses less memory on every supported chip, especially the ESP8266, and the way automations are built now produces smaller, faster code.
 
@@ -73,16 +77,12 @@ The [ESPHome Starter Kit](/starter-kit/) is the easiest way to start building yo
   ["ESP32 ULP coprocessor", "/components/esp32_ulp/", "badge:ESP32_ULP"],
   ["Modem", "/components/modem/", "modem.svg", "dark-invert"],
   ["EZSP Proxy Tap", "/components/ezsp_proxy_tap/", "badge:ezsp_proxy_tap"],
-  ["Serial Proxy", "/components/serial_proxy/", "badge:UART"],
   ["BLE MIDI", "/components/ble_midi/", "bluetooth.svg", "dark-invert"],
   ["Zephyr Coredump", "/components/zephyr_coredump/", "bug-report.svg", "dark-invert"],
   ["OTA Updates for nRF52 (Adafruit BLE)", "/components/ota/adafruit_ble/", "system-update.svg", "dark-invert"],
   ["FUSB302B", "/components/fusb302b/", "badge:FUSB302B", "USB-C PD sink"],
   ["HDMI-CEC Bus", "/components/hdmi_cec/", "badge:HDMI-CEC"],
-  ["TCP UART", "/components/tcp_uart/", "badge:UART"],
   ["TinyUSB Keyboard", "/components/tinyusb_keyboard/", "usb.svg", "dark-invert"],
-  ["UART Mux", "/components/uart_mux/", "badge:UART"],
-  ["UART TCP", "/components/uart_tcp/", "badge:UART"],
   ["USB Audio", "/components/usb_audio/", "usb.svg", "dark-invert"],
   ["PCA9505", "/components/pca9505/", "badge:PCA9505"],
   ["Modem Signal", "/components/sensor/modem/", "modem.svg", "dark-invert"],
@@ -97,7 +97,6 @@ The [ESPHome Starter Kit](/starter-kit/) is the easiest way to start building yo
   ["MAX31888", "/components/sensor/max31888/", "badge:MAX31888", "Temperature"],
   ["Vevor DTX Weather Station", "/components/vevor_dtx/", "weather-sunny.svg", "Weather", "dark-invert"],
   ["APDS9930", "/components/sensor/apds9930/", "apds9930.jpg", "Light & Proximity"],
-  ["AS7341", "/components/sensor/as7341/", "as7341.jpg", "Spectral Color Sensor (deprecated)"],
   ["AS7341 / AS7343 / TCS3448", "/components/sensor/as734x/", "as7341.jpg", "Spectral Color Sensor"],
   ["BH1745", "/components/sensor/bh1745/", "bh1745.jpg", "Lux & RGB colour"],
   ["VEML6040", "/components/sensor/veml6040/", "badge:VEML6040", "Lux & RGBW colour"],
@@ -126,7 +125,7 @@ The [ESPHome Starter Kit](/starter-kit/) is the easiest way to start building yo
   ["Daikin Madoka", "/components/climate/daikin_madoka/", "daikin.png"],
   ["Midea PortaSplit", "/components/climate/midea_portasplit/", "midea.svg"],
   ["APC Proteous Cover", "/components/cover/apc_proteous/", "apc_proteous.svg"],
-  ["VNC Client", "/components/vnc/", "vnc.svg", "dark-invert"],
+  ["VNC Client", "/components/vnc/", "badge:VNC"],
   ["HT16K33 Character Display", "/components/display/ht16k33_char/", "badge:HT16K33"],
   ["SH1122", "/components/display/sh1122/", "sh1122.jpg"],
   ["ST7305", "/components/display/st7305/", "st7305.jpg"],
@@ -147,7 +146,6 @@ The [ESPHome Starter Kit](/starter-kit/) is the easiest way to start building yo
   ["Seeed Studio Multi-Channel Relay", "/components/switch/seeed_multi_channel_relay/", "seeed_multi_channel_relay.webp"],
   ["Modem Text Sensor", "/components/text_sensor/modem/", "modem.svg", "dark-invert"],
   ["RX8111 Timestamp", "/components/text_sensor/rx8111/", "clock-outline.svg", "dark-invert"],
-  ["Systa Bus", "/components/systa_bus/", "systasolar_aqua.png"],
   ["DS3231 RTC", "/components/time/ds3231/", "ds3231.jpg"],
   ["RX8111 RTC", "/components/time/rx8111/", "clock-outline.svg", "dark-invert"],
   ["NS2009", "/components/touchscreen/ns2009/", "mod-lcd2.8rtp.jpg"],
@@ -226,6 +224,22 @@ sweep closes memory, event-decoding and REST-visibility bugs.
   `DISPLAY_TYPE_COLOR`.
 - If you use the CB3S board (LN-CB3S V1.0) with the `D12` alias, update your pin to `D13` or `PA11`; `D12` now
   drives PA10.
+- If you use `hlw8012` (HLW8012, BL0937, CSE7759) on a BK72xx (Beken) chip with inverted pins and the readings dropped
+  to half after updating (typical for the BL0937, whose pulses are 38 µs), update the calibration: pulses of about 50 µs
+  or less were previously double counted on Beken chips, and each pulse is now counted once, the same as on ESP32. To
+  keep your calibration, double `voltage_divider` (this also corrects power and energy) and double the current: double
+  an existing `multiply` filter on the current sensor, or add `multiply: 2`. Leave `current_resistor` as it is, because
+  power depends on both values and halving it as well would double power a second time. Then check the readings against
+  a known load. With pins that are not inverted, these short pulses were missed before and are now counted; pulses
+  between about 75 and 150 µs were miscounted either way. The same applies to `pulse_counter` with
+  `internal_filter: 0us`; with the default filter, and for slower pulses such as water and gas meters, `pulse_counter`
+  on Beken chips counts as before ([#21271](https://github.com/esphome/esphome/pull/21271)).
+- If you use `hlw8012` (HLW8012, BL0937, CSE7759) on a Realtek chip, check its calibration: on RTL8720C it counted no
+  pulses at all on older releases, and on RTL8710B it counted nothing with inverted pins; both now read correctly, the
+  same as on ESP32. `pulse_counter` with `internal_filter: 0us` counts there too; with the default filter it still
+  counts nothing on RTL8720C, or with inverted pins on RTL8710B
+  ([#21271](https://github.com/esphome/esphome/pull/21271)). LN882H reads the pin within a few microseconds of a pulse
+  edge, so it counted these pulses correctly before and needs no change.
 {/* UPGRADE_CHECKLIST_END */}
 
 {/* FEATURE_HIGHLIGHTS_START */}
