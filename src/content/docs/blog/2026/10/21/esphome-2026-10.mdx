@@ -73,9 +73,9 @@ The [ESPHome Starter Kit](/starter-kit/) is the easiest way to start building yo
   ["Improv via BLE", "/components/improv_ble/", "improv.svg", "dark-invert"],
   ["Bridge", "/components/bridge/", "usb.svg", "dark-invert"],
   ["CDC-ACM UART Bridge", "/components/bridge/cdc_acm_uart/", "usb.svg", "dark-invert"],
-  ["TCP UART", "/components/tcp_uart/", "badge:UART"],
-  ["UART Mux", "/components/uart_mux/", "badge:UART"],
-  ["UART TCP", "/components/uart_tcp/", "badge:UART"],
+  ["TCP UART", "/components/tcp_uart/", "badge:TCP_UART"],
+  ["UART Mux", "/components/uart_mux/", "badge:UART_MUX"],
+  ["UART TCP", "/components/uart_tcp/", "badge:UART_TCP"],
   ["STCC4", "/components/sensor/stcc4/", "stcc4.jpg", "CO2 & Temperature & Humidity"],
   ["TF-Luna", "/components/sensor/tfluna/", "tfluna.jpg", "IR optical distance"],
   ["PZEM-6L24", "/components/sensor/pzem6l24/", "badge:PZEM-6L24", "3-Phase Voltage & Current & Power"],
@@ -1103,6 +1103,35 @@ The `nfc` stack now avoids per-tag heap churn. Most lambdas keep compiling, but 
 
 For detailed migration guides and API documentation, see the [ESPHome Developers Documentation](https://developers.esphome.io/).
 {/* BREAKING_CHANGES_DEVELOPERS_END */}
+
+{/* markdownlint-disable MD013 */}
+
+## Release 2026.10.1 - October 27
+
+- [esp32_hosted] Keep the OTA watchdog timeout through the coprocessor end call [esphome#21300](https://github.com/esphome/esphome/pull/21300) by [@swoboda1337](https://github.com/swoboda1337)
+- [core] Emit generated lambda code after the user includes [esphome#21307](https://github.com/esphome/esphome/pull/21307) by [@bdraco](https://github.com/bdraco)
+- [light] Add a StringRef overload for LightCall::set_effect [esphome#21358](https://github.com/esphome/esphome/pull/21358) by [@bdraco](https://github.com/bdraco)
+- [mqtt] Resend the fan state when its first publish fails [esphome#21328](https://github.com/esphome/esphome/pull/21328) by [@bdraco](https://github.com/bdraco)
+- [http_request] Copy a manifest URL set at run time and keep the config literal by pointer [esphome#21373](https://github.com/esphome/esphome/pull/21373) by [@bdraco](https://github.com/bdraco)
+- [climate] Add StringRef overloads for ClimateCall::set_fan_mode and set_preset [esphome#21359](https://github.com/esphome/esphome/pull/21359) by [@bdraco](https://github.com/bdraco)
+- [core] Keep the color codes of a filtered build output line [esphome#21396](https://github.com/esphome/esphome/pull/21396) by [@swoboda1337](https://github.com/swoboda1337)
+- [ledc] Reset the peripheral through the HAL on targets without the legacy periph API [esphome#21397](https://github.com/esphome/esphome/pull/21397) by [@swoboda1337](https://github.com/swoboda1337)
+- [core] Resolve version-less library dependencies like PlatformIO [esphome#21317](https://github.com/esphome/esphome/pull/21317) by [@bdraco](https://github.com/bdraco)
+- [esp32_ble] Ignore unhandled BLE key GAP events [esphome#21457](https://github.com/esphome/esphome/pull/21457) by [@minimicro34](https://github.com/minimicro34)
+- [core] Generate valid C++ for infinite float values [esphome#21625](https://github.com/esphome/esphome/pull/21625) by [@swoboda1337](https://github.com/swoboda1337)
+- [core] Avoid division by zero in Color::random_color() [esphome#21623](https://github.com/esphome/esphome/pull/21623) by [@swoboda1337](https://github.com/swoboda1337)
+- [core] Turn off the precompiled header with ccache older than 4.7 [esphome#21627](https://github.com/esphome/esphome/pull/21627) by [@bdraco](https://github.com/bdraco)
+
+## Release 2026.10.2 - November 3
+
+- [http_request] Fix macOS host build with the precompiled header [esphome#21705](https://github.com/esphome/esphome/pull/21705) by [@clydebarrow](https://github.com/clydebarrow)
+- [esp32][audio_http] Keep TLS 1.3 working [esphome#21786](https://github.com/esphome/esphome/pull/21786) by [@agners](https://github.com/agners)
+- [core] Start the Apple Silicon cc1plus wrapper through sh when the Python path has a space [esphome#21967](https://github.com/esphome/esphome/pull/21967) by [@bdraco](https://github.com/bdraco)
+- [host] Offer the built program as a download in the Device Builder [esphome#22114](https://github.com/esphome/esphome/pull/22114) by [@swoboda1337](https://github.com/swoboda1337)
+- [bluetooth_proxy] Release held connections when a new client replaces the subscriber [esphome#22077](https://github.com/esphome/esphome/pull/22077) by [@bdraco](https://github.com/bdraco)
+- [ota] Work around the LibreTiny OTA issue that bricks RTL8710B on a compressed update [esphome#22111](https://github.com/esphome/esphome/pull/22111) by [@bdraco](https://github.com/bdraco)
+
+{/* markdownlint-enable MD013 */}
 
 ## Full list of changes
 
