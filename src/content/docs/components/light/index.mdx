@@ -218,6 +218,30 @@ light:
   counts as the remembered effect. The remembered effect is kept in memory only, so it is lost on reboot. Defaults
   to `false`.
 
+- **write_on_setup** (*Optional*, boolean): Write the start-up state to the output during the light's own setup,
+  instead of once every component is set up. This is for an output that is set up before the light, such as a
+  display backlight that should come on before a slow display setup. Defaults to `false`.
+
+- **setup_priority** (*Optional*, float): Change the order in which the light is set up; a higher value is set up
+  earlier. With **write_on_setup**, give the output a higher value than the light, so it is set up first:
+
+  ```yaml
+  output:
+    - platform: ledc
+      id: backlight_pwm
+      pin: GPIO22
+      setup_priority: 1300
+
+  light:
+    - platform: monochromatic
+      output: backlight_pwm
+      name: Backlight
+      initial_state:
+        state: ON
+      write_on_setup: true
+      setup_priority: 1299
+  ```
+
 - **on_turn_on** (*Optional*, [Action](/automations/actions/#all-actions)): An automation to perform when the light is turned on. See
   [`light.on_turn_on` / `light.on_turn_off` Trigger](#light-on_turn_on_off_trigger).
 
