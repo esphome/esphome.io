@@ -247,7 +247,8 @@ packet_interface:
 - **type** (*Optional*, string): The reliability method. Only `hdlc` is available, which uses the acknowledgement
   and resend method of the HDLC protocol. Defaults to `hdlc`.
 - **timeout** (*Optional*, [Time](/guides/configuration-types/#time)): How long to wait for an acknowledgement before
-  resending. At least `50ms`. Defaults to `200ms`.
+  resending. At least `50ms`. Defaults to `200ms`; on a radio link, to what the radio's settings need for the other
+  device's largest packet and an acknowledgement.
 - **ack_delay** (*Optional*, [Time](/guides/configuration-types/#time)): How long to wait before acknowledging a
   packet, so that one acknowledgement can cover several packets, or a reply can carry it. Useful on radio links,
   which cannot receive while they send; about the time one packet takes to send is a good value. Must be shorter than

@@ -28,15 +28,21 @@ spreading factor 7, 2.3 s at 10 and 9 s at 12. While it sends, the radio cannot 
 while the radio is receiving one: the send fails, and the component sending it is told, but nothing is logged. A
 [reliability layer](/components/packet_interface/#reliability) sends it again shortly, and `entity_transport` tries
 again after a second. Other components, such as `packet_transport`, do not, so use a reliability layer with them, or
-the packet is lost. Packets are refused for at most as long as the largest packet takes to send, and at least 2
-seconds, so a receive that never ends cannot stop sending; after that, the packet is sent anyway, and a warning is
-logged.
+the packet is lost. Packets are refused for at most as long as the largest packet the radio can receive takes to
+send, and at least 2 seconds, so a receive that never ends cannot stop sending; after that, the packet is sent anyway,
+and a warning is logged.
 
-With a [reliability layer](/components/packet_interface/#reliability), the `timeout` must allow for a packet and
-its acknowledgement to be sent, which at high spreading factors means several seconds. `ack_delay` should be about
-the time one packet takes to send, so that the acknowledgement does not collide with a second packet from the other
-device. With spreading factor 7 and a bandwidth
-of 125 kHz, `timeout: 500ms` and `ack_delay: 100ms` work well. Two devices that send at the same regular interval can
+The radio waits at most 4 seconds for a packet to be sent, so the largest packet must take less, with a margin. At
+125 kHz this needs a `max_packet_size` of 157 or less at spreading factor 11, and 75 or less at 12; a larger one is
+rejected, with the largest that fits.
+
+With a [reliability layer](/components/packet_interface/#reliability), the `timeout` must allow for the other
+device's largest packet and an acknowledgement to be sent. Without a `timeout`, the link works one out from the
+radio's settings, `max_packet_size` and `ack_delay`: about 0.7 s at spreading factor 7 and 125 kHz with 255-byte
+packets and `ack_delay: 100ms`, and several seconds at high spreading factors. A shorter `timeout` is rejected.
+`ack_delay` should be about the time one packet takes to send, so that the acknowledgement does not collide with a
+second packet from the other device. With spreading factor 7 and a bandwidth of 125 kHz, `ack_delay: 100ms` works
+well. Two devices that send at the same regular interval can
 still collide now and then; the reliability layer sends again after a slightly random delay.
 
 ## Example Configuration
@@ -56,7 +62,6 @@ packet_interface:
       address: 0x0001
       destination: 0x0002
     reliability:
-      timeout: 500ms
       ack_delay: 100ms
     session:
 ```

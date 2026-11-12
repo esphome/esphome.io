@@ -12,11 +12,12 @@ radio itself marks where a packet starts and ends, and checks it with its CRC if
 The radio must send packets of varying length, so its `payload_length` must be `0`, the default.
 The radio must listen again after sending (`rx_start: true`, the default) when the link has a reliability or
 session layer or the rolling code, as these need packets back from the peer.
-Without LoRa modulation, the radio must be in packet mode (`packet_mode: true`), and it sends at most 64 bytes in a
-packet, so `max_packet_size` must be 64 or less. It must also have a `sync_value` set, as this is how the interface
+Without LoRa modulation, the radio must be in packet mode (`packet_mode: true`), and it sends at most 63 bytes in a
+packet, so `max_packet_size` must be 63 or less. It must also have a `sync_value` set, as this is how the interface
 tells that a packet is arriving, so that it does not send over it.
 
-Received packets carry the radio's RSSI and SNR, which the layers above pass on.
+Received packets carry the radio's RSSI and SNR, which the layers above pass on. Without LoRa modulation the radio
+does not measure them for each packet, so they are not known (`NAN`).
 
 A radio channel is shared by every device in range, so an [addressing layer](/components/packet_interface/#addressing)
 is usually needed: it drops packets meant for other devices, and lets the
@@ -29,15 +30,21 @@ spreading factor 7, 2.3 s at 10 and 9 s at 12. While it sends, the radio cannot 
 while the radio is receiving one: the send fails, and the component sending it is told, but nothing is logged. A
 [reliability layer](/components/packet_interface/#reliability) sends it again shortly, and `entity_transport` tries
 again after a second. Other components, such as `packet_transport`, do not, so use a reliability layer with them, or
-the packet is lost. Packets are refused for at most as long as the largest packet takes to send, and at least 2
-seconds, so a receive that never ends cannot stop sending; after that, the packet is sent anyway, and a warning is
-logged.
+the packet is lost. Packets are refused for at most as long as the largest packet the radio can receive takes to
+send, and at least 2 seconds, so a receive that never ends cannot stop sending; after that, the packet is sent anyway,
+and a warning is logged.
 
-With a [reliability layer](/components/packet_interface/#reliability), the `timeout` must allow for a packet and
-its acknowledgement to be sent, which at high spreading factors means several seconds. `ack_delay` should be about
-the time one packet takes to send, so that the acknowledgement does not collide with a second packet from the other
-device. With spreading factor 7 and a bandwidth
-of 125 kHz, `timeout: 500ms` and `ack_delay: 100ms` work well. Two devices that send at the same regular interval can
+The radio waits at most 4 seconds for a packet to be sent, so the largest packet must take less, with a margin. At
+125 kHz this needs a `max_packet_size` of 157 or less at spreading factor 11, and 75 or less at 12; a larger one is
+rejected, with the largest that fits.
+
+With a [reliability layer](/components/packet_interface/#reliability), the `timeout` must allow for the other
+device's largest packet and an acknowledgement to be sent. Without a `timeout`, the link works one out from the
+radio's settings, `max_packet_size` and `ack_delay`: about 0.7 s at spreading factor 7 and 125 kHz with 255-byte
+packets and `ack_delay: 100ms`, and several seconds at high spreading factors. A shorter `timeout` is rejected.
+`ack_delay` should be about the time one packet takes to send, so that the acknowledgement does not collide with a
+second packet from the other device. With spreading factor 7 and a bandwidth of 125 kHz, `ack_delay: 100ms` works
+well. Two devices that send at the same regular interval can
 still collide now and then; the reliability layer sends again after a slightly random delay.
 
 ## Example Configuration
@@ -57,7 +64,6 @@ packet_interface:
       address: 0x0001
       destination: 0x0002
     reliability:
-      timeout: 500ms
       ack_delay: 100ms
     session:
 ```
