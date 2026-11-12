@@ -1,0 +1,142 @@
+---
+description: "Instructions for reading and writing objects of CANopen devices over SDO in ESPHome"
+title: "CANopen"
+---
+import APIRef from '@components/APIRef.astro';
+
+The `canopen` component reads and writes objects of [CANopen](https://www.can-cia.org/can-knowledge/canopen/)
+devices (CiA 301), for example drives, sensors and I/O modules, on a [CAN bus](/components/canbus/), using the SDO
+client of the [CANopenNode](https://github.com/CANopenNode/CANopenNode) stack. Reads and writes are started from
+automations ([`canopen.sdo_read`](#canopen-sdo_read-action), [`canopen.sdo_write`](#canopen-sdo_write-action)) or
+lambdas (see [SDO Client](#sdo-client)).
+
+The ESPHome device isn't a CANopen node itself: it sends no boot-up message or heartbeat, doesn't react to NMT
+commands and has no object dictionary other devices can read. It sends only its SDO requests (expedited and
+segmented transfers; no block transfer).
+
+This component requires a [CAN bus](/components/canbus/) platform, for example
+[ESP32 CAN](/components/canbus/esp32_can/) or [MCP2515](/components/canbus/mcp2515/). Set the bus's `bit_rate` to the
+one of the CANopen network.
+
+```yaml
+# Example configuration entry
+canopen:
+```
+
+## Configuration Variables
+
+- **canbus_id** (*Optional*, [ID](/guides/configuration-types/#id)): The [CAN bus](/components/canbus/) to use. Required
+  if there is more than one bus.
+- **response_timeout** (*Optional*, [Time](/guides/configuration-types/#time)): How long an SDO request waits for an
+  answer. Up to `65535ms`. Defaults to `500ms`.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation and
+  in lambdas.
+
+## Automations
+
+### `canopen.sdo_read` Action
+
+Reads a value of up to 4 bytes from an object of a node over SDO. The action starts the transfer and continues;
+`on_value` or `on_error` runs when it ends. Requests are queued and sent one after another.
+
+```yaml
+on_...:
+  - canopen.sdo_read:
+      node_id: 0x01
+      index: 0x1018
+      subindex: 1
+      size: 4
+      on_value:
+        - logger.log:
+            format: "vendor id 0x%08x"
+            args: ["(unsigned) x"]
+```
+
+Configuration variables:
+
+- **node_id** (**Required**, int, [templatable](/automations/templates/)): The node, from `1` to `127`.
+- **index** (**Required**, int, [templatable](/automations/templates/)): The object index.
+- **subindex** (*Optional*, int, [templatable](/automations/templates/)): The subindex. Defaults to `0`.
+- **size** (*Optional*, int): The size of the object in bytes: `1`, `2` or `4` (a different size gives
+  `SDO_RESULT_SIZE_MISMATCH`), or `0` for any size up to 4 bytes. Defaults to `0`.
+- **on_value** (*Optional*, [Automation](/automations/)): Runs with the value read. Variable: `x` (`uint32_t`, little
+  endian bytes as an unsigned number; cast it for signed objects, e.g. `(int16_t) x`).
+- **on_error** (*Optional*, [Automation](/automations/)): Runs when the read failed. Variables: `result`
+  (`canopen::SDOResult`) and `abort_code` (`uint32_t`), as in [`canopen.sdo_write`](#canopen-sdo_write-action).
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The `canopen` component to use. Required if there is
+  more than one.
+
+### `canopen.sdo_write` Action
+
+Writes a value of 1, 2 or 4 bytes to an object of a node over SDO. The action starts the transfer and continues;
+`on_success` or `on_error` runs when it ends. Requests are queued and sent one after another.
+
+```yaml
+on_...:
+  - canopen.sdo_write:
+      node_id: 0x01
+      index: 0x1017
+      value: 2000
+      size: 2
+      on_error:
+        - logger.log:
+            format: "write failed: %s, abort code 0x%08x"
+            args: ["LOG_STR_ARG(canopen::sdo_result_to_string(result))", "(unsigned) abort_code"]
+```
+
+Configuration variables:
+
+- **node_id** (**Required**, int, [templatable](/automations/templates/)): The node, from `1` to `127`.
+- **index** (**Required**, int, [templatable](/automations/templates/)): The object index.
+- **subindex** (*Optional*, int, [templatable](/automations/templates/)): The subindex. Defaults to `0`.
+- **value** (**Required**, int, [templatable](/automations/templates/)): The value. Negative values are written as
+  two's complement. A constant must fit in `size` bytes.
+- **size** (*Optional*, int): The size of the object in bytes: `1`, `2` or `4`. Defaults to `4`.
+- **on_success** (*Optional*, [Automation](/automations/)): Runs when the node confirmed the write.
+- **on_error** (*Optional*, [Automation](/automations/)): Runs when the write failed. Variables: `result`
+  (`canopen::SDOResult`: `SDO_RESULT_ABORT`, `SDO_RESULT_TIMEOUT`, `SDO_RESULT_TRANSPORT_ERROR` or
+  `SDO_RESULT_REJECTED`) and `abort_code` (`uint32_t`, the SDO abort code for `SDO_RESULT_ABORT` and
+  `SDO_RESULT_TIMEOUT`).
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The `canopen` component to use. Required if there is
+  more than one.
+
+## Lambdas
+
+### SDO Client
+
+The SDO client has one channel; requests are queued (up to 16) and sent one after another. Every request ends in
+exactly one callback, with a `canopen::SDOReply`: `result` (`SDO_RESULT_SUCCESS`, `SDO_RESULT_ABORT`,
+`SDO_RESULT_TIMEOUT`, `SDO_RESULT_SIZE_MISMATCH`, `SDO_RESULT_TRANSPORT_ERROR` or `SDO_RESULT_REJECTED`),
+`abort_code`, `value` / `size` for values and `data` / `len` for buffers (valid only during the callback). A rejected
+request (queue full, invalid arguments) calls back before the call returns `false`.
+
+```cpp
+// value read with a width check: a different width gives SIZE_MISMATCH
+id(my_canopen).read_sdo<uint32_t>(0x01, 0x1018, 1, [](void *context, const canopen::SDOReply &reply) {
+  if (reply.ok())
+    ESP_LOGI("main", "vendor id 0x%08x", reply.as<uint32_t>());
+}, nullptr);
+
+// value write
+id(my_canopen).write_sdo<uint16_t>(0x01, 0x1017, 0, 2000);
+
+// buffer read (strings, domains); the buffer must stay valid until the callback
+static uint8_t name[64];
+id(my_canopen).read_sdo_data(0x01, 0x1008, 0, name, sizeof(name), [](void *context, const canopen::SDOReply &reply) {
+  if (reply.ok())
+    ESP_LOGI("main", "name: %.*s", (int) reply.len, (const char *) reply.data);
+}, nullptr);
+```
+
+- `read_sdo<T>(node_id, index, subindex, callback, context)` and `write_sdo<T>(node_id, index, subindex, value,
+  callback, context)` for values of 1, 2 or 4 bytes. `SDOReply::as<T>()` sign-extends for signed types.
+- `read_sdo_data(node_id, index, subindex, data, capacity, callback, context)` and `write_sdo_data(node_id, index,
+  subindex, data, len, callback, context)` for buffers. The buffer belongs to the caller and must stay valid until the
+  callback, so it can't be a local variable. A read of an object longer than `capacity` is aborted. Requests run one
+  at a time, so queued reads can share a buffer if each callback uses the data before it returns.
+
+## See Also
+
+- [CAN Bus](/components/canbus/)
+- [CANopenNode](https://github.com/CANopenNode/CANopenNode)
+- <APIRef text="canopen.h" path="canopen/canopen.h" />
