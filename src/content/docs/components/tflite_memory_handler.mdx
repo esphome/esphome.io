@@ -8,13 +8,15 @@ loaded automatically as a dependency of the `tflite_micro_runtime`
 component and of the third-party components that consume it.
 
 The allocator prefers PSRAM when available and falls back to internal SRAM otherwise; build flags
-`-DTFLITE_FORCE_SRAM` and `-DTFLITE_FORCE_PSRAM` override the selection. All allocations use
-`heap_caps_aligned_alloc(16, ...)` as required by TFLite Micro and are released through a heap-caps deleter
-wrapped in `std::unique_ptr`, so memory is never leaked when a model is unloaded.
+`-DTFLITE_FORCE_SRAM` and `-DTFLITE_FORCE_PSRAM` override the selection. The arena is allocated with
+`RAMAllocator` from the chosen heap and released by a `RAMUniquePtr`, so memory is never leaked when a model is
+unloaded; TFLite Micro aligns the buffers it places inside the arena itself.
 
 The component also hosts `ArenaProbe`, which probes the arena size actually required by a model by trial
-allocation (progressive increase then binary search), so the requested arena size does not need to be
-guessed.
+allocation (progressive increase then binary search), so the requested arena size does not need to be guessed.
+It starts from `tensor_arena_size` when that option is set, and otherwise from an estimate computed from the
+model's tensors while the configuration is generated; either way the size that is allocated is the one the
+probe measured.
 
 ## Example configuration entry
 
@@ -47,7 +49,7 @@ tflite_memory_handler:
 
 ## See Also
 
-- `tflite_micro_runtime` - the user-facing component that loads this library
-  automatically
+- [TFLite Micro Runtime](/components/tflite_micro_runtime/) - the user-facing component that loads this
+  library automatically
 - [esphome_ai_component Demo](https://github.com/nliaudat/esphome_ai_component) - working demo with pre-trained
   models and camera integration
