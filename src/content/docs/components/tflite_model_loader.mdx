@@ -10,9 +10,16 @@ component and of the third-party components that consume it.
 - `ModelLoader` builds a `MicroMutableOpResolver` from the model's own operator list (through
   `tflite_op_processor`), loads the model into a `MicroInterpreter` and allocates the tensor arena through
   `tflite_memory_handler`.
-- `crc32.h/cpp` provide the CRC32 helpers used to verify model data integrity at load time.
+- `crc32.h/cpp` provide the CRC32 helpers used to verify model data integrity at load time. The checksum is
+  computed from the model binary while the configuration is generated and verified on every load, whatever
+  `debug:` is set to.
 - `ModelHandler` (namespace `esphome::tflite_model_loader`) is the facade over the loader, memory handler and
   output processor that consumer-facing classes such as `TFLiteMicroHelper` drive.
+
+The model file is a flatbuffer that TFLite Micro reads through a cast, so code generation declares it with
+`alignas(16)` instead of the single-byte alignment a `PROGMEM` array gets by default: an unaligned 32-bit load
+traps on Xtensa instead of returning an error. The code generation side is described with `cg.progmem_array()`
+in the [developer documentation](https://developers.esphome.io/architecture/components/#code-generation).
 
 The component is loaded automatically by `tflite_micro_runtime`.
 
@@ -48,7 +55,7 @@ tflite_model_loader:
 
 ## See Also
 
-- `tflite_micro_runtime` - the user-facing component that loads this library
-  automatically
+- [TFLite Micro Runtime](/components/tflite_micro_runtime/) - the user-facing component that loads this
+  library automatically
 - [esphome_ai_component Demo](https://github.com/nliaudat/esphome_ai_component) - working demo with pre-trained
   models and camera integration
