@@ -545,6 +545,11 @@ start the work at the right time, use it instead of waiting:
 | `while` with a `delay` that polls a value | an [`interval`](/components/interval/) or `update_interval` |
 | `script.wait` followed by more actions | the same actions at the end of the script |
 
+The connection triggers run on each new connection, not at once when the device is already connected, so they only
+replace a wait for work meant to run on every connection. Actions moved to the end of a script run once per run of
+the script, for every caller; keep `script.wait` when only one caller needs them, or when they must wait until all
+`parallel` runs have finished.
+
 For example, this waits two seconds on every press, then checks whether the door is still open:
 
 ```yaml
