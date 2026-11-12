@@ -313,8 +313,13 @@ button:
   - `yb1fa`
   - `yx1ff`
   - `yag`
+  - `yap1f`
   - `yaw1f`: the `yag` byte layout with the frame timing and follow-up message of YAW1F remotes. Try it when a
     unit with a YAW1F remote ignores `yag`.
+
+  `yap1f` is the YAP1F / YAP1FB remote family. ESPHome encodes the YAP1F IR frame natively for transmit.
+  Configurable `horizontal_default` / `vertical_default` vane positions are not supported on `yap1f` (the current
+  frame layout does not carry them); only `auto` is accepted.
 
 - **use_fahrenheit** (*Optional*, boolean): Show the setpoint in Fahrenheit on the air conditioner's own display,
   for every whole degree from 61 °F to 86 °F. This does not change the unit Home Assistant shows. Sent for every
@@ -328,6 +333,12 @@ climate:
     id: my_gree_ac
     sensor: room_temperature
     model: yan
+
+# YAP1F example
+climate:
+  - platform: gree
+    name: "Workplace AC"
+    model: yap1f
 ```
 
 Models `yx1ff` and `yac1fb9` also offer the `sleep` preset.
