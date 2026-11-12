@@ -1,5 +1,5 @@
 ---
-description: "Debug tooling for TFLite Micro models (CRC32, architecture, tensors)"
+description: "Debug tooling for TFLite Micro models (architecture, tensors, parameter sweeps)"
 title: "TFLite Model Debug"
 ---
 
@@ -7,10 +7,13 @@ The `tflite_model_debug` component is a **library-only component**: it has no us
 loaded automatically as a dependency of the `tflite_micro_runtime`
 component and of the third-party components that consume it.
 
-Everything is guarded by the `DEBUG_TFLITE_MICRO_HELPER` define emitted when the `debug: true` option is set
-on the consuming `tflite_micro_runtime` component. When enabled it provides CRC32 model verification, model
-architecture inspection, tensor input/output statistics and quantization analysis, parameter sweeps for
-tuning preprocessing configuration, and watchdog feeding during long debug operations.
+The definitions are compiled in whenever this component is present: `USE_TFLITE_MODEL_DEBUG` is emitted by its
+own code generation and declares the debug members on `ModelHandler`. The `debug:` option of the consuming
+`tflite_micro_runtime` instance is a runtime flag that turns the diagnostics on for that instance, so nothing is
+compiled out when it is `false`. The diagnostics are model architecture inspection, tensor input/output
+statistics and quantization analysis, parameter sweeps for tuning preprocessing configuration, and watchdog
+feeding during long debug operations. Model data integrity is not one of them: the CRC32 is verified by
+`tflite_model_loader` on every load.
 
 ## Example configuration entry
 
@@ -23,7 +26,7 @@ tflite_micro_runtime:
     model_type: image
     model: "models/digit_recognizer.tflite"
     tensor_arena_size: 200KB
-    # Enables the tflite_model_debug diagnostics (CRC32, architecture, tensors)
+    # Enables the tflite_model_debug diagnostics for this instance
     debug: true
 ```
 
@@ -41,7 +44,7 @@ tflite_model_debug:
 
 ## See Also
 
-- `tflite_micro_runtime` - the user-facing component that loads this library
-  automatically
+- [TFLite Micro Runtime](/components/tflite_micro_runtime/) - the user-facing component that loads this
+  library automatically
 - [esphome_ai_component Demo](https://github.com/nliaudat/esphome_ai_component) - working demo with pre-trained
   models and camera integration
