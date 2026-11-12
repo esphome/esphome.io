@@ -1,0 +1,266 @@
+---
+description: "Instructions for setting up the Nordic Semiconductor nPM1300 power management IC in ESPHome."
+title: "Nordic nPM1300 PMIC"
+---
+
+The `npm1300` component configures and monitors the Nordic Semiconductor nPM1300 power management IC (PMIC) over
+the [I²C bus](/components/i2c/) ([product specification](https://docs.nordicsemi.com/bundle/ps_npm1300/page/keyfeatures_html5.html)).
+The nPM1300 has a 1-cell lithium-ion battery charger, two buck regulators (BUCK1, BUCK2), two LDOs or load switches
+(LDO1, LDO2) and a 10-bit ADC that measures the battery, the system supply and the USB supply (VBUS).
+
+The hub writes the VBUS current limit, the charger and the regulator settings at boot and reads the chip at
+`update_interval`. The `sensor`, `binary_sensor` and `text_sensor` platforms report measurements and the charger
+state, and the `switch` platform turns the charger and the regulators on and off.
+
+## Configuration
+
+```yaml
+# Example configuration entry
+npm1300:
+  id: pmic
+  vbus_current_limit: 500mA
+  charger:
+    charge_current: 150mA
+    termination_voltage: 4.2V
+
+sensor:
+  - platform: npm1300
+    battery_voltage:
+      name: "Battery Voltage"
+    battery_current:
+      name: "Battery Current"
+
+binary_sensor:
+  - platform: npm1300
+    charging:
+      name: "Charging"
+
+text_sensor:
+  - platform: npm1300
+    charger_status:
+      name: "Charger Status"
+```
+
+## Configuration Variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used to reference this hub
+  from the platforms and actions.
+- **address** (*Optional*, int): The I²C address of the chip. Defaults to `0x6B`.
+- **i2c_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the I²C bus.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often to read the chip.
+  Defaults to `60s`.
+- **vbus_current_limit** (*Optional*, current): The current the chip may draw from VBUS (USB). One of `100mA`, or
+  `500mA` to `1500mA` in 100 mA steps. The chip starts with `100mA` and returns to it every time VBUS is removed,
+  so the limit is written again on every update while VBUS is present. If not set, the chip default is kept.
+- **thermistor_resistance** (*Optional*, resistance): The nominal resistance of the battery thermistor (NTC), one of
+  `10kOhm`, `47kOhm` or `100kOhm`. Needed for the `battery_temperature` sensor. If the `charger` is configured
+  without a thermistor, the charger does not check the battery temperature.
+- **thermistor_beta** (*Optional*, int): The B constant of the battery thermistor. Defaults to `3380`.
+- **charger** (*Optional*): Configure and turn on the battery charger. See [Charger](#charger).
+- **buck1**, **buck2** (*Optional*): Configure a buck regulator. See [Regulators](#regulators).
+- **ldo1**, **ldo2** (*Optional*): Configure an LDO or load switch. See [Regulators](#regulators).
+
+The settings are written in this order: VBUS current limit, thermistor, charger, then the regulators. Raising the
+VBUS current limit first keeps the inrush current of a regulator from tripping the over-current protection of the
+chip when the board runs from USB.
+
+### Charger
+
+- **charge_current** (**Required**, current): The charge current, from `32mA` to `800mA` in 2 mA steps.
+- **termination_voltage** (*Optional*, voltage): The voltage at which charging ends. `3.5V` to `3.65V` or `4.0V` to
+  `4.45V`, in 50 mV steps. Defaults to `4.2V`.
+- **warm_termination_voltage** (*Optional*, voltage): The termination voltage when the battery is warm, with the same
+  values as `termination_voltage`. Defaults to `termination_voltage`.
+- **termination_current** (*Optional*, string): The charge current, as a share of `charge_current`, below which
+  charging is complete. One of `10%` or `20%`. Defaults to `10%`.
+- **trickle_voltage** (*Optional*, voltage): Below this battery voltage the battery is charged with a small trickle
+  current. One of `2.5V` or `2.9V`. Defaults to `2.9V`.
+- **discharge_current_limit** (*Optional*, current): The battery discharge current limit. One of `200mA` or `1000mA`.
+  Defaults to `1000mA`.
+- **recharge** (*Optional*, boolean): Start charging again when the battery voltage drops after a complete charge.
+  Defaults to `true`.
+- **enabled** (*Optional*, boolean): Turn on the charger at boot. Defaults to `true`.
+
+> [!WARNING]
+> Check `charge_current` and the termination voltages against the data sheet of your battery. Wrong values can damage
+> the battery.
+
+### Regulators
+
+- **voltage** (*Optional*, voltage): The output voltage, from `1.0V` to `3.3V` in 100 mV steps. For a buck
+  regulator this replaces the voltage set by the `VSET` pin of the chip. For an LDO, it applies in `ldo` mode.
+- **mode** (*Optional*, string): LDO1 and LDO2 only: `ldo` to regulate the output voltage, or `load_switch` to pass
+  the input voltage through.
+- **enabled** (*Optional*, boolean): Turn the output on (`true`) or off (`false`) at boot. If not set, the output
+  stays as it is.
+
+> [!CAUTION]
+> One of the buck regulators usually powers the microcontroller itself. Turning it off, or setting a voltage the
+> microcontroller does not support, turns off or damages the board.
+
+## Sensor
+
+```yaml
+sensor:
+  - platform: npm1300
+    battery_voltage:
+      name: "Battery Voltage"
+    battery_current:
+      name: "Battery Current"
+    battery_temperature:
+      name: "Battery Temperature"
+    die_temperature:
+      name: "PMIC Temperature"
+    system_voltage:
+      name: "System Voltage"
+    vbus_voltage:
+      name: "VBUS Voltage"
+```
+
+- **npm1300_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `npm1300` hub.
+- **battery_voltage** (*Optional*): The battery voltage, in volts.
+- **battery_current** (*Optional*): The battery current, in amperes: positive while charging, negative while
+  discharging. The chip measures it relative to the charge current or the discharge current limit, so it is most
+  accurate near those values.
+- **battery_temperature** (*Optional*): The battery temperature from the thermistor, in °C. Needs
+  `thermistor_resistance` on the hub.
+- **die_temperature** (*Optional*): The temperature of the nPM1300 itself, in °C.
+- **system_voltage** (*Optional*): The system supply voltage (VSYS), in volts.
+- **vbus_voltage** (*Optional*): The USB supply voltage (VBUS), in volts.
+
+All options from [Sensor](/components/sensor/).
+
+## Binary Sensor
+
+```yaml
+binary_sensor:
+  - platform: npm1300
+    vbus_present:
+      name: "USB Power"
+    charging:
+      name: "Charging"
+```
+
+- **npm1300_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `npm1300` hub.
+- **vbus_present** (*Optional*): On when a supply is connected to VBUS.
+- **charging** (*Optional*): On while the battery is charging (trickle, constant current or constant voltage).
+- **charge_complete** (*Optional*): On when charging is complete.
+- **battery_detected** (*Optional*): On when the charger detects a battery.
+- **charger_error** (*Optional*): On when the charger stopped because of an error, for example a battery or
+  thermistor fault or a charge timeout. Turn the charger switch off and on to clear the error.
+
+All options from [Binary Sensor](/components/binary_sensor/).
+
+## Text Sensor
+
+```yaml
+text_sensor:
+  - platform: npm1300
+    charger_status:
+      name: "Charger Status"
+```
+
+- **npm1300_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `npm1300` hub.
+- **charger_status** (*Optional*): The state of the charger: `Error`, `Paused, Die Too Hot`, `Charge Complete`,
+  `Trickle Charge`, `Constant Current`, `Constant Voltage`, `Discharging` (no VBUS), `No Battery` or
+  `Not Charging`.
+
+All options from [Text Sensor](/components/text_sensor/).
+
+## Switch
+
+```yaml
+switch:
+  - platform: npm1300
+    charger:
+      name: "Charger"
+    ldo1:
+      name: "LDO1"
+```
+
+- **npm1300_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `npm1300` hub.
+- **charger** (*Optional*): Turn the battery charger on or off. Turning it on also clears a charger error.
+- **buck1**, **buck2**, **ldo1**, **ldo2** (*Optional*): Turn a regulator on or off.
+
+The switches show the state read from the chip at every update, so their state is not restored at boot.
+
+All options from [Switch](/components/switch/).
+
+## `npm1300.enter_ship_mode` Action
+
+Puts the chip in ship mode, its lowest power state: all outputs are turned off and the device stays off until the
+`SHPHLD` button of the nPM1300 is pressed or VBUS is connected.
+
+```yaml
+on_...:
+  then:
+    - npm1300.enter_ship_mode: pmic
+```
+
+## `npm1300.hibernate` Action
+
+Puts the chip in hibernate mode: all outputs are turned off until the wake-up timer of the chip runs out, the
+`SHPHLD` button is pressed or VBUS is connected. The device then starts again from the beginning.
+
+```yaml
+on_...:
+  then:
+    - npm1300.hibernate:
+        id: pmic
+        duration: 1h
+```
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the `npm1300` hub.
+- **duration** (**Required**, [templatable](/automations/templates/), [Time](/guides/configuration-types/#time)): How
+  long to stay in hibernate mode, from `16ms` to about `74h`, in 16 ms steps.
+
+> [!NOTE]
+> A supply on VBUS wakes the chip, so with VBUS connected it leaves ship or hibernate mode right away.
+
+## Seeed Studio XIAO nRF54LM20A
+
+The XIAO nRF54LM20A boards have an nPM1300 at address `0x6B` on its own I²C bus on `P1.18` (SDA) and `P1.17` (SCL),
+with a 10 kΩ battery thermistor. BUCK2 powers the nRF54LM20A and must stay on, and LDO1 supplies 3.3 V to the IMU
+and the microphone of the Sense version. This configuration matches the settings of the board in Zephyr:
+
+```yaml
+i2c:
+  - id: pmic_bus
+    sda: P1.18
+    scl: P1.17
+
+npm1300:
+  id: pmic
+  i2c_id: pmic_bus
+  vbus_current_limit: 500mA
+  thermistor_resistance: 10kOhm
+  thermistor_beta: 3380
+  charger:
+    charge_current: 150mA
+    termination_voltage: 4.2V
+    warm_termination_voltage: 4.0V
+  ldo1:
+    voltage: 3.3V
+    mode: ldo
+    enabled: true
+
+sensor:
+  - platform: npm1300
+    battery_voltage:
+      name: "Battery Voltage"
+    battery_current:
+      name: "Battery Current"
+    battery_temperature:
+      name: "Battery Temperature"
+
+text_sensor:
+  - platform: npm1300
+    charger_status:
+      name: "Charger Status"
+```
+
+## See Also
+
+- [I²C Bus](/components/i2c/)
+- [nRF52 Platform](/components/nrf52/)
+- [nPM1300 product page](https://www.nordicsemi.com/Products/nPM1300)
