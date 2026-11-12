@@ -111,7 +111,12 @@ installs their first build over USB. Manufacturer updates still use the
 > The `esphome` OTA platform alone does not let a user install their own builds if the imported package still enables
 > `signed_ota_verification`, because the device rejects any update that is not signed with a key it trusts. We suggest
 > the package contains no signing configuration at all. The user then installs their first build over USB, and after
-> that nothing needs signing. See [Signed OTA Verification](/components/esp32/#signed-ota-verification).
+> that nothing needs signing. Remove `enable_ota_downgrade_protection` as well, as it requires
+> `signed_ota_verification`. See [Signed OTA Verification](/components/esp32/#signed-ota-verification).
+>
+> Without signature checks, anyone who can reach the device can upload firmware unless the `esphome` OTA platform is
+> authenticated. Point users to the [OTA encryption and password options](/components/ota/esphome/) so they can set
+> one in their own configuration before the first flash.
 
 ### Updates
 
