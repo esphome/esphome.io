@@ -133,6 +133,10 @@ measured rate for the rest of the message; a message that starts with any other 
 rate. The byte needs a level change at or after its last data bit, so `0x55` (alternating bits) is the best
 choice.
 
+The sync byte applies to every software UART in the configuration, so all UARTs that set
+`auto_baud_sync_byte` must use the same byte. Other software UARTs are unaffected unless their messages also start
+with that byte, in which case their real rate is measured too.
+
 ```yaml
 uart:
   tx_pin: GPIO5
