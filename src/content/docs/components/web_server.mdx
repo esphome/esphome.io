@@ -69,6 +69,9 @@ web_server:
 - **js_include** (*Optional*, local file): Path to local file to be included in web server index page.
   Contents of this file will be served as `/0.js` and used as JS script by internal webserver.
   Useful when building device without internet access, where you want to use built-in AP and webserver.
+  On version 2 and 3 the page loads the file as a JavaScript module, so it can also `import` add-ons by URL
+  while the main script keeps rendering the interface. The version 1 page does not load it.
+  See [Loading Add-on Modules](#loading-add-on-modules).
 
 - **auth** (*Optional*): Enables HTTP authentication with a username and password.
 
@@ -257,19 +260,6 @@ captive_portal:
 
 The following assume copies of the files with local paths - which are config dependent.
 
-Example `web_server` version 1 configuration with CSS and JS included from a local folder.
-CSS and JS URL's are set to empty value, so no internet access is needed for this device to show it's web interface.
-
-```yaml
-web_server:
-  port: 80
-  version: 1
-  css_include: "<some_folder>/webserver-v1.min.css"
-  css_url: ""
-  js_include: "<some_folder>/webserver-v1.min.js"
-  js_url: ""
-```
-
 Example `web_server` version 2 configuration with JS included from a local file.
 CSS and JS URL's are set to empty value, so no internet access is needed for this device to show it's web interface.
 V2 embeds the css within the js file so is not required, however you could include your own CSS.
@@ -283,6 +273,39 @@ web_server:
 ```
 
 Copy [https://oi.esphome.io/v2/www.js](https://oi.esphome.io/v2/www.js) to a V2 folder in your yaml folder.
+
+### Loading Add-on Modules
+
+To extend the hosted interface with an add-on, such as an extra panel for one of your sensors, keep `js_url` at its
+default, leave `local` off and point `js_include` at a small file next to your YAML:
+
+```yaml
+web_server:
+  version: 3
+  js_include: "addons.js"
+```
+
+The device serves `addons.js` as `/0.js`. On version 2 and 3 the page loads it with `<script type="module">`, so it
+can import the add-on by URL:
+
+```js
+// addons.js
+import "https://example.com/my-addon.js";
+```
+
+Module scripts run after the page has been parsed. On version 2 and 3 the main script has therefore defined
+`<esp-app>` by the time `addons.js` runs. Each further add-on is one more `import` line in the same file.
+
+With `local: true`, version 2 and 3 serve the embedded interface in place of this page. The device still serves
+`/0.js`, but the embedded interface does not load it, so the add-on never runs.
+
+> [!WARNING]
+> An imported add-on runs with the same access as the web interface, so it can read and control the device's
+> entities. Only import code you trust.
+
+> [!NOTE]
+> Browsers fetch module scripts with CORS. The add-on's host must send an `Access-Control-Allow-Origin` header that
+> admits the device's origin. Public CDNs such as jsDelivr send one, but a plain file server on your LAN may not.
 
 <span id="config-webserver-version-3-options"></span>
 
