@@ -163,6 +163,8 @@ entity_transport:
 
 - With `peers`, the `encryption`, `reliability` and `session` options go in each entry, not on the interface, and
   other components must use an entry's `id`, not the interface's.
+- Entries that use the rolling code each need their own encryption key. With a shared key, a packet recorded from
+  one device and sent again with another device's address would be accepted as coming from that device.
 - When two devices on a half-duplex bus such as RS485 send at the same moment, their packets collide and are lost.
   The reliability layer sends them again, after a timeout with a small random variation so that the two devices do
   not collide again.
