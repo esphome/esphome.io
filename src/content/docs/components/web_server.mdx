@@ -69,8 +69,9 @@ web_server:
 - **js_include** (*Optional*, local file): Path to local file to be included in web server index page.
   Contents of this file will be served as `/0.js` and used as JS script by internal webserver.
   Useful when building device without internet access, where you want to use built-in AP and webserver.
-  The page loads the file as a JavaScript module, so it can also `import` add-ons by URL while the main
-  script keeps rendering the interface. See [Loading Add-on Modules](#loading-add-on-modules).
+  On version 2 and 3 the page loads the file as a JavaScript module, so it can also `import` add-ons by URL
+  while the main script keeps rendering the interface. The version 1 page does not load it.
+  See [Loading Add-on Modules](#loading-add-on-modules).
 
 - **auth** (*Optional*): Enables HTTP authentication with a username and password.
 
@@ -297,8 +298,8 @@ web_server:
   js_include: "addons.js"
 ```
 
-The device serves `addons.js` as `/0.js` and the page loads it with `<script type="module">`, so it can import the
-add-on by URL:
+The device serves `addons.js` as `/0.js`. On version 2 and 3 the page loads it with `<script type="module">`, so it
+can import the add-on by URL:
 
 ```js
 // addons.js
