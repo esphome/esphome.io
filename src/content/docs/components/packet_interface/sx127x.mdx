@@ -34,12 +34,17 @@ the packet is lost. Packets are refused for at most as long as the largest packe
 send, and at least 2 seconds, so a receive that never ends cannot stop sending; after that, the packet is sent anyway,
 and a warning is logged.
 
+A send that becomes several radio packets, such as a large packet split by a
+[fragmentation layer](/components/packet_interface/#fragmentation), or the queue of a reliability layer, waits for
+each packet in turn, and other components do not run meanwhile. Validation warns when this can take more than 4
+seconds; use a smaller `max_packet_size` or `max_queue_length`, or faster radio settings.
+
 The radio waits at most 4 seconds for a packet to be sent, so the largest packet must take less, with a margin. At
 125 kHz this needs a `max_packet_size` of 157 or less at spreading factor 11, and 75 or less at 12; a larger one is
 rejected, with the largest that fits.
 
-With a [reliability layer](/components/packet_interface/#reliability), the `timeout` must allow for the other
-device's largest packet and an acknowledgement to be sent. Without a `timeout`, the link works one out from the
+With a [reliability layer](/components/packet_interface/#reliability), the `timeout` must allow for the largest
+packet that any device on the channel can send, and an acknowledgement. Without a `timeout`, the link works one out from the
 radio's settings, `max_packet_size` and `ack_delay`: about 0.7 s at spreading factor 7 and 125 kHz with 255-byte
 packets and `ack_delay: 100ms`, and several seconds at high spreading factors. A shorter `timeout` is rejected.
 `ack_delay` should be about the time one packet takes to send, so that the acknowledgement does not collide with a
