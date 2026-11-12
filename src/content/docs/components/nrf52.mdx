@@ -81,7 +81,8 @@ with the J-Link tools. This needs the `sdk-nrf` toolchain (the default); it does
 
 ESPHome resets the chip after flashing, so the new firmware starts straight away.
 
-With the `mcuboot` bootloader, you can also choose the J-Link's serial port instead of `JLINK`.
+When `bootloader` is `mcuboot` (the default on the nRF54 boards), you can also choose the J-Link's serial port
+instead of `JLINK`.
 
 If the J-Link output says that the chip is protected, the chip must be erased (recovered) once, for example with
 Nordic's [nRF Connect for Desktop](https://www.nordicsemi.com/Products/Development-tools/nRF-Connect-for-Desktop)
@@ -90,7 +91,8 @@ Programmer or `nrfutil device recover`. Then flash again.
 ## Flashing with a CMSIS-DAP Probe
 
 Boards with a built-in CMSIS-DAP debugger, such as the Seeed XIAO nRF54LM20A, are flashed through it when you
-run `esphome upload yourfile.yaml` and choose the board's serial port. This needs the `mcuboot` bootloader.
+run `esphome upload yourfile.yaml` and choose the board's serial port. This needs `bootloader`
+to be `mcuboot`, the default on the nRF54 boards.
 
 If flashing fails because the chip is locked, erase it once and upload again, for example:
 
