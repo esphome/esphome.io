@@ -1,0 +1,140 @@
+---
+description: "Store the device's YAML configuration on the device so it can be recovered if the files are lost."
+title: "Store YAML"
+---
+The `store_yaml` component embeds the local YAML configuration files that built
+the firmware (the entry YAML, files loaded with `!include`, and local packages)
+into the device's flash, so a working configuration can be recovered from a
+running device if the original files are lost on your computer.
+
+Remote packages (packages loaded from a Git repository or URL) are not
+embedded. Only their sources are recorded, in a `store_yaml_uncaptured.yaml`
+note, and they must be fetched again when you recover the configuration.
+
+The files are compressed when the firmware is built, so they take only a
+small part of the flash, usually 10% to 30% of their original size.
+
+```yaml
+# Example configuration entry
+store_yaml:
+```
+
+`store_yaml` depends on the [Native API](/components/api/).
+
+Because the embedded YAML may contain network credentials, `store_yaml`
+requires an [API encryption](/components/api/#configuration-variables) `key`
+in the configuration. A key that is only set later, from Home Assistant, is
+not enough. For isolated lab setups you can set `allow_unencrypted: true` to
+override this after acknowledging the risk.
+
+## Configuration Variables
+
+- **include_secrets** (*Optional*, boolean): Controls how secrets are handled
+  in the embedded files. Defaults to `false`.
+
+  With the default `false`, each file is re-generated from its parsed form
+  with secret values replaced by `!secret` references (see
+  [What Gets Redacted](#what-gets-redacted) for the exceptions): values loaded
+  through `!secret` keep their names, and values written inline in the YAML
+  get a name derived from where they appear (for example `wifi_password`).
+  The `secrets.yaml` content is replaced with a skeleton listing every
+  referenced key. To make a recovered configuration flashable, fill in the
+  skeleton's values and restore the files listed under
+  [What Is Not Stored](#what-is-not-stored). Because the files are
+  re-generated, comments and formatting are not preserved in this mode.
+
+  With `include_secrets: true`, every file, including `secrets.yaml`, is
+  embedded byte for byte, exactly as written.
+
+  > [!CAUTION]
+  > Setting `include_secrets: true` writes your Wi-Fi password, API encryption key and every other secret into
+  > the firmware binary, and any client that can connect to the native API can pull them back out. Never combine
+  > it with `allow_unencrypted: true`: every host that can reach the device would then get the secrets in plain
+  > text. Keep this off unless you understand the trade-off.
+
+- **allow_unencrypted** (*Optional*, boolean): Allow `store_yaml` without
+  [API encryption](/components/api/#configuration-variables). When enabled,
+  any client that can reach the device on the network can pull the embedded
+  YAML. Defaults to `false`.
+
+## What Gets Redacted
+
+Secret redaction covers values that ESPHome validates as sensitive (Wi-Fi
+credentials, API encryption keys, OTA and MQTT passwords, BLE bind keys, and
+similar). A credential placed in an option that is not marked sensitive, for
+example in a custom or external component, is embedded as written, so prefer
+`!secret` for any value you consider secret.
+
+If a sensitive value cannot be replaced (for example because it is assembled
+from several substitutions), the build fails rather than embedding it.
+Reference the value with `!secret`, or set `include_secrets: true` to embed
+secrets deliberately. The one exception is a Wi-Fi SSID loaded with `!secret`
+that also appears inside a longer value, such as a device name: SSIDs are
+broadcast, so the build only warns and that text is embedded as written.
+
+Even with `include_secrets: false`, treat the stored YAML as sensitive.
+
+## What Is Not Stored
+
+Some files cannot be stored. A `store_yaml_uncaptured.yaml` note in the
+recovered files lists them so you know what to restore:
+
+- `!include` paths that contain substitution variables (such as
+  `!include ${board}.yaml`). Restore these files manually.
+- Remote packages. The note lists each source with its `ref`, with
+  credentials in the URL masked and secrets shown by name. Fetch these packages
+  again to complete the configuration.
+- Directories that were symbolic links. The note lists each link and its
+  target so you can recreate them.
+
+Only YAML files are stored. Other files the configuration uses, such as C++
+files under `esphome: includes:`, fonts and images, are not stored and not
+listed in the note, so keep your own backup of them.
+
+## Recovering the Configuration
+
+Download the stored files with the
+[`recover-yaml` command](/guides/cli/#recover-yaml-command). It reads the
+device's API encryption key from the `ESPHOME_API_KEY` environment variable, or
+asks for it; leave it empty for a device built with `allow_unencrypted: true`.
+
+```bash
+esphome recover-yaml --device kitchen.local --output kitchen-recovered
+```
+
+For a typical configuration the files come back side by side in the new folder:
+
+```text
+kitchen-recovered/
+  kitchen.yaml
+  secrets.yaml
+```
+
+To finish the configuration:
+
+1. Fill in the values in `secrets.yaml`. The command names every
+   `secrets.yaml` that needs them.
+2. Restore anything listed in `store_yaml_uncaptured.yaml`, if it is there,
+   and the non-YAML files described in [What Is Not Stored](#what-is-not-stored).
+3. Check the main configuration with `esphome config`, then install as usual.
+   The command prints where the main configuration is, here
+   `kitchen-recovered/kitchen.yaml`.
+
+When the configuration included files from a folder above its own, such as
+`!include ../common/wifi.yaml`, the main configuration is put one folder down,
+in a folder named after it, so those files keep their place inside the new
+folder. Each further `../` level adds one more folder. The main configuration
+is then `kitchen-recovered/kitchen/kitchen.yaml`:
+
+```text
+kitchen-recovered/
+  kitchen/
+    kitchen.yaml
+    secrets.yaml
+  common/
+    wifi.yaml
+```
+
+## See Also
+
+- [Native API](/components/api/)
