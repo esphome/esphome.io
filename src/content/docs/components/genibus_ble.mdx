@@ -28,6 +28,7 @@ genibus_ble:
 
 - **ble_client_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the
   [BLE Client](/components/ble_client/) that connects to the pump. Required if you have more than one BLE Client.
+  Each pump needs its own BLE Client: two transports cannot share one.
 
 - **master_address** (*Optional*, int): The GENIbus address that ESPHome uses for itself on the bus. Defaults to
   `0xF8`, the address that the Grundfos GO app uses.
@@ -46,12 +47,12 @@ put back together before they are checked.
 ## Connection and Pairing
 
 The pump only answers on an encrypted link. When the BLE Client connects, this component starts pairing. The
-connection counts as up 500 milliseconds after ESPHome has subscribed to the GENIbus notifications of the pump.
-The pump can drop a request that arrives right after the subscription, so the component waits before the first
-request. Until then, the bus sends no requests. You cannot change this wait.
+connection counts as up when the link is encrypted and 500 milliseconds have passed since the pump confirmed the
+subscription to its GENIbus notifications. The pump can drop a request that arrives right after the subscription,
+so the component waits before the first request. Until then, the bus sends no requests. You cannot change this wait.
 
-If the pump does not offer the GENIbus characteristic, or ESPHome cannot subscribe to it, the component logs a
-warning and disconnects. This frees the pump's connection for other devices. The BLE Client connects again later if
+If the pump does not offer the GENIbus characteristic, ESPHome cannot subscribe to it, pairing fails, or the
+connection is not up within 10 seconds, the component logs a warning and disconnects. This frees the pump's connection for other devices. The BLE Client connects again later if
 `auto_connect` is on.
 
 > [!NOTE]
@@ -62,7 +63,7 @@ warning and disconnects. This frees the pump's connection for other devices. The
 
 ### Pairing Failed
 
-If pairing fails, the log shows the warning `Pairing failed` and the component sets a warning status.
+If pairing fails, the log shows the warning `Pairing failed, disconnecting` and the component sets a warning status.
 
 1. Allow pairing on the pump. How to do this depends on the pump model; see the manual of your pump. On a Grundfos
    ALPHA3, tap the Connect button briefly. The pump then starts the pairing itself, and no PIN is needed.
