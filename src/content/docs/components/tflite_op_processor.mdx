@@ -16,7 +16,7 @@ single source of truth for both sides of the pipeline:
   and `op_manifest.py` parses the same table, so a model whose operators cannot be registered is rejected before
   anything is compiled. The companion `.txt` report is not consulted for this: the model file is authoritative.
   The same reader returns the shape and data type of the model's input tensor, which `tflite_micro_runtime` uses
-  to configure an image model.
+  to configure an image or an audio model.
 - **At run time**, `OpResolverManager::register_ops()` reads the model's operator code list and registers only
   the operators actually used, through the table, on a `MicroMutableOpResolver` sized by
   `TFLITE_MICRO_MAX_OPERATORS`, which `tflite_micro_runtime` emits as the number of distinct operator codes of
