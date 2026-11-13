@@ -1,5 +1,5 @@
 ---
-description: "Instructions for setting up the RTSP Server in ESPHome to stream camera video to VLC, ffplay or NVR software"
+description: "Instructions for setting up the RTSP Server in ESPHome to stream camera video and microphone audio to VLC, ffplay or NVR software"
 title: "RTSP Server Component"
 ---
 import APIRef from '@components/APIRef.astro';
@@ -11,7 +11,8 @@ VLC, ffplay, go2rtc or Frigate to
 consume the camera feed directly, without any ESPHome-specific integration.
 
 Video is delivered as Motion JPEG (the format produced by the camera hardware) carried over
-the RTSP connection itself (TCP-interleaved transport). Clients requesting UDP transport are
+the RTSP connection itself (TCP-interleaved transport). Audio from a [microphone](/components/microphone/)
+can be added as a second track of the same stream, see [Audio](#audio). Clients requesting UDP transport are
 asked to fall back to TCP, which every common player does automatically. The camera streams
 only while at least one client is playing.
 
@@ -35,6 +36,12 @@ rtsp_server:
 - **allowed_ips** (*Optional*, list of IPv4 networks): Only peers from these networks may connect;
   others are refused at accept time. Each entry is a single address (`192.168.1.50`) or an
   `address/prefix` network (`192.168.1.0/24`). When omitted, every host that can reach the port is accepted.
+- **microphone** (*Optional*, [Microphone Source Configuration](/components/microphone/#config-microphone-source)):
+  The [microphone](/components/microphone/) to stream as an audio track. One channel, 16 bits per sample. ESP32 only.
+- **audio_codec** (*Optional*, string): How the audio track is encoded. Needs `microphone`. One of:
+
+  - `L16` (default): uncompressed 16-bit PCM at the microphone's sample rate.
+  - `PCMU` or `PCMA`: G.711 µ-law or A-law, which needs a microphone running at 8000 Hz.
 
 The component needs an [ESP32 Camera](/components/esp32_camera/) that delivers JPEG: the default
 `pixel_format: JPEG`, or another colour format converted with `jpeg_quality`; `GRAYSCALE` is not
@@ -42,6 +49,40 @@ supported. The `resolution` may be at most 2040 pixels per side. The configurati
 otherwise. A client whose connection makes no progress for half a second drops its current frame
 and takes no new one until the connection drains again, so it cannot slow the camera down for the
 other consumers.
+
+## Audio
+
+With `microphone` set, the stream offers an audio track next to the video one, on the same connection.
+Clients set up the tracks they want: players take both, and a client can also take just one. The
+microphone captures only while a client plays the audio track.
+
+```yaml
+# Next to a configured esp32_camera and i2s_audio bus
+microphone:
+  - platform: i2s_audio
+    id: mic
+    i2s_din_pin: GPIO12
+    adc_type: external
+    sample_rate: 16000
+    bits_per_sample: 16bit
+    channel: left
+
+rtsp_server:
+  microphone: mic
+```
+
+The track carries the microphone's samples as they are, with no processing beyond the source's
+`gain_factor`. Uncompressed `L16` costs 256 kbit/s at 16 kHz, a noticeable share of what the
+connection can carry over Wi-Fi (see [Throughput](#throughput)), so the video frame rate can drop
+when audio is added. G.711 (`PCMU` or `PCMA`) costs 64 kbit/s and is also what WebRTC players accept
+without transcoding, so go2rtc can pass it to a browser as it is. It needs the microphone at 8000 Hz;
+to keep another consumer such as a voice assistant at 16 kHz, give the server an 8 kHz copy through a
+[resampler microphone](/components/microphone/resampler/).
+
+Audio packets take priority over video, since late audio is heard while a lower video rate only looks less
+smooth. The device keeps the last 160 ms of audio; a client that falls further behind skips the oldest.
+Every 5 seconds the server sends RTCP sender reports that tie the timestamps of both tracks to one clock, so
+players that use them (ffmpeg, VLC) keep audio and video in step.
 
 ## Watching the Stream
 
@@ -76,6 +117,17 @@ or `network: tcp_send_buffer` to pick a buffer size by hand.
 The RTSP URL can be used directly as a camera source in surveillance software such as
 Frigate, go2rtc, Zoneminder or Blue Iris. Configure the source as an RTSP camera with
 TCP transport and the URL `rtsp://<device-ip>:<port>/`.
+
+For example, go2rtc can pull the stream once and offer it to browsers and other clients, transcoding
+the video to H.264 and, for `L16`, the audio to Opus:
+
+```yaml
+# go2rtc.yaml
+streams:
+  esp_cam:
+    - rtsp://192.168.1.100:554/
+    - ffmpeg:esp_cam#video=h264#audio=opus
+```
 
 ## Home Assistant
 
