@@ -73,6 +73,32 @@ Here is another example output for a Tuya ME-81H thermostat:
 - **ignore_mcu_update_on_datapoints** (*Optional*, list): A list of datapoints to ignore MCU updates for. Useful for
   certain broken/erratic hardware and debugging.
 
+- **heartbeat** (*Optional*, boolean): Set to `false` for an MCU that does not answer the heartbeat. The
+  initialization then starts at the product query, the working mode is not queried and `mcu_watchdog` cannot be used. See
+  [MCU Without Heartbeat](#tuya-no-heartbeat). Defaults to `true`.
+
+- **datapoint_ack** (*Optional*, boolean): Answers each datapoint of a report of the MCU with an acknowledgement. Some
+  MCUs repeat a report until they get one. Defaults to `false`.
+
+- **mcu_watchdog** (*Optional*): Acts when the MCU stops answering heartbeats, which ends a stall of the serial
+  transmitter of the MCU. It is active with its defaults when not configured. See [MCU Watchdog](#tuya-mcu_watchdog).
+
+  - **action** (*Optional*, string): What is done after `missed_heartbeats` unanswered heartbeats. Defaults to
+    `reboot`.
+
+    - `reboot`: Reboots the module, as the original Tuya module firmware does.
+    - `reset`: Resets the serial transmitter of the MCU by holding the UART TX line low for `reset_time`. The module
+      keeps running. Requires `tx_pin`.
+    - `disable`: Turns the watchdog off.
+
+  - **missed_heartbeats** (*Optional*, int): The number of unanswered heartbeats that starts the action.
+    Range `1` to `20`. Defaults to `6`, the value of the original Tuya module firmware (TuyaOS 3.11): six 15 second heartbeats.
+  - **tx_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The TX pin of the UART bus used
+    by this component. Required for `action: reset`. Set `allow_other_uses: true` here and on the `tx_pin` of the
+    UART bus.
+  - **reset_time** (*Optional*, [Time](/guides/configuration-types/#time)): How long the TX line is held low with
+    `action: reset`. Range `50ms` to `5s`. Defaults to `500ms`.
+
 Automations:
 
 - **on_datapoint_update** (*Optional*): An automation to perform when a Tuya datapoint update is received. See [`on_datapoint_update`](#tuya-on_datapoint_update).
@@ -134,6 +160,141 @@ tuya:
 - **datapoint_type** (*Optional*, string): The datapoint type one of *raw*, *string*, *bool*, *int*, *uint*, *enum*,
   *bitmask* or *any*.
 - See [Automation](/automations).
+
+<span id="tuya-mcu_watchdog"></span>
+
+## MCU Watchdog
+
+The serial transmitter of some Tuya MCUs can stall while the rest of the MCU keeps running. This has been observed on
+BHT-8000 series thermostats. The display and the buttons of the device still work, but the last bytes of a frame stay
+unsent until the MCU transmits again, so every reply and every report reaches the module late. In ESPHome the entities
+stop following the device, commands seem to be ignored and heartbeat replies arrive seconds late. The MCU does not leave
+this state by itself.
+
+The component counts heartbeats that the MCU does not answer. A heartbeat is unanswered when no reply arrives within
+1 second and none within 1 second after it was sent once more. A reply that arrives later does not count. The
+count goes back to zero after `missed_heartbeats` heartbeats in a row were answered in time, so an MCU that answers
+only now and then is still caught. The action runs when the count reaches `missed_heartbeats`.
+
+### Reboot
+
+By default the module reboots after 6 unanswered heartbeats, which are sent 15 seconds apart, as the original Tuya
+module firmware does. The MCU is not reset and keeps its settings. As in the original firmware, the module does not reboot before the
+MCU has answered the working mode query, so an MCU that never answers does not cause a reboot loop. This action is
+available on all platforms and needs no pin.
+
+```yaml
+tuya:
+  mcu_watchdog:
+    action: reboot
+    missed_heartbeats: 6
+```
+
+The reboot is logged before it happens:
+
+```text
+[E][tuya]: MCU left 6 heartbeats unanswered, rebooting
+```
+
+### Reset
+
+With `action: reset` the component drives `tx_pin` low for `reset_time`, sets the UART up again and queries all
+datapoints. Nothing is sent or received while the line is held. The module keeps running and stays connected. If the
+MCU still does not answer, the reset is repeated after another `missed_heartbeats` unanswered heartbeats. Unlike `reboot`, this action also runs before
+the MCU has answered the working mode query.
+
+```yaml
+uart:
+  - id: uart_tuya
+    tx_pin:
+      number: TX1
+      allow_other_uses: true
+    rx_pin: RX1
+    baud_rate: 9600
+
+tuya:
+  id: tuya_mcu
+  uart_id: uart_tuya
+  mcu_watchdog:
+    action: reset
+    missed_heartbeats: 6
+    tx_pin:
+      number: TX1
+      allow_other_uses: true
+    reset_time: 500ms
+```
+
+This action is available on BK72xx, LN882x, RTL87xx, ESP8266 and ESP32 with a UART bus of the microcontroller itself.
+The `tx_pin` must be the TX pin of the UART bus used by `tuya` and must not be inverted.
+
+Each reset is logged:
+
+```text
+[W][tuya]: MCU left 6 heartbeats unanswered, holding TX low
+[I][tuya]: MCU answers heartbeats again after the reset
+```
+
+The number of resets started since boot is shown in the config dump and can be published with a template sensor.
+`get_mcu_resets()` exists only with `action: reset`:
+
+```yaml
+sensor:
+  - platform: template
+    name: "MCU Resets"
+    accuracy_decimals: 0
+    update_interval: 60s
+    lambda: return id(tuya_mcu).get_mcu_resets();
+```
+
+### Disable
+
+```yaml
+tuya:
+  mcu_watchdog:
+    action: disable
+```
+
+<span id="tuya-no-heartbeat"></span>
+
+## MCU Without Heartbeat
+
+Some devices have a module firmware that sends no heartbeat, and their MCU does not answer one. With the default
+settings the log shows `Initialization failed at init_state 0` and the datapoints are never read.
+
+```yaml
+tuya:
+  heartbeat: false
+  datapoint_ack: true
+```
+
+With `heartbeat: false`:
+
+- No heartbeat is sent. The product query is repeated every 3 seconds until the MCU answers it.
+- The working mode is not queried. The WiFi status is sent over the UART unless `status_pin` is set.
+- The datapoints are queried after the first WiFi status reply of the MCU, or right after the product reply when
+  `status_pin` is set. A step without a reply is tried again every 3 seconds.
+- A restart of the MCU is not detected. An `mcu_watchdog` block other than `action: disable` is rejected.
+
+With `datapoint_ack: true` each datapoint of a `0x07` report is answered with command `0x07`, the datapoint id and
+`0x00`, as the module firmware of these devices does. Without it such an MCU sends each report three times.
+
+A known device is the [EZAIOT / XYZOO thermostat](https://devices.esphome.io/devices/EZAIOT-XYZOO-Thermostat) with
+product id `dq6nlukkifyawj9n`, which uses 38400 baud. Its original module firmware (TuyaOS 3.3.31) sends no heartbeat
+and answers every datapoint report.
+
+<span id="tuya-serial-timing"></span>
+
+## Serial Timing
+
+The component follows the serial timing of the original Tuya module firmware:
+
+- A heartbeat is sent every 3 seconds until the MCU has answered the working mode query, then every 15 seconds. After a
+  restart of the MCU the interval is 3 seconds again.
+- A command that needs a reply is sent once more if the MCU has not answered within 1 second. After the second second
+  without a reply it is dropped.
+- An incomplete frame of the MCU is dropped after 400 ms without a new byte.
+- An initialization that failed starts again with the next heartbeat reply of the MCU. With `heartbeat: false` the
+  open step is tried again every 3 seconds.
 
 ## See Also
 
