@@ -28,10 +28,17 @@ Every device component on the bus accepts these options in addition to its own:
 - **address** (*Optional*, int): The GENIbus address of the pump. Each device component sets a default for its pump,
   so you only need this if your pump uses another address.
 
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often the device component reads
+  the pump. Each device component sets its own default and may set a lower limit.
+
 ## How the Bus Works
 
 - **One request at a time.** The bus sends one request and waits for its answer before it sends the next one. If
   several devices are on the same bus, they take turns. Each device has at most one request open.
+
+- **Several values in one request.** A request can read several data objects at once, and the answer holds them in
+  the same order. How many a pump answers in one request depends on the pump, so each device component sets its own
+  limit. Writes always go in requests of their own.
 
 - **No answer.** If no valid answer arrives within the response timeout, the request ends and the bus sets a warning
   on the component. The next valid answer clears the warning. After a timeout, the bus waits for a short quiet period

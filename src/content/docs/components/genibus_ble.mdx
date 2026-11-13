@@ -10,17 +10,12 @@ The `genibus_ble` component is a transport for the [GENIbus](/components/genibus
 a Grundfos pump over Bluetooth Low Energy, the same way the Grundfos GO app does. It does not create any entities
 itself. Device components on the bus use it to read the pump.
 
-This component runs on the ESP32 only. It needs a [BLE Client](/components/ble_client/), which handles the Bluetooth
-connection to the pump. The BLE Client in turn needs the [ESP32 BLE Tracker](/components/esp32_ble_tracker/).
+This component runs on the ESP32 only. It needs a [BLE Client](/components/ble_client/) with the MAC address of the
+pump, which handles the Bluetooth connection. The BLE Client in turn needs the
+[ESP32 BLE Tracker](/components/esp32_ble_tracker/).
 
 ```yaml
 # Example configuration entry
-esp32_ble_tracker:
-
-ble_client:
-  - mac_address: XX:XX:XX:XX:XX:XX
-    id: pump_ble_client
-
 genibus_ble:
 ```
 
@@ -39,6 +34,9 @@ You can add more than one `genibus_ble` entry, one for each pump. Each entry nee
 
 The response timeout of this transport is 1 second, and the quiet period after a timeout is 250 milliseconds. See
 [How the Bus Works](/components/genibus/#how-the-bus-works). You cannot change these values.
+
+Frames longer than 20 bytes are written in pieces of 20 bytes, and answers that arrive in several notifications are
+put back together before they are checked.
 
 ## Connection and Pairing
 
@@ -61,13 +59,28 @@ warning and disconnects. This frees the pump's connection for other devices. The
 
 If pairing fails, the log shows the warning `Pairing failed` and the component sets a warning status.
 
-1. Allow pairing on the pump. How to do this depends on the pump model; see the manual of your pump.
+1. Allow pairing on the pump. How to do this depends on the pump model; see the manual of your pump. On a Grundfos
+   ALPHA3, tap the Connect button briefly. The pump then starts the pairing itself, and no PIN is needed.
 1. Let the BLE Client connect again, for example by restarting the ESP32.
 
+The pump keeps the pairing through a loss of power, so you only need to pair once. It can keep more than one pairing,
+for example with the ESP32 and a phone.
+
 > [!WARNING]
-> Do not hold buttons on the pump down for a long time while you try to pair. On a Grundfos ALPHA3, holding the
-> Connect button for 2 seconds or more changes the control mode of the pump. If this happens, check the control mode
-> and set it back.
+> Do not hold buttons on the pump down while you try to pair. On a Grundfos ALPHA3, holding the Connect button for
+> 2 seconds changes the control mode of the pump. If this happens, check the control mode and set it back.
+
+### The Pump Is Not Found
+
+- The pump allows only one Bluetooth connection. While a phone with the Grundfos GO app or another ESP32 is connected,
+  the pump does not advertise and ESPHome cannot connect.
+- A pump without power cannot be found either. If a heating controller switches the pump off, the connection comes
+  back on its own when the pump has power again. This is not an error.
+
+### No GENI Characteristic
+
+If the log shows `No GENI characteristic, disconnecting`, the device at this MAC address does not offer the GENIbus
+service. Check that the MAC address of the BLE Client belongs to the pump.
 
 ### Reconnects Fail Until Reboot (ESP-IDF 5.5.6)
 
