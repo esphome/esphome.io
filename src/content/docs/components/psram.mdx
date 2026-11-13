@@ -54,4 +54,9 @@ the datasheet for the module you are using to be sure.
 - Configuring an unsupported speed will usually result in the PSRAM running at the default speed.
 - On the original ESP32, 80MHz PSRAM requires 80MHz flash. Set `esp32.flash_frequency: 80MHz` alongside
   `psram.speed: 80MHz`; setting only the PSRAM speed may leave it at 40MHz in the generated ESP-IDF configuration.
-  Check the resulting `sdkconfig` to confirm both clocks.
+  Check the resulting `sdkconfig` to confirm both clocks. First check that the flash chip and board design support
+  80MHz: unlike an unsupported PSRAM speed, an unsupported flash clock can prevent booting and may require serial
+  recovery.
+- On the original ESP32 with revision-0 32-Mbit PSRAM, 80MHz PSRAM also occupies an SPI host for its clock. ESP-IDF
+  uses SPI3 (VSPI) by default, so peripherals assigned to SPI3 may fail to initialize. Use SPI2 (HSPI) if available,
+  software SPI, or retain 40MHz PSRAM when this host is needed.
