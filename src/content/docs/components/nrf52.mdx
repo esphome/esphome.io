@@ -229,6 +229,8 @@ nrf52:
   [Flashing with a SEGGER J-Link](#flashing-with-a-segger-j-link).
 - Logs go to UART0 by default, which is the J-Link virtual COM port on the **IMCU** USB port.
 - The hardware watchdog is turned on automatically.
+- [I²C](/components/i2c/) uses the TWIM21 peripheral, which can only use pins in its own power domain, all on one
+  port: put `sda` and `scl` both on port 1 or both on port 3. ESPHome rejects other pins.
 
 The buttons on the DK pull their pin to ground when pressed, so set `inverted: true` and turn on the pull-up.
 The LEDs light up when their pin is high. For example:
@@ -270,6 +272,8 @@ nrf52:
   rejected.
 - Logs go to UART0 by default, which is the board's USB serial port.
 - Flash it over USB, see [Flashing with a CMSIS-DAP Probe](#flashing-with-a-cmsis-dap-probe).
+- [I²C](/components/i2c/) uses the TWIM21 peripheral, as on the DK. Put `sda` and `scl` both on port 1 or both on
+  port 3.
 
 ## Nordic nRF54L15 DK
 
@@ -289,6 +293,8 @@ nrf52:
 - Flash the board through the on-board J-Link debugger, see
   [Flashing with a SEGGER J-Link](#flashing-with-a-segger-j-link).
 - The hardware watchdog is turned on automatically.
+- [I²C](/components/i2c/) uses the TWIM21 peripheral, which can only use pins in its own power domain: put `sda`
+  and `scl` on port 1. ESPHome rejects pins on other ports.
 
 ## GPIO Pin Numbering
 
