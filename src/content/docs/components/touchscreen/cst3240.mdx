@@ -1,21 +1,24 @@
 ---
 description: "Instructions for setting up cst3240 touch screen controller with ESPHome"
-title: "cst3240 Touch Screen Controller"
+title: "CST3240 Touch Screen Controller"
 ---
 
 import { Image } from 'astro:assets';
 import Figure from '@components/Figure.astro';
 import APIRef from '@components/APIRef.astro';
 
-The `cst3240` touchscreen platform allows using the touch screen controller based on the CST3240 chip with ESPHome.
+The `cst3240` touchscreen platform allows using the multitouch screen controller CST3240 with ESPHome.
+It handle both interrupt (recommended for the auto standby mode) and polling modes.
+The touchscreen resolution is set automatically by the linked display, like other ESPHome touchscreen
+components. Standalone, it takes the "dimensions" from the chip internal firmware settings.
 The [I²C](/components/i2c) is required to be set up in your configuration for this touchscreen to work.
 
-This controller is used on some CAN/RS485 ESP32S3 Panels.
+This controller is used on some industrial (CAN/RS485) ESP32-S3 Panels from PanelLan / Wireless Tag.
 
 <Figure
   src="/images/cst3240.jpg"
-  alt=""
-  caption="cst3240 touchscreen chip"
+  alt="CST3240"
+  caption="Touchscreen chip (Hynitron)"
   layout="constrained"
   width={300}
   height={245}
@@ -75,3 +78,8 @@ binary_sensor:
 ## See Also
 
 - <APIRef text="cst3240_touchscreen.hpp" path="cst3240/cst3240_touchscreen.hpp" />
+- [Binary Sensor Filters](/components/binary_sensor/#binary-sensor-filters)
+- [CST226 Touchscreen Controller](/components/touchscreen/cst226/)
+- [CST328 Touchscreen Controller](/components/touchscreen/cst328/)
+- [CST816 Touchscreen Controller](/components/touchscreen/cst816/)
+- [CST9220 Touchscreen Controller](/components/touchscreen/cst9220/)
