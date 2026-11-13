@@ -16,6 +16,11 @@ pump, which handles the Bluetooth connection. The BLE Client in turn needs the
 
 ```yaml
 # Example configuration entry
+esp32_ble_tracker:
+
+ble_client:
+  - mac_address: XX:XX:XX:XX:XX:XX
+
 genibus_ble:
 ```
 
@@ -73,9 +78,9 @@ for example with an ESP32 and a computer.
 ### The Pump Is Not Found
 
 - The pump allows only one Bluetooth connection. While a phone with the Grundfos GO app or another ESP32 is connected,
-  the pump does not advertise and ESPHome cannot connect.
-- A pump without power cannot be found either. If a heating controller switches the pump off, the connection comes
-  back on its own when the pump has power again. This is not an error.
+  the pump does not advertise and ESPHome cannot connect. This was seen on a Grundfos ALPHA3; other models may behave
+  differently.
+- If a heating controller switches the pump off, the connection comes back on its own when the pump has power again.
 
 ### No GENI Characteristic
 
