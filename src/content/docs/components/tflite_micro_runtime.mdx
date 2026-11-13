@@ -99,13 +99,15 @@ set explicitly, and a value set in YAML wins over the model and the report.
 
 When `model_type: audio`, the following variables configure streaming audio classification. The official audio
 models ship as JSON manifests that only name the `.tflite` file (see
-[Model Source Resolution](#model-source-resolution)); their tuning values must be set here explicitly:
+[Model Source Resolution](#model-source-resolution)); the streaming settings are not in the model, so they must be
+set here explicitly:
 
 - **probability_cutoff** (*Optional*, percentage): Probability threshold `0.0`–`1.0` for audio classification.
   Only detections above this threshold are reported.
 - **sliding_window_size** (*Optional*, integer): Size of the sliding window in frames.
 - **features_step_size** (*Optional*, integer): Step size for feature extraction in milliseconds. Range `0`–`30`.
-- **feature_count** (*Optional*, integer): Number of MFCC features. Range `10`–`80`.
+- **feature_count** (*Optional*, integer): Number of MFCC features. Read from the model's input tensor, which
+  declares it as its last dimension. Range `10`–`80`.
 
 ## Model Source Resolution
 
@@ -216,7 +218,8 @@ only the report carries:
 - Recommended tensor arena size, used instead of the estimate
 - Output processing strategy and scale factor
 - Channel order and input preprocessing (`input_order`, `normalize`, `invert`)
-- The audio tuning values, for `model_type: audio`
+- The audio tuning values the model does not carry (`probability_cutoff`, `sliding_window_size`,
+  `features_step_size`, and the arena size), for `model_type: audio`
 
 Generate the report with `regenerate_txt_reports.py` from the
 [esphome_ai_component](https://github.com/nliaudat/esphome_ai_component) repository. The values it supplies are
