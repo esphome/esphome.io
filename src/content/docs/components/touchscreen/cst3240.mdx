@@ -1,0 +1,77 @@
+---
+description: "Instructions for setting up cst3240 touch screen controller with ESPHome"
+title: "cst3240 Touch Screen Controller"
+---
+
+import { Image } from 'astro:assets';
+import Figure from '@components/Figure.astro';
+import APIRef from '@components/APIRef.astro';
+
+The `cst3240` touchscreen platform allows using the touch screen controller based on the CST3240 chip with ESPHome.
+The [I²C](/components/i2c) is required to be set up in your configuration for this touchscreen to work.
+
+This controller is used on some CAN/RS485 ESP32S3 Panels.
+
+<Figure
+  src="./images/cst3240.jpg"
+  alt=""
+  caption="cst3240 touchscreen chip"
+  layout="constrained"
+  width={300}
+  height={245}
+/>
+
+## Base Touchscreen Configuration
+
+```yaml
+# Example configuration entry
+touchscreen:
+  platform: cst3240
+  id: my_touchscreen
+  interrupt_pin: GPIOXX
+```
+
+### Configuration variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually set the ID of this touchscreen.
+- **interrupt_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The touch detection pin.
+- **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The chip reset pin.
+
+
+- All other options from [Touchscreen](/components/touchscreen/#config-touchscreen).
+
+### Sample config with a button zone and a buzzer feedback
+
+```yaml
+i2c:
+  sda: GPIO09
+  scl: GPIO03
+  frequency: 400kHz
+
+touchscreen:
+  - platform: cst3240
+    id: cst3240
+    display: display0
+    interrupt_pin: GPIO42
+    # reset_pin: GPIO38 # shared
+    setup_priority: -20 # after display
+    on_release:
+      lambda: "id(bip_ok).execute();"
+
+binary_sensor:
+  - platform: touchscreen
+    name: "Test Button"
+    touchscreen_id: cst3240
+    # bottom right alarm test
+    x_min: 350
+    y_min: 200
+    x_max: 480
+    y_max: 272
+    on_click:
+      then:
+        - lambda: "id(bip_alarm).execute();"
+```
+
+## See Also
+
+- <APIRef text="cst3240_touchscreen.hpp" path="cst3240/touchscreen/cst3240_touchscreen.hpp" />
