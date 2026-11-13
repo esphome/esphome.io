@@ -35,6 +35,12 @@ sensor:
 
 - **cs_pin** (**Required**, [Pin Schema](/guides/configuration-types/#pin-schema)): The Chip Select pin of the SPI interface.
 - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval to check the sensor. Defaults to `60s`.
+- **linearize** (*Optional*, boolean): Correct the thermocouple reading with the NIST ITS-90 type K tables.
+  The MAX31855 assumes a fixed 41.276 µV/°C, a straight-line approximation of the type K curve. Away from
+  0–100 °C this is off by several degrees, for example about 1.7 °C too warm at −18 °C and about 29 °C too
+  low at 1300 °C. The correction uses the cold-junction temperature from the same read. Readings outside the
+  NIST type K range (about −200 °C to 1372 °C) are published uncorrected, with a warning in the log. Defaults to `false`.
+
 - **reference_temperature** (*Optional*, [ID](/guides/configuration-types/#id)): Access the internal temperature sensor of the MAX31855.
 
   - All options from [Sensor](/components/sensor).
