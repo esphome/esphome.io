@@ -127,6 +127,11 @@ use `tx_pin: GPIO2`. Any other combination of pins will result in use of a softw
 > on nearly every bit, such as `0x55`, keep them off the longest. If most of the data sent is made of such
 > bytes, Wi-Fi load can still reset the ESP8266 with a hardware watchdog. Use `UART1` (`tx_pin: GPIO2`) for
 > transmit-heavy links like this.
+>
+> Such a reset looks like a reboot with nothing in the log before it: the device drops off the network for a few
+> seconds and its uptime starts again from zero. To confirm the cause, add the [debug component](/components/debug/)
+> with a `reset_reason` text sensor. After this reset it reads `Hardware Watchdog`, and the debug log at boot
+> shows `Fatal exception:4 flag:1 (Hardware Watchdog)`.
 
 ## `uart.write` Action
 
