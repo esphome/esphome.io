@@ -122,6 +122,12 @@ use `tx_pin: GPIO2`. Any other combination of pins will result in use of a softw
 > [!NOTE]
 > The Software UART is only available on the ESP8266. It is not available on ESP32 and variants.
 
+> [!WARNING]
+> Above 38400 baud, the Software UART turns interrupts off for most of each byte it sends. Bytes whose bits change
+> on nearly every bit, such as `0x55`, keep them off the longest. If most of the data sent is made of such
+> bytes, Wi-Fi load can still reset the ESP8266 with a hardware watchdog. Use `UART1` (`tx_pin: GPIO2`) for
+> transmit-heavy links like this.
+
 ## `uart.write` Action
 
 This [Action](/automations/actions/#all-actions) sends a defined UART signal to the given UART bus.
