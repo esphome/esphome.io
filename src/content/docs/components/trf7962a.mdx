@@ -1,0 +1,119 @@
+---
+description: "Instructions for setting up TRF7962A NFC readers in ESPHome"
+title: "TRF7962A NFC"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `trf7962a` component allows you to use the Texas Instruments TRF7962A NFC reader
+([datasheet](https://www.ti.com/lit/ds/symlink/trf7962a.pdf)) with ESPHome. The reader polls for ISO 15693 (NFC-V)
+tags, reads the UID of the tag on the antenna and runs the `on_tag` and `on_tag_removed` automations. It is
+connected over [SPI](/components/spi/).
+
+The [NFC binary sensor](/components/binary_sensor/nfc/) can be used with this reader to react to a specific tag.
+
+```yaml
+# Example configuration entry
+spi:
+  clk_pin: GPIOXX
+  miso_pin: GPIOXX
+  mosi_pin: GPIOXX
+
+trf7962a:
+  cs_pin: GPIOXX
+  irq_pin: GPIOXX
+  on_tag:
+    then:
+      - homeassistant.tag_scanned: !lambda 'return x;'
+```
+
+## Configuration Variables
+
+- **cs_pin** (**Required**, [Pin Schema](/guides/configuration-types/#pin-schema)): The pin connected to the reader's
+  chip select line.
+- **irq_pin** (**Required**, [Pin Schema](/guides/configuration-types/#pin-schema)): The pin connected to the reader's
+  `IRQ` line. The reader signals the end of each exchange on it.
+- **vin** (*Optional*, string): The supply voltage on the reader's `VIN` pin, `5V` or `3.3V`. Defaults to `5V`.
+- **rf_power** (*Optional*, string): The transmitter output power, `FULL` or `HALF`. Defaults to `FULL`.
+- **data_rate** (*Optional*): The SPI clock rate, up to `10MHz`. Defaults to `2MHz`, the rate the datasheet
+  recommends.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often to poll for a tag.
+  Defaults to `500ms`.
+- **on_tag** (*Optional*, [Automation](/automations/)): An automation to perform when a tag is first read. See
+  [`on_tag` Trigger](#on_tag-trigger).
+- **on_tag_removed** (*Optional*, [Automation](/automations/)): An automation to perform after a tag has not been
+  seen for three polls. See [`on_tag_removed` Trigger](#on_tag_removed-trigger).
+- **spi_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the
+  [SPI component](/components/spi/) if you want to use multiple SPI buses. The bus can't be shared with SPI Ethernet.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID for this component.
+
+> [!NOTE]
+> The reader handles one tag at a time. If two tags are on the antenna, their responses collide and neither is read,
+> so a tag already reported is treated as removed after three polls.
+
+## `on_tag` Trigger
+
+This automation is triggered when a tag is read. The UID is available as `x`, a `std::string` in the format
+`E0-04-03-50-1E-07-E7-ED` (most significant byte first, as printed on tags), and the tag as `tag`, an
+`nfc::NfcTag`.
+
+```yaml
+trf7962a:
+  # ...
+  on_tag:
+    then:
+      - homeassistant.tag_scanned: !lambda 'return x;'
+```
+
+## `on_tag_removed` Trigger
+
+This automation is triggered after a tag has been absent for three polls. The same `x` and `tag` are available.
+
+```yaml
+trf7962a:
+  # ...
+  on_tag_removed:
+    then:
+      - logger.log:
+          format: "Tag removed: %s"
+          args: [x.c_str()]
+```
+
+## Setting Up Tags
+
+To find the UID of a tag, hold it to the reader with the logger at `INFO` level or lower and look for a line like:
+
+```log
+[I][trf7962a]: Tag detected: E0-04-03-50-1E-07-E7-ED
+```
+
+That UID can then be used in an [NFC binary sensor](/components/binary_sensor/nfc/):
+
+```yaml
+trf7962a:
+  id: nfc_reader
+  cs_pin: GPIOXX
+  irq_pin: GPIOXX
+
+binary_sensor:
+  - platform: nfc
+    nfcc_id: nfc_reader
+    name: "Blue Tag"
+    uid: E0-04-03-50-1E-07-E7-ED
+```
+
+## Supported Hardware
+
+| Chip     | Bus | Notes                           |
+| -------- | --- | ------------------------------- |
+| TRF7962A | SPI | Tested in a Toniebox (ESP32-S3) |
+
+The reader currently finds one ISO 15693 tag per poll and reads only its UID.
+
+## See Also
+
+- [NFC Binary Sensor](/components/binary_sensor/nfc/)
+- [ST25R3916 NFC](/components/st25r/)
+- [PN532 NFC/RFID](/components/binary_sensor/pn532/)
+- [RC522 NFC/RFID](/components/binary_sensor/rc522/)
+- <APIRef text="trf7962a.h" path="trf7962a/trf7962a.h" />
