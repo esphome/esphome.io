@@ -65,19 +65,19 @@ needs any configuration for an entry configured here.
 ### Image Model Configuration Variables
 
 When `model_type: image`, the following variables are available to describe the model's expected input format.
-Most of these values are auto-detected from the `.txt` report file (see
-[Usage as a Dependency](#usage-as-a-dependency)), but can be overridden explicitly.
+The input shape and data type are read from the model itself, and the remaining values come from the `.txt`
+report file when the model has one (see [Usage as a Dependency](#usage-as-a-dependency)). Any of them can be
+set explicitly, and a value set in YAML wins over the model and the report.
 
-- **input_type** (*Optional*, string): Input tensor data type. One of `"uint8"` or `"float32"`. Defaults to
-  `"uint8"`.
+- **input_type** (*Optional*, string): Input tensor data type. One of `"uint8"` or `"float32"`. Read from the
+  model's input tensor.
 - **input_channels** (*Optional*, integer): Number of input channels (`1` for grayscale, `3` for RGB/BGR).
-  Defaults to `3`.
-- **input_width** (*Optional*, integer): Input image width in pixels. The `.txt` report supplies it when the
-  model has one, and there is no fallback: a model that neither its report nor this option describes is
-  rejected while the configuration is validated.
-- **input_height** (*Optional*, integer): Input image height in pixels. Same rule as `input_width`.
+  Read from the model's input tensor.
+- **input_width** (*Optional*, integer): Input image width in pixels. Read from the model's input tensor.
+- **input_height** (*Optional*, integer): Input image height in pixels. Read from the model's input tensor.
+  A configured shape that does not match the model's fails the load, and the log shows both shapes.
 - **input_order** (*Optional*, string): Channel order for preprocessing. One of `"RGB"`, `"BGR"`, or `"GRAY"`.
-  Defaults to `"RGB"`.
+  Defaults to `"RGB"`. A model with a single input channel is always read as `"GRAY"`.
 - **output_processing** (*Optional*, string): How the raw output tensor is turned into a class and a
   confidence. One of:
   - `"argmax"` — The tensor holds scores or probabilities; the largest entry is the class and its own value is
@@ -208,15 +208,14 @@ to show the API; a component configured through YAML receives the instance set u
 
 ### Model Report File (`.txt`)
 
-A model is a `.tflite` file, and everything that can be read from it is read from it: the operators it uses and
-an estimate of the tensor arena it needs come from the flatbuffer, so a model works with nothing else next to
-it. A companion `.txt` report is optional and adds the values that only the report carries:
+A model is a `.tflite` file, and everything that can be read from it is read from it: the operators it uses, the
+shape and data type of its input tensor, and an estimate of the tensor arena it needs come from the flatbuffer,
+so a model works with nothing else next to it. A companion `.txt` report is optional and adds the values that
+only the report carries:
 
-- Input dimensions (`input_width`, `input_height`, `input_channels`) — without a report these must be set for
-  `model_type: image`
-- Input data type (`uint8` or `float32`)
 - Recommended tensor arena size, used instead of the estimate
-- Output processing strategy
+- Output processing strategy and scale factor
+- Channel order and input preprocessing (`input_order`, `normalize`, `invert`)
 - The audio tuning values, for `model_type: audio`
 
 Generate the report with `regenerate_txt_reports.py` from the
