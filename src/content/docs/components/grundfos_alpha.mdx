@@ -1,0 +1,153 @@
+---
+title: "Grundfos ALPHA"
+description: "Instructions for reading the measurements of a Grundfos ALPHA circulator pump over Bluetooth LE."
+---
+import APIRef from '@components/APIRef.astro';
+
+The `grundfos_alpha` component reads the measurements of a Grundfos ALPHA circulator pump: flow, head, medium
+temperature, voltage, current, power and speed. It talks to the pump with the [GENIbus](/components/genibus/) protocol
+over [GENIbus over Bluetooth LE](/components/genibus_ble/). The component only reads; it does not change any setting
+of the pump.
+
+> [!NOTE]
+> The component has only been tested on a Grundfos ALPHA3 (unit family 52, type 1, version 0). It reads the unit
+> family, type and version of the pump first. Other models are not supported yet: the log shows
+> `Model x/y/z not supported`, the component sets a warning status and publishes no values. If you own another ALPHA
+> model and can help with tests, please open an issue.
+
+## Getting Started
+
+The component needs a [GENIbus over Bluetooth LE](/components/genibus_ble/) transport for the pump, which in turn
+needs a [BLE Client](/components/ble_client/) with the MAC address of the pump. Pair the pump once, as described in
+[Pairing Failed](/components/genibus_ble/#pairing-failed): on an ALPHA3, tap the Connect button briefly.
+
+```yaml
+# Example configuration entry
+esp32_ble_tracker:
+
+ble_client:
+  - mac_address: XX:XX:XX:XX:XX:XX
+
+genibus_ble:
+
+grundfos_alpha:
+
+sensor:
+  - platform: grundfos_alpha
+    flow:
+      name: "Pump Flow"
+```
+
+## Grundfos ALPHA Component
+
+### Configuration Variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the pump. Required if you
+  have more than one pump.
+- **genibus_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the
+  [GENIbus over Bluetooth LE](/components/genibus_ble/) transport. Required if you have more than one transport.
+- **address** (*Optional*, int): The GENIbus address of the pump. Defaults to `0xE7`, the address the ALPHA pumps
+  answer to over Bluetooth.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often the pump is read. Must be
+  at least `5s`. Defaults to `30s`.
+
+The component reads only what your sensors need: one request per data object, one request at a time. When the pump
+connects, the component reads it at once and does not wait for the next update.
+
+When the pump has no power, the connection drops. This is normal, for example when a heating controller switches the
+pump off. The sensors then show unknown values until the pump is back.
+
+## Sensor
+
+```yaml
+sensor:
+  - platform: grundfos_alpha
+    flow:
+      name: "Pump Flow"
+    head:
+      name: "Pump Head"
+    power:
+      name: "Pump Power"
+```
+
+### Configuration Variables
+
+- **grundfos_alpha_id** (*Optional*, [ID](/guides/configuration-types/#id)): The pump to use. Required if you have
+  more than one pump.
+- **flow** (*Optional*): The flow in m³/h. All options from [Sensor](/components/sensor/).
+- **head** (*Optional*): The head in m. All options from [Sensor](/components/sensor/).
+- **medium_temperature** (*Optional*): The temperature of the water as the pump reports it, in °C. All options from
+  [Sensor](/components/sensor/).
+- **voltage** (*Optional*): The supply voltage in V. All options from [Sensor](/components/sensor/).
+- **current** (*Optional*): The current in A. All options from [Sensor](/components/sensor/).
+- **power** (*Optional*): The power in W, read from the field that the Grundfos GO app uses for the power. All
+  options from [Sensor](/components/sensor/).
+- **speed** (*Optional*): The motor speed in rpm. All options from [Sensor](/components/sensor/).
+
+## Grundfos ALPHA and Alpha3
+
+The older [Grundfos Alpha3](/components/sensor/alpha3/) component (`alpha3`) also reads an ALPHA3 over Bluetooth LE.
+Use only one of the two for a pump: the pump accepts only one Bluetooth connection at a time.
+
+The values of the two components differ slightly:
+
+- **head**: `grundfos_alpha` converts the pressure with 9804 Pa per metre, as the Grundfos GO app does, and `alpha3`
+  with 10000 Pa per metre. The head from `grundfos_alpha` is therefore about 2 % higher.
+- **power**: `grundfos_alpha` reads the power field that the Grundfos GO app uses, `alpha3` another power value of
+  the pump. The two can differ by a few percent.
+- **medium_temperature**, **voltage** and **current** are only available in `grundfos_alpha`.
+
+## Troubleshooting
+
+### No Values
+
+- Check the log of [GENIbus over Bluetooth LE](/components/genibus_ble/#troubleshooting) for pairing and connection
+  problems.
+- `Model x/y/z not supported`: the pump is not a tested model, see the note at the top of this page.
+- `The pump has no object …; its sensors stay unknown`: the software of the pump does not have this value. The
+  component stops asking for it until the next connection.
+- `Unexpected reply to object …`: the pump answered with data in another layout. The component does not decode it,
+  and the sensors of this object show unknown values.
+
+## Full Example
+
+This example for a single ALPHA3 shows all sensors with the transport and its dependencies. Remove the sensors you
+do not need.
+
+```yaml
+esp32_ble_tracker:
+
+ble_client:
+  - mac_address: XX:XX:XX:XX:XX:XX
+    id: pump_ble_client
+
+genibus_ble:
+  ble_client_id: pump_ble_client
+
+grundfos_alpha:
+
+sensor:
+  - platform: grundfos_alpha
+    flow:
+      name: "Pump Flow"
+    head:
+      name: "Pump Head"
+    medium_temperature:
+      name: "Pump Medium Temperature"
+    voltage:
+      name: "Pump Voltage"
+    current:
+      name: "Pump Current"
+    power:
+      name: "Pump Power"
+    speed:
+      name: "Pump Speed"
+```
+
+## See Also
+
+- [GENIbus](/components/genibus/)
+- [GENIbus over Bluetooth LE](/components/genibus_ble/)
+- [BLE Client](/components/ble_client/)
+- [Grundfos Alpha3](/components/sensor/alpha3/)
+- <APIRef text="grundfos_alpha.h" path="grundfos_alpha/grundfos_alpha.h" />
