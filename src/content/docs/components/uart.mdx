@@ -81,6 +81,8 @@ uart:
 - **stop_bits** (*Optional*, int): The number of stop bits to send. Options: 1, 2. Defaults to 1.
 - **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID for this UART hub if you need multiple UART hubs.
 - **debug** (*Optional*, mapping): Options for debugging communication on the UART hub, see [Debugging](#debugging).
+- **auto_baud_sync_byte** (*Optional*, int): ESP8266 software UART only, up to 19200 baud. Corrects for a
+  device whose baud rate is slightly off, see [Auto baud](#auto-baud).
 - **clock_source** (*Optional*): ESP32 only. The UART clock source. Options: `DEFAULT`, `APB`, `XTAL`, `RTC`,
   `REF_TICK`. Defaults to `DEFAULT`, which uses the chip's ESP-IDF default. Supported values vary by chip and an
   unsupported selection is rejected during configuration validation.
@@ -121,6 +123,27 @@ use `tx_pin: GPIO2`. Any other combination of pins will result in use of a softw
 
 > [!NOTE]
 > The Software UART is only available on the ESP8266. It is not available on ESP32 and variants.
+
+### Auto baud
+
+Some devices send at a rate several percent away from the configured baud rate, which corrupts bytes with long
+runs of equal bits. If every message from the device starts with a known byte after a pause, set
+`auto_baud_sync_byte` to that byte. After each pause the software UART times that first byte and uses the
+measured rate for the rest of the message; a message that starts with any other byte is read at the configured
+rate. The byte needs a level change at or after its last data bit, so `0x55` (alternating bits) is the best
+choice.
+
+The sync byte applies to every software UART in the configuration, so all UARTs that set
+`auto_baud_sync_byte` must use the same byte. Other software UARTs are unaffected unless their messages also start
+with that byte, in which case their real rate is measured too.
+
+```yaml
+uart:
+  tx_pin: GPIO5
+  rx_pin: GPIO4
+  baud_rate: 9600
+  auto_baud_sync_byte: 0x55
+```
 
 ## `uart.write` Action
 
