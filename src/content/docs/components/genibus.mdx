@@ -18,7 +18,8 @@ configure.
 ## Device Components
 
 A device component reads the data of one pump model and creates its entities. No device component is available on
-this bus yet. Device components for specific pumps will follow.
+this bus yet. The first one, `grundfos_alpha` for the Grundfos ALPHA pumps, is proposed in a separate pull request
+and will follow; device components for other pumps can be added later.
 
 Every device component on the bus accepts these options in addition to its own:
 
@@ -36,21 +37,18 @@ Every device component on the bus accepts these options in addition to its own:
 - **One request at a time.** The bus sends one request and waits for its answer before it sends the next one. If
   several devices are on the same bus, they take turns. Each device has at most one request open.
 
-- **Several values in one request.** A request can read several data objects at once, and the answer holds them in
-  the same order. How many a pump answers in one request depends on the pump, so each device component sets its own
-  limit. Writes always go in requests of their own.
-
-- **No answer.** If no valid answer arrives within the response timeout, the request ends and the bus sets a warning
-  on the component. The next valid answer clears the warning. After a timeout, the bus waits for a short quiet period
-  before it sends the next request, so a late answer is not taken for the answer to the next request.
+- **No answer.** If no valid answer arrives within the response timeout of 1 second, the request ends and the bus
+  sets a warning on the component. The same happens when an answer is damaged or a request cannot be sent completely.
+  The next valid answer clears the warning. After such a failed request, the bus waits for a quiet period of
+  250 milliseconds before it sends the next request, so a late answer is not taken for the answer to the next request.
 
 - **Pump without power.** Some pumps lose power for a while, for example when a heating controller switches them off.
   The transport then loses its connection. This is normal and does not set a warning. The bus sends no requests while
   the connection is down, so the log is not filled with errors. A device component can show its values as unknown
   during this time. When the connection comes back, the devices start to read again.
 
-The response timeout, the quiet period and the master address are shown in the log at boot. The transport sets these
-values; see its page for the defaults.
+The response timeout, the quiet period and the master address are shown in the log at boot. You cannot change the
+response timeout or the quiet period. The transport sets the default master address; see its page.
 
 ## See Also
 
