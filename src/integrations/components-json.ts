@@ -30,12 +30,12 @@ function findPublicImage(imagesDir: string, slug: string): string | null {
 /**
  * Parse the components index page to build a map from component URL path
  * to the image filename used in the ImgTable entries.
- * e.g. "/components/api" -> "server-network.svg"
+ * e.g. "/components/api" -> "network-esphome.svg"
  */
 function buildIndexImageMap(indexPath: string): Record<string, string> {
   const map: Record<string, string> = {};
   const content = fs.readFileSync(indexPath, "utf-8");
-  // Match entries like: ["Label", "/components/api/", "server-network.svg", ...]
+  // Match entries like: ["Label", "/components/api/", "network-esphome.svg", ...]
   const re = /\["[^"]*",\s*"(\/components\/[^"]+)",\s*"([^"]+)"/g;
   let match;
   while ((match = re.exec(content)) !== null) {
