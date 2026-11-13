@@ -125,6 +125,8 @@ Image Settings:
 - **jpeg_quality** (*Optional*, int): The JPEG quality that the camera should encode images with.
   From 6 (best) to 63 (worst). Defaults to `10`. Set this to ``0`` to disable JPEG compression/conversion.
   Manual JPEG compression/conversion requires `psram` component to be enabled and configured.
+  It can be changed while the camera runs, see
+  [Changing the JPEG Quality at Runtime](#changing-the-jpeg-quality-at-runtime).
 
 - **vertical_flip** (*Optional*, boolean): Whether to flip the image vertically. Defaults to `true`.
 - **horizontal_mirror** (*Optional*, boolean): Whether to mirror the image horizontally. Defaults to `true`.
@@ -297,6 +299,33 @@ on_...:
 ```
 
 - **id** (**Required**, [ID](/guides/configuration-types/#id)): The camera.
+
+## Changing the JPEG Quality at Runtime
+
+The JPEG quality can be changed from a [lambda](/automations/templates/) while the camera runs. Call
+`set_jpeg_quality()` with the new value, then `update_camera_parameters()` to send it to the sensor:
+
+```yaml
+number:
+  - platform: template
+    name: JPEG Quality
+    min_value: 6
+    max_value: 63
+    step: 1
+    optimistic: true
+    set_action:
+      - lambda: |-
+          id(my_camera).set_jpeg_quality(x);
+          id(my_camera).update_camera_parameters();
+```
+
+Use values from 6 (best) to 63 (worst), as for the `jpeg_quality` option. The value is not checked, and `0` does not
+switch the JPEG conversion of another `pixel_format` on or off. After a restart the `jpeg_quality` of the configuration
+is used again.
+
+> [!NOTE]
+> The frame buffers are sized from the `resolution` at startup. A lower number makes larger images, and images that
+> no longer fit are dropped. If the camera stops sending images after a change, raise the number again.
 
 ## Configuration examples
 
