@@ -313,6 +313,69 @@ Notes:
   on the first update after boot, to clear accumulated ghosting.
 - If a lambda draws nothing, the update is skipped entirely.
 
+### Pre-rendered full frames
+
+A lambda normally draws through the display API. Some setups already have the
+finished screen as a packed bitmap instead: a server-side renderer, another MCU,
+or a dashboard pushed over the network. Converting such a frame through
+`it.draw_pixels_at()` costs a per-pixel pass over the whole panel, so the driver
+hands out its framebuffer instead. The lambda's `it` is the base display class, so
+reach the driver through the display's `id`:
+
+```cpp
+id(epd)->framebuffer_data()
+```
+
+- **`framebuffer_data()`**: the framebuffer, or `nullptr` if the allocation failed.
+- **`framebuffer_size()`**: its size in bytes, `0` when there is no buffer.
+- **`mark_dirty_area(x, y, w, h)`**: declare the rectangle that changed. Clamped to
+  the panel, so an off-by-one refreshes the visible part instead of dropping the
+  whole update.
+- **`mark_dirty_full()`**: declare the whole panel changed.
+- **`force_full_gc16()`**: declare the whole panel changed and force the next
+  update onto the `GC16` branch, so the frame gets a full refresh instead of a fast
+  `DU` one. Use it when large solid-black areas appear: `DU` does not erase those.
+- **`is_idle()`**: `true` when no update is in flight, so the framebuffer can be
+  rewritten. It says nothing about the panel: with `sleep_when_done: false` the
+  waveform is still running after the driver goes idle, and it stays `false` until
+  the controller has finished initialising.
+
+Coordinates are **native panel** coordinates: unlike `draw_pixel_at()`, `rotation`
+and `transform` are not applied.
+
+The buffer holds exactly what is streamed to the controller, row by row, with a
+stride that is not the width in bytes:
+
+| `grayscale` | Bytes per row             | Contents                                                                                                                                                                  |
+| ----------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `false`     | `((width + 15) / 16) * 2` | 1 bit per pixel, `1` is black. A row is padded to whole 16-pixel groups; each group is two bytes, the byte holding pixels 8–15 first and the byte holding pixels 0–7 second, and bit 0 of a byte is the lowest x |
+| `true`      | `(width + 1) / 2`         | 4 bits per pixel, `0` is black and `15` is white. The left pixel of a byte is the high nibble                                                                            |
+
+Both are with `invert_colors: false`. Rows are contiguous, so a full frame is a
+single `memcpy` of `framebuffer_size()` bytes.
+
+Write to the buffer only while `is_idle()` is true: the transfer path streams
+straight out of it. Pair these helpers with `auto_clear_enabled: false`, because
+auto-clear fills the buffer white and marks the whole panel dirty before every
+render, which discards the frame you just wrote.
+
+```yaml
+display:
+  - platform: it8951
+    model: seeed-reterminal-e1003
+    id: epd
+    auto_clear_enabled: false
+    update_interval: never
+    lambda: |-
+      // frame_ is a packed 1bpp bitmap in the panel-native layout above
+      // (1872x1404 here). Fetching it is application code: HTTP, MQTT, another MCU.
+      if (frame_ == nullptr || !id(epd)->is_idle())
+        return;
+      memcpy(id(epd)->framebuffer_data(), frame_, id(epd)->framebuffer_size());
+      id(epd)->force_full_gc16();
+      // Then trigger the push with it8951.update or component.update.
+```
+
 ## Technical notes
 
 - The IT8951 controller supports up to 16 levels of grayscale (4 bits per
