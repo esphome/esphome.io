@@ -30,6 +30,7 @@ submit a feature request (see FAQ).
 | [GREE](#gree_ir) | `gree`                             | yes |
 | [Haier Tundra](#haier_tundra) | `haier_tundra` | yes |
 | Hitachi | `hitachi_ac344`, `hitachi_ac424` | yes |
+| [Hitachi 168-bit](#hitachi_168bit) | `hitachi_168bit` | yes |
 | [Islandaire](#islandaire) | `islandaire`                       | yes |
 | [LG](#climate_ir_lg) | `climate_ir_lg`                    | yes |
 | [Midea](#midea_ir) | `midea_ir`                         | yes |
@@ -467,6 +468,28 @@ switch:
 
 > [!NOTE]
 > Quiet and Turbo mode cannot both be on at once, and either can only be turned on in Cool or Heat mode.
+
+### `hitachi_168bit`
+
+For Hitachi units that use a 168-bit IR frame, such as those controlled by the HCRA31NEWH remote. These units are
+not covered by `hitachi_ac344` or `hitachi_ac424`.
+
+Fan modes `auto`, `low`, `medium` and `high`, and swing modes `off` and `vertical`.
+
+- **model** (*Optional*, string): The remote model. There is one valid model:
+
+  - `HCRA31NEWH`  : Temperature range is from 16 to 30 (default)
+
+The remote sends swing as a toggle, so ESPHome tracks the swing state it last sent or received and sends the toggle
+only when the swing mode changes.
+
+```yaml
+# Example configuration entry
+climate:
+  - platform: hitachi_168bit
+    name: "AC"
+    receiver_id: rcvr  # the remote_receiver from Using a Receiver
+```
 
 ### `hitachi_ac344`
 
@@ -1070,6 +1093,7 @@ Additional configuration must be specified for this platform:
 - <APIRef text="fujitsu_general.h" path="fujitsu_general/fujitsu_general.h" />
 - <APIRef text="gree.h" path="gree/gree.h" />
 - <APIRef text="haier_tundra.h" path="haier_tundra/haier_tundra.h" />
+- <APIRef text="hitachi_168bit.h" path="hitachi_168bit/hitachi_168bit.h" />
 - <APIRef text="hitachi_ac344.h" path="hitachi_ac344/hitachi_ac344.h" />
 - <APIRef text="islandaire.h" path="islandaire/islandaire.h" />
 - <APIRef text="midea_ir.h" path="midea_ir/midea_ir.h" />
