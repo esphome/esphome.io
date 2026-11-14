@@ -142,8 +142,9 @@ sx126x:
 
 > [!NOTE]
 > Mode actions (`sx126x.run_image_cal` and `sx126x.set_mode_*`) are ignored, with a warning in the log, while a
-> packet is being sent, while a received packet is waiting to be delivered, or while the radio needs
-> configuration. `sx126x.send_packet` logs the reason when a packet cannot be sent.
+> packet is being sent or a received packet is waiting to be delivered. If the radio stops answering, its
+> configuration is applied again every second until it succeeds, and mode actions are ignored until then.
+> `sx126x.send_packet` logs the reason when a packet cannot be sent.
 
 ### `sx126x.run_image_cal` Action
 
@@ -193,12 +194,12 @@ on_...:
       cold: true
 ```
 
-Without a reboot, call `configure` before using the radio again. Until then, mode actions are ignored and
-packets are not sent. Here `my_radio` is the `id` of the `sx126x` component:
+Without a reboot, any mode action other than `sx126x.set_mode_sleep`, such as `sx126x.set_mode_rx`, applies the
+configuration again first, which wakes the radio. Until then, packets are not sent:
 
 ```yaml
 on_...:
-  - lambda: id(my_radio).configure();
+  - sx126x.set_mode_rx
 ```
 
 #### Configuration variables
