@@ -1,0 +1,56 @@
+---
+description: "Instructions for setting up BrizLabs two-wire LED strings, which get color data over the power wires."
+title: "BrizLabs LED String"
+---
+import APIRef from '@components/APIRef.astro';
+
+The `brizlabs_led_string` light platform controls BrizLabs LED strings that have only two wires. These strings have
+no data wire. The controller sends color data as short dips in the 24 V supply, and a decoder in each LED reads them.
+
+The string is divided into zones, and each zone is one pixel of an addressable light. The zones repeat along the
+string: with six zones, the first group of LEDs is zone 1, the next group is zone 2, and so on up to zone 6, then the
+pattern starts again at zone 1. All LEDs in a zone show the same color.
+
+This platform requires an [ESP32](/components/esp32/). It has only been tested on the ESP32-C2 controller that is
+supplied with the string.
+
+> [!NOTE]
+> The data signal is generated with the `spi2` hardware SPI interface, so only one `brizlabs_led_string` can be
+> configured, and `spi2` can't be used for anything else. An [SPI bus](/components/spi/) or an SPI
+> [Ethernet](/components/ethernet/) adapter in the same configuration must be set to a different `interface`. On
+> ESP32 variants that have a single hardware SPI interface, such as the ESP32-C2 and ESP32-C3, an SPI bus must use
+> the `software` interface, and SPI Ethernet can't be used.
+
+```yaml
+light:
+  - platform: brizlabs_led_string
+    name: "LED String"
+    pin: GPIOXX
+```
+
+## Configuration Variables
+
+- **pin** (**Required**, [Pin](/guides/configuration-types/#pin)): The pin that sends the data signal to the output
+  stage of the controller.
+
+- **num_zones** (*Optional*, int): The number of zones in the string, from `1` to `15`. Defaults to `6`.
+
+- All other options from [Light](/components/light/#config-light), except `power_estimation`, which is not supported
+  because each pixel represents a zone rather than a single LED.
+
+## Stock Controller
+
+On the controller supplied with the string, the data signal is on `GPIO0`. `GPIO3` enables the 24 V output stage and
+must be high for the LEDs to light. Use a [Power Supply](/components/power_supply/) on `GPIO3` and set it as the
+`power_supply` of the light, so that the output stage is on only while the light is on.
+
+## Effects
+
+Each zone is one pixel, so the addressable [light effects](/components/light/#light-effects) can be used. With six
+zones, an effect has six pixels to work with.
+
+## See Also
+
+- [Light Component](/components/light/)
+- [Power Supply Component](/components/power_supply/)
+- <APIRef text="brizlabs_led_string.h" path="brizlabs_led_string/brizlabs_led_string.h" />
