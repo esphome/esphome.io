@@ -69,7 +69,7 @@ esp32:
 
 - **framework** (*Optional*): Options for the underlying framework used by ESPHome. See [Framework](#framework).
 
-- **watchdog_timeout** (*Optional*, [Time](/guides/configuration-types#time)): The timeout applied to the
+- **watchdog_timeout** (*Optional*, [Time](/guides/configuration-types/#time)): The timeout applied to the
   ESP-IDF task watchdog. If a subscribed task fails to feed the watchdog within this period, the device
   will reboot. Useful for power-managed devices or long blocking operations that need extended watchdog
   windows. Defaults to `5s`, valid range is `5s` to `60s`. Note: OTA updates temporarily raise the
@@ -364,7 +364,7 @@ esp32:
   toolchain: platformio
 ```
 
-You can also select the toolchain via the [CLI](/guides/cli#cli-toolchain):
+You can also select the toolchain via the [CLI](/guides/cli/#cli-toolchain):
 
 ```bash
 esphome --toolchain platformio compile my_device.yaml
@@ -558,7 +558,7 @@ esp32:
   automatically roll back to the previous firmware if the device crashes or resets before the boot is marked as
   successful. This works in conjunction with the [safe_mode](/components/safe_mode) component - after the
   `boot_is_good_after` time (default 60s), the firmware is marked as valid. Since ESPHome 2026.8.0, an orderly
-  shutdown — entering [deep sleep](/components/deep_sleep#deep-sleep-and-ota-rollback), a restart or a shutdown —
+  shutdown — entering [deep sleep](/components/deep_sleep/#deep-sleep-and-ota-rollback), a restart or a shutdown —
   also counts as a successful boot and marks the firmware as valid. If the device crashes before the firmware is
   marked as valid, it will roll back to the previous working firmware. Defaults to `true`.
 
@@ -816,7 +816,7 @@ When using the Arduino framework, ESPHome uses selective compilation to only bui
 
 Previously, many Arduino libraries were compiled even though ESPHome never called them. In most Arduino configs, none of these libraries were actually used, yet they bloated the binary by 50% or more and consumed significant RAM.
 
-Components that need specific Arduino libraries automatically enable them. For edge cases where a library isn't auto-detected (e.g., custom lambdas using Arduino APIs), you can explicitly enable libraries using the [libraries](/components/esphome#libraries) configuration option.
+Components that need specific Arduino libraries automatically enable them. For edge cases where a library isn't auto-detected (e.g., custom lambdas using Arduino APIs), you can explicitly enable libraries using the [libraries](/components/esphome/#libraries) configuration option.
 
 ```yaml
 # Example: Enabling Arduino libraries for custom lambda code
@@ -950,7 +950,7 @@ ESPHome can protect an ESP32 device on several fronts. These options are all con
 
 - **enable_ota_downgrade_protection** (*Optional*, boolean): Reject OTA updates whose firmware version is older
   than the version the device is currently running. The version is taken from the `version` under the
-  [`project`](/components/esphome#esphome-creators_project) key, which is embedded into the firmware image and
+  [`project`](/components/esphome/#esphome-creators_project) key, which is embedded into the firmware image and
   compared on the device before the new image is allowed to boot. Defaults to `false`.
 
   This option requires:
@@ -998,7 +998,7 @@ ESPHome can protect an ESP32 device on several fronts. These options are all con
 ## IDF Components
 
 The `components` option allows you to include IDF components. These components will then be compiled into the resulting
-firmware and may be used by [lambdas](/automations/templates#config-lambda). The most common usage of this option is to include third-party
+firmware and may be used by [lambdas](/automations/templates/#config-lambda). The most common usage of this option is to include third-party
 components that are available in the [ESP Component Registry](https://components.espressif.com/).
 
 ### Simple
