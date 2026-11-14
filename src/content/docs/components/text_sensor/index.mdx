@@ -29,7 +29,7 @@ Configuration variables:
 - **name** (*Optional*, string): The name for the sensor. At least one of **id** and **name** must be specified.
 
 > [!NOTE]
-> If you have a [friendly_name](/components/esphome#configuration-variables) set for your device and
+> If you have a [friendly_name](/components/esphome/#configuration-variables) set for your device and
 > you want the text sensor to use that name, you can set `name: None`.
 
 - **icon** (*Optional*, icon): Manually set the icon to use for the sensor in the frontend.
@@ -51,8 +51,8 @@ Configuration variables:
   for a list of available options.
   Set to `""` to remove the default entity category.
 
-- If MQTT enabled, All other options from [MQTT Component](/components/mqtt#config-mqtt-component).
-- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](/components/web_server#config-webserver-version-3-options).
+- If MQTT enabled, All other options from [MQTT Component](/components/mqtt/#config-mqtt-component).
+- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](/components/web_server/#config-webserver-version-3-options).
 
 Automations:
 
@@ -168,6 +168,68 @@ Does not change the value of the text sensor if the current value wasn't found.
 
 The arguments are a list of substitutions, each in the form `LOOKUP -> REPLACEMENT`.
 
+### `throttle`
+
+Lets a value through at most once per given time period; values that come sooner are dropped.
+
+```yaml
+# Example configuration entry
+- platform: template
+  # ...
+  filters:
+    - throttle: 1s
+```
+
+### `throttle_with_priority`
+
+Like `throttle`, but the listed values are always let through at once.
+
+```yaml
+# Example configuration entry
+- platform: template
+  # ...
+  filters:
+    - throttle_with_priority:
+        timeout: 1s
+        value: "NA"
+```
+
+- **timeout** (**Required**, [Time](/guides/configuration-types/#time)): The minimum time between two values.
+- **value** (*Optional*, string or list of strings): The values that are let through at once. Without any, this works
+  like `throttle`.
+
+The short form `- throttle_with_priority: 1s` sets only the time, so it works like `throttle`.
+
+### `timeout`
+
+Lets every value through, and sends a value again once no new one has come for the given time period.
+
+```yaml
+# Example configuration entry
+- platform: template
+  # ...
+  filters:
+    - timeout:
+        timeout: 30s
+        value: "Offline"
+```
+
+- **timeout** (**Required**, [Time](/guides/configuration-types/#time)): How long to wait for a new value.
+- **value** (*Optional*, string): The text to send when the time runs out, or `last` to send the last value again.
+  Defaults to `last`. Because `last` is a keyword, the timeout cannot send the literal text "last".
+
+The short form `- timeout: 1s` sends the last value again after 1s.
+
+Put `timeout` before `throttle_with_priority` so the last value before a pause still gets through the throttle:
+
+```yaml
+filters:
+  - timeout: 1s
+  - throttle_with_priority:
+      timeout: 1s
+      value: "NA"
+```
+
 ### `lambda`
 
 Perform a advanced operations on the text sensor value. The input string is `x` and
@@ -185,7 +247,7 @@ filters:
 
 ## Text Sensor Automation
 
-You can access the most recent state of the sensor in [lambdas](/automations/templates#config-lambda) using
+You can access the most recent state of the sensor in [lambdas](/automations/templates/#config-lambda) using
 `id(sensor_id).state`.
 
 <span id="text_sensor-on_value"></span>
@@ -193,7 +255,7 @@ You can access the most recent state of the sensor in [lambdas](/automations/tem
 ### `on_value`
 
 This automation will be triggered when a new value is published.
-In [Lambdas](/automations/templates#config-lambda) you can get the value from the trigger with `x`.
+In [Lambdas](/automations/templates/#config-lambda) you can get the value from the trigger with `x`.
 
 ```yaml
 text_sensor:
@@ -212,7 +274,7 @@ Configuration variables: See [Automation](/automations).
 ### `on_raw_value`
 
 This automation will be triggered when a new value is received that hasn't passed
-through any filters. In [Lambdas](/automations/templates#config-lambda) you can get the value from the trigger with `x`.
+through any filters. In [Lambdas](/automations/templates/#config-lambda) you can get the value from the trigger with `x`.
 
 ```yaml
 text_sensor:
@@ -228,7 +290,7 @@ Configuration variables: See [Automation](/automations).
 
 ## `text_sensor.state` Condition
 
-This [Condition](/automations/actions#all-conditions) allows you to check if a given text sensor
+This [Condition](/automations/actions/#all-conditions) allows you to check if a given text sensor
 has a specific state.
 
 ```yaml
@@ -243,12 +305,12 @@ on_...:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The text sensor ID.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The text sensor ID.
 - **state** (**Required**, string, [templatable](/automations/templates)): The state to compare
   to.
 
 > [!NOTE]
-> This condition can also be expressed in [lambdas](/automations/templates#config-lambda):
+> This condition can also be expressed in [lambdas](/automations/templates/#config-lambda):
 >
 > ```cpp
 > if (id(my_text_sensor).state == "Hello World") {
@@ -258,7 +320,7 @@ Configuration variables:
 
 ### lambda calls
 
-From [lambdas](/automations/templates#config-lambda), you can call several methods on all text sensors to do some
+From [lambdas](/automations/templates/#config-lambda), you can call several methods on all text sensors to do some
 advanced stuff (see the full API Reference for more info).
 
 - `publish_state()`  : Manually cause the sensor to push out a value.

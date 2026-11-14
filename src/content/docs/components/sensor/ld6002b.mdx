@@ -40,14 +40,14 @@ ld6002b:
 
 ### Configuration Variables
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this component.
-- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID for this component.
+- **uart_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the
   [UART Component](/components/uart) to use. Required if you have multiple UARTs configured.
-- **wakeup_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): Pin used to wake the
+- **wakeup_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): Pin used to wake the
   radar from low power mode. Required if you want `auto_wake` or the `wake` button to function. With
   `low_power` enabled and no `wakeup_pin` wired, the first command after an idle period is consumed as
   a wake-up and is retried automatically; wiring `wakeup_pin` avoids that retry.
-- **wakeup_pulse** (*Optional*, [Time](/guides/configuration-types#time), default: `50ms`): Pulse
+- **wakeup_pulse** (*Optional*, [Time](/guides/configuration-types/#time), default: `50ms`): Pulse
   length for the wakeup pin. **Requires** `wakeup_pin`.
 - **auto_wake** (*Optional*, boolean, default: `true`): Pulse `wakeup_pin` before sending a command.
   **Requires** `wakeup_pin`.
@@ -127,17 +127,17 @@ binary_sensor:
 
 ### Configuration Variables
 
-- **ld6002b_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the
+- **ld6002b_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the
   LD6002B component.
 - **target** (*Optional*): True if any target is detected or any detection area reports presence.
-  All options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
+  All options from [Binary Sensor](/components/binary_sensor/#config-binary_sensor).
 - **target_N** (*Optional*): True if target slot N (N = 1 to 3) is occupied: `target_1`, `target_2`,
   `target_3`. A person keeps the same slot for as long as they are tracked continuously, and a new
   person takes the lowest free slot. All options from
-  [Binary Sensor](/components/binary_sensor#config-binary_sensor).
+  [Binary Sensor](/components/binary_sensor/#config-binary_sensor).
 - **detection_area_N** (*Optional*): True if presence is detected in detection area N (0 to 3):
   `detection_area_0`, `detection_area_1`, `detection_area_2`, `detection_area_3`. All options from
-  [Binary Sensor](/components/binary_sensor#config-binary_sensor).
+  [Binary Sensor](/components/binary_sensor/#config-binary_sensor).
 
 > [!NOTE]
 > The `detection_area_N` sensors are cleared when the module reports that it entered unattended
@@ -173,7 +173,7 @@ sensor:
 
 ### Configuration Variables
 
-- **ld6002b_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the
+- **ld6002b_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the
   LD6002B component.
 - **target_count** (*Optional*, int): Total number of targets currently detected (0 to 3). All options
   from [Sensor](/components/sensor).
@@ -208,7 +208,7 @@ sensor:
 
 > [!NOTE]
 > The per-target `x`, `y`, `z` and `doppler_index` sensors come with these
-> [filters](/components/sensor#sensor-filters) by default. They hold the last reading for a second, so a
+> [filters](/components/sensor/#sensor-filters) by default. They hold the last reading for a second, so a
 > dropped frame does not read as a gap, and then limit how often updates reach the frontend:
 >
 > ```yaml
@@ -262,12 +262,12 @@ text_sensor:
 
 ### Configuration Variables
 
-- **ld6002b_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the
+- **ld6002b_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the
   LD6002B component.
 - **work_mode** (*Optional*): `normal` or `low_power` based on the radar work mode. All options from
-  [Text Sensor](/components/text_sensor#config-text_sensor).
+  [Text Sensor](/components/text_sensor/#config-text_sensor).
 - **ota_version** (*Optional*): Firmware version string, if supported by your module firmware. All
-  options from [Text Sensor](/components/text_sensor#config-text_sensor).
+  options from [Text Sensor](/components/text_sensor/#config-text_sensor).
 
 > [!NOTE]
 > `work_mode` reflects the current operating state and can differ from the `low_power` switch setting.
@@ -314,19 +314,20 @@ number:
 
 ### Configuration Variables
 
-- **ld6002b_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the
+- **ld6002b_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the
   LD6002B component.
 - **hold_delay** (*Optional*, range `0`–`65535` s, step `1`): Presence hold time, in seconds (default
   30 s in the 2025 protocol spec). All options from
-  [Number](/components/number#config-number).
-- **z_min** / **z_max** (*Optional*, range `-10`–`10` m, step `0.1`): Global Z-axis detection range, in
-  meters. All options from
-  [Number](/components/number#config-number).
+  [Number](/components/number/#config-number).
+- **z_min** (*Optional*, range `-10`–`10` m, step `0.1`): Lower bound of the global Z-axis detection
+  range, in meters. All options from [Number](/components/number/#config-number).
+- **z_max** (*Optional*, range `-10`–`10` m, step `0.1`): Upper bound of the global Z-axis detection
+  range, in meters. All options from [Number](/components/number/#config-number).
 - **low_power_sleep_time** (*Optional*, range `0`–`60000` ms, step `100`): Low power sleep time in
   milliseconds (default 500 ms). When
   low-power mode is enabled and the area is unattended, the module sleeps for this interval between
   scans; higher values reduce idle power but increase detection latency. All options from
-  [Number](/components/number#config-number).
+  [Number](/components/number/#config-number).
 - **area_config** (*Optional*): Coordinate values (`x_min`/`x_max`/`y_min`/`y_max`/`z_min`/`z_max`, each
   range `-10`–`10` m, step `0.1`) for the selected area ID. **Requires** both a `select.area_id` and a
   `button.apply_area` on the same `ld6002b` (enforced at compile time); set the values, then press
@@ -356,17 +357,17 @@ select:
 
 ### Configuration Variables
 
-- **ld6002b_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the
+- **ld6002b_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the
   LD6002B component.
 - **sensitivity** (*Optional*): `low`, `medium`, or `high`. `low` only detects motion. All options
-  from [Select](/components/select#config-select).
+  from [Select](/components/select/#config-select).
 - **trigger_speed** (*Optional*): `fast` (~0.5 s), `medium` (~1 s), or `slow` (~5 s), the time from
-  detecting a person to triggering. All options from [Select](/components/select#config-select).
+  detecting a person to triggering. All options from [Select](/components/select/#config-select).
 - **installation_mode** (*Optional*): `top` or `side`. All options from
-  [Select](/components/select#config-select).
+  [Select](/components/select/#config-select).
 - **area_id** (*Optional*): Area to edit with `area_config`. Options are `interference_area_0` through
   `interference_area_3` and `detection_area_0` through `detection_area_3` (mapped internally to IDs
-  0–7). All options from [Select](/components/select#config-select).
+  0–7). All options from [Select](/components/select/#config-select).
 
 > [!NOTE]
 > If no area ID is selected, **Apply Area** is ignored to prevent writing to the wrong region.
@@ -391,21 +392,21 @@ switch:
 
 ### Configuration Variables
 
-- **ld6002b_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the
+- **ld6002b_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the
   LD6002B component.
 - **low_power** (*Optional*): Enable or disable low power mode. In low power mode, the module uses a
   lower duty cycle when the area is empty and returns to full tracking on motion. The module
   documentation reports ~2.5 mA average current in low power idle and ~135 mA in normal tracking.
-  All options from [Switch](/components/switch#config-switch).
+  All options from [Switch](/components/switch/#config-switch).
 - **point_cloud** (*Optional*): Enable or disable point-cloud reporting, which is what `point_count`
   reads. All options from
-  [Switch](/components/switch#config-switch).
+  [Switch](/components/switch/#config-switch).
 - **target_display** (*Optional*): Enable or disable target reporting (`0x0A04`). If disabled, target
   sensors will show `unknown` and target presence binary sensors turn off until re-enabled. All
-  options from [Switch](/components/switch#config-switch).
+  options from [Switch](/components/switch/#config-switch).
 
 > [!NOTE]
-> Each switch applies its own [`restore_mode`](/components/switch#config-switch) on boot. `point_cloud`
+> Each switch applies its own [`restore_mode`](/components/switch/#config-switch) on boot. `point_cloud`
 > and `low_power` keep the standard `ALWAYS_OFF` default, so enable **Point Cloud** when you want the
 > stream. `target_display` defaults to `RESTORE_DEFAULT_ON`, so target reporting starts on unless a
 > stored state or your own `restore_mode` says otherwise. `inverted` is not available on these
@@ -439,39 +440,39 @@ button:
 
 ### Configuration Variables
 
-- **ld6002b_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the
+- **ld6002b_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the
   LD6002B component.
 - **apply_area** (*Optional*): Send the configured `area_config` to the selected `area_id`. **Requires**
-  a `select.area_id` on the same `ld6002b`. All options from [Button](/components/button#config-button).
+  a `select.area_id` on the same `ld6002b`. All options from [Button](/components/button/#config-button).
 - **auto_interference** (*Optional*): Generate interference areas from the current environment. Run
   this with no people present and with known interference sources active. To reset the generated
   interference areas, use **Clear Interference**. All options from
-  [Button](/components/button#config-button).
+  [Button](/components/button/#config-button).
 - **get_areas** (*Optional*): Request stored interference/detection areas from the radar. All options
-  from [Button](/components/button#config-button).
+  from [Button](/components/button/#config-button).
 - **clear_interference** (*Optional*): Clear interference areas. All options from
-  [Button](/components/button#config-button).
+  [Button](/components/button/#config-button).
 - **reset_detection_area** (*Optional*): Reset detection areas to defaults (4 m by 4 m). All options
-  from [Button](/components/button#config-button).
-- **get_delay** (*Optional*): Request hold delay. All options from [Button](/components/button#config-button).
+  from [Button](/components/button/#config-button).
+- **get_delay** (*Optional*): Request hold delay. All options from [Button](/components/button/#config-button).
 - **get_sensitivity** (*Optional*): Request sensitivity state. All options from
-  [Button](/components/button#config-button).
+  [Button](/components/button/#config-button).
 - **get_trigger_speed** (*Optional*): Request trigger speed state. All options from
-  [Button](/components/button#config-button).
+  [Button](/components/button/#config-button).
 - **get_z_range** (*Optional*): Request Z-axis range. All options from
-  [Button](/components/button#config-button).
+  [Button](/components/button/#config-button).
 - **get_installation** (*Optional*): Request installation mode from the radar and update the
   `installation_mode` select with `top` or `side`. All options from
-  [Button](/components/button#config-button).
+  [Button](/components/button/#config-button).
 - **get_low_power_mode** (*Optional*): Request low power mode state. All options from
-  [Button](/components/button#config-button).
+  [Button](/components/button/#config-button).
 - **get_low_power_sleep_time** (*Optional*): Request low power sleep time. All options from
-  [Button](/components/button#config-button).
+  [Button](/components/button/#config-button).
 - **reset_unattended** (*Optional*): Reset the module's unattended (no-person) state used by its
   low-power logic. Helpful if the device gets stuck in an unattended state. All options from
-  [Button](/components/button#config-button).
+  [Button](/components/button/#config-button).
 - **wake** (*Optional*): Pulse the `wakeup_pin` to wake the radar. **Requires** `wakeup_pin` on the
-  parent `ld6002b`. All options from [Button](/components/button#config-button).
+  parent `ld6002b`. All options from [Button](/components/button/#config-button).
 
 ## Examples
 
