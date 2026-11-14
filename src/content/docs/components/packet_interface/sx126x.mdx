@@ -1,0 +1,94 @@
+---
+description: "Instructions for setting up an SX126x LoRa packet interface on ESPHome"
+title: "SX126x Packet Interface"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `sx126x` [Packet Interface](/components/packet_interface/) platform sends and receives packets with an SX126x
+radio configured with the [SX126x](/components/sx126x/) component. Each packet is sent as one radio packet, so the
+radio itself marks where a packet starts and ends, and checks it with its CRC if `crc_enable` is set.
+
+The radio must send packets of varying length, so its `payload_length` must be `0`, the default.
+The radio must listen again after sending (`rx_start: true`, the default) when the link has a reliability or
+session layer or the rolling code, as these need packets back from the peer.
+With FSK modulation, the radio must have a `sync_value` set, as this is how the interface tells that a packet is
+arriving, so that it does not send over it.
+
+Received packets carry the radio's RSSI and SNR, which the layers above pass on. With FSK modulation the radio does
+not measure the SNR, so it is not known (`NAN`).
+
+A radio channel is shared by every device in range, so an [addressing layer](/components/packet_interface/#addressing)
+is usually needed: it drops packets meant for other devices, and lets the
+[reliability](/components/packet_interface/#reliability) and [session](/components/packet_interface/#session) layers
+work with one device among several.
+
+Sending waits until the radio has transmitted the packet, which takes from a few milliseconds to several seconds,
+depending on the packet size, spreading factor and bandwidth: a 255-byte LoRa packet at 125 kHz takes about 0.4 s at
+spreading factor 7, 2.3 s at 10 and 9 s at 12. While it sends, the radio cannot receive, so a packet is not sent
+while the radio is receiving one: the send fails, and the component sending it is told, but nothing is logged. A
+[reliability layer](/components/packet_interface/#reliability) sends it again shortly, and `entity_transport` tries
+again after a second. Other components, such as `packet_transport`, do not, so use a reliability layer with them, or
+the packet is lost. Packets are refused for at most as long as the largest packet the radio can receive takes to
+send, and at least 2 seconds, so a receive that never ends cannot stop sending; after that, the packet is sent anyway,
+and a warning is logged.
+
+When the link has a reliability or session layer or the rolling code, which need packets back from the peer, the
+two devices also take turns: after a packet is sent, a later send waits until the peer has had time to start a
+reply and the radio to receive its header, unless a packet arrives first. This takes about 0.27 s at spreading
+factor 10 and 125 kHz. Without it, the next packet of a burst is sent over the peer's reply, and both are lost.
+The radio packets of one send, such as the fragments of a large packet, are sent without waiting.
+
+A send that becomes several radio packets, such as a large packet split by a
+[fragmentation layer](/components/packet_interface/#fragmentation), or the queue of a reliability layer, waits for
+each packet in turn, and other components do not run meanwhile. Validation warns when this can take more than 4
+seconds; use a smaller `max_packet_size` or `max_queue_length`, or faster radio settings.
+
+The radio waits at most 4 seconds for a packet to be sent, so the largest packet must take less, with a margin. At
+125 kHz this needs a `max_packet_size` of 157 or less at spreading factor 11, and 75 or less at 12; a larger one is
+rejected, with the largest that fits.
+
+With a [reliability layer](/components/packet_interface/#reliability), the `timeout` must allow for the largest
+packet that any device on the channel can send, and an acknowledgement. Without a `timeout`, the link works one out from the
+radio's settings, `max_packet_size` and `ack_delay`: about 0.7 s at spreading factor 7 and 125 kHz with 255-byte
+packets and `ack_delay: 100ms`, and several seconds at high spreading factors. A shorter `timeout` is rejected.
+`ack_delay` should be about the time one packet takes to send, so that the acknowledgement does not collide with a
+second packet from the other device. With spreading factor 7 and a bandwidth of 125 kHz, `ack_delay: 100ms` works
+well. Two devices that send at the same regular interval can
+still collide now and then; the reliability layer sends again after a slightly random delay.
+
+## Example Configuration
+
+```yaml
+# Example configuration entry
+sx126x:
+  # ... radio pins and settings, with modulation: LORA
+  frequency: 917MHz
+  modulation: LORA
+  crc_enable: true
+
+packet_interface:
+  - platform: sx126x
+    id: lora_link
+    addressing:
+      address: 0x0001
+      destination: 0x0002
+    reliability:
+      ack_delay: 100ms
+    session:
+```
+
+## Configuration Variables
+
+- **sx126x_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the [SX126x](/components/sx126x/) radio
+  to use. Required only if more than one is configured.
+- **max_packet_size** (*Optional*, int): The largest packet, in bytes, that can be sent or received. Range is 16 to
+  255. Defaults to `255`.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation.
+
+## See Also
+
+- [Packet Interface Component](/components/packet_interface/)
+- [SX126x Component](/components/sx126x/)
+- [Entity Transport Component](/components/entity_transport/)
+- <APIRef text="sx126x_packet_interface.h" path="sx126x/packet_interface/sx126x_packet_interface.h" />
