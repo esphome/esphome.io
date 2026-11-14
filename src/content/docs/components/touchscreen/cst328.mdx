@@ -4,11 +4,22 @@ title: "CST328 Touch Screen Controller"
 ---
 
 import APIRef from '@components/APIRef.astro';
+import Figure from '@components/Figure.astro';
 
-The `cst328` touchscreen platform allows using the touch screen controllers based on the cst328 chip with ESPHome.
-The [I²C](/components/i2c) is required to be set up in your configuration for this touchscreen to work.
+The `cst328` touchscreen platform allows using the Hynitron CST328 and CST3240 touch screen controllers with
+ESPHome. The [I²C](/components/i2c) is required to be set up in your configuration for this touchscreen to work.
 
-This controller is used in the Waveshare ESP32-S3 Touch LCD 2.8 board.
+The CST328 is used in the Waveshare ESP32-S3 Touch LCD 2.8 board. The CST3240 is used on some industrial (CAN/RS485)
+ESP32-S3 panels from PanelLan / Wireless Tag.
+
+<Figure
+  src="/images/cst3240.jpg"
+  alt="CST3240"
+  caption="CST3240 touchscreen chip (Hynitron)"
+  layout="constrained"
+  width={300}
+  height={245}
+/>
 
 ## Base Touchscreen Configuration
 
@@ -23,6 +34,8 @@ touchscreen:
 ### Configuration variables
 
 - **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually set the ID of this touchscreen.
+- **model** (*Optional*, string): The controller chip, `CST328` (default) or `CST3240`. The default I²C address is
+  `0x1A` for the CST328 and `0x5A` for the CST3240.
 - **interrupt_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The touch detection pin.
 - **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The chip reset pin.
 
@@ -58,6 +71,22 @@ touchscreen:
     id: my_touchscreen
     interrupt_pin: GPIO8
     reset_pin: GPIO17
+```
+
+### Sample config for a PanelLan / Wireless Tag ESP32-S3 panel (CST3240)
+
+```yaml
+i2c:
+  sda: GPIO09
+  scl: GPIO03
+  frequency: 400kHz
+
+touchscreen:
+  - platform: cst328
+    model: CST3240
+    id: my_touchscreen
+    display: display0
+    interrupt_pin: GPIO42
 ```
 
 ## See Also
