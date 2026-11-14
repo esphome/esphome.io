@@ -73,9 +73,14 @@ Here is another example output for a Tuya ME-81H thermostat:
 - **ignore_mcu_update_on_datapoints** (*Optional*, list): A list of datapoints to ignore MCU updates for. Useful for
   certain broken/erratic hardware and debugging.
 
+- **weather** (*Optional*): Answer the weather service of the MCU. See [Weather service](#tuya-weather).
+
 Automations:
 
 - **on_datapoint_update** (*Optional*): An automation to perform when a Tuya datapoint update is received. See [`on_datapoint_update`](#tuya-on_datapoint_update).
+
+- **on_weather_request** (*Optional*): An automation under `weather` to perform when the MCU asks for weather data.
+  See [`on_weather_request`](#tuya-on_weather_request).
 
 ## Tuya Automation
 
@@ -134,6 +139,183 @@ tuya:
 - **datapoint_type** (*Optional*, string): The datapoint type one of *raw*, *string*, *bool*, *int*, *uint*, *enum*,
   *bitmask* or *any*.
 - See [Automation](/automations).
+
+<span id="tuya-weather"></span>
+
+## Weather service
+
+Some Tuya MCUs show weather data on their display, for example the outdoor temperature on a thermostat. The MCU
+enables the service with the list of values it wants (command `0x20`), the module then sends them (command `0x21`).
+The MCU can also ask for fresh data at any time (command `0x34`, subcommand `0x03`). With the original firmware the
+values come from the Tuya cloud. The `weather` option answers the MCU from ESPHome sensors instead.
+
+```yaml
+sensor:
+  - platform: homeassistant
+    id: outdoor_temperature
+    entity_id: sensor.outdoor_temperature
+  - platform: homeassistant
+    id: outdoor_humidity
+    entity_id: sensor.outdoor_humidity
+
+text_sensor:
+  # Home Assistant weather state translated to a Tuya condition code, see below
+  - platform: homeassistant
+    id: weather_condition
+    entity_id: weather.home
+    filters:
+      - lambda: |-
+          static const struct {
+            const char *state;
+            const char *code;
+          } CODES[] = {
+              {"sunny", "120"},        {"clear-night", "146"},     {"partlycloudy", "129"}, {"cloudy", "142"},
+              {"windy", "142"},        {"windy-variant", "142"},   {"fog", "121"},          {"hail", "127"},
+              {"lightning", "110"},    {"lightning-rainy", "143"}, {"pouring", "101"},      {"rainy", "112"},
+              {"snowy", "105"},        {"snowy-rainy", "113"},
+          };
+          for (const auto &c : CODES) {
+            if (x == c.state)
+              return std::string(c.code);
+          }
+          return std::string();
+
+tuya:
+  weather:
+    # Optional, 30min is the default. never: only on the MCU's request
+    update_interval: 30min
+    w.temp: outdoor_temperature
+    w.humidity: outdoor_humidity
+    w.conditionNum: weather_condition
+```
+
+Nothing is sent until the MCU enables the service or asks for data, and nothing before the initialization of the MCU
+connection is done. With the logger at `DEBUG`, the line "Weather data requested" lists the keys your MCU asks for.
+
+A request for data (command `0x34`, subcommand `0x03`) is answered at most once per 20 minutes and not within 5 seconds
+after another answer. An answer that left out a source without a value does not count, and a refused request
+gets the result `0x01`. Enabling the service (command `0x20`) is always answered.
+
+### Configuration variables
+
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): Send the values again at this interval
+  while the MCU has the service enabled, at least `1min`. Defaults to `30min`, the interval of the original Tuya
+  module firmware. With `never` values are sent only when the MCU enables the service or asks for data.
+
+- **on_weather_request** (*Optional*, [Automation](/automations)): An automation to perform when the MCU asks for
+  weather data. See [`on_weather_request`](#tuya-on_weather_request).
+
+- Any Tuya weather key (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the
+  [Sensor](/components/sensor/) or [Text Sensor](/components/text_sensor/) with the value for that key.
+  At least one key or `on_weather_request` is required.
+
+### Weather keys
+
+| Key | Source | Sent as |
+| --- | --- | --- |
+| `w.temp`, `w.thigh`, `w.tlow`, `w.realFeel` | sensor | integer |
+| `w.humidity`, `w.pressure`, `w.uvi`, `w.windLevel` | sensor | integer |
+| `w.aqi`, `w.qualityLevel`, `w.pm10`, `w.pm25`, `w.o3`, `w.no2`, `w.co`, `w.so2` | sensor | integer |
+| `w.windSpeed` | sensor | string, one decimal |
+| `w.conditionNum`, `w.condition`, `w.tips`, `w.windDir` | text sensor | string |
+| `w.sunrise`, `w.sunset`, `w.sunRise`, `w.sunSet` | text sensor | string |
+| `w.rank`, `w.quality`, `c.area`, `c.city`, `c.province` | text sensor | string |
+
+- A sensor value is rounded to the nearest integer. A sensor or text sensor without a value is left out.
+- `w.conditionNum` is the Tuya weather condition code as text, see
+  [Weather condition codes](#tuya-weather-conditions).
+- Units: `w.temp`, `w.thigh`, `w.tlow` and `w.realFeel` in °C, `w.pressure` in hPa, `w.windSpeed` in m/s.
+  `w.sunrise` and `w.sunset` are text in the form `2017-04-24 05:24`. `w.windDir` is a compass point such as `N`,
+  `NNE` or `SW`.
+- Use the spelling your MCU asks for: some ask for `w.sunRise` and `w.sunSet`.
+- An MCU that asks for `w.date.N` wants a forecast for N days. A forecast value has the day as a suffix:
+  `w.thigh.0` is today, `w.thigh.1` tomorrow, up to day 6.
+- Only the keys the MCU asked for are sent. A forecast key is sent when the MCU asked for its base key and for
+  more than that many days. When the MCU sent no list of keys, all configured keys are sent.
+- For an MCU that asked for `w.date.N`, a key without a day is sent as the value of today with the suffix `.0`
+  (`w.temp` as `w.temp.0`), which is how the parser of Tuya's MCU SDK reads a key. A configured `.0` key takes its
+  place.
+- `w.condition`, `w.tips`, `w.sunRise` and `w.sunSet` are not on Tuya's weather page. They are in the key list of
+  Tuya's MCU SDK.
+- A string value is limited to 99 bytes, the buffer of Tuya's MCU SDK, and the values of one answer to 1024 bytes.
+  What does not fit is left out with a warning.
+- An MCU built on Tuya's SDK enables the service once after its own start. After a restart of the module alone
+  nothing is sent until the MCU enables the service again or asks for data.
+
+<span id="tuya-weather-conditions"></span>
+
+### Weather condition codes
+
+The codes are from Appendix 4 of the
+[Tuya weather service documentation](https://developer.tuya.com/en/docs/mcu-standard-protocol/mcusdk-wifi-weather?id=Kd2fvzw7ny80s).
+Which of them an MCU can show depends on the device. There is no code 135.
+
+| Code | Condition | Code | Condition | Code | Condition |
+| --- | --- | --- | --- | --- | --- |
+| 101 | Heavy rain | 116 | Strong sandstorm | 131 | Moderate snow |
+| 102 | Thunderstorm | 117 | Sand blowing | 132 | Overcast |
+| 103 | Sandstorm | 118 | Light to moderate rain | 133 | Needle ice |
+| 104 | Light snow | 119 | Mostly clear | 134 | Downpour |
+| 105 | Snow | 120 | Sunny | 136 | Thundershower and hail |
+| 106 | Freezing fog | 121 | Fog | 137 | Freezing rain |
+| 107 | Rainstorm | 122 | Shower | 138 | Snow shower |
+| 108 | Isolated shower | 123 | Heavy shower | 139 | Light rain |
+| 109 | Dust | 124 | Heavy snow | 140 | Haze |
+| 110 | Thunder and lightning | 125 | Extreme rainstorm | 141 | Moderate rain |
+| 111 | Light shower | 126 | Blizzard | 142 | Cloudy |
+| 112 | Rain | 127 | Hail | 143 | Thundershower |
+| 113 | Sleet | 128 | Light to moderate snow | 144 | Moderate to heavy rain |
+| 114 | Dust devil | 129 | Partly cloudy | 145 | Heavy rain to rainstorm |
+| 115 | Ice pellets | 130 | Light snow shower | 146 | Clear |
+
+The example at the top of this section translates the state of a Home Assistant weather entity into these codes.
+The choice of code for each state is a suggestion. Home Assistant has no state for most of the codes. Tuya has no
+code for wind alone, so `windy` and `windy-variant` are sent as cloudy (142), and `exceptional` has no code. A state without a code gives an empty text, which is not sent.
+
+<span id="tuya-on_weather_request"></span>
+
+### `on_weather_request`
+
+This automation is triggered when the MCU enables the weather service, when it asks for weather data and the request is not
+refused by the 20 minute limit, and at each `update_interval`. A variable `x` of type `std::vector<std::string>` with the keys the MCU asked for is passed
+to the automation. Values sent with [`tuya.send_weather`](#tuya-send_weather) inside the automation go into the
+answer and take the place of a configured source with the same key.
+
+```yaml
+tuya:
+  weather:
+    w.temp: outdoor_temperature
+    on_weather_request:
+      - then:
+          - tuya.send_weather:
+              w.humidity: !lambda "return (int32_t) lroundf(id(outdoor_humidity).state);"
+              w.windDir: "NE"
+```
+
+<span id="tuya-send_weather"></span>
+
+### `tuya.send_weather` Action
+
+This action sends weather values to the MCU. Outside `on_weather_request` the values are sent at once in a frame
+of their own. Nothing is sent before the MCU has enabled the weather service, and keys the MCU did not ask for
+are skipped. The action also works without a `weather` block. A value from a lambda is always sent, so check for
+NaN in the lambda.
+
+```yaml
+on_...:
+  then:
+    - tuya.send_weather:
+        w.temp: !lambda "return (int32_t) lroundf(id(outdoor_temperature).state);"
+        w.conditionNum: "120"
+```
+
+Configuration variables:
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `tuya` component. Only needed with more
+  than one.
+- Any Tuya weather key (*Optional*, [templatable](/automations/templates)): The value for that key: an integer for
+  the keys sent as integer, a string for the others, `w.windSpeed` included (`"2.7"`). At least one key is
+  required.
 
 ## See Also
 
