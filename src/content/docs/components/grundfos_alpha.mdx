@@ -38,6 +38,30 @@ sensor:
       name: "Pump Flow"
 ```
 
+### Finding the MAC Address
+
+The pump advertises under its model name, for example `ALPHA3 25-60 180`. It only advertises while no other device
+is connected to it, so close the Grundfos GO app first.
+
+- On Android, a Bluetooth scanner app shows the name and the MAC address. iPhones and Macs do not show Bluetooth MAC
+  addresses.
+- On the ESP32, add this to the configuration for a moment. It logs the name and MAC address of every device whose
+  name starts with `ALPHA`. Remove it once you have the address.
+
+```yaml
+esp32_ble_tracker:
+  on_ble_advertise:
+    - then:
+        - lambda: |-
+            auto name = x.get_name();
+            if (name.size() >= 5 && memcmp(name.c_str(), "ALPHA", 5) == 0) {
+              char addr[MAC_ADDRESS_PRETTY_BUFFER_SIZE];
+              ESP_LOGI("pump", "%.*s: %s", (int) name.size(), name.c_str(), x.address_str_to(addr));
+            }
+```
+
+If you have two pumps of the same model, both show the same name; switch one off to tell them apart.
+
 ## Grundfos ALPHA Component
 
 ### Configuration Variables
