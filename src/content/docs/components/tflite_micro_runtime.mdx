@@ -22,9 +22,10 @@ of their own:
 | `tflite_model_debug` | The diagnostics behind `debug:`. |
 
 This component serves as a foundation for TFLite-based components such as the
-[`meter_reader_tflite`](https://github.com/nliaudat/esphome_ai_component) AI meter reader. A complete working
-demo with multiple ESP32 boards, pre-trained digit recognition models, and camera integration is available at
-[github.com/nliaudat/esphome_ai_component](https://github.com/nliaudat/esphome_ai_component).
+[`meter_reader_tflite`](https://github.com/nliaudat/esphome_ai_component/tree/next) AI meter reader. A complete
+working demo with multiple ESP32 boards, pre-trained digit recognition models, and camera integration is
+available on the `next` branch of
+[github.com/nliaudat/esphome_ai_component](https://github.com/nliaudat/esphome_ai_component/tree/next).
 
 > [!NOTE]
 > This is a **helper/library component** that is typically used as a dependency by other components. It does not
@@ -50,11 +51,12 @@ tflite_micro_runtime:
     model: "models/digit_recognizer.tflite"
 ```
 
-The preprocessing and output settings are not part of the model: `input_order`, `output_processing`,
-`scale_factor`, `normalize` and `invert` come from the `.txt` report when the model has one, and otherwise from
-their defaults (`RGB`, `argmax`, `1.0`, `false` and `false`). A model trained on BGR input, or one whose output
-tensor holds logits, therefore needs them set here or supplied by a report (see
-[Model Report File](#model-report-file)).
+Nothing else is needed: the `.txt` report is optional, and an image model is configured from its `.tflite` alone.
+The settings the flatbuffer does not carry - `input_order`, `output_processing`, `scale_factor`, `normalize` and
+`invert` - come from the `.txt` report when the model has one, otherwise from the file name tags when the name
+has one (`_RGB`, `_BGR`, `_GRAY`, `_100cls`), otherwise from their defaults (`RGB`, `argmax`, `1.0`, `false` and
+`false`). A model trained on BGR input, or one whose output tensor holds logits, needs them set here or supplied
+by a report or a file name tag (see [Model Report File](#model-report-file)).
 
 ### Image Model with Explicit Settings
 
@@ -71,7 +73,7 @@ tflite_micro_runtime:
     input_width: 32            # optional: the model's input tensor width
     input_height: 20           # optional: the model's input tensor height
     input_channels: 1          # optional: the model's input tensor channel count
-    input_order: GRAY          # optional: RGB, or GRAY for a single-channel model
+    input_order: GRAY          # optional: RGB, BGR or GRAY (RGB for three channels)
     normalize: false           # optional: scale pixels to 0.0-1.0 before inference
     invert: false              # optional: invert the pixel values
     output_processing: argmax  # optional: argmax, softmax, qat_quantized or auto_detect
@@ -249,10 +251,10 @@ report file is available next to the model.
 
 ## Model Report File
 
-A model is a `.tflite` file, and everything that can be read from it is read from it: the operators it uses, the
-shape and data type of its input tensor, and an estimate of the tensor arena it needs come from the flatbuffer,
-so a model works with nothing else next to it. A companion `.txt` report next to the model is optional and adds
-the values that only the report carries:
+The report is optional. A model is a `.tflite` file, and everything that can be read from it is read from it:
+the operators it uses, the shape and data type of its input tensor, and an estimate of the tensor arena it needs
+come from the flatbuffer, so an image model works with nothing else next to it. A companion `.txt` report next to
+the model adds the values that only the report carries:
 
 - Recommended tensor arena size, used instead of the estimate
 - Output processing strategy and scale factor
@@ -265,8 +267,8 @@ containing `_GRAY` (or `_GRAYSCALE`), `_RGB` or `_BGR` selects the channel order
 selects the 100-class scale factor (`_10cls` is the default, so it changes nothing). The image configuration that
 results is logged while it is generated, so it can be checked against the model.
 
-Generate the report with `regenerate_txt_reports.py` from the
-[esphome_ai_component](https://github.com/nliaudat/esphome_ai_component) repository. The values it supplies are
+Generate the report with `regenerate_txt_reports.py` from the `next` branch of
+[esphome_ai_component](https://github.com/nliaudat/esphome_ai_component/tree/next). The values it supplies are
 validated like the YAML options, and a value given in YAML wins over the report.
 
 > [!IMPORTANT]
@@ -666,5 +668,5 @@ load, whatever `debug:` is set to.
 - [PSRAM Component](/components/psram/)
 - [TensorFlow Lite Micro](https://www.tensorflow.org/lite/micro)
 - [ESP-TFLite-Micro](https://components.espressif.com/components/espressif/esp-tflite-micro)
-- [esphome_ai_component Demo](https://github.com/nliaudat/esphome_ai_component) — Working ESPHome external
-  component with AI meter reader, camera integration, and pre-trained models
+- [esphome_ai_component Demo](https://github.com/nliaudat/esphome_ai_component/tree/next) — Working ESPHome
+  external component with AI meter reader, camera integration, and pre-trained models
