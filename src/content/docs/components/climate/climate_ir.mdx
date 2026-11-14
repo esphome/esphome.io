@@ -30,7 +30,7 @@ submit a feature request (see FAQ).
 | [GREE](#gree_ir) | `gree`                             | yes |
 | [Haier Tundra](#haier_tundra) | `haier_tundra` | yes |
 | Hitachi | `hitachi_ac344`, `hitachi_ac424` | yes |
-| [Hitachi 168-bit](#hitachi_168bit) | `hitachi_168bit` | yes |
+| [Hitachi (HCRA31NEWH remote)](#whirlpool) | `whirlpool` (`HITACHI_HCRA31NEWH`) | yes |
 | [Islandaire](#islandaire) | `islandaire`                       | yes |
 | [LG](#climate_ir_lg) | `climate_ir_lg`                    | yes |
 | [Midea](#midea_ir) | `midea_ir`                         | yes |
@@ -468,28 +468,6 @@ switch:
 
 > [!NOTE]
 > Quiet and Turbo mode cannot both be on at once, and either can only be turned on in Cool or Heat mode.
-
-### `hitachi_168bit`
-
-For Hitachi units that use a 168-bit IR frame, such as those controlled by the HCRA31NEWH remote. These units are
-not covered by `hitachi_ac344` or `hitachi_ac424`.
-
-Fan modes `auto`, `low`, `medium` and `high`, and swing modes `off` and `vertical`.
-
-- **model** (*Optional*, string): The remote model. There is one valid model:
-
-  - `HCRA31NEWH`  : Temperature range is from 16 to 30 (default)
-
-The remote sends swing as a toggle, so ESPHome tracks the swing state it last sent or received and sends the toggle
-only when the swing mode changes.
-
-```yaml
-# Example configuration entry
-climate:
-  - platform: hitachi_168bit
-    name: "AC"
-    receiver_id: rcvr  # the remote_receiver from Using a Receiver
-```
 
 ### `hitachi_ac344`
 
@@ -943,15 +921,18 @@ button:
 
 ### `whirlpool`
 
-- **model** (*Optional*, string): There are three valid models to choose from:
+- **model** (*Optional*, string): There are four valid models to choose from:
 
   - `DG11J1-3A`  : Temperature range is from 18 to 32 (default)
   - `DG11J1-91`  : Temperature range is from 16 to 30
   - `HISENSE_ARG`: Hisense, BGH and Tadiran units sold in Argentina that work with the BGH Smart Control (HPA-4911)
     module. Temperature range is from 16 to 30; the swing setting is sent as a state instead of a toggle.
+  - `HITACHI_HCRA31NEWH`: Hitachi units that use the HCRA31NEWH remote, which are not covered by `hitachi_ac344` or
+    `hitachi_ac424`. Temperature range is from 16 to 30; the unit takes the power state from every frame.
 
-All whirlpool models only have a power toggle, so the climate keeps track of whether it believes the unit is on. If
-the unit is switched with another remote, the next command may toggle the power instead of changing a setting. With
+All whirlpool models except `HITACHI_HCRA31NEWH` only have a power toggle, so the climate keeps track of whether it
+believes the unit is on. If the unit is switched with another remote, the next command may toggle the power instead of
+changing a setting. Models that send swing as a toggle send it only when the swing mode changes. With
 the `HISENSE_ARG` model the three frames of one transmission are separated by gaps close to the default `idle` of
 `10ms`, so a [receiver](#ir-receiver_id) needs a longer `idle` to capture them as one signal: `idle: 50ms`, or the
 largest value the platform allows, `32767us`, on ESP32 variants with RMT other than ESP32 and ESP32-S2.
@@ -1093,7 +1074,6 @@ Additional configuration must be specified for this platform:
 - <APIRef text="fujitsu_general.h" path="fujitsu_general/fujitsu_general.h" />
 - <APIRef text="gree.h" path="gree/gree.h" />
 - <APIRef text="haier_tundra.h" path="haier_tundra/haier_tundra.h" />
-- <APIRef text="hitachi_168bit.h" path="hitachi_168bit/hitachi_168bit.h" />
 - <APIRef text="hitachi_ac344.h" path="hitachi_ac344/hitachi_ac344.h" />
 - <APIRef text="islandaire.h" path="islandaire/islandaire.h" />
 - <APIRef text="midea_ir.h" path="midea_ir/midea_ir.h" />
