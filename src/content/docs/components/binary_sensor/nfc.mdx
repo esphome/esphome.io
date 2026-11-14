@@ -14,8 +14,9 @@ The tag may be identified in one of three ways:
 - By a given NDEF tag "name", or...
 - By a given string contained in the tag's NDEF message/data
 
-Note that this platform is currently supported by the [PN7150](/components/pn7150/) and [PN716x](/components/pn7160/) only;
-one of these components must be present in your device's configuration in order to use it.
+Note that this platform is currently supported by the [PN7150](/components/pn7150/), [PN716x](/components/pn7160/)
+and [ST25R3916](/components/st25r/) only; one of these components must be present in your device's configuration in
+order to use it. The ST25R3916 matches on the tag UID only, as it does not read NDEF data yet.
 
 ```yaml
 # Example configuration entries
@@ -52,8 +53,9 @@ prepared using the Home Assistant Companion app) or (part of) a string that is c
 
 To obtain a tag's UID:
 
-- Set up a simple NFC component (such as the [PN532](/components/binary_sensor/pn532/), [PN7150](/components/pn7150/) or [PN716x](/components/pn7160/))
-  configuration without any binary sensors.
+- Set up a simple NFC component (such as the [PN532](/components/binary_sensor/pn532/),
+  [PN7150](/components/pn7150/), [PN716x](/components/pn7160/) or [ST25R3916](/components/st25r/)) configuration
+  without any binary sensors.
 
 - Approach the NFC reader with an NFC tag. When the tag is sufficiently close to the reader, you'll see a message in the
   ESPHome device's logs similar to this:
@@ -61,6 +63,8 @@ To obtain a tag's UID:
   ```log
   Read tag type Mifare Classic with UID 1C-E5-E7-A6
   ```
+
+  The ST25R3916 logs a different line; see its [Setting Up Tags](/components/st25r/#setting-up-tags) section.
 
 - Either:
 
@@ -83,6 +87,7 @@ cards/tags to share the same message.
 - [PN532 NFC/RFID](/components/binary_sensor/pn532/)
 - [PN7150 NFC](/components/pn7150/)
 - [PN7160 NFC](/components/pn7160/)
+- [ST25R3916 NFC](/components/st25r/)
 - <APIRef text="pn532.h" path="pn532/pn532.h" />
 - <APIRef text="pn7150.h" path="pn7150/pn7150.h" />
 - <APIRef text="pn7160.h" path="pn7160/pn7160.h" />

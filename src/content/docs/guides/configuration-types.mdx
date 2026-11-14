@@ -107,6 +107,17 @@ Advanced options:
   i.e. the maximum amount of current can additionally be set. Defaults to `20mA`.
   Options are `5mA`, `10mA`, `20mA`, `40mA`.
 
+- **hold_state** (*Optional*, boolean): On `ESP32`, hold the pin during (deep) sleep and software reset so it keeps
+  its output level or pullup/pulldown mode. Only internal pins support this; pins on I/O expanders do not. Use hold
+  for pins driven directly as GPIO, not for pins used by peripherals such as `i2c` or `rmt` (`uart` is the exception,
+  where it can hold the pullup/pulldown). If the pin is also used elsewhere with `allow_other_uses`, enable hold on
+  all uses or none. Pins configured as both input and output might glitch during wakeup/reboot. Defaults to `false`.
+
+> [!WARNING]
+> A hold outlives an OTA update. If a held pin is removed from the configuration entirely, the pin stays held until
+> a hardware reset. When `hold_state: true` is added to an existing pin and installed over OTA, the pin may be in an
+> undefined state until it is toggled or the device is hardware reset.
+
 - **ignore_strapping_warning** (*Optional*, boolean): Certain pins on ESP32s are designated *strapping pins* and are read
   by the chip on reset to configure initial operation, e.g. to enable bootstrap mode.
   Using such pins for I/O should be avoided and ESPHome will warn if I/O is configured on a strapping pin.
