@@ -8,7 +8,7 @@ The `tlv320dac3100` platform allows your ESPHome devices to use the TI TLV320DAC
 built-in mono class-D speaker amplifier and a stereo headphone driver. This allows the playback of audio via the
 microcontroller from a range of sources via [Media Player](/components/media_player/).
 
-The [I²C bus](/components/i2c) is required in your configuration as this is used to communicate with the
+The [I²C bus](/components/i2c/) is required in your configuration as this is used to communicate with the
 TLV320DAC3100. Audio data comes from an [I²S Audio Speaker](/components/speaker/i2s_audio/).
 
 ```yaml
@@ -26,9 +26,7 @@ speaker:
     audio_dac: dac
 ```
 
-<span id="config-tlv320dac3100"></span>
-
-## Configuration variables
+## Configuration Variables
 
 - **sample_rate** (**Required**, int): The sample rate of the audio sent to the DAC, from `8000` to `192000`. Must
   match the `sample_rate` of the I²S speaker.
@@ -45,7 +43,7 @@ speaker:
 - **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The pin connected to the DAC's
   RESET input. Boards that leave RESET to the microcontroller, such as the Adafruit breakout, need this.
 - **address** (*Optional*, int): The I²C address of the driver. Defaults to `0x18`.
-- **i2c_id** (*Optional*): The ID of the [I²C bus](/components/i2c) the TLV320DAC3100 is connected to.
+- **i2c_id** (*Optional*): The ID of the [I²C bus](/components/i2c/) the TLV320DAC3100 is connected to.
 - All other options from [Audio DAC](/components/audio_dac/#config-audio_dac).
 
 > [!NOTE]
@@ -57,7 +55,7 @@ speaker:
 > The DAC needs its clock running while it powers up, so it powers up when audio first plays. The outputs stay muted
 > until about 0.1 s after that, which keeps the speaker free of pops. An I²S speaker must name this DAC in its
 > `audio_dac` option; a speaker further up the chain, such as a mixer, does not report when the clocks start.
-> That speaker must use `dac_type: external` and standard I²S (the default `i2s_comm_fmt`), not S/PDIF.
+> The I²S speaker must use `dac_type: external` and standard I²S (the default `i2s_comm_fmt`), not S/PDIF.
 
 > [!NOTE]
 > The clock dividers are fixed for `sample_rate`, so audio has to reach the I²S speaker at that rate. Use a
