@@ -1,0 +1,310 @@
+---
+title: "Fendt Caravan"
+description: "Monitor and control the Fendt caravan control panel over Bluetooth Low Energy."
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `fendt_caravan` component connects to the control panel of a Fendt caravan over Bluetooth Low Energy (BLE). It
+reads the values the panel reports and sends commands to it, so the main control unit, the Alde heating, the fridge,
+the lights and the battery sensor can be used from ESPHome.
+
+The panel groups its devices into units. Each unit you configure here is a hub that the entity platforms below
+(`sensor`, `binary_sensor`, `switch`, `text_sensor`, `select`, `climate` and `light`) refer to with `parent_id`.
+
+The component works only on the ESP32. It needs a [BLE Client](/components/ble_client/) for the panel and the
+[ESP32 Bluetooth Low Energy Tracker](/components/esp32_ble_tracker/) to find it.
+
+## Configuration
+
+```yaml
+fendt_caravan:
+  ble_client_id: caravan_ble_client
+  bt_id: XX:XX:XX:XX:XX:XX
+  main_control_unit:
+    id: caravan_mcu
+  lighting_unit:
+    id: caravan_lighting
+```
+
+## Configuration Variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation.
+- **ble_client_id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the
+  [BLE Client](/components/ble_client/) that connects to the panel.
+- **bt_id** (**Required**, MAC Address): The Bluetooth address of the phone or tablet that was paired with the panel
+  in the Fendt app. The panel drops the connection when it gets any other address.
+- **main_control_unit** (**Required**): The main control unit hub.
+  - **id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the hub, used as `parent_id` by its
+    entities.
+  - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The panel reports the inside and
+    outside temperatures many times a second. The latest values are published once per interval. Defaults to `60s`.
+- **lighting_unit** (**Required**): The lighting unit hub, used by the [lights](#light).
+  - **id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the hub.
+- **alde_unit** (*Optional*): The Alde heating unit hub.
+  - **id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the hub.
+- **fridge_unit** (*Optional*): The fridge unit hub.
+  - **id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the hub.
+- **battery_one_unit** (*Optional*): The hub of the first battery sensor (`IBS0`) on the panel.
+  - **id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the hub.
+
+The hubs other than the main control unit publish each value as soon as the panel reports it. They accept
+`update_interval`, but do not use it.
+
+## Sensor
+
+```yaml
+sensor:
+  - platform: fendt_caravan
+    parent_id: caravan_mcu
+    type: temp_in
+    name: "Inside Temperature"
+```
+
+### Configuration Variables
+
+- **type** (**Required**, string): The value to read, one of the types below.
+- **parent_id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the hub that provides the type.
+- All other options from [Sensor](/components/sensor/#config-sensor).
+
+| Type                     | Hub                      | Unit | Description                                 |
+| ------------------------ | ------------------------ | ---- | ------------------------------------------- |
+| `temp_in`                | `main_control_unit`      | °C   | Inside temperature                          |
+| `temp_out`               | `main_control_unit`      | °C   | Outside temperature                         |
+| `water_level`            | `main_control_unit`      | %    | Fresh water tank level                      |
+| `battery_current`        | `battery_one_unit`       | A    | Battery current                             |
+| `battery_voltage`        | `battery_one_unit`       | V    | Battery voltage                             |
+| `battery_level`          | `battery_one_unit`       | %    | Battery state of charge                     |
+| `battery_remaining_time` | `battery_one_unit`       | h    | Time left at the current load               |
+| `battery_temperature`    | `battery_one_unit`       | °C   | Battery temperature                         |
+| `battery_capacity`       | `battery_one_unit`       | Ah   | Battery capacity                            |
+
+## Binary Sensor
+
+```yaml
+binary_sensor:
+  - platform: fendt_caravan
+    parent_id: caravan_mcu
+    type: power_status
+    name: "Mains Power"
+```
+
+### Configuration Variables
+
+- **type** (**Required**, string): The value to read, one of the types below.
+- **parent_id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the hub that provides the type.
+- All other options from [Binary Sensor](/components/binary_sensor/#config-binary_sensor).
+
+| Type                   | Hub                      | Description                                      |
+| ---------------------- | ------------------------ | ------------------------------------------------ |
+| `power_status`         | `main_control_unit`      | Mains power is connected                         |
+| `alde_status`          | `alde_unit`              | The Alde heating is available                    |
+| `fridge_status`        | `fridge_unit`            | The fridge is available                          |
+| `battery_available`    | `battery_one_unit`       | The battery sensor is available                  |
+| `battery_recalibrated` | `battery_one_unit`       | Recalibration state of the battery sensor        |
+
+## Switch
+
+```yaml
+switch:
+  - platform: fendt_caravan
+    parent_id: caravan_mcu
+    type: main_switch
+    name: "Main Switch"
+```
+
+### Configuration Variables
+
+- **type** (**Required**, string): The switch, one of the types below.
+- **parent_id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the hub that provides the type.
+- All other options from [Switch](/components/switch/#config-switch).
+
+| Type                      | Hub                 | Description                  |
+| ------------------------- | ------------------- | ---------------------------- |
+| `main_switch`             | `main_control_unit` | Main power switch            |
+| `all_lights`              | `main_control_unit` | All lights                   |
+| `floor_heater`            | `main_control_unit` | Floor heating                |
+| `alde_heater`             | `alde_unit`         | Alde heating                 |
+| `alde_heater_gas`         | `alde_unit`         | Alde gas burner              |
+| `alde_water_heater`       | `alde_unit`         | Alde hot water               |
+| `alde_water_heater_boost` | `alde_unit`         | Alde hot water boost         |
+| `fridge_status`           | `fridge_unit`       | Fridge on and off            |
+
+Each switch follows the state the panel reports, so it also changes when the panel is used directly.
+
+## Text Sensor
+
+```yaml
+text_sensor:
+  - platform: fendt_caravan
+    parent_id: caravan_mcu
+    type: software_version
+    name: "Panel Software Version"
+```
+
+### Configuration Variables
+
+- **type** (**Required**, string): The value to read, one of the types below.
+- **parent_id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the hub that provides the type.
+- All other options from [Text Sensor](/components/text_sensor/#config-text_sensor).
+
+| Type                  | Hub                      | Description                       |
+| --------------------- | ------------------------ | --------------------------------- |
+| `software_version`    | `main_control_unit`      | Software version of the panel     |
+| `panel_version`       | `main_control_unit`      | Version of the panel              |
+| `fridge_power_source` | `fridge_unit`            | Power source the fridge runs on   |
+| `fridge_type`         | `fridge_unit`            | Fridge model                      |
+| `battery_type`        | `battery_one_unit`       | Battery type set on the panel     |
+
+The text sensors that have a fixed set of values publish one of these:
+
+- `fridge_power_source`: `Automatic`, `Gas`, `DirectCurrent`, `AlternatingCurrent`
+- `fridge_type`: `None`, `DometicAbsorberFridge`, `HobbyCompressorRMVOC90`, `DOMETICRC104Compressor`, `DOMETIC_RUC`
+- `battery_type`: `Unknown`, `Standard`, `Gel`, `AGM`, `LiFePO4`
+
+## Select
+
+```yaml
+select:
+  - platform: fendt_caravan
+    parent_id: caravan_fridge
+    type: fridge_mode
+    name: "Fridge Mode"
+```
+
+### Configuration Variables
+
+- **type** (**Required**, string): The setting, one of the types below.
+- **parent_id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the hub that provides the type.
+- All other options from [Select](/components/select/#config-select).
+
+The options are fixed by the panel and cannot be changed.
+
+| Type                      | Hub           | Options                                  |
+| ------------------------- | ------------- | ---------------------------------------- |
+| `alde_heater_electricity` | `alde_unit`   | `Off`, `1 kW`, `2 kW`, `3 kW`            |
+| `fridge_mode`             | `fridge_unit` | `Performance`, `Quiet`, `Boost`          |
+| `fridge_temperature`      | `fridge_unit` | `1`, `2`, `3`, `4`, `5`                  |
+
+## Climate
+
+The `alde` climate controls the Alde heating. Its mode follows the heater switch, and its current temperature comes
+from a sensor, normally the `temp_in` sensor of the main control unit. The target temperature is sent to the panel.
+
+```yaml
+climate:
+  - platform: fendt_caravan
+    parent_id: caravan_alde
+    type: alde
+    name: "Heating"
+    heater_switch: alde_heater_switch
+    sensor: inside_temperature
+```
+
+### Configuration Variables
+
+- **type** (**Required**, string): Only `alde` is supported.
+- **parent_id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the `alde_unit` hub.
+- **heater_switch** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the `alde_heater`
+  [switch](#switch). Setting the mode to heat or off turns it on or off.
+- **sensor** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the sensor that gives the current
+  temperature.
+- **heat_action** (*Optional*, [Action](/automations/actions/)): The action to run when the mode changes to heat.
+- **off_action** (*Optional*, [Action](/automations/actions/)): The action to run when the mode changes to off.
+- All other options from [Climate](/components/climate/#config-climate).
+
+## Light
+
+Each light is a variable on the panel, such as `LIGHT_SW0` for a light that can only be switched or `LIGHT_DIM0` for
+a dimmable one. Which variable belongs to which light depends on the caravan model.
+
+```yaml
+light:
+  - platform: fendt_caravan
+    parent_id: caravan_lighting
+    light_type: dimmable
+    variable_name: LIGHT_DIM0
+    name: "Ceiling Light"
+```
+
+### Configuration Variables
+
+- **light_type** (**Required**, string): `switch` for a light that can only be turned on and off, or `dimmable` for a
+  light with brightness control.
+- **parent_id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the `lighting_unit` hub.
+- **variable_name** (**Required**, string): The name of the light's variable on the panel, for example `LIGHT_SW0`
+  or `LIGHT_DIM1`.
+- **default_transition_length** (*Optional*, [Time](/guides/configuration-types/#time)): Only for `dimmable`.
+  Defaults to `0s`.
+- All other options from [Light](/components/light/#config-light).
+
+The panel takes the brightness of a dimmable light in 15 steps.
+
+## Example
+
+A configuration with all units:
+
+```yaml
+esp32_ble_tracker:
+
+ble_client:
+  - mac_address: XX:XX:XX:XX:XX:XX
+    id: caravan_ble_client
+
+fendt_caravan:
+  ble_client_id: caravan_ble_client
+  bt_id: XX:XX:XX:XX:XX:XX
+  main_control_unit:
+    id: caravan_mcu
+  lighting_unit:
+    id: caravan_lighting
+  alde_unit:
+    id: caravan_alde
+  fridge_unit:
+    id: caravan_fridge
+  battery_one_unit:
+    id: caravan_battery
+
+sensor:
+  - platform: fendt_caravan
+    parent_id: caravan_mcu
+    type: temp_in
+    name: "Inside Temperature"
+    id: inside_temperature
+  - platform: fendt_caravan
+    parent_id: caravan_battery
+    type: battery_level
+    name: "Battery Level"
+
+switch:
+  - platform: fendt_caravan
+    parent_id: caravan_alde
+    type: alde_heater
+    name: "Alde Heating"
+    id: alde_heater_switch
+  - platform: fendt_caravan
+    parent_id: caravan_fridge
+    type: fridge_status
+    name: "Fridge"
+
+climate:
+  - platform: fendt_caravan
+    parent_id: caravan_alde
+    type: alde
+    name: "Heating"
+    heater_switch: alde_heater_switch
+    sensor: inside_temperature
+
+light:
+  - platform: fendt_caravan
+    parent_id: caravan_lighting
+    light_type: switch
+    variable_name: LIGHT_SW1
+    name: "Awning Light"
+```
+
+## See Also
+
+- [BLE Client](/components/ble_client/)
+- [ESP32 Bluetooth Low Energy Tracker](/components/esp32_ble_tracker/)
+- <APIRef text="fendt_caravan.h" path="fendt_caravan/fendt_caravan.h" />
