@@ -16,14 +16,24 @@ i2c:
 
 vl6180x:
   - id: tof_sensor
+
+sensor:
+  - platform: vl6180x
+    vl6180x_id: tof_sensor
     range:
       name: "Distance"
     lux:
       name: "Illuminance"
+
+text_sensor:
+  - platform: vl6180x
+    vl6180x_id: tof_sensor
+    range_status:
+      name: "Range status"
 ```
 
 The sensor's default I²C address is `0x29`. A VL6180X sensor provides distance and ambient light measurements. If your
-module contains a VL6180 variant without ambient light sensing, omit the `lux` section.
+module contains a VL6180 variant without ambient light sensing, omit the `lux` section from the sensor platform.
 
 ## Wiring
 
@@ -48,20 +58,6 @@ module contains a VL6180 variant without ambient light sensing, omit the `lux` s
   non-default I²C address. Each sensor needs its own pin.
 - **interrupt_pin** (*Optional*, [GPIO Pin Schema](/guides/configuration-types/#pin-schema)): The GPIO connected to the
   sensor's interrupt output. When omitted, the component polls the sensor over I²C.
-- **range** (*Optional*): Distance measurement settings. At least one of `range`, `range_status`, or `lux` should be
-  configured.
-  - **scaler** (*Optional*, int): Sensor range scaler, from `1` to `3`. Defaults to `1`. Higher values increase the
-    reported measurement range; the distance is reported in millimeters.
-  - All other options from [Sensor](/components/sensor/).
-- **range_status** (*Optional*): Text sensor reporting the range result, such as `OK`, `No Target`, `Out of Range`, or
-  `Sensor Error`.
-  - All other options from [Text Sensor](/components/text_sensor/).
-- **lux** (*Optional*): Ambient light measurement settings.
-  - **gain** (*Optional*, float): ALS gain. One of `1`, `1.25`, `1.67`, `2.5`, `5`, `10`, `20`, or `40`. Defaults to
-    `1`.
-  - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval between ambient light
-    measurements. Defaults to the component's `update_interval`.
-  - All other options from [Sensor](/components/sensor/).
 - **recovery** (*Optional*): Automatic recovery settings.
   - **failure_threshold** (*Optional*, int): Consecutive measurement or I²C failures before recovery starts. Defaults
     to `3`.
@@ -69,6 +65,25 @@ module contains a VL6180 variant without ambient light sensing, omit the `lux` s
     Defaults to `30s`.
   - **max_retries** (*Optional*, int): Number of recovery attempts before the component increases the retry delay.
     Defaults to `10`. Recovery continues after this limit with a delay of at least `30s`.
+
+## Sensor Platform
+
+Configure distance and ambient light entities under `sensor:` and reference the `vl6180x` hub with `vl6180x_id`. Put
+both optional entities in one platform entry. At least one of `range` or `lux` is required.
+
+- **range** (*Optional*): Distance sensor. **scaler** (*Optional*, int) supports `1` to `3` and defaults to `1`.
+  Higher values increase the reported measurement range; distance is reported in millimeters. All other options from
+  [Sensor](/components/sensor/) are supported.
+- **lux** (*Optional*): Ambient light sensor. **gain** (*Optional*, float) supports `1`, `1.25`, `1.67`, `2.5`, `5`,
+  `10`, `20`, or `40`, and defaults to `1`. **update_interval** (*Optional*, [Time](/guides/configuration-types/#time))
+  controls its measurement interval and defaults to the hub's `update_interval`. All other options from
+  [Sensor](/components/sensor/) are supported.
+
+## Text Sensor Platform
+
+To publish the range result, add a `text_sensor:` entry with `platform: vl6180x`, the hub's `vl6180x_id`, and a
+`range_status` sensor. It reports values such as `OK`, `No Target`, `Out of Range`, and `Sensor Error`. All standard
+options from [Text Sensor](/components/text_sensor/) are supported.
 
 ## Multiple Sensors
 
@@ -80,12 +95,18 @@ vl6180x:
   - id: near_sensor
     address: 0x29
     enable_pin: GPIOXX
-    range:
-      name: "Near Distance"
 
   - id: far_sensor
     address: 0x30
     enable_pin: GPIOXX
+
+sensor:
+  - platform: vl6180x
+    vl6180x_id: near_sensor
+    range:
+      name: "Near Distance"
+  - platform: vl6180x
+    vl6180x_id: far_sensor
     range:
       name: "Far Distance"
 ```
