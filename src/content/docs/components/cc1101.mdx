@@ -84,8 +84,8 @@ and optional CRC checking.
   is the length byte. Range: `0` to `1024`.
   As a lambda, it computes the received packet length from the bytes received so far, passed as `x`
   (`std::vector<uint8_t>`). Return a negative value to discard the current packet, return `0` while the
-  length is still unknown, or return the full packet length in bytes. A positive returned length must be
-  greater than the number of bytes already received and must not exceed `1024`. Requires `packet_mode: true`.
+  length is still unknown, or return the full packet length in bytes, at most `1024`. A length that is not
+  more than the bytes already received ends the packet there. Requires `packet_mode: true`.
 
 Packet lengths above 64 bytes and a `packet_length` lambda are supported for receive only. The receiver
 drains the CC1101 RX FIFO while the packet is being received and uses the packet length handling described
