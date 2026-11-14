@@ -14,17 +14,9 @@ The [NFC binary sensor](/components/binary_sensor/nfc/) can be used with this re
 
 ```yaml
 # Example configuration entry
-spi:
-  clk_pin: GPIOXX
-  miso_pin: GPIOXX
-  mosi_pin: GPIOXX
-
 trf7962a:
   cs_pin: GPIOXX
   irq_pin: GPIOXX
-  on_tag:
-    then:
-      - homeassistant.tag_scanned: !lambda 'return x;'
 ```
 
 ## Configuration Variables
@@ -35,8 +27,8 @@ trf7962a:
   `IRQ` line. The reader signals the end of each exchange on it.
 - **vin** (*Optional*, string): The supply voltage on the reader's `VIN` pin, `5V` or `3.3V`. Defaults to `5V`.
 - **rf_power** (*Optional*, string): The transmitter output power, `FULL` or `HALF`. Defaults to `FULL`.
-- **data_rate** (*Optional*): The SPI clock rate, up to `10MHz`. Defaults to `2MHz`, the rate the datasheet
-  recommends.
+- **data_rate** (*Optional*, frequency): The SPI clock rate, up to `10MHz`. Defaults to `2MHz`, the rate the
+  datasheet recommends.
 - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often to poll for a tag.
   Defaults to `500ms`.
 - **on_tag** (*Optional*, [Automation](/automations/)): An automation to perform when a tag is first read. See
@@ -48,8 +40,8 @@ trf7962a:
 - **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID for this component.
 
 > [!NOTE]
-> The reader handles one tag at a time. If two tags are on the antenna, their responses collide and neither is read,
-> so a tag already reported is treated as removed after three polls.
+> The reader handles one tag at a time and reads only its UID. If two tags are on the antenna, their responses collide
+> and neither is read, so a tag already reported is treated as removed after three polls.
 
 ## `on_tag` Trigger
 
@@ -81,7 +73,8 @@ trf7962a:
 
 ## Setting Up Tags
 
-To find the UID of a tag, hold it to the reader with the logger at `INFO` level or lower and look for a line like:
+To find the UID of a tag, hold it to the reader with the logger at `INFO` level or more verbose (the default `DEBUG`
+works) and look for a line like:
 
 ```log
 [I][trf7962a]: Tag detected: E0-04-03-50-1E-07-E7-ED
@@ -107,8 +100,6 @@ binary_sensor:
 | Chip     | Bus | Notes                           |
 | -------- | --- | ------------------------------- |
 | TRF7962A | SPI | Tested in a Toniebox (ESP32-S3) |
-
-The reader currently finds one ISO 15693 tag per poll and reads only its UID.
 
 ## See Also
 
