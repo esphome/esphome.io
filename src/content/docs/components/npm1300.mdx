@@ -127,6 +127,10 @@ sensor:
 - **die_temperature** (*Optional*): The temperature of the nPM1300 itself, in °C.
 - **system_voltage** (*Optional*): The system supply voltage (VSYS), in volts.
 - **vbus_voltage** (*Optional*): The USB supply voltage (VBUS), in volts.
+- **vbus_current_limit** (*Optional*): The VBUS current limit stored in the chip, in amperes. The chip cannot
+  measure the VBUS current itself. This is the value software selected, so it is only accurate with
+  `vbus_current_limit` set on the hub, which applies it on every update. Without it, the sensor shows the reset
+  value of the register (0.5 A) while the chip uses its power-on limit of 100 mA.
 
 All options from [Sensor](/components/sensor/).
 
@@ -143,6 +147,8 @@ binary_sensor:
 
 - **npm1300_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `npm1300` hub.
 - **vbus_present** (*Optional*): On when a supply is connected to VBUS.
+- **vbus_current_limit_active** (*Optional*): On while the VBUS current is held at its limit. The battery then
+  supplies the rest of the load, or charging slows down. If this is on often, raise `vbus_current_limit`.
 - **charging** (*Optional*): On while the battery is charging (trickle, constant current or constant voltage).
 - **charge_complete** (*Optional*): On when charging is complete.
 - **battery_detected** (*Optional*): On when the charger detects a battery.
