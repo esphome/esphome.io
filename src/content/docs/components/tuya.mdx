@@ -76,10 +76,6 @@ Here is another example output for a Tuya ME-81H thermostat:
 - **ignore_mcu_update_on_datapoints** (*Optional*, list): A list of datapoints to ignore MCU updates for. Useful for
   certain broken/erratic hardware and debugging.
 
-- **auto_baud** (*Optional*, boolean): Only with `protocol: low_power`. Find the MCU's baud rate by trying 9600 and
-  115200 until the MCU sends a valid product info answer. The baud rate of the UART bus is tried first.
-  Defaults to `false`.
-
 - **mcu_wake_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): Only with `protocol: low_power`.
   An output that wakes the MCU before the module sends to it. Use `inverted: true` when the MCU wakes on a low level.
 
@@ -101,8 +97,9 @@ info:
 - **Version 0**: the older low-power command set, used for example by HC32-based thermostats.
 - **Version 3**: the standard Tuya framing, with a sleep handshake added.
 
-Putting the Wi-Fi module to sleep needs support from the platform. On platforms without it, the component answers
-every sleep request of the MCU with "busy", so the module stays awake and the device works, but uses more battery.
+The Wi-Fi module itself does not sleep: the component answers every sleep request of the MCU with "busy", so the
+module stays awake. The device works, but uses more battery than with its original firmware. Set the baud rate of the
+[UART bus](/components/uart) to the one of the MCU, usually 9600 or 115200.
 
 ```yaml
 uart:
@@ -113,7 +110,6 @@ uart:
 tuya:
   id: tuya_mcu
   protocol: low_power
-  auto_baud: true
   mcu_wake_pin:
     number: GPIO12
     inverted: true
@@ -127,7 +123,7 @@ tuya:
 
 Only with `protocol: low_power`. Asks the MCU to send its current datapoints. A version 3 MCU gets the standard status
 query. A version 0 MCU gets datapoint 106 set to `true`, which is the refresh request of the HC32 thermostat firmware.
-The request is skipped while the MCU is busy or the module is about to sleep.
+The request is skipped while the MCU is busy.
 
 ```yaml
 button:
