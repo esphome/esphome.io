@@ -49,10 +49,12 @@ audio_dac:
 
 > [!NOTE]
 > `bits_per_sample` and `sample_rate` configure the control interface during startup. They should
-> match the format used by the attached audio path.
+> match the format used by the attached audio path. Some boards, including the tested InnoMaker RPI HIFI DAC PRO,
+> generate their own I²S bit clock (BCLK) and word clock (LRCLK). For these boards, set `i2s_mode: secondary`
+> on the [I²S Audio Speaker](/components/speaker/i2s_audio/).
 
 > [!NOTE]
-> This platform configures stereo playback only and does not expose the raw ES9038Q2M register map.
+> This platform configures the DAC's stereo I²S format and does not expose the raw ES9038Q2M register map.
 > With the [logger](/components/logger/) at `VERBOSE` level the control interface registers are
 > printed with the configuration output, which helps when bringing up a new board.
 
@@ -65,9 +67,13 @@ audio_dac:
 All [Audio DAC automations](/components/audio_dac/#automations) are supported by this platform.
 
 > [!NOTE]
-> The volume maps linearly onto the control interface's 0.5 dB attenuation steps, so `100%` is 0 dB,
-> `50%` is about -64 dB and the lowest settings are inaudible. Most listening happens in the upper part of
-> the range.
+> The volume uses a hybrid curve, rounded to the control interface's 0.5 dB attenuation steps:
+>
+> - From `50%` to `100%`, each percentage point increases the level by 0.5 dB: `50%` is -25 dB
+>   and `100%` is 0 dB.
+> - Below `50%`, the amplitude follows a cubic curve that joins the upper range at -25 dB.
+>   For example, `25%` is about -43 dB and `10%` is about -67 dB.
+> - `0%` selects the maximum attenuation of -127.5 dB.
 
 ## See Also
 
