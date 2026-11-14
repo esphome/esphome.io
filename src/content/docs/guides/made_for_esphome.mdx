@@ -82,8 +82,43 @@ themselves. That requires:
 - [Project information](/components/esphome/#esphome-creators_project) (`esphome` → `project` → `name` and `version`),
   which is what the Device Builder matches on when it offers to adopt the device.
 - The [`api`](/components/api/) component, which the adoption flow relies on.
-- The [`esphome` OTA platform](/components/ota/esphome/), so the user can install their own builds over the air.
+- The [`esphome` OTA platform](/components/ota/esphome/), so the user can install their own builds over the air. The
+  only exception is [signed firmware](#signed-firmware).
 - Serial flashing left enabled, as the escape hatch when everything else fails.
+
+#### Signed Firmware
+
+A device that ships with signed firmware and has no network OTA endpoint may leave the `esphome` OTA platform out of
+the configuration it ships. The device accepts no firmware uploads over the network, so a user who takes control
+installs their first build over USB. Manufacturer updates still use the
+[`http_request` update platform](#updates) and are signed. Every one of these must hold:
+
+- The configuration enables
+  [`signed_ota_verification`](/components/esp32/#signed-ota-verification) under `esp32:` → `framework:` →
+  `advanced:`. The review detects signed firmware from the published YAML.
+- The configuration has no other network OTA endpoint. The [`web_server` OTA platform](/components/ota/web_server/)
+  does not qualify for this exception.
+- The configuration contains [`improv_serial`](/components/improv_serial/). A device without network OTA is flashed
+  over USB, so it has a USB port, and a device with a USB port needs `improv_serial`. It must run on the USB serial
+  connection (the logger's port by default, or the UART given by `uart_id`), so that a user can provision the device
+  through the USB port. It does not control flashing.
+- The device can be flashed over USB without any keys and without opening the case. A human reviewer confirms this, as
+  it cannot be read from the configuration.
+- The package at `package_import_url` still enables the [`esphome` OTA platform](/components/ota/esphome/), so a user
+  who takes control can update the device over the network. The automated review checks this.
+
+> [!NOTE]
+> The `esphome` OTA platform alone does not let a user install their own builds if the imported package still enables
+> `signed_ota_verification`, because the device rejects any update that is not signed with a key it trusts. We suggest
+> the package contains no signing configuration at all. The user then installs their first build over USB, and after
+> that nothing needs signing. Remove `enable_ota_downgrade_protection` as well, as it requires
+> `signed_ota_verification`. See [Signed OTA Verification](/components/esp32/#signed-ota-verification).
+>
+> Without signature checks, anyone who can reach the device can upload firmware through any unprotected endpoint.
+> Point users to the [OTA encryption](/components/ota/esphome/) option of the `esphome` OTA platform, which we
+> recommend over a password, so they can set it in their own configuration before the first flash. The
+> [Web Server](/components/web_server/) and [Captive Portal](/components/captive_portal/) can also accept firmware
+> uploads, so users should disable or separately secure them in the adopted configuration.
 
 ### Updates
 
@@ -96,6 +131,9 @@ The `source` URL must point at a publicly reachable
 [JSON manifest](/components/update/http_request/#update_http_request-manifest_format) whose `builds` include a
 `chipFamily` matching your hardware and an `ota.path` that resolves to a downloadable binary. Our review tooling
 fetches the manifest and the binary, so a dead link or a chip family mismatch will fail the review.
+
+The review installs the latest stable ESPHome. If your configuration sets `esphome:` → `min_version` higher than that,
+the review upgrades to the stable release or the newest beta that satisfies it.
 
 ## Example Configuration
 
