@@ -33,6 +33,12 @@ the packet is lost. Packets are refused for at most as long as the largest packe
 send, and at least 2 seconds, so a receive that never ends cannot stop sending; after that, the packet is sent anyway,
 and a warning is logged.
 
+When the link has a reliability or session layer or the rolling code, which need packets back from the peer, the
+two devices also take turns: after a packet is sent, a later send waits until the peer has had time to start a
+reply and the radio to receive its header, unless a packet arrives first. This takes about 0.27 s at spreading
+factor 10 and 125 kHz. Without it, the next packet of a burst is sent over the peer's reply, and both are lost.
+The radio packets of one send, such as the fragments of a large packet, are sent without waiting.
+
 A send that becomes several radio packets, such as a large packet split by a
 [fragmentation layer](/components/packet_interface/#fragmentation), or the queue of a reliability layer, waits for
 each packet in turn, and other components do not run meanwhile. Validation warns when this can take more than 4
