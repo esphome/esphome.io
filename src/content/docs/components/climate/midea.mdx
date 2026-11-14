@@ -17,11 +17,20 @@ The `midea` component creates a Midea air conditioner climate device.
 > - [Comfee](https://www.feelcomfee.com/global/)
 > - [Inventor](https://www.inventorairconditioner.com/)
 > - [Senville](https://senville.com/)
+> - [Cooper & Hunter](https://cooperandhunter.com/)
 > - and maybe others
 >
 > Control is possible with a custom dongle. Example of hardware implementation is [IoT Uni Dongle](https://github.com/dudanov/iot-uni-dongle) or [Midea SLWF-01pro](https://smartlight.me/smart-home-devices/wifi-devices/wifi-dongle-air-conditioners-midea-idea-electrolux-for-home-assistant) ([CloudFree](https://cloudfree.shop/product/ductless-hvac-wi-fi-module/), [Tindie](https://www.tindie.com/products/smartlightme/wifi-dongle-for-air-conditioners-midea-electrolux)).
 
 The Midea air conditioner requires the UART to be configured with `baud_rate: 9600`. The hardware requires **5V logic levels** and does not appear to work with 3.3V logic levels. Use a logic level shifter if building your own dongle.
+
+> [!CAUTION]
+> On some models, the indoor unit's internal USB port shares its 5V rail with the unit's display board. WiFi transmit
+> current spikes can sag the rail enough to cause display flicker or dropout.
+>
+> If you power the module from this port, add a 470-1000µF, 16V (or higher) electrolytic capacitor across 5V/GND at the
+> module's power input, placed as close to the module as possible. Observe polarity: the positive lead goes to 5V and
+> the striped (negative) lead goes to GND. A reversed electrolytic can fail violently.
 
 ```yaml
 # Example configuration entry
@@ -67,12 +76,12 @@ climate:
 
 ## Configuration variables
 
-- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [Uart](/components/uart/) if you want
+- **uart_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the [Uart](/components/uart/) if you want
   to use multiple UART buses.
 
-- **transmitter_id** (*Optional*, [ID](/guides/configuration-types#id)): Defined and used automatically when using [Remote Transmitter](/components/remote_transmitter/) component for IR commands transmit.
-- **period** (*Optional*, [Time](/guides/configuration-types#time)): Minimal period between requests to the appliance. Defaults to `1s`.
-- **timeout** (*Optional*, [Time](/guides/configuration-types#time)): Request response timeout until next request attempt. Defaults to `2s`.
+- **transmitter_id** (*Optional*, [ID](/guides/configuration-types/#id)): Defined and used automatically when using [Remote Transmitter](/components/remote_transmitter/) component for IR commands transmit.
+- **period** (*Optional*, [Time](/guides/configuration-types/#time)): Minimal period between requests to the appliance. Defaults to `1s`.
+- **timeout** (*Optional*, [Time](/guides/configuration-types/#time)): Request response timeout until next request attempt. Defaults to `2s`.
 - **num_attempts** (*Optional*, int): Number of request attempts between 1 and 5 inclusive. Defaults to `3`.
 - **autoconf** (*Optional*, boolean): Get capabilities automatically. Allows you not to manually define most of the capabilities of the appliance.
   Defaults to `True`.
@@ -95,7 +104,7 @@ climate:
   sensor (experimental).
 
   - All options from [Sensor](/components/sensor).
-- All other options from [Climate](/components/climate#config-climate).
+- All other options from [Climate](/components/climate/#config-climate).
 
 ## Automations
 
