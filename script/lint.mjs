@@ -4,6 +4,9 @@ import { readFile, stat, readdir } from "fs/promises";
 import { join, basename, dirname, extname } from "path";
 import { execSync } from "child_process";
 import { fileURLToPath } from "url";
+import { needsAnchorTrailingSlash, withAnchorTrailingSlash } from "../src/lib/internal-links.mjs";
+
+import { collectPageAnchors } from "./heading-anchors.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -39,6 +42,7 @@ const fileTypes = [
   ".jpg",
   ".js",
   ".json",
+  ".lock",
   ".md",
   ".mdx",
   ".png",
@@ -235,19 +239,6 @@ async function buildAnchorCache() {
     return cache;
   }
 
-  function generateSlug(text) {
-    return (
-      text
-        .toLowerCase()
-        // Mirror src/lib/rehype-heading-slugs.mjs: dots in automation headings
-        // (e.g. `light.turn_on`) map to `-` so the anchor becomes `light-turn_on`.
-        .replace(/\./g, "-")
-        .replace(/[^\w\s-]/g, "")
-        .replace(/[-\s]+/g, "-")
-        .replace(/^-+|-+$/g, "")
-    );
-  }
-
   async function processDir(dir, basePath = "") {
     const entries = await readdir(dir, { withFileTypes: true });
 
@@ -268,29 +259,7 @@ async function buildAnchorCache() {
         pagePath = pagePath.replace(/\\/g, "/");
 
         const content = await readFile(fullPath, "utf-8");
-        const anchors = new Set();
-
-        for (const line of content.split("\n")) {
-          // Match headings
-          const headingMatch = line.match(/^(#{1,6})\s+(.*)/);
-          if (headingMatch) {
-            const headingText = headingMatch[2].trim();
-            const anchorId = generateSlug(headingText);
-            anchors.add(anchorId);
-          }
-
-          // Match anchor shortcodes (old Hugo style)
-          const shortcodeMatch = line.match(/\{\{<\s*anchor\s+"([^\s>]+)"\s*>}}/);
-          if (shortcodeMatch) {
-            anchors.add(shortcodeMatch[1]);
-          }
-
-          // Match HTML anchor spans
-          const spanMatch = line.match(/<span id="([^"]+)"><\/span>/);
-          if (spanMatch) {
-            anchors.add(spanMatch[1]);
-          }
-        }
+        const anchors = collectPageAnchors(content);
 
         cache.set(pagePath, anchors);
       }
@@ -345,7 +314,7 @@ async function checkInternalLinks(fname, content, anchorCache) {
                 fname,
                 lineno,
                 col,
-                `Anchor-only link '#${anchorId}' not found on current page. If this should link to another page, use the full path like [${linkText}](/path/to/page#${anchorId})`,
+                `Anchor-only link '#${anchorId}' not found on current page. If this should link to another page, use the full path like [${linkText}](/path/to/page/#${anchorId})`,
               );
             }
           }
@@ -378,6 +347,18 @@ async function checkInternalLinks(fname, content, anchorCache) {
     if (!linkUrl.startsWith("/")) {
       addError(fname, lineno, col, `Relative link '${linkUrl}' should use an absolute path (e.g., /components/...)`);
       continue;
+    }
+
+    // Keep the trailing slash before an anchor. Without it the site answers with a 301 to the
+    // slashed URL, so every reader following the link pays an extra round trip.
+    if (needsAnchorTrailingSlash(linkUrl)) {
+      addError(
+        fname,
+        lineno,
+        col,
+        `Internal link '${linkUrl}' is missing the trailing slash before its anchor. ` +
+          `Use '${withAnchorTrailingSlash(linkUrl)}' instead.`,
+      );
     }
 
     // Parse internal link

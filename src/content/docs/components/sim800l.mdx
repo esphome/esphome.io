@@ -9,11 +9,11 @@ import APIRef from '@components/APIRef.astro';
 
 ## Component/Hub
 
-The `SIM800L` Component provides the ability to dial, answer calls, send/receive SMS text messages and
-send/receive USSD codes. The device must be connected via a [UART bus](/components/uart/)
-supporting both receiving and transmitting line. The UART bus must be configured at the same speed
-of the module which is by default 9600bps. The required connection wires are `+VCC`, `GND`,
-`RX` and `TX`.
+The `SIM800L` Component provides the ability to dial, answer calls, send/receive SMS text messages,
+send/receive USSD codes and detect DTMF key presses during calls. The device must be connected via a
+[UART bus](/components/uart/) supporting both receiving and transmitting line. The UART bus must be
+configured at the same speed of the module which is by default 9600bps. The required connection wires are
+`+VCC`, `GND`, `RX` and `TX`.
 
 > [!WARNING]
 > If you are using the [Logger](/components/logger/) make sure you are not using the same pins for `TX` and `RX` or
@@ -37,8 +37,8 @@ sim800l:
 
 ### Configuration variables
 
-- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the UART hub.
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+- **uart_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the UART hub.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation.
 - **on_sms_received** (*Optional*, [Automation](/automations)): An action to be
   performed when an SMS is received. See [`on_sms_received` Trigger](#sim800l-on_sms_received).
 
@@ -51,6 +51,10 @@ sim800l:
 
 - **on_call_disconnected** (*Optional*, [Automation](/automations)): An action to be
   performed when a call is disconnected.
+
+- **on_dtmf_received** (*Optional*, [Automation](/automations/)): An action to be
+  performed when a DTMF key is pressed by the other party during a call.
+  See [`on_dtmf_received` Trigger](#on_dtmf_received-trigger).
 
 ## Sensor
 
@@ -80,7 +84,7 @@ binary_sensor:
 
 - **registered** (*Optional*): Indicates if the SIM800L has successfully registered in the cellular network.
 
-  - All options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
+  - All options from [Binary Sensor](/components/binary_sensor/#config-binary_sensor).
 
 ## Triggers
 
@@ -89,7 +93,7 @@ binary_sensor:
 ### `on_sms_received` Trigger
 
 With this configuration option you can write complex automations whenever an SMS message
-is received. To use the message content, use a [lambda](/automations/templates#config-lambda)
+is received. To use the message content, use a [lambda](/automations/templates/#config-lambda)
 template, the message content and the sender phone number are available inside that lambda
 under the variables named `message` and `sender` respectively.
 
@@ -132,6 +136,29 @@ has been received.
 on_ussd_received:
 ```
 
+### `on_dtmf_received` Trigger
+
+This automation triggers every time the other party presses a key on their phone keypad during
+a connected call. The pressed key is available in the lambda as a `key` string parameter, holding
+one of `0`-`9`, `*`, `#` or `A`-`D`. Each key press triggers the automation once.
+
+DTMF detection is only enabled on the module (`AT+DDET=1`) when this trigger is configured. If the
+module firmware does not support DTMF detection a warning is logged and the rest of the component
+keeps working.
+
+```yaml
+on_dtmf_received:
+  - logger.log:
+      format: "DTMF key '%s'"
+      args: ["key.c_str()"]
+  - if:
+      condition:
+        lambda: 'return key == "1";'
+      then:
+        - switch.turn_on: relay_1
+        - sim800l.disconnect
+```
+
 ## Actions
 
 ### `sim800l.send_sms` Action
@@ -160,7 +187,7 @@ on_...:
   number.
 
 - **message** (**Required**, string, [templatable](/automations/templates)): The message content.
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the SIM800L if you have multiple components.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the SIM800L if you have multiple components.
 
 ### `sim800l.dial` Action
 
@@ -176,7 +203,7 @@ on_...:
 #### Configuration variables
 
 - **recipient** (**Required**, string, [templatable](/automations/templates)): The number to dial.
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the SIM800L if you have multiple components.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the SIM800L if you have multiple components.
 
 ### `sim800l.connect` Action
 

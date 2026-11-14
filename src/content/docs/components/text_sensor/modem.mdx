@@ -1,0 +1,39 @@
+---
+description: "Instructions for setting up text sensors that report the network type and messages of a cellular modem."
+title: "Modem Text Sensor"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `modem` text sensor platform reports the network type of the [Modem](/components/modem/) and the unsolicited
+result codes (URC) it sends on its own, such as network registration changes.
+
+```yaml
+# Example configuration entry
+text_sensor:
+  - platform: modem
+    network_type:
+      name: Modem Network Type
+    urc:
+      name: Modem URC
+```
+
+## Configuration Variables
+
+- **network_type** (*Optional*): The type of network the modem is attached to, as read with the `AT+CNSMOD` command:
+  `No service`, `GSM`, `GPRS`, `EDGE`, `WCDMA`, `HSDPA`, `HSUPA`, `HSPA`, `LTE`, or `Unknown` when the modem
+  does not answer or reports another value. Only the `SIM7600` and `SIM7670` models are supported; other models are
+  rejected at validation. The modem is queried every `update_interval` of the [Modem](/components/modem/) component,
+  only while it is connected, starting right after it connects. When the connection is lost, the text sensor shows
+  `No service`. All options from [Text Sensor](/components/text_sensor/#config-text_sensor).
+- **urc** (*Optional*): Publishes each unsolicited result code (URC) the modem sends as one line. URCs that arrive
+  while the modem answers a command, or before the previous URC is published, can be missed. All options from
+  [Text Sensor](/components/text_sensor/#config-text_sensor).
+- **modem_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the
+  [Modem](/components/modem/) component. Defaults to the configured modem.
+
+## See Also
+
+- [Modem Component](/components/modem/)
+- [Modem Sensor](/components/sensor/modem/)
+- <APIRef text="modem_component.h" path="modem/modem_component.h" />
