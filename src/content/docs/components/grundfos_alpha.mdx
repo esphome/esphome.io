@@ -173,6 +173,48 @@ sensor:
       name: "Pump Speed"
 ```
 
+## Several Pumps
+
+Each pump needs its own [BLE Client](/components/ble_client/) with the MAC address of that pump, its own
+[GENIbus over Bluetooth LE](/components/genibus_ble/) transport and its own `grundfos_alpha`. Give each of them an
+`id` and choose the pump of a sensor with `grundfos_alpha_id`. To tell the pumps apart, see
+[Finding the MAC Address](#finding-the-mac-address).
+
+```yaml
+esp32_ble_tracker:
+
+ble_client:
+  - mac_address: XX:XX:XX:XX:XX:XX
+    id: underfloor_ble_client
+  - mac_address: YY:YY:YY:YY:YY:YY
+    id: radiator_ble_client
+
+genibus_ble:
+  - id: underfloor_bus
+    ble_client_id: underfloor_ble_client
+  - id: radiator_bus
+    ble_client_id: radiator_ble_client
+
+grundfos_alpha:
+  - id: underfloor_pump
+    genibus_id: underfloor_bus
+  - id: radiator_pump
+    genibus_id: radiator_bus
+
+sensor:
+  - platform: grundfos_alpha
+    grundfos_alpha_id: underfloor_pump
+    power:
+      name: "Underfloor Pump Power"
+  - platform: grundfos_alpha
+    grundfos_alpha_id: radiator_pump
+    power:
+      name: "Radiator Pump Power"
+```
+
+An ESP32 keeps up to 3 BLE connections at the same time by default. For more pumps, raise `max_connections` of
+[BLE Component](/components/esp32_ble/).
+
 ## See Also
 
 - [GENIbus](/components/genibus/)
