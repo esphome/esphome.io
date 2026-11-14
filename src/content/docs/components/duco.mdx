@@ -67,10 +67,15 @@ The known node types are:
 | 8    | UCBAT  | Battery powered remote       |
 | 9    | UC     | Wired wall switch            |
 | 10   | UCRH   | Humidity sensor              |
+| 10   | BSRH   | Built-in humidity sensor     |
 | 12   | UCCO2  | CO2 sensor                   |
+| 12   | BSCO2  | Built-in CO2 sensor          |
 | 13   | VLV    | Valve                        |
 | 17   | BOX    | The ventilation box itself   |
 | 18   | SWITCH | Sensor for the current mode  |
+
+`UCRH`/`BSRH` and `UCCO2`/`BSCO2` share their type number. The network type reported during discovery distinguishes
+the user-controller and built-in variants.
 
 With the addresses you can add sensors, for example the CO2 level and temperature of the CO2 sensors above:
 
@@ -173,21 +178,66 @@ number:
 
 ## Text Sensor
 
-The text sensor reports the serial number of the box.
+Text sensors can report the serial number, software version, errors, uptime, and node type of the box or a node.
 
 ```yaml
 text_sensor:
   - platform: duco
-    name: "Serial Number"
+    serial:
+      - name: "Box Serial Number"
+      - name: "Bedroom Serial Number"
+        address: 3
+    version:
+      - name: "Bedroom Software Version"
+        address: 3
+    error:
+      - name: "Bedroom Errors"
+        address: 3
+    uptime:
+      - name: "Bedroom Uptime"
+        address: 3
+    node_type:
+      - name: "Bedroom Node Type"
+        address: 3
 ```
 
 ### Configuration Variables
 
 - **duco_id** (*Optional*, [ID](/guides/configuration-types/#id)): The Duco component to use. Only needed with more
   than one.
-- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often the serial number is read.
-  Defaults to `300s`.
-- All other options from [Text Sensor](/components/text_sensor/).
+- **serial** (*Optional*): A list of serial-number text sensors. Each entry accepts:
+  - **address** (*Optional*, int): The box address is `0`; node addresses range from `1` to `68`. Defaults to `0`.
+  - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often the serial number is read.
+    Defaults to `300s`.
+- **version** (*Optional*): A list of node software-version text sensors. Each entry accepts:
+  - **address** (*Optional*, int): Node address from `1` to `68`. Defaults to `1`.
+  - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often the version is read.
+    Defaults to `300s`.
+- **error** (*Optional*): A list of node error text sensors. Each entry accepts:
+  - **address** (*Optional*, int): Node address from `1` to `68`. Defaults to `1`.
+  - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often errors are read. Defaults to
+    `60s`.
+- **uptime** (*Optional*): A list of node uptime text sensors. Each entry accepts:
+  - **address** (*Optional*, int): Node address from `1` to `68`. Defaults to `1`.
+  - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often uptime is read. Defaults to
+    `60s`.
+- **node_type** (*Optional*): A list of node-type text sensors. Each entry accepts:
+  - **address** (*Optional*, int): Node address from `1` to `68`. Defaults to `1`.
+  - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often the node type is read.
+    Defaults to `300s`.
+
+All entries accept the options from [Text Sensor](/components/text_sensor/). The original single serial-number
+configuration remains supported:
+
+```yaml
+text_sensor:
+  - platform: duco
+    name: "Box Serial Number"
+```
+
+For this legacy form, **address** (*Optional*, int) selects the box (`0`) or a node (`1` to `68`) and defaults to
+`0`. **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)) defaults to `300s`.
+**duco_id** and all other options from [Text Sensor](/components/text_sensor/) are also supported.
 
 ## Sensor
 
