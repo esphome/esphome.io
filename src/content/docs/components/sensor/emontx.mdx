@@ -59,8 +59,8 @@ emontx:
 
 In `emontx` platform:
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation or multiple hubs.
-- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [UART Component](/components/uart) if you want to use multiple UART buses.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation or multiple hubs.
+- **uart_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the [UART Component](/components/uart) if you want to use multiple UART buses.
 - **lock_on_reboot** (*Optional*, boolean or `auto`): The ESPHome device sends `emonlock` to the EmonTx right before it reboots (OTA update, restart, safe mode, ...), and `emonunlock` once it has booted. While locked, the EmonTx ignores configuration commands, so serial noise during the reboot cannot change its settings. A crash, watchdog reset or power loss skips the lock. These commands need EmonTx firmware v1.2.0 or later: older firmware reads them as a request to enter the bootloader. Defaults to `auto`.
   - `auto`: ESPHome asks the EmonTx for its firmware version with the `v` command after it boots, and only sends the lock commands to firmware v1.2.0 or later. Nothing else is sent to older firmware. If no version arrives (ESPHome asks up to three times), no lock command is sent either: an EmonTx locked before the reboot then stays locked until it restarts or receives `emonunlock` (see [emontx.send_command](#actions)).
   - `true`: always send the lock commands. Only use this with firmware v1.2.0 or later.
@@ -94,8 +94,8 @@ button:
 
 #### Configuration variables
 
-- **id** (*Required*, [ID](/guides/configuration-types#id)): The ID of the EmonTx hub.
-- **command** (*Required*, string, [templatable](/automations/actions#all-actions)): The command string to send.
+- **id** (*Required*, [ID](/guides/configuration-types/#id)): The ID of the EmonTx hub.
+- **command** (*Required*, string, [templatable](/automations/actions/#all-actions)): The command string to send.
 
 ### `emontx.pause` / `emontx.resume` Actions
 
@@ -670,5 +670,5 @@ See the [MQTT documentation](/components/mqtt) for more details on how to config
 
 ## See Also
 
-- [Sensor Filters](/components/sensor#sensor-filters)
+- [Sensor Filters](/components/sensor/#sensor-filters)
 - [OpenEnergyMonitor](https://openenergymonitor.org/)

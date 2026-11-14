@@ -18,7 +18,7 @@ import APIRef from '@components/APIRef.astro';
 import EnumValues from '@components/EnumValues.astro';
 
 The `web_server` component creates a simple web server on the node that can be accessed
-through any browser and a simple [REST API](/web-api#api-rest). The component still uses a good amount of
+through any browser and a simple [REST API](/web-api/#api-rest). The component still uses a good amount of
 flash, though significantly less than in older releases, and it has been heavily optimized to be much
 cheaper to include, including on the ESP8266; each connected client uses some memory, so check your
 device's free heap if you combine it with many other features on a memory-constrained board.
@@ -87,13 +87,15 @@ web_server:
     must request it too (for example, `curl --digest`); plain `basic` clients are rejected.
 
 - **include_internal** (*Optional*, boolean): Whether `internal` entities are shown on the web interface
-  and reachable through the [REST API](/web-api#api-rest). Without it, an internal entity's REST endpoints
+  and reachable through the [REST API](/web-api/#api-rest). Without it, an internal entity's REST endpoints
   answer with 404, the same way the native API and MQTT hide internal entities. Defaults to `false`.
 
 - **allowed_origins** (*Optional*, list of strings): A list of origins that browsers are allowed to make
   cross-origin requests from. See [Cross-Origin Requests](#cross-origin-requests) for details. Each entry
-  must exactly match the requesting page's `Origin` header (e.g. `https://app.esphome.io`). A single `"*"`
-  entry (quoted, since an unquoted `*` is invalid YAML) allows any origin, but this is not recommended.
+  must exactly match the requesting page's `Origin` header (e.g. `https://app.esphome.io`) and be at most 127
+  characters long. A single `"*"` entry (quoted, since an unquoted `*` is invalid YAML) allows any origin, but
+  this is not recommended. On ESP32, a device reached through a host name longer than about 119 characters can only be
+  used from a browser with the `"*"` entry, because its own origin does not fit the 127 character limit.
 
 - **enable_private_network_access** (*Optional*, boolean): Enables support for
   [Private Network Access](https://wicg.github.io/private-network-access) and the
@@ -110,7 +112,7 @@ web_server:
   web server OTA platform, setting this to `false` prevents OTA access through the regular web interface while
   maintaining it for captive portal access. To enable OTA for web server, use the `web_server` OTA platform instead.
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation.
 - **local** (*Optional*, boolean): Include the supporting JavaScript locally, allowing it to work without
   internet access.
   Defaults to `false`, except when the [WiFi](/components/wifi/) configuration has only an access point
@@ -129,7 +131,7 @@ web_server:
 - **sorting_groups** (*Optional*, list): Available only on `version: 3`. A list of group ID's and names to group the
   entities. See [Webserver Entity Grouping](#config-webserver-grouping).
 
-  - **id** (**Required**, [ID](/guides/configuration-types#id)): Manually specify the ID used for the group.
+  - **id** (**Required**, [ID](/guides/configuration-types/#id)): Manually specify the ID used for the group.
   - **name** (**Required**, string): A string representing the group name which is displayed as the header of the group
   - **sorting_weight** (*Optional*, float): A float representing the weight of the group. A group with a smaller
 
@@ -182,7 +184,9 @@ Recommendations:
 
 ### Cross-Origin Requests
 
-By default the web server rejects cross-origin browser requests to its entity control and state endpoints.
+By default the web server rejects cross-origin browser requests to every endpoint it serves, including the web
+OTA `/update` endpoint and the [Prometheus](/components/prometheus/) `/metrics` endpoint. The captive portal
+pages are open by design and not checked.
 When a request carries an `Origin` header, it is allowed only if it is *same-origin* — that is, the `Origin`
 matches the address the device is served on (its IP address, mDNS `<node_name>.local` name, or DNS name) — or
 if the origin is listed in `allowed_origins`. This is defense-in-depth against the browser "confused deputy"
@@ -190,8 +194,7 @@ if the origin is listed in `allowed_origins`. This is defense-in-depth against t
 
 Requests that do not carry an `Origin` header — `curl`, scripts, the native API, and other non-browser
 clients — are always allowed. The `Origin` check only constrains browsers; it is **not** an authentication
-boundary, and it does not cover the web OTA `/update` endpoint. To restrict access itself, use `auth:` and keep
-devices on a trusted, segmented network. See the project
+boundary. To restrict access itself, use `auth:` and keep devices on a trusted, segmented network. See the project
 [threat model](https://github.com/esphome/esphome/blob/dev/THREAT_MODEL.md) for the full scope.
 
 To allow a specific external site to make cross-origin requests, list its origin:
@@ -222,7 +225,7 @@ web_server:
 ```
 
 > [!IMPORTANT]
-> Always enable authentication when using the web server. See the [Security Best Practices](/guides/security_best_practices#2-web-server-authentication) guide for recommendations.
+> Always enable authentication when using the web server. See the [Security Best Practices](/guides/security_best_practices/#web-server-authentication) guide for recommendations.
 
 Use version 1 user interface:
 
@@ -423,8 +426,8 @@ By clicking on any sensor it will expand a graph with the historical values for 
 
 ## See Also
 
-- [Event Source API](/web-api#api-event-source)
-- [REST API](/web-api#api-rest)
+- [Event Source API](/web-api/#api-event-source)
+- [REST API](/web-api/#api-rest)
 - [`esphome logs` Command](/guides/cli/#logs-command)
 - [Prometheus Component](/components/prometheus/)
 - <APIRef text="web_server.h" path="web_server/web_server.h" />
