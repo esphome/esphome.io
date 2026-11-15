@@ -83,7 +83,7 @@ Automations:
 
 - **on_datapoint_update** (*Optional*): An automation to perform when a Tuya datapoint update is received. See [`on_datapoint_update`](#tuya-on_datapoint_update).
 - **on_mcu_ready** (*Optional*): Only with `protocol: low_power`. An automation to perform once after boot, when the
-  MCU has answered and sent its first complete status. See [Automation](/automations).
+  MCU has answered and sent its first complete status, so it takes writes. See [Automation](/automations).
 
 <span id="tuya-low_power"></span>
 
@@ -116,25 +116,6 @@ tuya:
   on_mcu_ready:
     - logger.log: "MCU ready"
 ```
-
-<span id="tuya-refresh_action"></span>
-
-### `tuya.refresh` Action
-
-Only with `protocol: low_power`. Asks the MCU to send its current datapoints. A version 3 MCU gets the standard status
-query. A version 0 MCU gets datapoint 106 set to `true`, which is the refresh request of the HC32 thermostat firmware.
-The request is skipped while the MCU is busy.
-
-```yaml
-button:
-  - platform: template
-    name: "Refresh"
-    on_press:
-      - tuya.refresh:
-          tuya_id: tuya_mcu
-```
-
-- **tuya_id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the Tuya component.
 
 ## Tuya Automation
 
