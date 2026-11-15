@@ -3,7 +3,6 @@ description: "Instructions for setting up cst3240 touch screen controller with E
 title: "CST3240 Touch Screen Controller"
 ---
 
-import { Image } from 'astro:assets';
 import Figure from '@components/Figure.astro';
 import APIRef from '@components/APIRef.astro';
 
@@ -34,9 +33,8 @@ This controller is used on some industrial (CAN/RS485) ESP32-S3 Panels from Pane
 ```yaml
 # Example configuration entry
 touchscreen:
-  platform: cst3240
-  id: my_touchscreen
-  interrupt_pin: GPIOXX
+  - platform: cst3240
+    interrupt_pin: GPIOXX
 ```
 
 ### Configuration variables
@@ -47,23 +45,22 @@ touchscreen:
 
 - All other options from [Touchscreen](/components/touchscreen/#config-touchscreen).
 
-### Sample config with a button zone and a buzzer feedback
+### Example With a Touch Zone
 
 ```yaml
 i2c:
-  sda: GPIO09
-  scl: GPIO03
+  sda: GPIOXX
+  scl: GPIOXX
   frequency: 400kHz
 
 touchscreen:
   - platform: cst3240
     id: id_cst3240
     display: display0
-    interrupt_pin: GPIO42
-    # reset_pin: GPIO38 # shared
+    interrupt_pin: GPIOXX
     setup_priority: -20 # after display
     on_release:
-      lambda: "id(bip_ok).execute();"
+      - logger.log: "Touch released"
 
 binary_sensor:
   - platform: touchscreen
@@ -76,7 +73,7 @@ binary_sensor:
     y_max: 272
     on_click:
       then:
-        - lambda: "id(bip_alarm).execute();"
+        - logger.log: "Test button clicked"
 ```
 
 ## See Also
