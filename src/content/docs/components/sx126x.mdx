@@ -142,8 +142,9 @@ sx126x:
 
 > [!NOTE]
 > Mode actions (`sx126x.run_image_cal` and `sx126x.set_mode_*`) are ignored, with a warning in the log, while a
-> packet is being sent or a received packet is waiting to be delivered. If the radio stops answering, its
-> configuration is applied again every second until it succeeds, and mode actions are ignored until then.
+> packet is being sent or a received packet is waiting to be delivered. If a mode change fails, or the radio cannot be
+> put back in RX or sleep after a send, its configuration is applied again every second until it succeeds, and mode
+> actions are ignored until then. If reading a received packet fails, the read is tried again 200 ms later.
 > `sx126x.send_packet` logs the reason when a packet cannot be sent.
 
 ### `sx126x.run_image_cal` Action
