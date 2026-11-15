@@ -19,6 +19,7 @@ state, and the `switch` platform turns the charger and the regulators on and off
 npm1300:
   id: pmic
   vbus_current_limit: 500mA
+  thermistor_resistance: 10kOhm
   charger:
     charge_current: 150mA
     termination_voltage: 4.2V
@@ -55,9 +56,9 @@ text_sensor:
   `1500mA` in 100 mA steps. The chip uses `100mA` after a reset and every time USB is plugged in again, so the limit
   is written again on every update while VBUS is present. If not set, the chip default (`100mA`) is kept.
 - **thermistor_resistance** (*Optional*, resistance): The nominal resistance of the battery thermistor (NTC), one of
-  `10kOhm`, `47kOhm`, `100kOhm`, or `none` for a battery without a thermistor. With `none`, the
-  `battery_temperature` sensor is not available and the charger does not check the battery temperature.
-  Defaults to `10kOhm`.
+  `10kOhm`, `47kOhm`, `100kOhm`, or `none` for a battery without a thermistor. **Required** with a `charger` block
+  or the `charger` switch, and needed for the `battery_temperature` sensor. With `none`, the charger does not check
+  the battery temperature. If not set, the chip keeps its own setting.
 - **thermistor_beta** (*Optional*, int): The B constant of the battery thermistor. Defaults to the value the product
   specification lists for the resistance: `3380` for `10kOhm`, `4050` for `47kOhm` and `4250` for `100kOhm`.
 - **charger** (*Optional*): Configure the battery charger. See [Charger](#charger).
@@ -87,6 +88,11 @@ The defaults are the reset values of the chip from the product specification.
 - **recharge** (*Optional*, boolean): Start charging again when the battery voltage drops after a complete charge.
   Defaults to `true`.
 - **enabled** (*Optional*, boolean): Turn on the charger at boot. Defaults to `false`.
+
+> [!WARNING]
+> `thermistor_resistance` must match the thermistor of your battery. The charger compares the thermistor with a
+> reference of the selected resistance, so a wrong value shifts the battery temperature it sees: a larger thermistor
+> than selected can let a hot battery charge, and a smaller one a freezing battery.
 
 > [!WARNING]
 > Check `charge_current` and the termination voltages against the data sheet of your battery. Wrong values can damage
@@ -191,8 +197,9 @@ switch:
 ```
 
 - **npm1300_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `npm1300` hub.
-- **charger** (*Optional*): Turn the battery charger on or off. Turning it on also clears a charger error. With
-  `thermistor_resistance: none`, it needs a `charger` block on the hub, which turns off the battery temperature check.
+- **charger** (*Optional*): Turn the battery charger on or off. Turning it on also clears a charger error. Needs
+  `thermistor_resistance` on the hub. With `thermistor_resistance: none`, it also needs a `charger` block on the hub,
+  which turns off the battery temperature check.
 - **buck1**, **buck2**, **ldo1**, **ldo2** (*Optional*): Turn a regulator on or off.
 
 The switches show the state read from the chip at every update, so their state is not restored at boot.
