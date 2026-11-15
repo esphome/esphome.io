@@ -9,8 +9,13 @@ import APIRef from '@components/APIRef.astro';
 
 The `cst3240` touchscreen platform allows using the multitouch screen controller CST3240 with ESPHome.
 It handle both interrupt (recommended for the auto standby mode) and polling modes.
+
 The touchscreen resolution is set automatically by the linked display, like other ESPHome touchscreen
-components. Standalone, it takes the "dimensions" from the chip internal firmware settings.
+components.
+
+Standalone, it takes the "dimensions" from the chip internal firmware settings.
+In this case X/Y can be reversed with the swap_xy option.
+
 The [I²C](/components/i2c) is required to be set up in your configuration for this touchscreen to work.
 
 This controller is used on some industrial (CAN/RS485) ESP32-S3 Panels from PanelLan / Wireless Tag.
@@ -39,7 +44,7 @@ touchscreen:
 - **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually set the ID of this touchscreen.
 - **interrupt_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The touch detection pin.
 - **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The chip reset pin.
-
+- **swap_xy** (*Optional*, boolean): If true, exchange the x and y axes.
 
 - All other options from [Touchscreen](/components/touchscreen/#config-touchscreen).
 
@@ -53,7 +58,7 @@ i2c:
 
 touchscreen:
   - platform: cst3240
-    id: cst3240
+    id: id_cst3240
     display: display0
     interrupt_pin: GPIO42
     # reset_pin: GPIO38 # shared
@@ -64,7 +69,7 @@ touchscreen:
 binary_sensor:
   - platform: touchscreen
     name: "Test Button"
-    touchscreen_id: cst3240
+    touchscreen_id: id_cst3240
     # bottom right alarm test
     x_min: 350
     y_min: 200
