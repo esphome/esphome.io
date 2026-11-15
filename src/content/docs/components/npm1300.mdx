@@ -56,9 +56,9 @@ text_sensor:
   `1500mA` in 100 mA steps. The chip uses `100mA` after a reset and every time USB is plugged in again, so the limit
   is written again on every update while VBUS is present. If not set, the chip default (`100mA`) is kept.
 - **thermistor_resistance** (*Optional*, resistance): The nominal resistance of the battery thermistor (NTC), one of
-  `10kOhm`, `47kOhm`, `100kOhm`, or `none` for a battery without a thermistor. **Required** with a `charger` block
-  or the `charger` switch, and needed for the `battery_temperature` sensor. With `none`, the charger does not check
-  the battery temperature. If not set, the chip keeps its own setting.
+  `10kOhm`, `47kOhm`, `100kOhm`, or `none` for a battery without a thermistor. With `none`, the charger does not check
+  the battery temperature. **Required** with a `charger` block, the `charger` switch or the `battery_temperature`
+  sensor. A configuration without any of these, for example one that only reads voltages, can leave it out.
 - **thermistor_beta** (*Optional*, int): The B constant of the battery thermistor. Defaults to the value the product
   specification lists for the resistance: `3380` for `10kOhm`, `4050` for `47kOhm` and `4250` for `100kOhm`.
 - **charger** (*Optional*): Configure the battery charger. See [Charger](#charger).
