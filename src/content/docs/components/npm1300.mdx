@@ -98,6 +98,12 @@ The defaults are the reset values of the chip from the product specification.
 > Check `charge_current` and the termination voltages against the data sheet of your battery. Wrong values can damage
 > the battery.
 
+> [!NOTE]
+> The nPM1300 cannot detect whether a battery is connected. With the charger on, USB connected and no battery, the
+> charger keeps starting and finishing a charge, so the `charging` and `charge_complete` binary sensors and the
+> `charger_status` text sensor change between states and do not mean anything. Turn the charger off on boards
+> that run without a battery.
+
 ### Regulators
 
 - **voltage** (*Optional*, voltage): The output voltage, from `1.0V` to `3.3V` in 100 mV steps. For a buck
