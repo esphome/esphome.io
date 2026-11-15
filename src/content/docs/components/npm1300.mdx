@@ -158,7 +158,6 @@ binary_sensor:
   supplies the rest of the load, or charging slows down. If this is on often, raise `vbus_current_limit`.
 - **charging** (*Optional*): On while the battery is charging (trickle, constant current or constant voltage).
 - **charge_complete** (*Optional*): On when charging is complete.
-- **battery_detected** (*Optional*): On when the charger detects a battery.
 - **charger_error** (*Optional*): On when the charger stopped because of an error, for example a battery or
   thermistor fault or a charge timeout. Turn the charger switch off and on to clear the error.
 
@@ -192,7 +191,8 @@ switch:
 ```
 
 - **npm1300_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `npm1300` hub.
-- **charger** (*Optional*): Turn the battery charger on or off. Turning it on also clears a charger error.
+- **charger** (*Optional*): Turn the battery charger on or off. Turning it on also clears a charger error. With
+  `thermistor_resistance: none`, it needs a `charger` block on the hub, which turns off the battery temperature check.
 - **buck1**, **buck2**, **ldo1**, **ldo2** (*Optional*): Turn a regulator on or off.
 
 The switches show the state read from the chip at every update, so their state is not restored at boot.
