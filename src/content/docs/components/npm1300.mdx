@@ -186,9 +186,16 @@ text_sensor:
 ```
 
 - **npm1300_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `npm1300` hub.
-- **charger_status** (*Optional*): The state of the charger: `Error`, `Paused, Die Too Hot`, `Charge Complete`,
-  `Trickle Charge`, `Constant Current`, `Constant Voltage`, `Discharging` (no VBUS), `No Battery` or
-  `Not Charging`.
+- **charger_status** (*Optional*): The state of the charger. The first one that applies is shown:
+  - `Discharging`: no supply on VBUS, so the battery powers the board.
+  - `Error`: the charger stopped because of an error. See the `charger_error` binary sensor.
+  - `Disabled`: the charger is turned off.
+  - `Paused, PMIC Too Hot`: the nPM1300 is too hot. Charging starts again when it cools down.
+  - `Charge Complete`, `Trickle Charge`, `Constant Current` or `Constant Voltage`: the charging phase.
+  - `Paused, Battery Too Cold` or `Paused, Battery Too Hot`: the battery temperature is below 0 °C or above 60 °C,
+    the default limits of the chip. Not shown with `thermistor_resistance: none`.
+  - `Not Charging`: the charger is on but does not charge, for example because the VBUS voltage is too low or too
+    high.
 
 All options from [Text Sensor](/components/text_sensor/).
 
