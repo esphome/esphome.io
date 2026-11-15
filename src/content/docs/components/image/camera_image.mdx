@@ -1,0 +1,102 @@
+---
+description: "Instructions for displaying frames from an ESP32 camera as an image in ESPHome."
+title: "Camera Image"
+---
+import APIRef from '@components/APIRef.astro';
+
+The `camera_image` platform of the [image](/components/image/) component
+requests frames from an [ESP32 camera](/components/esp32_camera/) and decodes
+them into a runtime image. The image can be drawn on any
+[display](/components/display/) or used with [LVGL](/components/lvgl/)
+widgets, like an [online image](/components/image/online_image/).
+
+```yaml
+image:
+  - platform: camera_image
+    id: camera_frame
+    camera_id: my_camera
+    format: JPEG
+    type: RGB565
+    resize: 320x240
+    update_interval: 1s
+    on_image:
+      - component.update: my_display
+```
+
+The camera requests a frame with `camera::IDLE`, so API and web-server streams
+are not affected. A request that does not produce a frame within 5 seconds is
+abandoned and retried on the next update.
+
+## Configuration variables
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The image ID.
+- **camera_id** (**Required**, [ID](/guides/configuration-types/#id)): The
+  `esp32_camera` to read frames from.
+- **format** (**Required**): The camera's encoded format. `JPEG`.
+- **type** (**Required**): How the image is stored internally: `BINARY`,
+  `GRAYSCALE`, `RGB565` or `RGB`. See the
+  [image component](/components/image/).
+- **resize** (*Optional*, string): Fit the decoded image inside `WIDTHxHEIGHT`,
+  preserving the aspect ratio.
+- **crop** (*Optional*): A rectangle applied after decoding and after
+  `resize`, when both are set.
+  - **x** (**Required**, int): Horizontal offset.
+  - **y** (**Required**, int): Vertical offset.
+  - **width** (**Required**, int): Crop width.
+  - **height** (**Required**, int): Crop height.
+- **rotation** (*Optional*, int): `0` (default), `90`, `180` or `270` degrees,
+  applied after `crop`. Requires `resize` or `crop` so the output size is
+  known. `crop` and `rotation` need `type` `GRAYSCALE`, `RGB565` or `RGB`, and
+  cannot be combined with `transparency: alpha_channel`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)):
+  How often to request a frame. Defaults to `never`; use `component.update` or
+  set an interval.
+- **double_buffer** (*Optional*, boolean): Decode into a second buffer.
+  Incompatible with `crop` and `rotation`. Defaults to `false`.
+- **placeholder** (*Optional*, [ID](/guides/configuration-types/#id)): Image to
+  show until the first frame arrives.
+- **transparency**, **byte_order**: As for the [image
+  component](/components/image/).
+
+## Automations
+
+- **on_image** (*Optional*, [Automation](/automations)): Runs after a frame has
+  been decoded. Use it to refresh the display.
+- **on_error** (*Optional*, [Automation](/automations)): Runs when the camera
+  returns an empty frame, does not deliver one within 5 seconds, or decoding
+  fails.
+
+## Examples
+
+Show a cropped, rotated view of the camera on a small display:
+
+```yaml
+esp32_camera:
+  id: my_camera
+  # ... camera pins and resolution ...
+
+image:
+  - platform: camera_image
+    id: camera_frame
+    camera_id: my_camera
+    format: JPEG
+    type: RGB565
+    resize: 320x240
+    crop:
+      x: 40
+      y: 20
+      width: 200
+      height: 100
+    rotation: 90
+    update_interval: 1s
+    on_image:
+      - component.update: my_display
+```
+
+## See Also
+
+- [Image Component](/components/image/)
+- [ESP32 Camera](/components/esp32_camera/)
+- [Online Image](/components/image/online_image/)
+- [Display](/components/display/)
+- <APIRef text="camera_image.h" path="camera_image/camera_image.h" />
