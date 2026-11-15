@@ -59,8 +59,9 @@ text_sensor:
   `10kOhm`, `47kOhm`, `100kOhm`, or `none` for a battery without a thermistor. With `none`, the charger does not check
   the battery temperature. **Required** with a `charger` block, the `charger` switch or the `battery_temperature`
   sensor. A configuration without any of these, for example one that only reads voltages, can leave it out.
-- **thermistor_beta** (*Optional*, int): The B constant of the battery thermistor. Defaults to the value the product
-  specification lists for the resistance: `3380` for `10kOhm`, `4050` for `47kOhm` and `4250` for `100kOhm`.
+- **thermistor_beta** (*Optional*, int): The B constant of the battery thermistor. Only with a resistance in
+  `thermistor_resistance`. Defaults to the value the product specification lists for the resistance: `3380` for
+  `10kOhm`, `4050` for `47kOhm` and `4250` for `100kOhm`.
 - **charger** (*Optional*): Configure the battery charger. See [Charger](#charger).
 - **buck1**, **buck2** (*Optional*): Configure a buck regulator. See [Regulators](#regulators).
 - **ldo1**, **ldo2** (*Optional*): Configure an LDO or load switch. See [Regulators](#regulators).
@@ -78,8 +79,8 @@ The defaults are the reset values of the chip from the product specification.
 - **termination_voltage** (*Optional*, voltage): The voltage at which charging ends. `3.5V` to `3.65V` or `4.0V` to
   `4.45V`, in 50 mV steps. Defaults to `3.6V`.
 - **warm_termination_voltage** (*Optional*, voltage): The termination voltage when the battery is warm (45 °C to
-  60 °C), with the same values as `termination_voltage`. Defaults to `3.6V`, also when `termination_voltage` is set
-  to another value, so set both. A warning is shown when only `termination_voltage` is set.
+  60 °C), with the same values as `termination_voltage`. Defaults to `3.6V`, or to `termination_voltage` when that is
+  lower. A warning is shown when only `termination_voltage` is set, to a value above `3.6V`.
 - **termination_current** (*Optional*, string): The charge current, as a share of `charge_current`, below which
   charging is complete. One of `10%` or `20%`. Defaults to `10%`.
 - **trickle_voltage** (*Optional*, voltage): Below this battery voltage the battery is charged with a small trickle
