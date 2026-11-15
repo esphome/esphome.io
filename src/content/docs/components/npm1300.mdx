@@ -22,6 +22,8 @@ npm1300:
   charger:
     charge_current: 150mA
     termination_voltage: 4.2V
+    warm_termination_voltage: 4.0V
+    enabled: true
 
 sensor:
   - platform: npm1300
@@ -49,14 +51,16 @@ text_sensor:
 - **i2c_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the I²C bus.
 - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often to read the chip.
   Defaults to `60s`.
-- **vbus_current_limit** (*Optional*, current): The current the chip may draw from VBUS (USB). One of `100mA`, or
-  `500mA` to `1500mA` in 100 mA steps. The chip starts with `100mA` and returns to it every time VBUS is removed,
-  so the limit is written again on every update while VBUS is present. If not set, the chip default is kept.
+- **vbus_current_limit** (*Optional*, current): The current the chip may draw from VBUS (USB), from `100mA` to
+  `1500mA` in 100 mA steps. The chip uses `100mA` after a reset and every time USB is plugged in again, so the limit
+  is written again on every update while VBUS is present. If not set, the chip default (`100mA`) is kept.
 - **thermistor_resistance** (*Optional*, resistance): The nominal resistance of the battery thermistor (NTC), one of
-  `10kOhm`, `47kOhm` or `100kOhm`. Needed for the `battery_temperature` sensor. If the `charger` is configured
-  without a thermistor, the charger does not check the battery temperature.
-- **thermistor_beta** (*Optional*, int): The B constant of the battery thermistor. Defaults to `3380`.
-- **charger** (*Optional*): Configure and turn on the battery charger. See [Charger](#charger).
+  `10kOhm`, `47kOhm`, `100kOhm`, or `none` for a battery without a thermistor. With `none`, the
+  `battery_temperature` sensor is not available and the charger does not check the battery temperature.
+  Defaults to `10kOhm`.
+- **thermistor_beta** (*Optional*, int): The B constant of the battery thermistor. Defaults to the value the product
+  specification lists for the resistance: `3380` for `10kOhm`, `4050` for `47kOhm` and `4250` for `100kOhm`.
+- **charger** (*Optional*): Configure the battery charger. See [Charger](#charger).
 - **buck1**, **buck2** (*Optional*): Configure a buck regulator. See [Regulators](#regulators).
 - **ldo1**, **ldo2** (*Optional*): Configure an LDO or load switch. See [Regulators](#regulators).
 
@@ -66,11 +70,14 @@ chip when the board runs from USB.
 
 ### Charger
 
-- **charge_current** (**Required**, current): The charge current, from `32mA` to `800mA` in 2 mA steps.
+The defaults are the reset values of the chip from the product specification.
+
+- **charge_current** (*Optional*, current): The charge current, from `32mA` to `800mA` in 2 mA steps.
+  Defaults to `32mA`.
 - **termination_voltage** (*Optional*, voltage): The voltage at which charging ends. `3.5V` to `3.65V` or `4.0V` to
-  `4.45V`, in 50 mV steps. Defaults to `4.2V`.
+  `4.45V`, in 50 mV steps. Defaults to `3.6V`.
 - **warm_termination_voltage** (*Optional*, voltage): The termination voltage when the battery is warm, with the same
-  values as `termination_voltage`. Defaults to `termination_voltage`.
+  values as `termination_voltage`. Defaults to `3.6V`.
 - **termination_current** (*Optional*, string): The charge current, as a share of `charge_current`, below which
   charging is complete. One of `10%` or `20%`. Defaults to `10%`.
 - **trickle_voltage** (*Optional*, voltage): Below this battery voltage the battery is charged with a small trickle
@@ -79,7 +86,7 @@ chip when the board runs from USB.
   Defaults to `1000mA`.
 - **recharge** (*Optional*, boolean): Start charging again when the battery voltage drops after a complete charge.
   Defaults to `true`.
-- **enabled** (*Optional*, boolean): Turn on the charger at boot. Defaults to `true`.
+- **enabled** (*Optional*, boolean): Turn on the charger at boot. Defaults to `false`.
 
 > [!WARNING]
 > Check `charge_current` and the termination voltages against the data sheet of your battery. Wrong values can damage
@@ -122,15 +129,15 @@ sensor:
 - **battery_current** (*Optional*): The battery current, in amperes: positive while charging, negative while
   discharging. The chip measures it relative to the charge current or the discharge current limit, so it is most
   accurate near those values.
-- **battery_temperature** (*Optional*): The battery temperature from the thermistor, in °C. Needs
-  `thermistor_resistance` on the hub.
+- **battery_temperature** (*Optional*): The battery temperature from the thermistor, in °C. Not available with
+  `thermistor_resistance: none`.
 - **die_temperature** (*Optional*): The temperature of the nPM1300 itself, in °C.
 - **system_voltage** (*Optional*): The system supply voltage (VSYS), in volts.
 - **vbus_voltage** (*Optional*): The USB supply voltage (VBUS), in volts.
-- **vbus_current_limit** (*Optional*): The VBUS current limit stored in the chip, in amperes. The chip cannot
-  measure the VBUS current itself. This is the value software selected, so it is only accurate with
-  `vbus_current_limit` set on the hub, which applies it on every update. Without it, the sensor shows the reset
-  value of the register (0.5 A) while the chip uses its power-on limit of 100 mA.
+- **vbus_current_limit** (*Optional*): The VBUS current limit selected in the chip (register `VBUSINILIM0`), in
+  amperes. The chip cannot measure the VBUS current itself. The reset value is 0.1 A. After USB is plugged in
+  again the chip uses 100 mA until a new limit is applied, which the hub does on every update when
+  `vbus_current_limit` is set.
 
 All options from [Sensor](/components/sensor/).
 
@@ -240,11 +247,11 @@ npm1300:
   i2c_id: pmic_bus
   vbus_current_limit: 500mA
   thermistor_resistance: 10kOhm
-  thermistor_beta: 3380
   charger:
     charge_current: 150mA
     termination_voltage: 4.2V
     warm_termination_voltage: 4.0V
+    enabled: true
   ldo1:
     voltage: 3.3V
     mode: ldo
