@@ -74,8 +74,8 @@ The known node types are:
 | 17   | BOX    | The ventilation box itself   |
 | 18   | SWITCH | Sensor for the current mode  |
 
-`UCRH`/`BSRH` and `UCCO2`/`BSCO2` share their type number. The network type reported during discovery distinguishes
-the user-controller and built-in variants.
+`UCRH`/`BSRH` and `UCCO2`/`BSCO2` share their type number; discovery lists a built-in sensor by its `BSRH` or `BSCO2`
+name.
 
 With the addresses you can add sensors, for example the CO2 level and temperature of the CO2 sensors above:
 
@@ -183,21 +183,12 @@ Text sensors can report the serial number, software version, errors, uptime, and
 ```yaml
 text_sensor:
   - platform: duco
-    serial:
+    serial_number:
       - name: "Box Serial Number"
       - name: "Bedroom Serial Number"
         address: 3
-    version:
-      - name: "Bedroom Software Version"
-        address: 3
     error:
       - name: "Bedroom Errors"
-        address: 3
-    uptime:
-      - name: "Bedroom Uptime"
-        address: 3
-    node_type:
-      - name: "Bedroom Node Type"
         address: 3
 ```
 
@@ -205,8 +196,9 @@ text_sensor:
 
 - **duco_id** (*Optional*, [ID](/guides/configuration-types/#id)): The Duco component to use. Only needed with more
   than one.
-- **serial** (*Optional*): A list of serial-number text sensors. Each entry accepts:
-  - **address** (*Optional*, int): The box address is `0`; node addresses range from `1` to `68`. Defaults to `0`.
+- **serial_number** (*Optional*): A list of serial-number text sensors. Each entry accepts:
+  - **address** (*Optional*, int): `0` reads the serial number of the box, `1` that of the box's main board, and `2` to
+    `68` that of a node. Defaults to `0`.
   - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often the serial number is read.
     Defaults to `300s`.
 - **version** (*Optional*): A list of node software-version text sensors. Each entry accepts:
@@ -235,8 +227,8 @@ text_sensor:
     name: "Box Serial Number"
 ```
 
-For this legacy form, **address** (*Optional*, int) selects the box (`0`) or a node (`1` to `68`) and defaults to
-`0`. **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)) defaults to `300s`.
+For this legacy form, **address** (*Optional*, int) works as for `serial_number` above and defaults to `0`.
+**update_interval** (*Optional*, [Time](/guides/configuration-types/#time)) defaults to `300s`.
 **duco_id** and all other options from [Text Sensor](/components/text_sensor/) are also supported.
 
 ## Sensor
