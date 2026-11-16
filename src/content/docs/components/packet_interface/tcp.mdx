@@ -21,6 +21,11 @@ Each packet is sent with its length in front. When nothing else has been sent fo
 sent, and if nothing at all has been received for `timeout`, the connection is closed and made again.
 This finds a device that has lost power or its network, which TCP alone can take many minutes to notice.
 
+A packet that is sent while the connection is stalled, because the other device has stopped reading or the network
+has stopped moving data, is refused, and the component sending it is told. With a fragmentation layer, a packet of
+several fragments can be refused part way through: the other device then drops the fragments it has, and the sender
+is told the packet was not sent. `entity_transport` tries again a second later.
+
 ## Example Configuration
 
 ```yaml
