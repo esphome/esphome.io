@@ -23,9 +23,10 @@ image:
       - component.update: my_display
 ```
 
-The camera requests a frame with `camera::IDLE`, so API and web-server streams
-are not affected. A request that does not produce a frame within 5 seconds is
-abandoned and retried on the next update.
+Each update requests one frame with `camera::COMPONENT_REQUESTER`, which is
+served to this component only: API and web-server streams are not affected. A
+request that does not produce a frame within 5 seconds is abandoned and retried
+on the next update.
 
 ## Configuration variables
 
@@ -41,7 +42,9 @@ abandoned and retried on the next update.
   preserving the aspect ratio.
 - **crop** (*Optional*): A rectangle applied after decoding and after
   `resize`, when both are set. With `resize`, the crop must fit inside the
-  resize bounds, which are also the largest possible decoded size.
+  resize bounds, which are also the largest possible decoded size; without
+  `resize` it must fit the camera's `resolution`. Both are checked when the
+  configuration is validated.
   - **x** (**Required**, int): Horizontal offset.
   - **y** (**Required**, int): Vertical offset.
   - **width** (**Required**, int): Crop width.
@@ -59,6 +62,12 @@ abandoned and retried on the next update.
   show until the first frame arrives.
 - **transparency**, **byte_order**: As for the [image
   component](/components/image/).
+
+## Notes
+
+The referenced camera must deliver JPEG frames: keep `pixel_format: JPEG`, or
+set `jpeg_quality` above `0` so the camera converts its raw frames. A camera
+configured for raw frames is rejected when the configuration is validated.
 
 ## Automations
 
