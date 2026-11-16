@@ -15,7 +15,8 @@ When the `udp` component sends to one IPv4 address that is not a broadcast or mu
 accepts packets only from that address. It then joins exactly two devices, so no
 [addressing layer](/components/packet_interface/#addressing) is needed, and one cannot be configured. An address
 ending in `.255` is taken as a broadcast address; set `point_to_point` when that guess is wrong for your subnet. A
-point-to-point link logs a warning, at most once a minute, when it drops a packet from another sender.
+point-to-point link logs a warning, at most once a minute, when it drops a packet from another sender; set
+`point_to_point: false` to accept packets from every sender, as earlier versions did.
 
 When the `udp` component sends to a broadcast or multicast address, or to several addresses, every packet received
 is accepted, and an addressing layer can tell the devices apart. The

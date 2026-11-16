@@ -338,8 +338,9 @@ On a LoRa link with a dictionary made from a typical packet, JSON packets of 70 
 their size. With the default dictionary, the JSON tried shrank by about 40% overall, and less for short packets that
 are mostly numbers.
 
-Each device holds two packets of `max_packet_size` bytes and one packet of the layers below, plus 1.5 kB used to find
-repeated text; if there is not enough memory, the layer is marked failed and nothing is sent.
+Each layer holds two packets of `max_packet_size` bytes and one packet of the layers below, and the device holds
+1.5 kB, shared by every compression layer, used to find repeated text; if there is not enough memory, the layer is
+marked failed and nothing is sent.
 
 ## Session
 
