@@ -41,10 +41,11 @@ on the next update.
 - **resize** (*Optional*, string): Fit the decoded image inside `WIDTHxHEIGHT`,
   preserving the aspect ratio.
 - **crop** (*Optional*): A rectangle applied after decoding and after
-  `resize`, when both are set. With `resize`, the crop must fit inside the
-  resize bounds, which are also the largest possible decoded size; without
-  `resize` it must fit the camera's `resolution`. Both are checked when the
-  configuration is validated.
+  `resize`, when both are set. It must fit the size the frame decodes to: the
+  camera's `resolution`, or, with `resize`, the result of scaling that
+  resolution uniformly to fit `WIDTHxHEIGHT`. That is smaller than the resize
+  box when the aspect ratios differ, for example 640x480 into 320x320 decodes to
+  320x240. Checked when the configuration is validated.
   - **x** (**Required**, int): Horizontal offset.
   - **y** (**Required**, int): Vertical offset.
   - **width** (**Required**, int): Crop width.
