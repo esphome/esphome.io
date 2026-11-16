@@ -32,14 +32,16 @@ abandoned and retried on the next update.
 - **id** (**Required**, [ID](/guides/configuration-types/#id)): The image ID.
 - **camera_id** (**Required**, [ID](/guides/configuration-types/#id)): The
   `esp32_camera` to read frames from.
-- **format** (**Required**): The camera's encoded format. `JPEG`.
+- **format** (**Required**): The camera's encoded format. Only `JPEG` (or its
+  alias `JPG`) is accepted, because a camera delivers JPEG frames.
 - **type** (**Required**): How the image is stored internally: `BINARY`,
   `GRAYSCALE`, `RGB565` or `RGB`. See the
   [image component](/components/image/).
 - **resize** (*Optional*, string): Fit the decoded image inside `WIDTHxHEIGHT`,
   preserving the aspect ratio.
 - **crop** (*Optional*): A rectangle applied after decoding and after
-  `resize`, when both are set.
+  `resize`, when both are set. With `resize`, the crop must fit inside the
+  resize bounds, which are also the largest possible decoded size.
   - **x** (**Required**, int): Horizontal offset.
   - **y** (**Required**, int): Vertical offset.
   - **width** (**Required**, int): Crop width.
