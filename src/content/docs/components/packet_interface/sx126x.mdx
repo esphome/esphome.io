@@ -35,9 +35,10 @@ sent anyway, and a warning is logged. This assumes every device on the channel k
 packet from another kind of LoRa device, such as a 255-byte packet at spreading factor 12, can be sent over before
 it ends.
 
-When the link has a reliability or session layer or the rolling code, which need packets back from the peer, the
-two devices also take turns: after a packet is sent, a later send waits until the peer has had time to start a
-reply and the radio to receive its header, unless a packet arrives first. This takes about 0.27 s at spreading
+When the link has a reliability layer, whose peer acknowledges each packet, the two devices also take turns: after
+a packet is sent, a later send waits until the peer has had time to start its acknowledgement and the radio to
+receive its header, unless a packet arrives first. A send that waits is refused, and the reliability layer sends it
+again. This takes about 0.27 s at spreading
 factor 10 and 125 kHz. Without it, the next packet of a burst is sent over the peer's reply, and both are lost.
 The radio packets of one send, such as the fragments of a large packet, are sent without waiting.
 
