@@ -253,6 +253,10 @@ wifi:
     are tried before the device listens for a configurator. The device then listens during each pause between
     connection attempts. Without any network it listens from boot, and listens again at most once per `timeout`
     after an attempt that did not finish. Defaults to `1min`.
+- **on_ap_start** (*Optional*, [Automation](/automations/)): An action to be performed when the access point starts.
+  Requires `ap:` to be configured.
+- **on_ap_stop** (*Optional*, [Automation](/automations/)): An action to be performed when the access point stops.
+  Requires `ap:` to be configured.
 - **on_connect** (*Optional*, [Automation](/automations)): An action to be performed when a connection is established.
 - **on_disconnect** (*Optional*, [Automation](/automations)): An action to be performed when the connection is dropped.
 - **on_dpp_uri** (*Optional*, [Automation](/automations)): An action to be performed when the Wi-Fi Easy Connect URI
@@ -722,6 +726,22 @@ wifi:
 
 - **ttls_phase_2** (*Optional*, string): The Phase 2 Authentication Method for EAP-TTLS.
   Can be `pap`, `eap`, `mschap`, `mschapv2` or `chap`, defaults to `mschapv2`.
+
+## `on_ap_start` / `on_ap_stop` Trigger
+
+These triggers run once when the access point has been set up successfully, and once when it stops. They
+require `ap:` to be configured. An access point that fails to start does not fire `on_ap_start`.
+
+```yaml
+wifi:
+  # ...
+  ap:
+    password: !secret ap_password
+  on_ap_start:
+    - logger.log: "Access point started"
+  on_ap_stop:
+    - logger.log: "Access point stopped"
+```
 
 <span id="wifi-on_connect_disconnect"></span>
 
