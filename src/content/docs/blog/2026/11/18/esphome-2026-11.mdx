@@ -61,7 +61,7 @@ This is the short, plain-language version for anyone short on time or still find
 
 **Also in this release:** over thirty new components plus many smaller fixes and improvements.
 
-If you're running a typical config, there's nothing else you need to check before updating – aside from the items above.
+If you're running a typical config, there's nothing else you need to check before updating – aside from the items above and a few rarer setups covered in the upgrade checklist.
 
 For the full release overview and technical detail – including anything that affects custom lambdas, external components or non-standard setups – keep reading below.
 
@@ -243,11 +243,11 @@ watchdog resets on ESP8266 and timing errors on Realtek chips.
   counts nothing on RTL8720C, or with inverted pins on RTL8710B
   ([#21271](https://github.com/esphome/esphome/pull/21271)). LN882H reads the pin within a few microseconds of a pulse
   edge, so it counted these pulses correctly before and needs no change.
-- If a browser page hosted on another origin calls web OTA `/update`, Prometheus `/metrics`, the index page or the
-  ESP32 `/events` stream, add that origin to `web_server: allowed_origins:`. Each entry can be at most 127 characters.
+- If a browser page on another site calls web OTA `/update`, Prometheus `/metrics`, the index page or the ESP32
+  `/events` stream, add that site to `web_server: allowed_origins:`. Each entry can be at most 127 characters.
 - If you use `deep_sleep` with `wakeup_pin` on an ESP32-H2, replace it with `esp32_ext1_wakeup` using the same pin.
-- If your device receives MQTT messages larger than 8 KB on ESP8266, 16 KB on LibreTiny or 32 KB on ESP32, raise the
-  new `max_payload_size` option under `mqtt:`; larger messages are now dropped with a warning.
+- If your device receives MQTT messages over 8 KB (ESP8266), 16 KB (LibreTiny) or 32 KB (ESP32), raise the new
+  `max_payload_size` option under `mqtt:`. Larger messages are now dropped with a warning.
 {/* UPGRADE_CHECKLIST_END */}
 
 {/* FEATURE_HIGHLIGHTS_START */}
@@ -306,7 +306,7 @@ A second large framework effort, driven mostly by [@bdraco](https://github.com/b
 
 ## ESP-IDF 5.1 floor and library refresh
 
-The minimum ESP-IDF rises to 5.1 and three major vendor libraries are refreshed, so builds stop configuring with deprecated symbols and devices built on them stop hitting the known bugs. [LibreTiny](/components/libretiny/) now defaults to 1.14.0 with Beken BDK 3.0.78 on BK7231N and BK7231T, which fixes WPA3 support on those chips, stops the BK7231T captive portal from losing saved credentials and fixes a watchdog trip during web OTA ([#21531](https://github.com/esphome/esphome/pull/21531)). `esp_hosted` on the ESP32-P4 and Tab5 jumps to 3.1.0, which repairs 1-bit SDIO, no longer erases the co-processor partition at OTA begin, and no longer crashes the host with a watchdog reset when it restarts after a co-processor update ([#21394](https://github.com/esphome/esphome/pull/21394), [#22306](https://github.com/esphome/esphome/pull/22306)). `esp-zigbee-sdk` rises to 2.0.5 and `esp-audio-libs` to 4.1.0 ([#20998](https://github.com/esphome/esphome/pull/20998), [#20754](https://github.com/esphome/esphome/pull/20754)). The GCC 12 toolchain that ships with ESP-IDF 5.1 also lets ESPHome drop its 5.0-specific workarounds, so basename debug flags apply everywhere and `CONFIG_SW_COEXIST_ENABLE` is written under its current name ([#21398](https://github.com/esphome/esphome/pull/21398)). `espressif/esp-adf-libs` and `espressif/esp-hosted` binaries are now downloaded and cached rather than carried in the repository ([#20065](https://github.com/esphome/esphome/pull/20065)).
+The minimum ESP-IDF rises to 5.1 and three major vendor libraries are refreshed, so builds stop configuring with deprecated symbols and devices built on them stop hitting the known bugs. [LibreTiny](/components/libretiny/) now defaults to 1.14.0 with Beken BDK 3.0.78 on BK7231N and BK7231T, which fixes WPA3 support on those chips, stops the BK7231T captive portal from losing saved credentials and fixes a watchdog trip during web OTA ([#21531](https://github.com/esphome/esphome/pull/21531)). `esp_hosted` on the ESP32-P4 and Tab5 jumps to 3.1.0, which repairs 1-bit SDIO and no longer erases the co-processor partition at OTA begin ([#21394](https://github.com/esphome/esphome/pull/21394)). The host also no longer crashes with a watchdog reset when it restarts after a co-processor update ([#22306](https://github.com/esphome/esphome/pull/22306)). `esp-zigbee-sdk` rises to 2.0.5 and `esp-audio-libs` to 4.1.0 ([#20998](https://github.com/esphome/esphome/pull/20998), [#20754](https://github.com/esphome/esphome/pull/20754)). The GCC 12 toolchain that ships with ESP-IDF 5.1 also lets ESPHome drop its 5.0-specific workarounds, so basename debug flags apply everywhere and `CONFIG_SW_COEXIST_ENABLE` is written under its current name ([#21398](https://github.com/esphome/esphome/pull/21398)). `espressif/esp-adf-libs` and `espressif/esp-hosted` binaries are now downloaded and cached rather than carried in the repository ([#20065](https://github.com/esphome/esphome/pull/20065)).
 
 ## OTA uploads that finish on bad Wi-Fi
 
@@ -434,47 +434,56 @@ Alongside the memory and codegen work, this cycle closes several real correctnes
 
 ## Networking and diagnostics
 
-Fixes made during the beta help devices reconnect faster and stop several crashes on the network side.
+Fixes made during the beta help devices reconnect faster and stop several network crashes.
 
-- **Wi-Fi reconnects** - a network with a pinned `bssid:` or `channel:` that is missing from the scan no longer costs
-  31 seconds on every retry ([#21747](https://github.com/esphome/esphome/pull/21747)). On ESP32, a hidden first network that is out of range no longer stops the
-  device from joining the next network ([#22764](https://github.com/esphome/esphome/pull/22764)). ESP32 gets its IPv6 link-local address on every connect again;
-  before, about half of boots had none ([#22364](https://github.com/esphome/esphome/pull/22364)).
-- **Captive portal setup** - a device given Wi-Fi details through the captive portal uses `power_save_mode` right
-  away, so ESP8266 connections no longer keep dropping until the next reboot ([#22564](https://github.com/esphome/esphome/pull/22564)).
-- **Clean restart on ESP32** - the device leaves Wi-Fi before it reboots, which stops some WPA3 access points from
-  crashing when a device restarts ([#22715](https://github.com/esphome/esphome/pull/22715)). Reboots forced by a `reboot_timeout` now also run every component's
-  shutdown steps, the same as a normal restart.
-- **Realtek Wi-Fi** - RTL87xx chips find and join open networks from the scan, and a failed join no longer skips the
-  second attempt ([#21750](https://github.com/esphome/esphome/pull/21750), [#21749](https://github.com/esphome/esphome/pull/21749)).
-- **MQTT** - on ESP32, retained messages sent at connect no longer overflow the event queue when many topics are
-  subscribed ([#22248](https://github.com/esphome/esphome/pull/22248)). MQTT connects as soon as the network is up after boot, instead of about 20 seconds later
-  with a false DNS error ([#22843](https://github.com/esphome/esphome/pull/22843)). Messages over the new `max_payload_size` are dropped instead of using up the
-  heap ([#22278](https://github.com/esphome/esphome/pull/22278)).
-- **Native API** - entities no longer stay unavailable in Home Assistant after a device restarts or installs an
-  update ([#22625](https://github.com/esphome/esphome/pull/22625)).
-- **OTA without a password** - an empty OTA password, or one cleared at run time, now works; uploads no longer fail
-  with "ESP requests password, but no password given!" ([#22485](https://github.com/esphome/esphome/pull/22485)).
-- **Ethernet on ESP32** - a new IPv6 address no longer risks overflowing the system event task stack ([#22657](https://github.com/esphome/esphome/pull/22657)),
-  and W5500 boards with IPv6 no longer crash on every reboot while logs are open ([#22683](https://github.com/esphome/esphome/pull/22683)).
-- **Web server** - ESP8266, RP2040 and LibreTiny move to ESPAsyncWebServer 3.12.1, which fixes two security bugs in
-  web OTA uploads and a memory leak in the `/events` stream ([#22682](https://github.com/esphome/esphome/pull/22682)). On RP2040 with wired Ethernet, the live
-  event stream no longer stalls after a few seconds ([#22686](https://github.com/esphome/esphome/pull/22686)). RTL87xx and LN882x free closed TCP connections after
-  about a second instead of 120 seconds, so many short requests no longer use up memory ([#22696](https://github.com/esphome/esphome/pull/22696)).
+- **Wi-Fi reconnects** - a network set to a fixed `bssid:` or `channel:` may be missing from a scan. Each retry no
+  longer waits 31 seconds in that case ([#21747](https://github.com/esphome/esphome/pull/21747)). On ESP32, a hidden
+  first network that is out of range no longer stops the device from joining the next network
+  ([#22764](https://github.com/esphome/esphome/pull/22764)). ESP32 also gets its local IPv6 address on every connection
+  again; before, about half of boots had none ([#22364](https://github.com/esphome/esphome/pull/22364)).
+- **Captive portal setup** - a device given Wi-Fi details through the captive portal now applies `power_save_mode` at
+  once. ESP8266 connections no longer keep dropping until the next reboot
+  ([#22564](https://github.com/esphome/esphome/pull/22564)).
+- **Clean restart on ESP32** - the device leaves Wi-Fi before it reboots. This stops some WPA3 access points from
+  crashing when a device restarts ([#22715](https://github.com/esphome/esphome/pull/22715)). A reboot forced by
+  `reboot_timeout` now also runs every component's shutdown steps, like a normal restart.
+- **Realtek Wi-Fi** - RTL87xx chips now find and join open networks from the scan. A failed join no longer skips the
+  second attempt ([#21750](https://github.com/esphome/esphome/pull/21750),
+  [#21749](https://github.com/esphome/esphome/pull/21749)).
+- **MQTT** - on ESP32, many subscriptions no longer cause retained messages to be lost at connect
+  ([#22248](https://github.com/esphome/esphome/pull/22248)). MQTT connects as soon as the network is up after boot.
+  Before, it waited about 20 seconds and logged a false DNS error
+  ([#22843](https://github.com/esphome/esphome/pull/22843)). Messages over the new `max_payload_size` are dropped
+  instead of using up memory ([#22278](https://github.com/esphome/esphome/pull/22278)).
+- **Native API** - entities no longer stay unavailable in Home Assistant after a device restarts or installs an update
+  ([#22625](https://github.com/esphome/esphome/pull/22625)).
+- **OTA without a password** - an empty OTA password, or one cleared at run time, now works. Uploads no longer fail with
+  "ESP requests password, but no password given!" ([#22485](https://github.com/esphome/esphome/pull/22485)).
+- **Ethernet on ESP32** - a new IPv6 address no longer risks a crash in the system event task
+  ([#22657](https://github.com/esphome/esphome/pull/22657)). W5500 boards with IPv6 no longer crash on every reboot
+  while logs are open ([#22683](https://github.com/esphome/esphome/pull/22683)).
+- **Web server** - ESP8266, RP2040 and LibreTiny move to ESPAsyncWebServer 3.12.1. It fixes two security bugs in web OTA
+  uploads and a memory leak in the `/events` stream ([#22682](https://github.com/esphome/esphome/pull/22682)). On RP2040
+  with wired Ethernet, the live event stream no longer stops after a few seconds
+  ([#22686](https://github.com/esphome/esphome/pull/22686)). RTL87xx and LN882x now free closed connections after about
+  a second instead of 120 seconds. Many short requests in a row no longer use up memory
+  ([#22696](https://github.com/esphome/esphome/pull/22696)).
 
 ## Bluetooth reliability
 
-- **Bond keys on ESP-IDF 5.5.6** - bonded devices, such as a Husqvarna Automower behind a Bluetooth proxy, keep their
-  keys when they reconnect, so encryption no longer fails until a reboot ([#22559](https://github.com/esphome/esphome/pull/22559)).
-- **Complete service discovery** - Bluetooth proxies and BLE clients see all of a device's services again when the
-  device lists them out of order ([#22576](https://github.com/esphome/esphome/pull/22576)).
-- **Crash on a dropped link** - a request to change the packet size or write data that fails as the link drops no
-  longer crashes the Bluetooth stack ([#22670](https://github.com/esphome/esphome/pull/22670)).
-- **Advertising and Improv** - quick changes to Bluetooth advertising, for example when Improv stops, no longer crash
-  the device, and Improv stays in the advertising packet so Home Assistant finds unprovisioned devices
+- **Bonded devices on ESP-IDF 5.5.6** - a bonded device keeps its pairing keys when it reconnects. Encryption no longer
+  fails until a reboot, for example with a Husqvarna Automower behind a Bluetooth proxy
+  ([#22559](https://github.com/esphome/esphome/pull/22559)).
+- **Complete service discovery** - Bluetooth proxies and BLE clients see all of a device's services again. This works
+  even when the device lists them out of order ([#22576](https://github.com/esphome/esphome/pull/22576)).
+- **Crash on a dropped link** - a connection can drop while a setup or write request is still queued. That no longer
+  crashes the Bluetooth stack ([#22670](https://github.com/esphome/esphome/pull/22670)).
+- **Advertising and Improv** - quick changes to what the device advertises, for example when Improv stops, no longer
+  crash it. Improv also stays in the advertising packet, so Home Assistant finds devices that still need Wi-Fi details
   ([#22499](https://github.com/esphome/esphome/pull/22499)).
-- **Fallback access point with scanning** - the fallback access point and captive portal can be joined again on
-  devices that scan for Bluetooth devices; the scan uses a short window while the access point runs ([#22566](https://github.com/esphome/esphome/pull/22566)).
+- **Fallback access point with scanning** - on devices that scan for Bluetooth devices, the fallback access point and
+  captive portal can be joined again. The scan uses a short window while the access point runs
+  ([#22566](https://github.com/esphome/esphome/pull/22566)).
 - **Pico W IDs** - Bluetooth proxies on the Raspberry Pi Pico W report 32-bit service and characteristic IDs in full
   ([#22679](https://github.com/esphome/esphome/pull/22679)).
 
@@ -482,43 +491,63 @@ Fixes made during the beta help devices reconnect faster and stop several crashe
 
 Several fixes stop watchdog resets and timing errors on smaller chips:
 
-- ESP8266 software serial no longer causes watchdog resets under Wi-Fi traffic, at 19200 baud and below as well as at
-  38400 and 57600 baud ([#22450](https://github.com/esphome/esphome/pull/22450), [#22603](https://github.com/esphome/esphome/pull/22603), [#22641](https://github.com/esphome/esphome/pull/22641)).
-- On ESP8266, `one_wire` sensors such as the DS18B20 and IR codes sent by `remote_transmitter` keep interrupts off
-  only for short moments, so they no longer cause random watchdog resets ([#22452](https://github.com/esphome/esphome/pull/22452), [#22453](https://github.com/esphome/esphome/pull/22453)).
+- ESP8266 software serial no longer causes watchdog resets under Wi-Fi traffic. This applies at 19200 baud and below,
+  and at 38400 and 57600 baud ([#22450](https://github.com/esphome/esphome/pull/22450),
+  [#22603](https://github.com/esphome/esphome/pull/22603), [#22641](https://github.com/esphome/esphome/pull/22641)).
+- On ESP8266, `one_wire` sensors such as the DS18B20 and IR codes sent by `remote_transmitter` no longer cause random
+  watchdog resets. Both now block interrupts only for very short moments
+  ([#22452](https://github.com/esphome/esphome/pull/22452), [#22453](https://github.com/esphome/esphome/pull/22453)).
 - On the original ESP32, an I2C bus fault no longer resets the device with an interrupt watchdog timeout
-  ([#22396](https://github.com/esphome/esphome/pull/22396)). I2C bus recovery stops once the sensor lets go of the bus, so a sensor that was mid-transfer at a reset
-  no longer stays stuck on every boot ([#22852](https://github.com/esphome/esphome/pull/22852)). On RP2040, an I2C write larger than the buffer is refused instead of
-  leaving the bus stuck ([#22791](https://github.com/esphome/esphome/pull/22791)).
-- The Realtek RTL8710B keeps accurate time and its "any edge" interrupts see both edges, and the RTL8720C keeps
-  interrupts after the first pulse, so `pulse_counter` and `hlw8012` keep counting ([#22404](https://github.com/esphome/esphome/pull/22404), [#22403](https://github.com/esphome/esphome/pull/22403), [#22400](https://github.com/esphome/esphome/pull/22400)).
-- On RP2040 and RP2350, the logger shows the previous crash report when a computer opens the USB port, and the
-  scheduler is protected from network callbacks ([#22266](https://github.com/esphome/esphome/pull/22266), [#22688](https://github.com/esphome/esphome/pull/22688)).
-- On LibreTiny, log lines from background tasks are no longer garbled or lost, and a related crash on BK72xx chips is
-  fixed ([#22594](https://github.com/esphome/esphome/pull/22594)).
+  ([#22396](https://github.com/esphome/esphome/pull/22396)). I2C bus recovery now stops once the sensor releases the
+  bus. A sensor that was mid-transfer at a reset no longer stays stuck on every boot
+  ([#22852](https://github.com/esphome/esphome/pull/22852)). On RP2040, an I2C write larger than the buffer is refused
+  instead of leaving the bus stuck ([#22791](https://github.com/esphome/esphome/pull/22791)).
+- The Realtek RTL8710B keeps accurate time, and its "any edge" interrupts see both edges
+  ([#22404](https://github.com/esphome/esphome/pull/22404), [#22403](https://github.com/esphome/esphome/pull/22403)).
+  The RTL8720C keeps its interrupts after the first pulse, so `pulse_counter` and `hlw8012` keep counting
+  ([#22400](https://github.com/esphome/esphome/pull/22400)).
+- On RP2040 and RP2350, the logger shows the previous crash report when a computer opens the USB port
+  ([#22266](https://github.com/esphome/esphome/pull/22266)). The scheduler is also protected from network callbacks,
+  which could corrupt it ([#22688](https://github.com/esphome/esphome/pull/22688)).
+- On LibreTiny, log lines from background tasks are no longer garbled or lost. A related crash on BK72xx chips is fixed
+  ([#22594](https://github.com/esphome/esphome/pull/22594)).
 
 And elsewhere:
 
-- **vl53l0x** distance sensors no longer stop reporting until a reboot after one failed I2C read ([#19235](https://github.com/esphome/esphome/pull/19235))
-- **voice_assistant** no longer opens the microphone before a slow spoken reply starts playing, which made the device
-  record and answer its own reply ([#19408](https://github.com/esphome/esphome/pull/19408))
-- **sm2135** bulbs no longer stay dark when switching between color and white at low brightness ([#19438](https://github.com/esphome/esphome/pull/19438))
-- **bme280** and **bmp280** no longer drop a whole reading when the temperature is near 26.5 °C ([#22236](https://github.com/esphome/esphome/pull/22236))
-- **sun** `next_sunrise` and `next_sunset` show the right event for locations far east or west, such as Australia,
-  New Zealand and Hawaii ([#22308](https://github.com/esphome/esphome/pull/22308))
-- **xiaomi_body_scale** handles the S400 Pro: no more 204.7 kg readings, and measurements complete ([#22317](https://github.com/esphome/esphome/pull/22317))
-- **nfc** rejects malformed NDEF records on a tag instead of reading past the end of the buffer ([#22276](https://github.com/esphome/esphome/pull/22276))
-- **cst816** touchscreens no longer register phantom taps while idle ([#22435](https://github.com/esphome/esphome/pull/22435))
-- **mipi_dsi** panels on the ESP32-P4, such as the M5Stack Tab5, no longer flash white when settings are saved or an
-  update is written ([#22535](https://github.com/esphome/esphome/pull/22535))
-- **serial_proxy** no longer loses bytes when the network connection to the client is busy ([#22687](https://github.com/esphome/esphome/pull/22687))
-- **dht** sensors build and read on nRF52, where `micros()` now counts real microseconds, and DHT22-family sensors no
-  longer read 0.1 °C too cold below freezing ([#22609](https://github.com/esphome/esphome/pull/22609), [#22612](https://github.com/esphome/esphome/pull/22612), [#22615](https://github.com/esphome/esphome/pull/22615))
-- **mlx90393** builds again on ESP32 with the Arduino framework ([#22801](https://github.com/esphome/esphome/pull/22801))
-- **rp2040_pio_led_strip** sends LED data at the right speed, which ran 30% fast on RP2350, and fails setup instead of
-  halting or corrupting memory when no free state machine or DMA channel is left ([#22265](https://github.com/esphome/esphome/pull/22265), [#22152](https://github.com/esphome/esphome/pull/22152), [#22153](https://github.com/esphome/esphome/pull/22153))
+- **vl53l0x** distance sensors no longer stop reporting until a reboot after one failed I2C read
+  ([#19235](https://github.com/esphome/esphome/pull/19235))
+- **voice_assistant** no longer opens the microphone before a slow spoken reply starts. The device recorded and answered
+  its own reply ([#19408](https://github.com/esphome/esphome/pull/19408))
+- **sm2135** bulbs no longer stay dark when switching between color and white at low brightness
+  ([#19438](https://github.com/esphome/esphome/pull/19438))
+- **bme280** and **bmp280** no longer drop a whole reading when the temperature is near 26.5 °C
+  ([#22236](https://github.com/esphome/esphome/pull/22236))
+- **sun** `next_sunrise` and `next_sunset` show the right event for places far east or west, such as Australia, New
+  Zealand and Hawaii ([#22308](https://github.com/esphome/esphome/pull/22308))
+- **xiaomi_body_scale** handles the S400 Pro: no more 204.7 kg readings, and measurements complete
+  ([#22317](https://github.com/esphome/esphome/pull/22317))
+- **nfc** rejects broken NDEF records on a tag instead of reading past the end of its buffer
+  ([#22276](https://github.com/esphome/esphome/pull/22276))
+- **cst816** touchscreens no longer register phantom taps while idle
+  ([#22435](https://github.com/esphome/esphome/pull/22435))
+- **mipi_dsi** panels on the ESP32-P4, such as the M5Stack Tab5, no longer flash white when settings or updates are
+  written to flash ([#22535](https://github.com/esphome/esphome/pull/22535))
+- **serial_proxy** no longer loses bytes when the network connection to the client is busy
+  ([#22687](https://github.com/esphome/esphome/pull/22687))
+- **dht** sensors now build and read on nRF52, where `micros()` now counts real microseconds
+  ([#22609](https://github.com/esphome/esphome/pull/22609), [#22612](https://github.com/esphome/esphome/pull/22612)).
+  DHT22-family sensors also no longer read 0.1 °C too cold below freezing
+  ([#22615](https://github.com/esphome/esphome/pull/22615))
+- **mlx90393** builds again on ESP32 with the Arduino framework
+  ([#22801](https://github.com/esphome/esphome/pull/22801))
+- **rp2040_pio_led_strip** sends LED data at the right speed; it ran 30% fast on RP2350
+  ([#22265](https://github.com/esphome/esphome/pull/22265)). With no free hardware channel left, setup now fails instead
+  of halting the device or corrupting memory ([#22152](https://github.com/esphome/esphome/pull/22152),
+  [#22153](https://github.com/esphome/esphome/pull/22153))
 - **ld2410**, **ld2412**, **ld2420**, **tfluna**, **tsl2591** and **seeed_mr24hpc1** drop device classes that do not
-  match their entities, which stops warnings in Home Assistant 2026.11 ([#22259](https://github.com/esphome/esphome/pull/22259), [#22260](https://github.com/esphome/esphome/pull/22260), [#22374](https://github.com/esphome/esphome/pull/22374), [#22375](https://github.com/esphome/esphome/pull/22375))
+  match their entities. This stops warnings in Home Assistant 2026.11
+  ([#22259](https://github.com/esphome/esphome/pull/22259), [#22260](https://github.com/esphome/esphome/pull/22260),
+  [#22374](https://github.com/esphome/esphome/pull/22374), [#22375](https://github.com/esphome/esphome/pull/22375))
 {/* FEATURE_HIGHLIGHTS_END */}
 
 ## Thank you, contributors
@@ -526,18 +555,18 @@ And elsewhere:
 {/* CONTRIBUTORS_START */}
 This release includes 1463 pull requests from over 240 contributors. A huge thank you to everyone who made 2026.11.0 possible:
 
-- [@bdraco](https://github.com/bdraco) - 697 PRs including the self-contained AP mode web interface served as a captive portal, OTA key rotation and a UDP fallback for lossy links, crash reports on five more LibreTiny chips, a boot log buffer replayed over the API, moving strings and lookup tables across hundreds of components into flash, numeric scheduler ids, new shared bus, codegen and Apply entity helpers rolled out across the component tree, and a large expansion of codegen, unit and integration test coverage
-- [@swoboda1337](https://github.com/swoboda1337) - 88 PRs including the clang-tidy 23 sweep, ESP-IDF 6 preparation, native Windows build support, and a broad fill-in of component test coverage
-- [@clydebarrow](https://github.com/clydebarrow) - 52 PRs including the new `runtime_image` streaming JPEG decoder, the LVGL 9.6 migration with the color picker and menu widgets, the new `packet_interface` component and XXTEA/HDLC layers, and merging simple actions into inline control flow
-- [@jesserockz](https://github.com/jesserockz) - 21 PRs including the component `DOMAIN` constants rollout, new `mipi_spi` and `epaper_spi` panel models, and the move to `gh actions-lock` for workflow pinning
+- [@bdraco](https://github.com/bdraco) - 763 PRs including the self-contained AP mode web interface served as a captive portal, OTA key rotation and a UDP fallback for lossy links, crash reports on five more LibreTiny chips, a boot log buffer replayed over the API, moving strings and lookup tables across hundreds of components into flash, numeric scheduler ids, new shared bus, codegen and Apply entity helpers rolled out across the component tree, and a large expansion of codegen, unit and integration test coverage
+- [@swoboda1337](https://github.com/swoboda1337) - 99 PRs including the clang-tidy 23 sweep, ESP-IDF 6 preparation, native Windows build support, and a broad fill-in of component test coverage
+- [@clydebarrow](https://github.com/clydebarrow) - 54 PRs including the new `runtime_image` streaming JPEG decoder, the LVGL 9.6 migration with the color picker and menu widgets, the new `packet_interface` component and XXTEA/HDLC layers, and merging simple actions into inline control flow
+- [@jesserockz](https://github.com/jesserockz) - 23 PRs including the component `DOMAIN` constants rollout, new `mipi_spi` and `epaper_spi` panel models, and the move to `gh actions-lock` for workflow pinning
 - [@FredM67](https://github.com/FredM67) - 21 PRs including the deferring-action validators and their adoption across `modbus_client`, `mqtt`, `haier` and `nextion`, and the `emontx` reboot lock and firmware-version read
 - [@remcom](https://github.com/remcom) - 17 PRs including the new `tmc2209` stepper driver, the `fusb302b` USB PD sink, the DFRobot SEN0609/SEN0610 radar and `i2s_audio` full duplex
 - [@Bascht74](https://github.com/Bascht74) - 14 PRs including the new `modbus_monitor` component, KeeLoq suffix bits and the Jarolift TDEF group frame, and the `TcpClientLink` idle timeout
 - [@luar123](https://github.com/luar123) - 12 PRs including zigbee sleepy-end-device support on ESP32, the zigbee report action, and GPIO hold during (deep) sleep
 - [@albert-canfield](https://github.com/albert-canfield) - 12 PRs including power-loss handling and weekday conversion fixes across `pcf8563`, `pcf85063` and `bm8563`, dry-only thermostat support and better compile-error line numbers for lambdas
-- [@kahrendt](https://github.com/kahrendt) - 12 PRs including the new `sendspin` source role that streams a microphone to the server, the `AudioCapture` microphone buffer rework and the original-ESP32 i2s playback fixes
+- [@kahrendt](https://github.com/kahrendt) - 13 PRs including the new `sendspin` source role that streams a microphone to the server, the `AudioCapture` microphone buffer rework and the original-ESP32 i2s playback fixes
 - [@rwrozelle](https://github.com/rwrozelle) - 10 PRs including the new `friedrich` climate IR component, the `power_management` domain with `esp32_power_management`, UDP IPv6 unicast and multicast, and the Thread-sized UDP OTA
-- [@tomaszduda23](https://github.com/tomaszduda23) - 10 PRs including CDC-UART on nRF52, the `zephyr_coredump` flash store and LVGL build fixes on nRF52
+- [@tomaszduda23](https://github.com/tomaszduda23) - 11 PRs including CDC-UART on nRF52, the `zephyr_coredump` flash store and LVGL build fixes on nRF52
 - [@wolph](https://github.com/wolph) - 10 PRs including the new Hi-Link LD6004 radar across every platform and the shared `LD600X` base used by ld6002b
 - [@exciton](https://github.com/exciton) - 10 PRs including SSD1681 differential partial refresh and other `epaper_spi` performance work, and the new `cw2017` battery fuel gauge
 - [@bharvey88](https://github.com/bharvey88) - 9 PRs including the `sen6x` CO2, temperature compensation, PM number concentration, actions and status sensors, and user-defined API action variables with defaults
@@ -545,7 +574,7 @@ This release includes 1463 pull requests from over 240 contributors. A huge than
 - [@fallenmi](https://github.com/fallenmi) - 9 PRs including correctness fixes across the HLK radar family (`ld2410`, `ld2410s`, `ld2420`, `ld2450`, `ld2460`), `tfluna` and `dfrobot_sen0395`
 - [@huangkongsheng](https://github.com/huangkongsheng) - 8 PRs including a config-validator sweep across cron ranges, `cv.entity_id`, `cv.dimensions`, `cv.percentage_int` and UTF-8 SSID length
 - [@MindFreeze](https://github.com/MindFreeze) - 7 PRs including the new `vnc` client component with Hextile encoding, password authentication and touchscreen input forwarding
-- [@kbx81](https://github.com/kbx81) - 7 PRs including `esp-idf-sbom` manifest emission with `esphome.project.sbom` supplier info, and interface-change notifications for network listeners
+- [@kbx81](https://github.com/kbx81) - 9 PRs including `esp-idf-sbom` manifest emission with `esphome.project.sbom` supplier info, and interface-change notifications for network listeners
 - [@latonita](https://github.com/latonita) - 6 PRs including the new `bh1745` colour sensor, `lis2dw12` accelerometer, `husb238` USB PD controller and the three-part `as734x` spectral sensor
 - [@Rapsssito](https://github.com/Rapsssito) - 5 PRs including MQTT session persistence and expanded TLS options, the new `bq25186` charger and RTC memory for `globals`
 - [@j9brown](https://github.com/j9brown) - 5 PRs including the new `i2s_clockless_led_strip` DMA driver and the `ESPColorView` / addressable-light refactor
@@ -571,7 +600,7 @@ This release includes 1463 pull requests from over 240 contributors. A huge than
 - [@CircuitSetup](https://github.com/CircuitSetup) - 2 PRs: configurable `atm90e32` thresholds and gain-calibration write verification
 - [@mvoss96](https://github.com/mvoss96) - 2 PRs: addressable LED strip power estimation / current limiting and `cse7766` low-load power behaviour
 - [@bughaver](https://github.com/bughaver) - 2 PRs: `heatpumpir` Eco and Boost presets and the ZMP IR receiver
-- [@PolarGoose](https://github.com/PolarGoose) - 2 PRs: `dlms_meter` Landis+Gyr E450 HDLC Cyprus support and a parser refresh
+- [@PolarGoose](https://github.com/PolarGoose) - 3 PRs: `dlms_meter` Landis+Gyr E450 HDLC Cyprus support and a parser refresh
 - [@Ardumine](https://github.com/Ardumine) - 2 PRs: the new `zephyr_mcumgr` SMP UDP OTA transport for nRF52 and Zephyr/nRF52 UDP IPv6
 - [@Zebble](https://github.com/Zebble) - 2 PRs: the new `lis3dh` accelerometer and `tca8418` keypad components
 - [@david-collett](https://github.com/david-collett) - 2 PRs: `esp32_ble_server` secure connection support
@@ -582,22 +611,22 @@ This release includes 1463 pull requests from over 240 contributors. A huge than
 - [@DennisGaida](https://github.com/DennisGaida) - 2 PRs: `bmi270` BMM150 magnetometer aux support and the new `lp5562` LED driver output
 - [@ikruglov](https://github.com/ikruglov) - 2 PRs: `bl0939` internal temperature sensor and `pcf8574` output preservation across MCU reboots
 - [@Gunni](https://github.com/Gunni) - 2 PRs: clearer `yaml_util` package errors and cached `esp32_hosted` firmware downloads
-- [@candrews](https://github.com/candrews) - 2 PRs: new `epaper_spi` panels (XSRUPB-7.5in-bwr and Good Display GDEY029Z95)
+- [@candrews](https://github.com/candrews) - 4 PRs: new `epaper_spi` panels (XSRUPB-7.5in-bwr and Good Display GDEY029Z95)
 - [@bboe](https://github.com/bboe) - 2 PRs: media_player constant bitrate and shared `CONF_BITRATE`
-- [@guillempages](https://github.com/guillempages) - 2 PRs: image RGB111 format and a Pillow deprecation fix
+- [@guillempages](https://github.com/guillempages) - 3 PRs: image RGB111 format and a Pillow deprecation fix
 - [@piitaya](https://github.com/piitaya) - 2 PRs: cover stop-tilt in the core and MQTT
 - [@Mat931](https://github.com/Mat931) - 2 PRs: the `systa_bus` text_sensor and an `esp32_camera` compile warning
 - [@mbrudka](https://github.com/mbrudka) - 2 PRs: `micro_wake_word` internal RAM placement and configurable capture buffer duration
 - [@jeroen85](https://github.com/jeroen85) - 2 PRs: four-decimal fast value formatting and a bigger `web_server_idf` task stack
 - [@sebo-b](https://github.com/sebo-b) - 2 PRs: `web_server` internal-entity URL handling and the new `ln882x_spi_led_strip`
 - [@gongloo](https://github.com/gongloo) - 2 PRs: `mipi_rgb` direct-to-PSRAM rotated blitting and HA state-subscription vector reservation
-- [@labodj](https://github.com/labodj) - 2 PRs: vbus P1 telegram checksum handling and shared `CONF_VALUE_TYPE`
+- [@labodj](https://github.com/labodj) - 3 PRs: vbus P1 telegram checksum handling and shared `CONF_VALUE_TYPE`
 - [@andytrofimov](https://github.com/andytrofimov) - 2 PRs: audio HTTP partial-read release and reduced speaker announcement buffering
 - [@Kubuxu](https://github.com/Kubuxu) - 2 PRs: `ledc` hardware duty dithering and a PWM duty-scaling fix
 - [@javitonino](https://github.com/javitonino) - 2 PRs: voice_assistant microphone stop handling at STT_END and before speech
-- [@randybb](https://github.com/randybb) - 2 PRs: OTA and voice_assistant builds with IPv4 disabled
+- [@randybb](https://github.com/randybb) - 3 PRs: OTA and voice_assistant builds with IPv4 disabled
 - [@GiorgioAresu](https://github.com/GiorgioAresu) - 2 PRs: the new `mipi_rgb` GC9503V and ZX3D95CE01S-TR-4848 panel support
-- [@adamsthws](https://github.com/adamsthws) - 2 PRs: an api responding-action array-arg compile fix and `cse7766` verbose power-factor logging
+- [@adamsthws](https://github.com/adamsthws) - 3 PRs: an api responding-action array-arg compile fix and `cse7766` verbose power-factor logging
 - [@crnjan](https://github.com/crnjan) - 2 PRs: `mitsubishi_cn105` horizontal vane direction control
 - [@chunckus-aurelius](https://github.com/chunckus-aurelius) - 2 PRs: shared tap and double-tap support via the new `motion` component
 - [@iskyguy](https://github.com/iskyguy) - 2 PRs: the `sht4x` serial-number text sensor with a longer response wait
@@ -665,20 +694,20 @@ Also thank you to [@Petapton](https://github.com/Petapton), [@Procsiab](https://
   keep today's behaviour for a physical device reached through this node, or `relation: child` for a logical part of
   this node.
   [#21232](https://github.com/esphome/esphome/pull/21232)
-- **Web server**: The `allowed_origins` check now runs on every handler, so web OTA `/update`, Prometheus `/metrics`,
-  the index page and the ESP32 `/events` stream reject cross-origin browser requests that are not listed. A page on
-  another origin that calls them must add its origin. Requests without an `Origin` header, such as scripts and
-  Prometheus scrapers, are not affected. Entries are now limited to 127 characters, so a device reached by a DNS name
-  longer than about 119 characters needs `"*"` for browser access to its own pages.
+- **Web server**: The `allowed_origins` check now covers every page the web server serves. Web OTA `/update`, Prometheus
+  `/metrics`, the index page and the ESP32 `/events` stream now reject browser requests from sites that are not listed.
+  A page on another site that calls them must add that site. Requests without an `Origin` header, such as scripts and
+  Prometheus scrapers, are not affected. Entries are now limited to 127 characters. On ESP32, a device reached by a host
+  name longer than about 119 characters therefore needs `"*"` for browser access to its own pages.
   [#21972](https://github.com/esphome/esphome/pull/21972)
-- **Deep sleep**: `wakeup_pin` is now accepted only on ESP32, S2, S3, C2, C3, C5, C6, C61 and P4, and `touch_wakeup`
-  only on ESP32, S2, S3 and P4. An ESP32-H2 config with `wakeup_pin` passed validation before but never woke the
-  device; it now fails validation. Use `esp32_ext1_wakeup` with the same pin instead. `deep_sleep` also builds on the
-  ESP32-P4 now.
+- **Deep sleep**: Among ESP32 chips, `wakeup_pin` is now accepted only on ESP32, S2, S3, C2, C3, C5, C6, C61 and P4;
+  BK72xx still supports it. `touch_wakeup` is accepted only on ESP32, S2, S3 and P4. An ESP32-H2 config with
+  `wakeup_pin` passed validation before, but the pin never woke the device. It now fails validation; use
+  `esp32_ext1_wakeup` with the same pin instead. `deep_sleep` also builds on the ESP32-P4 now.
   [#22246](https://github.com/esphome/esphome/pull/22246)
-- **MQTT**: Incoming messages are limited by the new `max_payload_size` option, so one oversized publish can no longer
-  use up the heap and crash the device. The default is 8 KB on ESP8266, 16 KB on LibreTiny and 32 KB on ESP32; raise
-  it if you receive larger messages, which are now dropped with a warning.
+- **MQTT**: The new `max_payload_size` option limits the size of incoming messages. One oversized message can no longer
+  use up the device's memory and crash it. The default is 8 KB on ESP8266, 16 KB on LibreTiny and 32 KB on ESP32. Larger
+  messages are now dropped with a warning, so raise the limit if you receive them.
   [#22278](https://github.com/esphome/esphome/pull/22278)
 
 ### Platform changes
