@@ -6,6 +6,8 @@ import { execSync } from "child_process";
 import { fileURLToPath } from "url";
 import { needsAnchorTrailingSlash, withAnchorTrailingSlash } from "../src/lib/internal-links.mjs";
 
+import { collectPageAnchors } from "./heading-anchors.mjs";
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -237,19 +239,6 @@ async function buildAnchorCache() {
     return cache;
   }
 
-  function generateSlug(text) {
-    return (
-      text
-        .toLowerCase()
-        // Mirror src/lib/rehype-heading-slugs.mjs: dots in automation headings
-        // (e.g. `light.turn_on`) map to `-` so the anchor becomes `light-turn_on`.
-        .replace(/\./g, "-")
-        .replace(/[^\w\s-]/g, "")
-        .replace(/[-\s]+/g, "-")
-        .replace(/^-+|-+$/g, "")
-    );
-  }
-
   async function processDir(dir, basePath = "") {
     const entries = await readdir(dir, { withFileTypes: true });
 
@@ -270,29 +259,7 @@ async function buildAnchorCache() {
         pagePath = pagePath.replace(/\\/g, "/");
 
         const content = await readFile(fullPath, "utf-8");
-        const anchors = new Set();
-
-        for (const line of content.split("\n")) {
-          // Match headings
-          const headingMatch = line.match(/^(#{1,6})\s+(.*)/);
-          if (headingMatch) {
-            const headingText = headingMatch[2].trim();
-            const anchorId = generateSlug(headingText);
-            anchors.add(anchorId);
-          }
-
-          // Match anchor shortcodes (old Hugo style)
-          const shortcodeMatch = line.match(/\{\{<\s*anchor\s+"([^\s>]+)"\s*>}}/);
-          if (shortcodeMatch) {
-            anchors.add(shortcodeMatch[1]);
-          }
-
-          // Match HTML anchor spans
-          const spanMatch = line.match(/<span id="([^"]+)"><\/span>/);
-          if (spanMatch) {
-            anchors.add(spanMatch[1]);
-          }
-        }
+        const anchors = collectPageAnchors(content);
 
         cache.set(pagePath, anchors);
       }

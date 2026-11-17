@@ -76,6 +76,13 @@ sx127x:
   `31_3kHz`, `41_7kHz`, `50_0kHz`, `62_5kHz`, `83_3kHz`, `100_0kHz`, `125_0kHz`,
   `166_7kHz`, `200_0kHz` or `250_0kHz`.
 
+- **afc_bandwidth** (*Optional*, enum): Receiver bandwidth used while the automatic frequency
+  correction (AFC) locks onto the carrier at the start of a packet, before `bandwidth` is used for the
+  payload. FSK only. Accepts the same values as `bandwidth`, `2_6kHz` to `250_0kHz`. It must cover the
+  signal bandwidth plus the expected carrier offset between transmitter and receiver, so it is normally
+  the same as or wider than `bandwidth`. Wideband links such as wM-Bus need a wider value than the
+  default. Defaults to `50_0kHz`.
+
 - **packet_mode** (*Optional*, bool): In packet mode bytes are sent via the `send_packet`
   automation and received with the `on_packet` trigger. If not enabled continuous mode is
   used and raw data is sent and received on DIO2.
