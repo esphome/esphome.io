@@ -51,9 +51,12 @@ on the next update.
   - **width** (**Required**, int): Crop width.
   - **height** (**Required**, int): Crop height.
 - **rotation** (*Optional*, int): `0` (default), `90`, `180` or `270` degrees,
-  applied after `crop`. Requires `resize` or `crop` so the output size is
-  known. `crop` and `rotation` need `type` `GRAYSCALE`, `RGB565` or `RGB`, and
-  cannot be combined with `transparency: alpha_channel`.
+  applied after `crop`. The output is the decoded size, or the `crop`, with the
+  axes swapped for `90` and `270`. A rotation allocates one scratch buffer of
+  the decoded size for the whole run, so a larger `resolution` with no `resize`
+  or `crop` needs correspondingly more memory. `crop` and `rotation` need `type`
+  `GRAYSCALE`, `RGB565` or `RGB`, and cannot be combined with
+  `transparency: alpha_channel`.
 - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)):
   How often to request a frame. Defaults to `never`; use `component.update` or
   set an interval.
