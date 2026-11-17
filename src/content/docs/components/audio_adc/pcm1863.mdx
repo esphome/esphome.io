@@ -23,7 +23,8 @@ audio_adc:
 ## Configuration Variables
 
 - **bits_per_sample** (*Optional*, enum): The bit depth of the audio samples. One of `16bit`, `20bit`, `24bit` or
-  `32bit`. Defaults to `24bit`.
+  `32bit`. Defaults to `24bit`. The [I²S microphone](/components/microphone/i2s_audio/) has no `20bit` setting, so
+  use `20bit` only with another I²S receiver.
 
 - **input** (*Optional*, enum): The analog input the ADC captures from at startup. Defaults to `VIN1`. One of:
 
@@ -77,10 +78,6 @@ All [Audio ADC Automations](/components/audio_adc/#automations-audio_adc) are su
 Capturing a line input and switching between two sources from the frontend:
 
 ```yaml
-i2c:
-  sda: GPIOXX
-  scl: GPIOXX
-
 audio_adc:
   - platform: pcm1863
     id: line_in_adc
