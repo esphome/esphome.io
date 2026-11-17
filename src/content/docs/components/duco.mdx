@@ -156,6 +156,7 @@ select:
 ## Number
 
 The number shows and changes the comfort temperature of the box, from 10.0 °C to 25.5 °C in steps of 0.1 °C.
+For a single-zone system, the original configuration remains supported and uses parameter address `0x12` by default:
 
 ```yaml
 number:
@@ -163,13 +164,32 @@ number:
     name: "Comfort Temperature"
 ```
 
+For a dual-zone system, use `comfort_temperature` to configure each zone separately:
+
+```yaml
+number:
+  - platform: duco
+    comfort_temperature:
+      - name: "Comfort Temperature Zone 1"
+        address: 0x13
+      - name: "Comfort Temperature Zone 2"
+        address: 0x14
+```
+
 ### Configuration Variables
 
+- **comfort_temperature** (*Optional*): A list of comfort temperature numbers. Use this instead of the top-level
+  `name` when configuring multiple zones.
+  - **address** (*Optional*, integer): The comfort temperature parameter address. Defaults to `0x12`.
+    On dual-zone systems, Zone 1 uses `0x13` and Zone 2 uses `0x14`.
+  - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often the temperature is read.
+    Defaults to `60s`.
+  - All other options from [Number](/components/number/).
 - **duco_id** (*Optional*, [ID](/guides/configuration-types/#id)): The Duco component to use. Only needed with more
   than one.
-- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often the temperature is read.
-  Defaults to `60s`.
 - All other options from [Number](/components/number/).
+- The original single-number configuration also accepts `address`, `update_interval`, and other
+  [Number](/components/number/) options directly under `platform: duco`.
 
 ## Text Sensor
 
