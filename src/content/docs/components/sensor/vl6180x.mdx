@@ -9,10 +9,6 @@ Several sensors can share one I²C bus through their XSHUT/CE pins.
 The [I²C Bus](/components/i2c/) must be configured for this component.
 
 ```yaml
-i2c:
-  sda: GPIOXX
-  scl: GPIOXX
-
 vl6180x:
   - id: tof_sensor
 
@@ -45,8 +41,8 @@ module contains a VL6180 variant without ambient light sensing, omit the `illumi
 - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval between measurements.
   Defaults to `60s`.
 - **enable_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The GPIO connected to the
-  sensor's XSHUT/CE input. Required for every sensor when more than one sensor is configured, and required when using a
-  non-default I²C address. Each sensor needs its own pin.
+  sensor's XSHUT/CE input. Required for every sensor that shares an I²C bus with another VL6180X, and required when
+  using a non-default I²C address. Each sensor needs its own pin.
 
 ## Sensor Platform
 
