@@ -21,8 +21,7 @@ sensor:
       name: "Illuminance"
 ```
 
-The sensor's default I²C address is `0x29`. A VL6180X sensor provides distance and ambient light measurements. If your
-module contains a VL6180 variant without ambient light sensing, omit the `illuminance` section from the sensor platform.
+If your module contains a VL6180 variant without ambient light sensing, omit `illuminance`.
 
 ## Wiring
 
@@ -30,8 +29,8 @@ module contains a VL6180 variant without ambient light sensing, omit the `illumi
 - `GND` connects to ground.
 - `SCL` connects to I²C SCL.
 - `SDA` connects to I²C SDA.
-- `XSHUT` or `CE` is the optional sensor enable input. Connect it to `enable_pin` when using multiple sensors or a
-  non-default I²C address.
+- `XSHUT` or `CE` is the optional sensor enable input. Connect it to `enable_pin` when several sensors share an I²C bus
+  or when using a non-default I²C address.
 
 ## Configuration Variables
 
@@ -46,18 +45,21 @@ module contains a VL6180 variant without ambient light sensing, omit the `illumi
 
 ## Sensor Platform
 
-Configure distance and ambient light entities under `sensor:` and reference the `vl6180x` hub with `vl6180x_id`. Put
-both optional entities in one platform entry. At least one of `distance` or `illuminance` is required.
+Configure distance and ambient light entities in one `sensor:` entry with `platform: vl6180x`. At least one of
+`distance` or `illuminance` is required. Light is measured right after distance on each update of the hub.
 
-- **distance** (*Optional*): Distance sensor. **scaler** (*Optional*, int) supports `1` to `3` and defaults to `1`.
-  Higher values increase the reported measurement range; distance is reported in millimeters. All other options from
-  [Sensor](/components/sensor/) are supported.
-- **illuminance** (*Optional*): Ambient light sensor. **gain** (*Optional*, float) supports `1`, `1.25`, `1.67`,
-  `2.5`, `5`, `10`, `20`, or `40`, and defaults to `1`. **integration_time** (*Optional*,
-  [Time](/guides/configuration-types/#time)) is the light measurement time, from `1ms` to `512ms`, and defaults to
-  `100ms`. Light is measured right after distance on each update. Bright light can overflow the reading at high gain
-  or with a long integration time; the sensor then reports no value. All other options from
-  [Sensor](/components/sensor/) are supported.
+- **vl6180x_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `vl6180x` hub. Required when more
+  than one hub is configured.
+- **distance** (*Optional*): Distance in millimeters. All options from [Sensor](/components/sensor/).
+  - **scaler** (*Optional*, int): `1` to `3`. Higher values extend the measurement range at lower resolution.
+    Defaults to `1`.
+- **illuminance** (*Optional*): Ambient light in lux. All options from [Sensor](/components/sensor/).
+  - **gain** (*Optional*, float): One of `1`, `1.25`, `1.67`, `2.5`, `5`, `10`, `20` or `40`. Defaults to `1`.
+  - **integration_time** (*Optional*, [Time](/guides/configuration-types/#time)): The light measurement time, from
+    `1ms` to `512ms`. Defaults to `100ms`.
+
+Bright light can overflow the light reading at high gain or with a long integration time; the sensor then reports no
+value until the light drops.
 
 ## Multiple Sensors
 
