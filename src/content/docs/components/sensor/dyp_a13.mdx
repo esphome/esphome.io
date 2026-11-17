@@ -1,0 +1,137 @@
+---
+title: "DYP-A13 Ultrasonic Distance Sensor"
+description: "Instructions for setting up DYP-A13 series UART ultrasonic distance sensors in ESPHome."
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `dyp_a13` sensor platform allows you to use DYP-A13 series UART-based ultrasonic distance sensors manufactured by [Shenzhen DYP Sensor Technology Co., Ltd](https://www.dypcn.com/ultrasonic-distance-sensor/) with ESPHome.
+
+To use this sensor, first set up a [UART Bus](/components/uart/) with a `baud_rate` of `9600`.
+
+This component supports:
+
+- **Automatic Modes:** Sensors that output distance frames continuously over UART.
+- **Controlled Modes:** Sensors that require a trigger signal (via a GPIO pin or UART TX) before taking a measurement.
+- **Processed vs Realtime:** Switching output filtering modes via a GPIO pin on supported hardware (**Automatic modes only**).
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: dyp_a13
+    model: A13NYTW
+    name: "Tank Distance"
+```
+
+## Supported Models
+
+Specify the `model` parameter (e.g., `model: A13NYTW`) to automatically configure the default `blind_zone`, `max_range`, required UART `baud_rate`, and operating `mode`.
+
+| Model Name | Default Blind Zone | Default Max Range | Baud Rate | Mode | Sensor RX Pin Usage |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **A13** | 25cm | 200cm | 9600 | Configurable | Trigger / Mode Select |
+| **A13B** | 25cm | 200cm | 9600 | Configurable | Trigger / Mode Select |
+| **A13BNYTW** | 25cm | 200cm | 9600 | **Controlled** | Trigger Input |
+| **A13BNYUW** | 25cm | 200cm | 9600 | **Auto** | Selects Processed/Realtime |
+| **A13NYTW** | 25cm | 200cm | 9600 | **Controlled** | Trigger Input |
+| **A13NYUW** | 25cm | 200cm | 9600 | **Auto** | Selects Processed/Realtime |
+
+## Configuration Variables
+
+- **model** (**Required**, string): The specific model within the A13 series (`A13`, `A13B`, `A13BNYTW`, `A13BNYUW`, `A13NYTW`, or `A13NYUW`). Setting this configures the default `blind_zone`, `max_range`, required UART `baud_rate`, and operating `mode`.
+- **uart_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the [UART Component](/components/uart/) to use. Required if more than one UART component exists; implied if only one exists.
+- **mode** (*Optional*, string): Operating mode for configurable models (`A13` and `A13B`; defaults to `AUTO`, or fixed by the model specification).
+  - `AUTO`: The sensor sends data automatically.
+  - `CONTROLLED`: ESPHome triggers the sensor to read data.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval to check the sensor. Defaults to `1s`.
+  - In `CONTROLLED` mode: How often to trigger a reading.
+  - In `AUTO` mode with `publish_mode: INTERVAL`: How often to publish the latest state.
+  - In `AUTO` mode with `publish_mode: IMMEDIATE`: Ignored for publishing (data is pushed as each frame arrives).
+- **blind_zone** (*Optional*, distance): Readings at or below this distance are reported as `unknown` (`NAN`). Defaults to the model's datasheet value (`25cm`) and can be overridden if needed.
+- **max_range** (*Optional*, distance): Readings above this distance are reported as `unknown` (`NAN`). Defaults to the model's datasheet value (`200cm`) and can be overridden if needed.
+- **trigger_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The GPIO pin used to trigger a reading in `CONTROLLED` mode. If omitted in `CONTROLLED` mode, the component triggers via the UART `tx_pin`.
+- **output_mode** (*Optional*, string): For `AUTO` mode sensors, determines the data processing algorithm. Requires `output_mode_pin` to be configured.
+  - `PROCESSED`: (Default when `output_mode_pin` is set) The sensor filters data for stability.
+  - `REALTIME`: The sensor outputs raw, faster updates.
+- **output_mode_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The GPIO pin connected to the sensor's mode selection pin (the sensor's RX pin) to switch between `PROCESSED` (HIGH) and `REALTIME` (LOW). If you only need RX on the UART bus, omit `tx_pin` from the `uart:` configuration and specify that GPIO here as `output_mode_pin`.
+- **publish_mode** (*Optional*, string): **Only applies when mode is AUTO.**
+  - `INTERVAL`: (Default) The sensor is polled according to `update_interval`, and the latest reading (or `unknown` if no reading arrived or the reading was out of range) is published. Recommended for Home Assistant to prevent flooding.
+  - `IMMEDIATE`: Every frame received from the UART is immediately published (reporting `unknown` if the reading is within `blind_zone` or exceeds `max_range`).
+- All other options from [Sensor](/components/sensor/).
+
+## Examples
+
+### Automatic Mode (`A13NYUW`)
+
+```yaml
+sensor:
+  - platform: dyp_a13
+    model: A13NYUW
+    name: "Water Level"
+    update_interval: 60s
+```
+
+### Controlled Mode (`A13NYTW`)
+
+The `A13NYTW` requires a trigger signal. By connecting the sensor's RX pin to the ESP's UART TX pin (or configuring `trigger_pin: GPIOXX`), this component triggers readings at each `update_interval`:
+
+```yaml
+sensor:
+  - platform: dyp_a13
+    model: A13NYTW
+    name: "Oil Tank Level"
+    update_interval: 10s
+```
+
+### Overriding `blind_zone` or `max_range`
+
+Each model sets `blind_zone` and `max_range` from its datasheet, but you can override either parameter if your installation requires custom bounds:
+
+```yaml
+sensor:
+  - platform: dyp_a13
+    model: A13NYTW
+    name: "Tank Distance"
+    blind_zone: 20cm
+    max_range: 180cm
+    update_interval: 5s
+```
+
+### Sump Pit Level (Advanced Calculation)
+
+In this example, we calculate the depth of water in a sump pit using a `dyp_a13` sensor (`model: A13NYTW`). The sensor returns the "air gap" (distance from sensor to water), so we subtract that from the total depth of the pit to get the water level:
+
+```yaml
+sensor:
+  - platform: dyp_a13
+    name: "Sump Pit Water Depth"
+    model: A13NYTW
+    update_interval: 5s
+    unit_of_measurement: "in"
+    icon: "mdi:waves"
+    accuracy_decimals: 2
+    filters:
+      # Filter noise by taking the median of the last 6 readings
+      - median:
+          window_size: 6
+          send_every: 6
+          send_first_at: 6
+      # Convert "Distance to Water" (Air Gap) into "Depth of Water"
+      - lambda: |-
+          // x is the sensor reading in meters (e.g., 0.5m)
+          // 1. Convert meters to inches
+          float air_gap_inches = x * 39.3701;
+
+          // 2. Define physical constants
+          float total_pit_depth = 72.0;
+          float sensor_offset = 3.0; // Mounting height or enclosure offset
+
+          // 3. Calculate water depth: (Total Depth - Offset) - Air Gap
+          return (total_pit_depth - sensor_offset) - air_gap_inches;
+```
+
+## See Also
+
+- [Sensor Filters](/components/sensor/#sensor-filters)
+- [UART Bus](/components/uart/)
+- <APIRef text="dyp_base.h" path="dyp_base/dyp_base.h" />
