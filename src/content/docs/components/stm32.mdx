@@ -71,6 +71,15 @@ into it, then run `esphome run <config-file> --device /dev/ttyACM0`. After that,
 with no button: opening the USB serial port at 1200 baud reboots the app into the bootloader.
 `esphome logs <config-file> --reset` reboots the app.
 
+To use MCUboot on the XIAO STM32C5 instead, set `framework: advanced: bootloader: mcuboot`. MCUboot replaces
+TinyUF2 at the start of flash, so the board is then flashed over SWD, and ESPHome requires
+`framework: advanced: runner:` to be set, for example `runner: stm32cubeprogrammer`. The board's devicetree
+keeps the first 32 KB for TinyUF2, so the configuration also needs overlays that give MCUboot its own
+partition; see the
+[`stm32c5/xiao-stm32c5-mcuboot.yaml`](https://github.com/esphomeplatformzephyr/zephyr-examples/blob/framework-zephyr/stm32c5/xiao-stm32c5-mcuboot.yaml)
+example. MCUboot has no console on this board, because it is built without USB; the app still logs over
+USB. Putting TinyUF2 back also needs SWD.
+
 ## See Also
 
 - [Zephyr](/components/zephyr/)
