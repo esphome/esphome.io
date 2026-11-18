@@ -81,6 +81,40 @@ on_...:
     - sensor.duty_time.reset: my_climate_work_time
 ```
 
+### `sensor.duty_time.set` Action
+
+This action sets the accumulated duty time to a specified number of seconds and publishes the new sensor state.
+It does not change whether the counter is running, or update the `last_time` sensor. Use it to restore a previously
+backed-up counter value after replacing a device or erasing its flash.
+
+```yaml
+on_...:
+  then:
+    - sensor.duty_time.set:
+        id: my_climate_work_time
+        value: 450000
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the `duty_time` sensor.
+- **value** (**Required**, integer, [templatable](/automations/templates/)): The accumulated time in seconds,
+  from `0` to `4294967295` (unsigned 32-bit integer).
+
+The value can also be supplied by a lambda:
+
+```yaml
+on_...:
+  then:
+    - sensor.duty_time.set:
+        id: my_climate_work_time
+        value: !lambda "return 450000U;"
+```
+
+When `restore: true` is configured on the sensor, the new value is saved using ESPHome's
+[preferences](/components/preferences/) mechanism. The action does not retrieve a backup automatically.
+
+
 <span id="sensor-duty_time-is_running_action"></span>
 <span id="sensor-duty_time-is_not_running_action"></span>
 
