@@ -153,6 +153,10 @@ most of the configuration will be set by default, but can be overridden if neede
   - **offset_height** (*Optional*, int): Specify an offset for the y-direction of the display. Default is 0.
 
 - **invert_colors** (*Optional*, boolean): Specifies whether the display colors should be inverted. Options are `true` or `false`. Defaults to `false`.
+- **brightness** (*Optional*, int): The brightness sent to the display at startup, from 0 to 255, for models that set
+  their brightness with a command and the `CUSTOM` model only. The default depends on the model; for the `CUSTOM`
+  model no brightness command is sent unless it is set. Setting it allows a
+  [MIPI DSI brightness light](/components/light/mipi_dsi/) to be used with the display.
 - **rotation** (*Optional*): Rotate the display presentation in software. Choose one of `0°`, `90°`, `180°`, or `270°`. If the driver chip supports hardware rotation for the given orientation this will be translated to the appropriate hardware command. If hardware rotation is not supported, the display will be rotated in software.
 - **transform** (*Optional*): If `rotation` is not sufficient, use this to transform the display. If this option is
   specified, then the `dimensions` option must also be provided. The value can either be the string `disabled` to disable hardware transform, or a dictionary.
@@ -219,6 +223,8 @@ rotation: 90
 Many displays have an integrated backlight, which may need to be turned on for the display to show. This backlight is not controlled
 by the driver, but can be controlled by a separate GPIO pin. Depending on the display, the backlight may be active high or active low, and may
 be able to be dimmed using a [Monochromatic](/components/light/monochromatic/) with a [Ledc](/components/output/ledc/).
+AMOLED displays do not have a backlight, and set their brightness with a command. To control the brightness while
+running, use a [MIPI DSI brightness light](/components/light/mipi_dsi/).
 
 ## Touchscreens
 
@@ -228,4 +234,5 @@ A touchscreen, if present, must be configured separately. See the [Touchscreen](
 
 - [Display Component](/components/display/)
 - [LVGL Graphics](/components/lvgl/)
+- [MIPI DSI Display Brightness](/components/light/mipi_dsi/)
 - <APIRef text="mipi_dsi.h" path="mipi_dsi/mipi_dsi.h" />
