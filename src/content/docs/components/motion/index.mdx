@@ -74,9 +74,9 @@ sensor:
   calibration the computed matrix is logged in a format that can be copied directly into
   your configuration for persistent use.
 
-- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval at which
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval at which
   sensor data is read. Defaults to `250ms`.
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation.
 
 ### Sensor configuration
 
@@ -129,11 +129,11 @@ binary_sensor:
   - `free_fall`: the total acceleration in `g` below which free fall is detected. Defaults to `0.15`.
   - `moving`: the change in acceleration in `g` (or a proportional change in angular rate) above
     which motion is detected. Defaults to `0.05`.
-- **duration** (*Optional*, [Time](/guides/configuration-types#time)): Only used by `free_fall` and
+- **duration** (*Optional*, [Time](/guides/configuration-types/#time)): Only used by `free_fall` and
   `moving`. For `free_fall`, the device must be falling for at least this long before the sensor
   turns `ON`; defaults to `100ms`. For `moving`, the sensor stays `ON` for at least this long after
   the last detected motion; defaults to `2s`.
-- **motion_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the `motion` hub to
+- **motion_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `motion` hub to
   read from. Only required when more than one `motion` hub is configured.
 - All other options from [Binary Sensor](/components/binary_sensor).
 
@@ -153,17 +153,17 @@ event:
 
 - **threshold** (*Optional*, float): The change in acceleration between successive readings, in `g`,
   above which a shake is detected. Lower values make detection more sensitive. Defaults to `0.5`.
-- **cooldown** (*Optional*, [Time](/guides/configuration-types#time)): The minimum time between
+- **cooldown** (*Optional*, [Time](/guides/configuration-types/#time)): The minimum time between
   consecutive `shake` events. Defaults to `500ms`.
-- **motion_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the `motion` hub to
+- **motion_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `motion` hub to
   read from. Only required when more than one `motion` hub is configured.
-- All other options from [Event](/components/event#config-event).
+- All other options from [Event](/components/event/#config-event).
 
 ## Actions
 
 ### `motion.calibrate_level` Action
 
-This [action](/automations/actions#all-actions) computes a calibration matrix so that the
+This [action](/automations/actions/#all-actions) computes a calibration matrix so that the
 current accelerometer reading maps to `[0, 0, 1]` (device flat, Z pointing up). Place the
 device on a level surface and trigger this action. It replaces the current `transform_matrix`.
 
@@ -190,7 +190,7 @@ copied into the `transform_matrix` configuration for persistent calibration.
 
 ### `motion.calibrate_heading` Action
 
-This [action](/automations/actions#all-actions) corrects the heading (rotation around Z)
+This [action](/automations/actions/#all-actions) corrects the heading (rotation around Z)
 after a prior level calibration. Tilt the device around its Y axis only (pitch forward or
 backward) and trigger this action. It composes a Z-rotation correction with the existing
 matrix so that the horizontal acceleration component falls entirely on the X axis, with its
@@ -212,7 +212,7 @@ on_...:
 
 ### `motion.clear_calibration` Action
 
-This [action](/automations/actions#all-actions) discards any runtime calibration and restores
+This [action](/automations/actions/#all-actions) discards any runtime calibration and restores
 the build-time matrix defined by `axis_map` or `transform_matrix` (or the identity matrix if
 neither is configured). Use it to undo a `motion.calibrate_level` / `motion.calibrate_heading`
 sequence without re-flashing.
@@ -257,7 +257,7 @@ entry with the resulting matrix in a format suitable for copy-pasting into your 
 
 ## See Also
 
-- [Sensor Filters](/components/sensor#sensor-filters)
+- [Sensor Filters](/components/sensor/#sensor-filters)
 - [BMI270 Accelerometer/Gyroscope platform](/components/motion/bmi270/)
 - [ICM-20689 Accelerometer/Gyroscope platform](/components/motion/icm20689/)
 - [LIS3DH Accelerometer platform](/components/motion/lis3dh/)
