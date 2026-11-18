@@ -80,8 +80,8 @@ uart:
 ## Hardware UARTs
 
 Whenever possible, ESPHome will use the hardware UART unit on the ESP8266 for fast and accurate communication.
-When the hardware UARTs are all occupied, ESPHome will fall back to a software implementation that may not
-be accurate at higher baud rates.
+When the hardware UARTs of the ESP8266 are all occupied, ESPHome will fall back to a software implementation that
+may not be accurate at higher baud rates. Other platforms do not fall back in this way; see the paragraphs below.
 
 `UART0` is (by default) used by the [logger component](/components/logger/), using `tx_pin: GPIO1` and
 `rx_pin: GPIO3`. If you configure a UART that overlaps with these pins, you can share the hardware with the
@@ -101,7 +101,8 @@ that the board assigns to it. The `Pin functions` table of the board in the
 
 - Some RTL8720C boards, such as the WBR3 and the BW15, offer more than one pin for a UART. For example, `UART0` of
   the WBR3 can use `PA11` or `PA14` for TX and `PA12` or `PA13` for RX. Any of the listed pins can be used. This
-  requires LibreTiny 1.12.0 or later, and both `tx_pin` and `rx_pin` must be set for such a UART.
+  requires LibreTiny 1.12.0 or later. A direction (TX or RX) that has more than one pin has no default, so its pin
+  must be set; a direction with a single pin can still be left out.
 - If the configured pins do not belong to a hardware UART, the configuration is rejected, and the error message lists
   the pin numbers that each UART can use. RTL8710B chips are the exception: they use a software UART for other pins.
 - Each hardware UART can only be used by one `uart` entry.
