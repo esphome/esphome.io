@@ -43,6 +43,31 @@ climate:
 The unit reports its state after every change, including changes made with the handheld remote, so the state in
 ESPHome follows the unit.
 
+## Switches
+
+The `pioneer_wt` switch platform adds switches for two settings of the indoor unit.
+
+```yaml
+# Example configuration entry
+switch:
+  - platform: pioneer_wt
+    display:
+      name: Display
+    beeper:
+      name: Beeper
+```
+
+### Configuration Variables
+
+- **pioneer_wt_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `pioneer_wt` climate.
+  Required if you have more than one.
+- **display** (*Optional*): Turns the display on the front of the indoor unit on or off.
+  All options from [Switch](/components/switch/#config-switch).
+- **beeper** (*Optional*): Turns the beep that the indoor unit makes when it receives a command on or off.
+  All options from [Switch](/components/switch/#config-switch).
+
+The state of both switches follows what the unit reports.
+
 ## Hardware
 
 The Wi-Fi module plugs into a socket on the indoor unit. The socket has the shape of a USB connector, but it carries
@@ -95,5 +120,6 @@ regulator if it is higher than your board accepts.
 ## See Also
 
 - [Climate Component](/components/climate/)
+- [Switch Component](/components/switch/)
 - [UART Bus](/components/uart/)
 - <APIRef text="pioneer_wt.h" path="pioneer_wt/pioneer_wt.h" />
