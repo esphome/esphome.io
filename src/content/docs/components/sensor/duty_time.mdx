@@ -115,6 +115,36 @@ When `restore: true` is configured on the sensor, the new value is saved using E
 [preferences](/components/preferences/) mechanism. The action does not retrieve a backup automatically.
 
 
+### Example: Restore a Saved Value from Home Assistant
+
+A [user-defined API action](/components/api/#api-device-actions) can accept a runtime value from Home Assistant,
+so the value does not need to be hard-coded in ESPHome. For example, add this to the ESPHome configuration:
+
+```yaml
+api:
+  actions:
+    - action: restore_duty_time
+      variables:
+        seconds: int
+      then:
+        - sensor.duty_time.set:
+            id: my_climate_work_time
+            value: !lambda "return seconds;"
+```
+
+After flashing the configuration, call the corresponding Home Assistant action with the saved value. For a device
+named `my_device`, and a numeric helper called `input_number.duty_time_backup`, the Home Assistant action is:
+
+```yaml
+action: esphome.my_device_restore_duty_time
+data:
+  seconds: "{{ states('input_number.duty_time_backup') | int(0) }}"
+```
+
+This example assumes the helper already contains a valid non-negative runtime in seconds; it does not create or
+update the backup. Trigger restoration intentionally, such as after replacing a device or erasing its flash.
+Do not restore on every startup, since an older backup can overwrite newer accumulated runtime.
+
 <span id="sensor-duty_time-is_running_action"></span>
 <span id="sensor-duty_time-is_not_running_action"></span>
 
