@@ -95,8 +95,19 @@ The ESP8266 has two UARTs; the second of which is TX-only. Only a limited set of
 use either `tx_pin: GPIO1` and `rx_pin: GPIO3`, or `tx_pin: GPIO15` and `rx_pin: GPIO13`. `UART1` must
 use `tx_pin: GPIO2`. Any other combination of pins will result in use of a software UART.
 
+On [LibreTiny](/components/libretiny/) boards (BK72xx, RTL87xx, LN882x), each hardware UART can only use the pins
+that the board assigns to it. The `Pin functions` table of the board in the
+[LibreTiny documentation](https://docs.libretiny.eu/link/boards) shows them as `TX0`, `RX0`, `TX1` and so on.
+
+- Some RTL8720C boards, such as the WBR3 and the BW15, offer more than one pin for a UART. For example, `UART0` of
+  the WBR3 can use `PA11` or `PA14` for TX and `PA12` or `PA13` for RX. Any of the listed pins can be used. This
+  requires LibreTiny 1.12.0 or later, and both `tx_pin` and `rx_pin` must be set for such a UART.
+- If the configured pins do not belong to a hardware UART, the configuration is rejected, and the error message lists
+  the pin numbers that each UART can use. RTL8710B chips are the exception: they use a software UART for other pins.
+- Each hardware UART can only be used by one `uart` entry.
+
 > [!NOTE]
-> The Software UART is only available on the ESP8266. It is not available on ESP32 and variants.
+> The Software UART is only available on the ESP8266 and on RTL8710B chips. It is not available on ESP32 and variants.
 
 ## `uart.write` Action
 
