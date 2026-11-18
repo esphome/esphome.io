@@ -1,0 +1,55 @@
+---
+description: "Instructions for setting up the GENIbus protocol bus to communicate with Grundfos pumps in ESPHome."
+title: "GENIbus"
+---
+import APIRef from '@components/APIRef.astro';
+
+GENIbus is the protocol that Grundfos uses for its own pumps. The `genibus` component is the bus: it builds the
+requests, sends them through a transport and passes the answers back. It does not create any sensors or other entities
+itself. Device components sit on the bus and turn the pump data into entities.
+
+You do not add `genibus:` to your configuration. It is loaded by a transport, and the transport is the entry you
+configure.
+
+## Transports
+
+- [**GENIbus over Bluetooth LE**](/components/genibus_ble/): Talk to a pump over Bluetooth Low Energy (ESP32 only).
+
+## Device Components
+
+A device component reads the data of one pump model and creates its entities. No device component is available on
+this bus yet.
+
+Every device component on the bus accepts these options in addition to its own:
+
+- **genibus_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the transport to use. Required if you
+  have more than one transport.
+
+- **address** (*Optional*, int): The GENIbus address of the pump. Each device component sets a default for its pump,
+  so you only need this if your pump uses another address.
+
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often the device component reads
+  the pump. Each device component sets its own default and may set a lower limit.
+
+## How the Bus Works
+
+- **One request at a time.** The bus sends one request and waits for its answer before it sends the next one. If
+  several devices are on the same bus, they take turns. Each device has at most one request open.
+
+- **No answer.** If no valid answer arrives within the response timeout of 1 second, the request ends and the bus
+  sets a warning on the component. The same happens when an answer is damaged or a request cannot be sent completely.
+  The next valid answer clears the warning. After such a failed request, the bus waits for a quiet period of
+  250 milliseconds before it sends the next request, so a late answer is not taken for the answer to the next request.
+
+- **Pump without power.** Some pumps lose power for a while, for example when a heating controller switches them off.
+  The transport then loses its connection. This is normal and does not set a warning. The bus sends no requests while
+  the connection is down, so the log is not filled with errors. A device component can show its values as unknown
+  during this time. When the connection comes back, the devices start to read again.
+
+The response timeout, the quiet period and the master address are shown in the log at boot. You cannot change the
+response timeout or the quiet period. The transport sets the default master address; see its page.
+
+## See Also
+
+- [GENIbus over Bluetooth LE](/components/genibus_ble/)
+- <APIRef text="genibus.h" path="genibus/genibus.h" />
