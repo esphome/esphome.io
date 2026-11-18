@@ -132,17 +132,29 @@ api:
             value: !lambda "return seconds;"
 ```
 
-After flashing the configuration, call the corresponding Home Assistant action with the saved value. For a device
-named `my_device`, and a numeric helper called `input_number.duty_time_backup`, the Home Assistant action is:
+After flashing the configuration, a Home Assistant script can restore the saved value. For a device named
+`my_device` and a numeric helper called `input_number.duty_time_backup`, use:
 
 ```yaml
-action: esphome.my_device_restore_duty_time
-data:
-  seconds: "{{ states('input_number.duty_time_backup') | int(0) }}"
+# Home Assistant configuration
+script:
+  restore_duty_time:
+    sequence:
+      - variables:
+          backup_seconds: "{{ states('input_number.duty_time_backup') }}"
+      - condition: template
+        value_template: >-
+          {{ is_number(backup_seconds)
+             and 0 <= (backup_seconds | float(0)) <= 2147483647 }}
+      - action: esphome.my_device_restore_duty_time
+        data:
+          seconds: "{{ backup_seconds | int }}"
 ```
 
-This example assumes the helper already contains a valid non-negative runtime in seconds; it does not create or
-update the backup. Trigger restoration intentionally, such as after replacing a device or erasing its flash.
+The condition stops the script without changing the device counter when the helper is `unknown`, `unavailable`,
+non-numeric, negative, or beyond the signed 32-bit range accepted by the API action. An explicit zero is allowed.
+This example assumes the helper already contains the desired runtime in seconds; it does not create or update
+the backup. Trigger restoration intentionally, such as after replacing a device or erasing its flash.
 Do not restore on every startup, since an older backup can overwrite newer accumulated runtime.
 
 <span id="sensor-duty_time-is_running_action"></span>
