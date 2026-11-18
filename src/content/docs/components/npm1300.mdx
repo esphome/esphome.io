@@ -18,30 +18,11 @@ state, and the `switch` platform turns the charger and the regulators on and off
 # Example configuration entry
 npm1300:
   id: pmic
-  vbus_current_limit: 500mA
-  thermistor_resistance: 10kOhm
-  charger:
-    charge_current: 150mA
-    termination_voltage: 4.2V
-    warm_termination_voltage: 4.0V
-    enabled: true
 
 sensor:
   - platform: npm1300
     battery_voltage:
       name: "Battery Voltage"
-    battery_current:
-      name: "Battery Current"
-
-binary_sensor:
-  - platform: npm1300
-    charging:
-      name: "Charging"
-
-text_sensor:
-  - platform: npm1300
-    charger_status:
-      name: "Charger Status"
 ```
 
 ## Configuration Variables
@@ -257,7 +238,7 @@ on_...:
 
 The XIAO nRF54LM20A boards have an nPM1300 at address `0x6B` on its own I²C bus on `P1.18` (SDA) and `P1.17` (SCL),
 with a 10 kΩ battery thermistor. BUCK2 powers the nRF54LM20A and must stay on, and LDO1 supplies 3.3 V to the IMU
-and the microphone of the Sense version. This configuration matches the settings of the board in Zephyr:
+and the microphone of the Sense version:
 
 ```yaml
 i2c:
