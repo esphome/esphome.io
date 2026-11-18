@@ -242,6 +242,28 @@ esphome upload my-device.yaml --device 192.168.1.100 --device 2001:db8::1
 ```
 
 
+**`-j|--jobs JOBS`**
+: The number of configurations to upload at once when several are given. Defaults to `1`, which uploads them one
+after another.
+
+With more than one job, each configuration is uploaded by its own process and its output is collected instead of
+being printed as it happens. On a terminal, a block of progress bars is shown while the uploads run, one line for
+each upload in progress and one for the total. A line shows what its upload is doing (`resolving`, `connecting`,
+`Uploading`, or `retry 2/4` once an attempt has failed and another is being made) and stays on screen with the
+time taken, or `FAILED`, when the upload ends. Once every upload has ended, the log of each one is printed in the
+order the configurations were given, followed by the usual summary.
+
+```shell
+esphome upload --jobs 8 livingroom.yaml kitchen.yaml garage.yaml
+```
+
+When the output is not a terminal, for example when it is redirected to a file, no progress bars are drawn and
+the log of each upload is printed as soon as that upload ends.
+
+Uploads that run at the same time can't ask questions, so anything that would prompt fails instead. For the same
+reason `--device` defaults to `OTA` when more than one job is used; give `--device` to override it.
+
+
 **`--upload_speed BAUD_RATE`**
 : The upload speed for serial flashing defaults to 460800 or as set with the environment variable `ESPHOME_UPLOAD_SPEED`.
 This can be overridden in the platformio options on a per-config
