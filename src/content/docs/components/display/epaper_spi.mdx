@@ -36,6 +36,7 @@ pins and dimensions specified.
 | `SSD1677`    | Solomon      |                                                                            | [Product page](https://www.solomon-systech.com/product/ssd1677/) |
 | `SSD1681`    | Solomon      | 200x200 mono, supports partial refresh via `full_update_every`             | [Product page](https://www.solomon-systech.com/product/ssd1681/) |
 | `SSD1683`    | Solomon      |                                                                            | [Product page](https://www.solomon-systech.com/product/ssd1683/) |
+| `SSD2677`    | Solomon      | Mono and four-level gray. Requires busy and reset pins.                    |                                                                  |
 | `T133A01`    | TianMa       | 13.3" 6-color e-paper controller IC with dual-CS SPI architecture          |                                                                  |
 | `UC8151`     | UltraChip    | UC8151D 3-color (black/white/red) e-paper controller                       |                                                                  |
 | `UC8179`     | UltraChip    | E-paper controller used by 800x480 7.5" panels (mono and 3-color variants) |                                                                  |
@@ -87,17 +88,19 @@ Models listed under **Aliases** use identical driver settings, so either name ca
 These models correspond to displays integrated with a microcontroller, and have a full configuration predefined, so at
 a minimum only the model name need be configured. Other options can be overridden in the configuration if needed.
 
-| Model name                      | Manufacturer         | Description                                                                                                                                                                                                                                                          | Link                                                                                   |
-|---------------------------------|----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------|
-| `inkplate2`                     | Soldered Electronics | Soldered Inkplate 2: 2.13" 3-color (black/white/red) e-paper, 104x212.                                                                                                                                                                                               | [Product page](https://soldered.com/products/inkplate-2)                               |
-| `inkplate6color`                | Soldered Electronics | Soldered Inkplate 6COLOR: 7-color (black/white/green/blue/red/yellow/orange) e-paper, 600x448.                                                                                                                                                                       | [Product page](https://soldered.com/products/inkplate-6color-e-paper-display)          |
-| `Seeed-ee04-mono-4.26`          | Seeed Studio         | Seeed EE04 board with Waveshare 4.26" mono epaper.                                                                                                                                                                                                                   | [Product page](https://www.seeedstudio.com/XIAO-ePaper-Display-Board-EE04-p-6560.html) |
-| `Seeed-reTerminal-E1001`        | Seeed Studio         | 7.5" mono e-paper (800x480, UC8179), supports fast and partial refresh via `full_update_every`.                                                                                                                                                                      | [Product page](https://www.seeedstudio.com/reTerminal-E1001-p-6534.html)               |
-| `Seeed-reTerminal-E1002`        | Seeed Studio         |                                                                                                                                                                                                                                                                      | [Product page](https://www.seeedstudio.com/reTerminal-E1002-p-6533.html)               |
-| `Seeed-reTerminal-E1004`        | Seeed Studio         | 13.3" 6-color e-paper (1200x1600, T133A01). Requires PSRAM.                                                                                                                                                                                                          | [Product page](https://www.seeedstudio.com/reTerminal-E1004-p-6692.html)               |
-| `Seeed-reTerminal-Sticky`       | Seeed Studio         | 3.97" mono e-paper (800x480, SSD1677), supports partial refresh via `full_update_every`. Requires PSRAM.                                                                                                                                                             | [Product page](https://www.seeedstudio.com/sticky/)                                    |
-| `Seeed-reTerminal-Sticky-gray4` | Seeed Studio         | The reTerminal Sticky in four-level grayscale, for antialiased text. Full refresh only unless `monochrome_partial_updates` is set; see [Four-level grayscale](#four-level-grayscale-reterminal-sticky). Requires PSRAM.                                              |                                                                                        |
-| `Xteink-X4Pro-UC8279`           | Xteink               | Xteink X4 Pro e-reader with its UC8279 panel (800x480 mono), supports partial refresh via `full_update_every`. The X4 Pro also ships with other panel controllers; this model is only for the UC8279 one. The board's power rails are not managed by this component. |                                                                                        |
+| Model name                         | Manufacturer         | Description                                                                                                                                                                                                                                                          | Link                                                                                   |
+|------------------------------------|----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------|
+| `inkplate2`                        | Soldered Electronics | Soldered Inkplate 2: 2.13" 3-color (black/white/red) e-paper, 104x212.                                                                                                                                                                                               | [Product page](https://soldered.com/products/inkplate-2)                               |
+| `inkplate6color`                   | Soldered Electronics | Soldered Inkplate 6COLOR: 7-color (black/white/green/blue/red/yellow/orange) e-paper, 600x448.                                                                                                                                                                       | [Product page](https://soldered.com/products/inkplate-6color-e-paper-display)          |
+| `Seeed-ee04-mono-4.26`             | Seeed Studio         | Seeed EE04 board with Waveshare 4.26" mono epaper.                                                                                                                                                                                                                   | [Product page](https://www.seeedstudio.com/XIAO-ePaper-Display-Board-EE04-p-6560.html) |
+| `Seeed-reTerminal-E1001`           | Seeed Studio         | 7.5" mono e-paper (800x480, UC8179), supports fast and partial refresh via `full_update_every`.                                                                                                                                                                      | [Product page](https://www.seeedstudio.com/reTerminal-E1001-p-6534.html)               |
+| `Seeed-reTerminal-E1002`           | Seeed Studio         |                                                                                                                                                                                                                                                                      | [Product page](https://www.seeedstudio.com/reTerminal-E1002-p-6533.html)               |
+| `Seeed-reTerminal-E1004`           | Seeed Studio         | 13.3" 6-color e-paper (1200x1600, T133A01). Requires PSRAM.                                                                                                                                                                                                          | [Product page](https://www.seeedstudio.com/reTerminal-E1004-p-6692.html)               |
+| `Seeed-reTerminal-Sticky`          | Seeed Studio         | 3.97" mono e-paper (800x480, SSD1677), supports partial refresh via `full_update_every`. Requires PSRAM.                                                                                                                                                             | [Product page](https://www.seeedstudio.com/sticky/)                                    |
+| `Seeed-reTerminal-Sticky-gray4`    | Seeed Studio         | The reTerminal Sticky in four-level grayscale, for antialiased text. Full refresh only unless `monochrome_partial_updates` is set; see [Four-level grayscale](#four-level-grayscale-reterminal-sticky). Requires PSRAM.                                              |                                                                                        |
+| `Seeed-reTerminal-Sticky-V2`       | Seeed Studio         | The second version of the reTerminal Sticky (800x480, SSD2677), mono, supports partial refresh via `full_update_every`. Requires PSRAM. See [Temperature sensor](#temperature-sensor-ssd2677).                                                                       |                                                                                        |
+| `Seeed-reTerminal-Sticky-V2-gray4` | Seeed Studio         | The second version of the reTerminal Sticky in four-level grayscale. Full refresh only unless `monochrome_partial_updates` is set; see [Four-level grayscale](#four-level-grayscale-reterminal-sticky). Requires PSRAM.                                              |                                                                                        |
+| `Xteink-X4Pro-UC8279`              | Xteink               | Xteink X4 Pro e-reader with its UC8279 panel (800x480 mono), supports partial refresh via `full_update_every`. The X4 Pro also ships with other panel controllers; this model is only for the UC8279 one. The board's power rails are not managed by this component. |                                                                                        |
 
 ## Configuration variables
 
@@ -162,12 +165,16 @@ but can be overridden if needed.
   before a full update is forced. Defaults to `1` which will make every update a full update. A full update can also be
   requested at any time with the [`epaper_spi.full_update_next`](#epaper_spi-full_update_next-action) action.
 - **monochrome_partial_updates** (*Optional*, boolean): Only for four-level grayscale models
-  (`Seeed-reTerminal-Sticky-gray4`). Allows `full_update_every` greater than `1`, with the partial updates in between
+  (`Seeed-reTerminal-Sticky-gray4`, `Seeed-reTerminal-Sticky-V2-gray4`). Allows `full_update_every` greater than
+  `1`, with the partial updates in between
   in black and white. Defaults to `false`: every update is a full four-level update. See
   [Four-level grayscale](#four-level-grayscale-reterminal-sticky) for the trade-off this accepts.
 - **border_waveform** (*Optional*, int): Only for SSD1677 models. The border waveform byte (controller command `0x3C`),
   which sets how the border around the active area is driven. Defaults to `0x01`, or `0x00` for
   `Seeed-reTerminal-Sticky-gray4`. Rarely needs changing.
+- **temperature_sensor** (*Optional*, [ID](/guides/configuration-types/#id)): Only for SSD2677 models. A
+  [sensor](/components/sensor/) that reports the temperature in °C, used to choose the refresh waveform. See
+  [Temperature sensor](#temperature-sensor-ssd2677).
 - **spi_id** (*Optional*, [ID](/guides/configuration-types/#id)): Required to specify the ID of the [SPI Component](/components/spi) if your
   configuration defines multiple SPI buses. If only a single SPI bus is configured, this is optional.
 - **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation.
@@ -242,10 +249,10 @@ display:
 
 ### Four-Level Grayscale (reTerminal Sticky)
 
-The `Seeed-reTerminal-Sticky-gray4` model drives the panel in four gray levels. With `monochrome_partial_updates: true`,
-`full_update_every` can be greater than `1`, and the partial updates in between are black and white. The first partial
-update removes the gray levels from the whole panel until the next full update, a trade-off often worth making for the
-noticeably sharper text.
+The `Seeed-reTerminal-Sticky-gray4` and `Seeed-reTerminal-Sticky-V2-gray4` models drive the panel in four gray
+levels. With `monochrome_partial_updates: true`, `full_update_every` can be greater than `1`, and the partial updates
+in between are black and white. The first partial update removes the gray levels from the whole panel until the next
+full update, a trade-off often worth making for the noticeably sharper text.
 
 In this mode, an update is partial by default; request a full one with
 [`epaper_spi.full_update_next`](#epaper_spi-full_update_next-action) to bring the gray levels back:
@@ -272,6 +279,32 @@ on_...:
 
 > [!NOTE]
 > With custom `dimensions`, the width must be a multiple of 8.
+
+### Temperature Sensor (SSD2677)
+
+An e-paper panel needs a different waveform at different temperatures. On SSD2677 models, the driver chooses the
+waveform for each update from `temperature_sensor`. Without a sensor, or until the sensor has a reading, it uses the
+waveform for 25 °C, so set this option if the device will be used in a room well away from that
+temperature.
+
+The reTerminal Sticky has an SHT40 sensor on board that can be used for this:
+
+```yaml
+i2c:
+  sda: GPIO1
+  scl: GPIO0
+
+sensor:
+  - platform: sht4x
+    temperature:
+      id: room_temperature
+      name: Temperature
+
+display:
+  - platform: epaper_spi
+    model: Seeed-reTerminal-Sticky-V2
+    temperature_sensor: room_temperature
+```
 
 ### 4-color display example
 
@@ -397,8 +430,8 @@ Y = 0.299R + 0.587G + 0.114B
 $$
 
 A luma of `128` or more draws white, anything lower draws black. The four-level grayscale model
-(`Seeed-reTerminal-Sticky-gray4`) uses the same luma, split into four bands: below `32` draws black, `32` to `95` dark
-gray, `96` to `159` light gray, and `160` or more white.
+(`Seeed-reTerminal-Sticky-gray4`, `Seeed-reTerminal-Sticky-V2-gray4`) uses the same luma, split into four bands:
+below `32` draws black, `32` to `95` dark gray, `96` to `159` light gray, and `160` or more white.
 
 Saturated colors therefore do not map the way their RGB values might suggest:
 
