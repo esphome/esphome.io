@@ -52,6 +52,23 @@ sensor:
         coefficient: -1.0
 ```
 
+- `WEIGHTED_MEAN` combination: This type calculates the mean of the source sensor
+  states, with each source's contribution determined by its weight. The weights
+  are normalized by their sum.
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: combination
+    type: weighted_mean
+    name: "Weighted Mean Temperature"
+    sources:
+      - source: temperature_sensor_1
+        weight: 1.0
+      - source: temperature_sensor_2
+        weight: 3.0
+```
+
 - `MAX`, `MEAN`, `MEDIAN`, `MIN`, `MOST_RECENTLY_UPDATED`,
   `RANGE`, `SUM` combinations: These types compute the specified combination among
   all source sensor states.
@@ -71,7 +88,7 @@ sensor:
 ## Configuration variables
 
 - **type** (**Required**, enum): Combination statistic type, should be one of
-  `KALMAN`, `LINEAR`, `MAX`, `MEAN`, `MEDIAN`, `MIN`,
+  `KALMAN`, `LINEAR`, `WEIGHTED_MEAN`, `MAX`, `MEAN`, `MEDIAN`, `MIN`,
   `MOST_RECENTLY_UPDATED`, `RANGE`, or `SUM`.
 
 - **sources** (**Required**, list): A list of sensors to use as source.
@@ -87,6 +104,12 @@ sensor:
   - **coefficient** (*Optional*, only for `LINEAR` type, float, [templatable](/automations/templates)):
     The coefficient to multiply the sensor's state by before summing all source sensor states.
     If implemented as a template, the measurement is in parameter `x`.
+
+  - **weight** (**Required**, only for `WEIGHTED_MEAN` type, non-negative float, [templatable](/automations/templates)):
+    The non-negative weight for this source. A weight of zero excludes the source from the mean.
+    Sources with a non-finite state, such as `NaN`, are also excluded. Weights are normalized by
+    their sum, so only their relative values matter. If implemented as a template, the measurement
+    is in parameter `x`. If no finite source with a positive weight remains, the result is `NaN`.
 
 - **process_std_dev** (**Required**, only for `KALMAN` type, float): The standard deviation of the
   measurement's change per second (e.g. `1/3600 = 0.000277` if the
