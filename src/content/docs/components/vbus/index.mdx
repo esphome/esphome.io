@@ -1,6 +1,6 @@
 ---
 title: "VBus Component"
-description: "Receive telemetry from solar thermal controllers using the VBus protocol."
+description: "Receive telemetry and read or change settings on solar thermal controllers using VBus."
 ---
 
 import { Image } from 'astro:assets';
@@ -8,8 +8,8 @@ import resolVbusAdapterSchematicImg from '../images/resol_vbus_adapter_schematic
 import vbusSerialOptocouplerImg from '../images/vbus_serial_optocoupler.png';
 
 The `vbus` component connects ESPHome to solar thermal controllers made by RESOL and sold under names such as
-Viessmann, Kioto and Wagner. Choose a built-in decoder for the measurements the controller broadcasts, or decode a
-documented custom packet.
+Viessmann, Kioto and Wagner. Start with the measurements the controller already broadcasts, then add setting
+controls if a supported controller profile is available.
 
 <Image
   src="/images/resol_deltasol_bs_plus.jpg"
@@ -24,11 +24,12 @@ documented custom packet.
 | What You Want To Do | Start Here |
 | --- | --- |
 | Receive temperatures, pump states and energy | [Receive only](#receive-only) |
+| Read settings or change them explicitly | [Receive and transmit](#receive-and-transmit) |
 | Find the entities supported by your controller | [Supported models](#supported-models) |
 
 ## Hardware Connection
 
-The device must be connected via a [UART bus](/components/uart/) supporting the receiving line only. The UART bus
+For status reading, connect the device via a [UART bus](/components/uart/) with a receiving line. The UART bus
 must be configured at the same speed of the module which is by default 9600bps. The controller outputs data every
 second.
 
@@ -44,6 +45,14 @@ An electrically isolated version using an opto-coupler:
 
 Another approach, with PCB design ready to be manufactured [can be found
 here](https://github.com/FatBeard/vbus-arduino-library/tree/master/pcb).
+
+Optional transmission requires a VBus transmitter circuit as well as the receiver. A UART TX pin must never be
+connected directly to the bus. The open-source [isolated VBus interface](https://github.com/labodj/resol-vbus-interface)
+provides KiCad sources, fabrication files, a BOM and
+[circuit notes](https://github.com/labodj/resol-vbus-interface/blob/main/docs/circuit.md).
+Its [assembly guide](https://github.com/labodj/resol-vbus-interface/blob/main/docs/assembly.md) covers startup checks
+and the TX signal polarity. See the project's
+[validation notes](https://github.com/labodj/resol-vbus-interface/blob/main/docs/validation.md) for the tested setup.
 
 > [!WARNING]
 > Do not connect the GND pin of your module with the ground of Resol unit as that may damage the output port of it.
@@ -93,20 +102,36 @@ decoder.
 
 Use [custom binary sensors](/components/vbus/receive/#custom-vbus-binary-sensors) to decode documented status bits.
 
+## Receive And Transmit
+
+### Basic Use
+
+Keep the RX sensors above and use an [RX/TX interface](#hardware-connection). Reading a setting requires a transmitted
+request even when no value is changed. Receiving broadcasts alone still needs only the receiver.
+
+The generic transport requires documented addresses, commands and parameter IDs for the connected controller.
+It does not discover settings or create controller-specific controls. Use the advanced reference below for custom
+integration.
+
+### Advanced Use
+
+The [transmit reference](/components/vbus/transmit/) covers bus grants, raw commands. These facilities are for
+documented custom protocols; a supported settings profile handles them for ordinary use.
+
 ## Supported Models
 
-Every model below has an RX decoder.
+Every model below has an RX decoder. A settings profile is a separate capability, with its own firmware requirements.
 Open a model guide for the supported measurements and status fields.
 
-| Controller | RX Model |
+| Controller | Support |
 | --- | --- |
-| [DeltaSol BS Plus](/components/vbus/deltasol_bs_plus/) | `deltasol_bs_plus` |
-| [DeltaSol BS 2009](/components/vbus/deltasol_bs_2009/) | `deltasol_bs_2009` |
-| [DeltaSol BS/2](/components/vbus/deltasol_bs2/) | `deltasol_bs2` |
-| [DeltaSol C](/components/vbus/deltasol_c/) | `deltasol_c` |
-| [DeltaSol CS2](/components/vbus/deltasol_cs2/) | `deltasol_cs2` |
-| [DeltaSol CS4](/components/vbus/deltasol_cs4/) | `deltasol_cs4` |
-| [DeltaSol CS Plus](/components/vbus/deltasol_cs_plus/) | `deltasol_cs_plus` |
+| [DeltaSol BS Plus](/components/vbus/deltasol_bs_plus/) | RX |
+| [DeltaSol BS 2009](/components/vbus/deltasol_bs_2009/) | RX |
+| [DeltaSol BS/2](/components/vbus/deltasol_bs2/) | RX |
+| [DeltaSol C](/components/vbus/deltasol_c/) | RX |
+| [DeltaSol CS2](/components/vbus/deltasol_cs2/) | RX |
+| [DeltaSol CS4](/components/vbus/deltasol_cs4/) | RX |
+| [DeltaSol CS Plus](/components/vbus/deltasol_cs_plus/) | RX |
 
 The Dux H3214 uses the [BS 2009 decoder](/components/vbus/deltasol_bs_2009/); its pump 2 is unsupported.
 Citrin Solar CS 1.3 uses the [CS4 decoder](/components/vbus/deltasol_cs4/).
@@ -132,6 +157,8 @@ disable the UART
 > system it controls. The actual arrangement number set up can be determined from the settings of the device. Please
 > check the user manual and assess your arrangement to determine the functionality of each sensor and name them
 > accordingly.
+
+- **transmit** (*Optional*, mapping): Enable the [generic transmitter](/components/vbus/transmit/).
 
 ## Sensor
 
