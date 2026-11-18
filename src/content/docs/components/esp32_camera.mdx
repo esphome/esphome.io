@@ -58,6 +58,12 @@ Connection Options:
   - **pin** (**Required**, pin): The pin the external clock line is connected to.
   - **frequency** (*Optional*, frequency): The frequency of the external clock, must be between `8MHz`
     and `20MHz`. Defaults to `20MHz`.
+> [!NOTE]
+> Wi-Fi connectivity:
+> On some ESP32 camera boards, the default external clock frequency of 20MHz can severely degrade Wi-Fi throughput, even with good signal strength.
+> If you experience intermittent API disconnections, high latency, packet loss or incomplete camera images, try reducing external_clock.frequency to 8MHz.
+> A lower clock frequency may reduce the maximum achievable frame rate.
+> See [ESPHome issue #4191](https://github.com/esphome/issues/issues/4191) and [Espressif issue #5834](https://github.com/espressif/arduino-esp32/issues/5834) for further details.
 
 - **i2c_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the [I²C bus](/components/i2c) the camera is connected to.
 - **reset_pin** (*Optional*, pin): The ESP pin the reset pin of the camera is connected to.
@@ -317,7 +323,7 @@ i2c:
 esp32_camera:
   external_clock:
     pin: GPIO0
-    frequency: 20MHz
+    frequency: 20MHz # Try 8MHz if experiencing Wi-Fi connectivity issues.
   i2c_id: camera_i2c
   data_pins: [GPIO5, GPIO18, GPIO19, GPIO21, GPIO36, GPIO39, GPIO34, GPIO35]
   vsync_pin: GPIO25
