@@ -68,6 +68,12 @@ cover:
   This will make the Home Assistant frontend show buttons for both OPEN and CLOSE actions, instead
   of hiding or disabling one of them. Defaults to `true`.
 
+- **rerun_action_while_moving** (*Optional*, boolean): Run the `open_action` or `close_action` again when the cover
+  is asked to move in the direction it is already moving. This is useful when a command can be missed, which can leave
+  the cover stopped while ESPHome thinks it is moving. If `open_action` or `close_action` is still running (for
+  example, waiting in a `delay`), it is stopped and started from the beginning. When `false`, the action is not run
+  again, and only the target position is updated. Defaults to `false`.
+
 - All other options from [Cover](/components/cover/#config-cover).
 
 > [!NOTE]
