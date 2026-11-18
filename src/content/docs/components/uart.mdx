@@ -79,10 +79,9 @@ uart:
 
 ## Hardware UARTs
 
-Whenever possible, ESPHome will use the hardware UART unit on the ESP8266 for fast and accurate communication.
-When the hardware UARTs of the ESP8266 are all occupied, ESPHome will fall back to a software implementation that
-may not be accurate at higher baud rates. RTL8710B chips also fall back to a software UART; other platforms do not.
-See the paragraphs below.
+Whenever possible, ESPHome will use a hardware UART for fast and accurate communication. On the ESP8266 and on
+RTL8710B chips, when no hardware UART is available, ESPHome will fall back to a software implementation that may not
+be accurate at higher baud rates.
 
 `UART0` is (by default) used by the [logger component](/components/logger/), using `tx_pin: GPIO1` and
 `rx_pin: GPIO3`. If you configure a UART that overlaps with these pins, you can share the hardware with the
