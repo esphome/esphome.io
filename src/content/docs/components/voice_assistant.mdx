@@ -45,6 +45,14 @@ voice_assistant:
 - **use_wake_word** (*Optional*, boolean): Enable wake word on the assist pipeline. Defaults to `false`.
 - **conversation_timeout** (*Optional*, [Time](/guides/configuration-types/#time)): How long to wait before resetting the `conversation_id`
   sent to the voice assist pipeline, which contains the context of the current assist pipeline. Defaults to `300s`.
+- **tts_playback_start_timeout** (*Optional*, [Time](/guides/configuration-types/#time)): How long to wait for the
+  media player to start playing the TTS response. Must be at least `1ms`. Defaults to `15s`.
+  Increase this if a slow TTS engine, such as XTTS, takes longer than that to start. If playback has not started in
+  time, the response is treated as finished and the follow-up turn Home Assistant asked for is skipped. Continuous
+  mode (`voice_assistant.start_continuous`) still starts listening again. A larger value only delays recovery when
+  the media player never starts. Once playback has started, the response ends when the media player stops playing
+  it. With a `speaker` this option has no effect: the response finishes 2 seconds after the speaker stops, unless a
+  stream-end event ends it first.
 
 - **on_intent_start** (*Optional*, [Automation](/automations)): An automation to perform when intent processing starts.
 - **on_intent_progress** (*Optional*, [Automation](/automations)): An automation to perform when intent progress happens.

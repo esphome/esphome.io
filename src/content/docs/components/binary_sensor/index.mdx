@@ -53,6 +53,10 @@ Automations:
 - **on_state** (*Optional*, [Automation](/automations)): An automation to perform
   when a state change is published. See [`on_state`](#binary_sensor-on_state).
 
+- **on_raw_value** (*Optional*, [Automation](/automations)): An automation to perform
+  every time a value is published, before any filters and including repeated values.
+  See [`on_raw_value`](#on_raw_value).
+
 - **on_click** (*Optional*, [Automation](/automations)): An automation to perform
   when the button is held down for a specified period of time.
   See [`on_click`](#binary_sensor-on_click).
@@ -298,6 +302,30 @@ binary_sensor:
     on_state:
       then:
         - switch.turn_off: relay_1
+```
+
+Configuration variables: See [Automation](/automations).
+
+### `on_raw_value`
+
+This automation is triggered every time a value is published, before any
+[filters](#binary-sensor-filters) are applied. Unlike `on_state`, it also runs when the
+published value is the same as the current state, so it can be used to track when a
+value was last received. The published value is given as the variable `x` as a boolean.
+It is not called when the state is invalidated.
+
+```yaml
+globals:
+  - id: door_last_seen
+    type: uint32_t
+
+binary_sensor:
+  - platform: packet_transport
+    id: remote_door
+    # ...
+    on_raw_value:
+      then:
+        - lambda: id(door_last_seen) = millis();
 ```
 
 Configuration variables: See [Automation](/automations).

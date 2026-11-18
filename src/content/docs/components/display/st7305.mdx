@@ -1,0 +1,138 @@
+---
+description: "Instructions for setting up ST7305 and ST7306 reflective monochrome LCD displays."
+title: "ST7305 Reflective LCD Display"
+---
+
+import Figure from '@components/Figure.astro';
+import APIRef from '@components/APIRef.astro';
+
+## Usage
+
+The `st7305` display platform drives reflective monochrome LCD panels based on the Sitronix
+ST7305 and ST7306 controllers over a 4-wire [SPI bus](/components/spi/). These panels are 1 bit
+per pixel, have no backlight and retain their image. The built-in `WAVESHARE-400X300` model
+describes the 4.2" panel on the Waveshare ESP32-S3-RLCD-4.2 (400x300 in landscape). Other
+panels can be described with the `CUSTOM` model.
+
+<Figure
+  src="/images/st7305.jpg"
+  alt=""
+  caption="Waveshare ESP32-S3-RLCD-4.2"
+  layout="constrained"
+  width={300}
+  height={225}
+/>
+
+The controller RAM is addressed in 12-pixel by 2-pixel blocks. A landscape panel packs 2x4
+pixels into each byte, while a portrait panel packs 4x2 pixels. The selected model's orientation
+sets the packing and the address window alignment.
+
+## Waveshare ESP32-S3-RLCD-4.2
+
+The `WAVESHARE-400X300` model also sets the board's fixed pins: CS on GPIO40, DC on GPIO5 and
+reset on GPIO41. Connect the SPI bus to the board's display connector and use the model.
+
+```yaml
+spi:
+  clk_pin: GPIO11
+  mosi_pin: GPIO12
+
+display:
+  - platform: st7305
+    model: WAVESHARE-400X300
+    lambda: |-
+      it.fill(Color::WHITE);
+      it.print(10, 10, id(my_font), Color::BLACK, "Hello");
+```
+
+## Custom Panels
+
+Use the `CUSTOM` model and supply the panel dimensions, packing orientation (`portrait`), address
+window and init sequence.
+
+```yaml
+display:
+  - platform: st7305
+    model: CUSTOM
+    width: 168
+    height: 384
+    portrait: true
+    column_start: 0x17
+    cs_pin: GPIOXX
+    dc_pin: GPIOXX
+    reset_pin: GPIOXX
+    init_sequence:
+      - [0x11]
+      - delay 200ms
+      - [0x29]
+    lambda: |-
+      it.print(0, 0, id(my_font), Color::BLACK, "Hello");
+```
+
+Each `init_sequence` entry is a `[command, data...]` list. Use `delay <time>` between entries
+where the controller needs time to settle. Supply every register write the panel requires; the
+driver programs the address window for each refresh from the window options.
+
+The panel's inner dimension must be a multiple of 12 so that the framebuffer's inner stride
+matches whole 12-pixel controller addresses: the height for landscape panels, the width for
+portrait panels. Landscape panels also require an even width, and portrait panels an even height.
+The address window must be large enough for the framebuffer: the number of addressed columns,
+rows and three bytes per address must cover `width * height / 8` bytes.
+
+## Configuration Variables
+
+- **model** (*Optional*, string): The panel model. One of `WAVESHARE-400X300` (default) or
+  `CUSTOM`.
+- **cs_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The chip
+  select pin. Required for `CUSTOM`; the `WAVESHARE-400X300` model supplies GPIO40.
+- **dc_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The data/command
+  pin. Required for `CUSTOM`; the `WAVESHARE-400X300` model supplies GPIO5.
+- **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The reset pin.
+  The `WAVESHARE-400X300` model supplies GPIO41. If no pin is configured, the driver uses a
+  software reset.
+- **data_rate** (*Optional*, frequency): The SPI clock rate. Defaults to `10MHz`.
+- **spi_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the
+  [SPI Component](/components/spi/) if there are multiple SPI buses.
+- **width** (*Optional*, int): The display width in pixels. Required for `CUSTOM`.
+- **height** (*Optional*, int): The display height in pixels. Required for `CUSTOM`.
+- **portrait** (*Optional*, boolean): Set to `true` for a panel that packs 4x2 pixels per byte
+  (portrait native orientation). Set to `false` for the 2x4 landscape layout. Required for
+  `CUSTOM`; the `WAVESHARE-400X300` model sets it to `false`.
+- **column_start** (*Optional*, int): The CASET start address. Defaults to the model value, or `0`
+  for `CUSTOM`.
+- **column_end** (*Optional*, int): The CASET end address. Defaults to the model value, or to a
+  value derived from the display dimensions for `CUSTOM`.
+- **row_start** (*Optional*, int): The RASET start address. Defaults to the model value, or `0` for
+  `CUSTOM`.
+- **row_end** (*Optional*, int): The RASET end address. Defaults to the model value, or to a value
+  derived from the display dimensions for `CUSTOM`.
+- **init_sequence** (*Optional*, list): The controller initialisation sequence. Required for
+  `CUSTOM`; may override a model's sequence.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code
+  generation.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval to
+  re-draw the screen. Defaults to `1s`.
+- **lambda** (*Optional*, [lambda](/automations/templates/#config-lambda)): The lambda to use for
+  rendering the content on the display.
+- **pages** (*Optional*, list): Show pages instead of a single lambda. See
+  [Display Pages](/components/display/#display-pages).
+- **auto_clear_enabled** (*Optional*, boolean): Whether the display should be cleared before each
+  update. Defaults to `true` if a lambda or pages are configured.
+- **show_test_card** (*Optional*, boolean): Show a test card. Defaults to `false`.
+- **rotation** (*Optional*, integer): Rotate the rendered content. One of `0` (default), `90`,
+  `180` or `270`.
+
+## Partial Updates
+
+The driver tracks the area that changed and writes only the matching address window. Drawing a
+pixel with the value it already has produces no SPI traffic. To keep updates small, set
+`auto_clear_enabled: false` and draw only the parts that change. With the default `auto_clear`
+behaviour the screen is cleared and redrawn each update, but the write is still limited to the
+area the content occupies.
+
+## See Also
+
+- [Display Component](/components/display/)
+- [Display Rendering Engine](/components/display/#display-engine)
+- [SPI Bus](/components/spi/)
+- <APIRef text="st7305.h" path="st7305/st7305.h" />

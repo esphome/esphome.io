@@ -45,3 +45,13 @@ display:
           auto y = (it.get_height() / 2) - (size / 2);
           it.qr_code(x, y, id(homepage_qr), Color(255,255,255), 2);
 ```
+
+A lambda can replace the encoded string at runtime with `set_value()`; the code is regenerated on the next draw.
+For example, to show the [Wi-Fi Easy Connect](/components/wifi/#wi-fi-easy-connect) URI:
+
+```yaml
+wifi:
+  dpp: {}
+  on_dpp_uri:
+    - lambda: id(homepage_qr).set_value(uri);
+```

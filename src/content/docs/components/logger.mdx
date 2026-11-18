@@ -49,6 +49,19 @@ Advanced settings:
    This prevents API disconnections when multiple threads attempt to log simultaneously.
    Set to `0` to disable the log buffer. Defaults to `768B`.
 
+- **boot_log_buffer_size** (*Optional*, int): The size of a buffer that keeps messages from the moment the logger
+   starts, so that [`logger.replay_boot_logs`](#logger-replay_boot_logs-action) can send them to a client that
+   connects later. Between `512B` and `16kB`, or `0` to disable. Defaults to `0`.
+
+- **boot_log_level** (*Optional*, string): The most verbose [log level](#log-levels) kept in the boot log buffer.
+   Only lines that pass the active log level and the per-tag `logs` levels reach the buffer, so it cannot be more
+   verbose than `level`, and an `initial_level` or `logger.set_level` more severe than it also limits what is kept.
+   Defaults to `WARN`.
+
+- **boot_logs** (*Optional*, mapping): Per-tag levels for the boot log buffer, in the same form as `logs`, for
+   example `wifi: DEBUG` to keep a component's debug lines without filling the buffer with everyone else's. A tag's
+   boot level cannot be more verbose than its `logs` level.
+
 - **hardware_uart** (*Optional*, string): The Hardware UART to use for logging. The default varies depending on
    the specific processor/chip and framework you are using. See the [table below](#default-hardware-interfaces).
 
@@ -251,6 +264,31 @@ on_...:
 > When using `logger.set_level` with a `tag` parameter, runtime per-tag log level support is automatically enabled.
 > If you need to call `set_log_level()` directly from a lambda or external component, you must manually enable
 > `runtime_tag_levels: true` in the logger configuration.
+
+## `logger.replay_boot_logs` Action
+
+Sends the messages captured during boot, `WARN` and above unless `boot_log_level` or `boot_logs` say otherwise, to
+every log listener, such as a connected API client. Set `boot_log_buffer_size` and call the action once a client can
+receive logs, for example from the API's
+[`on_client_connected` trigger](/components/api/#api-on_client_connected_trigger); the delay below gives a new API
+client time to subscribe to logs first:
+
+```yaml
+logger:
+  boot_log_buffer_size: 4kB
+
+api:
+  on_client_connected:
+    - delay: 2s
+    - logger.replay_boot_logs:
+```
+
+Each call sends the captured lines with the time since boot in front of each, such as `@64ms [W][wifi:123]: ...`, so
+listeners that are still attached see the lines again on the next call. A line is skipped when it no longer passes the
+log level in force at replay time, for example after `logger.set_level` set a more severe level. Capture stops at the
+first replay. Lines that did not fit are counted in the replay summary, which is logged as a warning when any were
+dropped; raise `boot_log_buffer_size` if that happens. This is the way to see why a device shows an error status before
+the network comes up on boards without a usable serial port.
 
 ## Logger Automation
 

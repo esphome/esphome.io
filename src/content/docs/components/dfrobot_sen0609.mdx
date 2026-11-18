@@ -1,0 +1,245 @@
+---
+title: "DFRobot SEN0609 mmWave Radar"
+description: "Instructions for setting up the DFRobot SEN0609 and SEN0610 (C4001) mmWave presence radars."
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `dfrobot_sen0609` component lets you use the DFRobot SEN0609 and SEN0610 24GHz mmWave radars (C4001 family)
+with ESPHome. The radar reports human presence and, in speed and distance mode, the distance, speed and signal energy
+of a moving target. The SEN0609 has a detection range of up to 25 m and the SEN0610 up to 12 m.
+
+The component talks to the module's text command line over UART, so set the module's communication switch to UART.
+A [UART](/components/uart/) is required, with both `tx_pin` and `rx_pin`, `baud_rate` set to `9600`, `parity` set to
+`NONE` and `stop_bits` set to `1`.
+
+```yaml
+uart:
+  tx_pin: GPIOXX
+  rx_pin: GPIOXX
+  baud_rate: 9600
+
+dfrobot_sen0609:
+
+binary_sensor:
+  - platform: dfrobot_sen0609
+    has_target:
+      name: Presence
+```
+
+## Hub Component
+
+At every boot the hub stops the sensor, writes the run mode, the UART output settings and the
+[LED switches](#switch), reads the versions when [text sensors](#text-sensor) are configured, reads the
+[settings](#settings) that have an entity configured, and starts the sensor again. The run mode, the UART output
+and the LEDs are applied each time instead of being saved on the module.
+
+The module ignores commands that arrive too quickly, so the hub sends one command at a time and retries a command
+that is rejected or not answered, up to three times. When the module does not answer at all, the component shows a
+warning status and tries again after 30 seconds.
+
+### Configuration Variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID for this component. Necessary
+  if you want to define multiple instances of this component.
+- **uart_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the [UART](/components/uart/) to use.
+  Required if you have multiple UARTs configured.
+- **model** (*Optional*, string): The radar model, which sets the largest value of the range
+  [numbers](#number). Defaults to `SEN0609`.
+
+  - `SEN0609`: Detection range up to 25 m.
+  - `SEN0610`: Detection range up to 12 m.
+
+- **mode** (*Optional*, string): The run mode of the radar. Defaults to `presence`.
+
+  - `presence`: The radar reports whether a person is present.
+  - `speed_and_distance`: The radar reports the distance, speed and energy of a moving target. Needed for the
+    [sensors](#sensor).
+
+## Binary Sensor
+
+```yaml
+binary_sensor:
+  - platform: dfrobot_sen0609
+    has_target:
+      name: Presence
+```
+
+### Configuration Variables
+
+- **dfrobot_sen0609_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the hub component. Required
+  if you have multiple hubs configured.
+- **has_target** (*Optional*): `true` when the radar detects a target. In `presence` mode this is a person being
+  present; in `speed_and_distance` mode it is a moving target. All options from
+  [Binary Sensor](/components/binary_sensor/).
+
+## Sensor
+
+The sensors need the hub `mode` to be `speed_and_distance`; configuration validation fails otherwise. When no target
+is detected, the sensors report an unknown state.
+
+```yaml
+dfrobot_sen0609:
+  mode: speed_and_distance
+
+sensor:
+  - platform: dfrobot_sen0609
+    target_distance:
+      name: Target Distance
+    target_speed:
+      name: Target Speed
+```
+
+### Configuration Variables
+
+- **dfrobot_sen0609_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the hub component. Required
+  if you have multiple hubs configured.
+- **target_distance** (*Optional*): The distance to the target in metres. All options from
+  [Sensor](/components/sensor/).
+- **target_speed** (*Optional*): The speed of the target in metres per second. All options from
+  [Sensor](/components/sensor/).
+- **target_energy** (*Optional*): The signal energy reflected by the target, without a unit. All options from
+  [Sensor](/components/sensor/).
+
+## Text Sensor
+
+The versions are read from the module at boot.
+
+```yaml
+text_sensor:
+  - platform: dfrobot_sen0609
+    version:
+      name: Software Version
+    hardware_version:
+      name: Hardware Version
+```
+
+### Configuration Variables
+
+- **dfrobot_sen0609_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the hub component. Required
+  if you have multiple hubs configured.
+- **version** (*Optional*): The software version of the module. All options from
+  [Text Sensor](/components/text_sensor/).
+- **hardware_version** (*Optional*): The hardware version of the module. All options from
+  [Text Sensor](/components/text_sensor/).
+
+## Settings
+
+The [number](#number), [switch](#switch) and [select](#select) entities change the settings of the module. The hub
+reads their values from the module at boot, so the entities show what the module holds. The `query_params`
+[button](#button) reads them again.
+
+Changing a setting stops the radar for a moment: the hub stops the sensor, writes the change, saves it to the module's
+flash and starts the sensor again. Changes made within a second of each other are saved together. If the module does
+not accept a change, a warning is logged and the entity shows the module's value again.
+
+The `run_led` and `out_led` switches are the exception: the module forgets them at power off, so they are not read
+from the module or saved to its flash. The hub writes them at boot from the switch's restored state. Changing an LED
+also stops and starts the sensor.
+
+Some settings are written in pairs with one command: `min_range` with `max_range`, `hold_sensitivity` with
+`trigger_sensitivity`, and `on_latency` with `off_latency`. When only one of a pair has an entity, the other value is
+read from the module and written back unchanged.
+
+## Number
+
+```yaml
+number:
+  - platform: dfrobot_sen0609
+    max_range:
+      name: Maximum Range
+    off_latency:
+      name: Off Latency
+```
+
+### Configuration Variables
+
+- **dfrobot_sen0609_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the hub component. Required
+  if you have multiple hubs configured.
+- **min_range** (*Optional*): The shortest distance at which a target is detected, from 0.6 m to the longest range of
+  the `model`. All options from [Number](/components/number/).
+- **max_range** (*Optional*): The longest distance at which a target is detected, from 0.6 m to the longest range of
+  the `model`. All options from [Number](/components/number/).
+- **trigger_range** (*Optional*): The distance within which a target must come to trigger presence, from 0.6 m to
+  the longest range of the `model`. Once triggered, presence is held up to `max_range`. Only in `presence` mode. All
+  options from [Number](/components/number/).
+- **hold_sensitivity** (*Optional*): The sensitivity, from 0 to 9, used to hold presence once it is triggered. Only
+  in `presence` mode. All options from [Number](/components/number/).
+- **trigger_sensitivity** (*Optional*): The sensitivity, from 0 to 9, used to trigger presence. Only in `presence`
+  mode. All options from [Number](/components/number/).
+- **on_latency** (*Optional*): The delay before presence is reported, from 0 to 2 seconds. Only in `presence` mode.
+  All options from [Number](/components/number/).
+- **off_latency** (*Optional*): How long presence is held after the target is gone, from 2 to 1500 seconds. Only in
+  `presence` mode. All options from [Number](/components/number/).
+- **inhibit_time** (*Optional*): How long detection is suppressed after presence ends, from 0.1 to 60 seconds. Only
+  in `presence` mode. All options from [Number](/components/number/).
+- **threshold_factor** (*Optional*): The detection threshold, from 0 to 65535. Higher values need a stronger
+  reflection to detect a target. Only in `speed_and_distance` mode. All options from [Number](/components/number/).
+
+Configuration validation fails when a number is used in a hub `mode` it does not support.
+
+## Switch
+
+```yaml
+switch:
+  - platform: dfrobot_sen0609
+    run_led:
+      name: Run LED
+```
+
+The module forgets the LED states at power off, so the hub writes them at every boot. The LED switches default to a
+`restore_mode` of `RESTORE_DEFAULT_ON`.
+
+### Configuration Variables
+
+- **dfrobot_sen0609_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the hub component. Required
+  if you have multiple hubs configured.
+- **micro_motion** (*Optional*): Detection of small movements. Only in `speed_and_distance` mode; configuration
+  validation fails otherwise. All options from [Switch](/components/switch/).
+- **run_led** (*Optional*): The module's run LED. All options from [Switch](/components/switch/).
+- **out_led** (*Optional*): The module's LED that lights while a target is detected. All options from
+  [Switch](/components/switch/).
+
+## Select
+
+```yaml
+select:
+  - platform: dfrobot_sen0609
+    out_pin_level:
+      name: Out Pin Level
+```
+
+### Configuration Variables
+
+- **dfrobot_sen0609_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the hub component. Required
+  if you have multiple hubs configured.
+- **out_pin_level** (*Optional*): The level of the module's OUT pin while a target is detected, `low` or `high`. All
+  options from [Select](/components/select/).
+
+## Button
+
+```yaml
+button:
+  - platform: dfrobot_sen0609
+    restart:
+      name: Restart
+```
+
+### Configuration Variables
+
+- **dfrobot_sen0609_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the hub component. Required
+  if you have multiple hubs configured.
+- **restart** (*Optional*): Reboots the module. The module does not answer this command, so the hub waits for it to
+  boot, then writes the run mode, the UART output settings and the LEDs and reads the settings again, as it does at
+  boot. All options from [Button](/components/button/).
+- **factory_reset** (*Optional*): Restores the module's factory settings, then writes the run mode, the UART output
+  settings and the LEDs and reads the settings again, so the [settings](#settings) entities show the factory values.
+  All options from [Button](/components/button/).
+- **query_params** (*Optional*): Reads the versions and the settings that have an entity configured from the module
+  again. Like a change, this stops the radar for a moment. All options from [Button](/components/button/).
+
+## See Also
+
+- [DFRobot mmWave Radar (SEN0395)](/components/dfrobot_sen0395/)
+- [UART](/components/uart/)
+- <APIRef text="dfrobot_sen0609.h" path="dfrobot_sen0609/dfrobot_sen0609.h" />
