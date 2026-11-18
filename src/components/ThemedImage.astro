@@ -56,17 +56,15 @@ const fallback = await getImage({ src: light, widths, format: "webp" });
 ---
 
 <picture>
-  {
-    sources.map((source) => (
-      <source
-        type={source.type}
-        srcset={source.srcset}
-        sizes={sizes}
-        media={source.scheme === "dark" ? "(prefers-color-scheme: dark)" : undefined}
-        data-theme-source={source.scheme}
-      />
-    ))
-  }
+  {sources.map((source) => (
+    <source
+      type={source.type}
+      srcset={source.srcset}
+      sizes={sizes}
+      media={source.scheme === "dark" ? "(prefers-color-scheme: dark)" : undefined}
+      data-theme-source={source.scheme}
+    />
+  ))}
   <img
     src={fallback.src}
     srcset={fallback.srcSet.attribute}

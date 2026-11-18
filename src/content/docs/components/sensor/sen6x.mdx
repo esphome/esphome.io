@@ -199,15 +199,39 @@ sensor:
 
   - All options from [Sensor](/components/sensor).
 
+- **temperature_compensation** (*Optional*): Corrects the reported ambient temperature for heat from the enclosure
+  or nearby components by applying an offset. Compensation slot 0 is used.
+
+  - **offset** (*Optional*, float): Temperature offset in °C. Allowed values are in range -163.84..163.835.
+    Defaults to `0`.
+  - **normalized_offset_slope** (*Optional*, float): Normalized temperature offset slope. Allowed values are in
+    range -3.2768..3.2767. Defaults to `0`.
+  - **time_constant** (*Optional*, int): Time constant in seconds. Allowed values are in range 0..65535.
+    Defaults to `0`.
+
+- **temperature_acceleration** (*Optional*): Parameters for the RH/T engine's temperature acceleration mode, from
+  Sensirion's [SEN6x Temperature Acceleration and Compensation](https://sensirion.com/media/documents/C964FCC8/69709EC3/PS_AN_SEN6x_Temperature_Compensation_and_Acceleration_Application_No.pdf)
+  application note.
+
+  All four accept values in range 0.1..6553.5.
+
+  - **k** (*Optional*, float): Filter constant K. Defaults to `20.0`.
+  - **p** (*Optional*, float): Filter constant P. Defaults to `20.0`.
+  - **t1** (*Optional*, float): Time constant T1 in seconds. Defaults to `100.0`.
+  - **t2** (*Optional*, float): Time constant T2 in seconds. Defaults to `300.0`.
+
+- **startup_delay** (*Optional*, [Time](/guides/configuration-types/#time)): Warm-up period after starting a
+  measurement during which values are discarded. Maximum 1 hour. Defaults to `60s`.
+
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor.
   Defaults to `0x6B`.
 
-- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the sensor.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval to check the sensor.
   Defaults to `60s`.
 
 > [!NOTE]
 > The sensor needs about a minute "warm-up". The VOC and NOx gas index algorithm needs a
-> number of samples before the values stabilize.
+> number of samples before the values stabilize. The warm-up period can be changed with `startup_delay`.
 
 ## Binary Sensor
 
@@ -252,9 +276,10 @@ detected model are ignored with an error in the log.
 ## Actions
 
 The measurement can be controlled and maintenance functions triggered from automations. On the SEN6x family,
-fan cleaning and the SHT heater only work while the measurement is stopped, and the device needs wait time
-after each command (1400 ms after stop, 10 s after fan cleaning, 20 s after the heater). Commands sent too
-early are ignored with a "Device busy" warning.
+fan cleaning, the SHT heater and the forced CO₂ recalibration only work while the measurement is stopped, and
+the device needs wait time after each command (1400 ms after stop, 10 s after fan cleaning, 20 s after the
+heater, and until a forced CO₂ recalibration's result has been read, about 500 ms). Commands sent too early are
+ignored with a "Device busy" warning.
 
 ### `sen6x.start_measurement` Action
 
@@ -288,6 +313,37 @@ button:
       - sen6x.start_measurement: my_sen6x
 ```
 
+### `sen6x.perform_forced_co2_recalibration` Action
+
+Recalibrates the CO₂ sensor to a known reference concentration (forced recalibration, FRC). Only available with
+SEN63C, SEN66 or SEN69C with the `co2` sensor configured, and only accepted in idle mode. Before triggering it,
+keep the sensor measuring for at least 3 minutes in air with a stable, known CO₂ concentration, such as clean
+outdoor air away from buildings and traffic, which is close to the
+[global background](https://gml.noaa.gov/ccgg/trends/global.html). The device keeps the correction across
+restarts. The applied correction is logged, and a recalibration the device rejects is logged as a warning.
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the sen6x sensor.
+- **value** (**Required**, float, [templatable](/automations/templates/)): The reference CO₂ concentration in
+  ppm, in range 0..40000, rounded to whole ppm. A lambda can return a sensor state directly. A value that is
+  out of range or not a number, such as the state of a sensor that has not reported yet, is rejected with a
+  warning and nothing is sent to the device.
+
+```yaml
+# Example: forced CO2 recalibration in fresh outdoor air
+button:
+  - platform: template
+    name: CO2 Recalibration
+    on_press:
+      - sen6x.stop_measurement: my_sen6x
+      - delay: 2s
+      - sen6x.perform_forced_co2_recalibration:
+          id: my_sen6x
+          # Global background, see https://gml.noaa.gov/ccgg/trends/global.html
+          value: 430
+      - delay: 1s
+      - sen6x.start_measurement: my_sen6x
+```
+
 ## Wiring
 
 The sensor has a JST GHR-06V-S 6 pin type connector, with a 1.25mm pitch. The cable needs this connector:
@@ -300,7 +356,7 @@ For better stability, the SDA and SCL lines require suitable pull-up resistors.
 
 ## See Also
 
-- [Sensor Filters](/components/sensor#sensor-filters)
+- [Sensor Filters](/components/sensor/#sensor-filters)
 - [Sen5x Series Environmental sensor](/components/sensor/sen5x/)
 - [Absolute Humidity](/components/sensor/absolute_humidity/)
 - [SDS011 Particulate Matter Sensor](/components/sensor/sds011/)

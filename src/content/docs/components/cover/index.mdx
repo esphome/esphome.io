@@ -34,7 +34,7 @@ Configuration variables:
 - **name** (*Optional*, string): The name for the cover. At least one of **id** and **name** must be specified.
 
 > [!NOTE]
-> If you have a [friendly_name](/components/esphome#configuration-variables) set for your device and
+> If you have a [friendly_name](/components/esphome/#configuration-variables) set for your device and
 > you want the cover to use that name, you can set `name: None`.
 
 - **device_class** (*Optional*, string): The device class for the
@@ -57,7 +57,7 @@ Advanced options:
   for a list of available options.
   Set to `""` to remove the default entity category.
 
-- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](/components/web_server#config-webserver-version-3-options).
+- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](/components/web_server/#config-webserver-version-3-options).
 
 MQTT options:
 
@@ -79,16 +79,17 @@ MQTT options:
 - **tilt_state_topic** (*Optional*, string): The topic to publish cover
   cover tilt state changes to. Not valid if `mqtt_json_state_payload` is set to `true`.
 
-- **tilt_command_topic** (*Optional*, string): The topic to receive
-  cover tilt commands on.
+- **tilt_command_topic** (*Optional*, string): The topic to receive cover tilt commands on. Accepts a tilt position from
+  0 to 100, or `STOP` to stop the tilt on covers that support it (for example a
+  [template cover](/components/cover/template/) with `stop_tilt_action`).
 
-- All other options from [MQTT Component](/components/mqtt#config-mqtt-component).
+- All other options from [MQTT Component](/components/mqtt/#config-mqtt-component).
 
 ## Actions
 
 ### `cover.open` Action
 
-This [action](/automations/actions#all-actions) opens the cover with the given ID when executed.
+This [action](/automations/actions/#all-actions) opens the cover with the given ID when executed.
 
 ```yaml
 on_...:
@@ -97,7 +98,7 @@ on_...:
 ```
 
 > [!NOTE]
-> This action can also be expressed in [lambdas](/automations/templates#config-lambda):
+> This action can also be expressed in [lambdas](/automations/templates/#config-lambda):
 >
 > ```cpp
 > auto call = id(cover_1).make_call();
@@ -107,7 +108,7 @@ on_...:
 
 ### `cover.close` Action
 
-This [action](/automations/actions#all-actions) closes the cover with the given ID when executed.
+This [action](/automations/actions/#all-actions) closes the cover with the given ID when executed.
 
 ```yaml
 on_...:
@@ -116,7 +117,7 @@ on_...:
 ```
 
 > [!NOTE]
-> This action can also be expressed in [lambdas](/automations/templates#config-lambda):
+> This action can also be expressed in [lambdas](/automations/templates/#config-lambda):
 >
 > ```cpp
 > auto call = id(cover_1).make_call();
@@ -126,7 +127,7 @@ on_...:
 
 ### `cover.stop` Action
 
-This [action](/automations/actions#all-actions) stops the cover with the given ID when executed.
+This [action](/automations/actions/#all-actions) stops the cover with the given ID when executed.
 
 ```yaml
 on_...:
@@ -135,7 +136,7 @@ on_...:
 ```
 
 > [!NOTE]
-> This action can also be expressed in [lambdas](/automations/templates#config-lambda):
+> This action can also be expressed in [lambdas](/automations/templates/#config-lambda):
 >
 > ```cpp
 > auto call = id(cover_1).make_call();
@@ -143,9 +144,29 @@ on_...:
 > call.perform();
 > ```
 
+### `cover.stop_tilt` Action
+
+This [action](/automations/actions/#all-actions) stops the tilt of the cover with the given ID when executed. It only
+has an effect on covers that support stopping the tilt.
+
+```yaml
+on_...:
+  then:
+    - cover.stop_tilt: cover_1
+```
+
+> [!NOTE]
+> This action can also be expressed in [lambdas](/automations/templates/#config-lambda):
+>
+> ```cpp
+> auto call = id(cover_1).make_call();
+> call.set_command_stop_tilt();
+> call.perform();
+> ```
+
 ### `cover.toggle` Action
 
-This [action](/automations/actions#all-actions) toggles the cover with the given ID when executed,
+This [action](/automations/actions/#all-actions) toggles the cover with the given ID when executed,
 cycling through the states close/stop/open/stop... This allows the cover to be controlled
 by a single push button.
 
@@ -156,7 +177,7 @@ on_...:
 ```
 
 > [!NOTE]
-> This action can also be expressed in [lambdas](/automations/templates#config-lambda):
+> This action can also be expressed in [lambdas](/automations/templates/#config-lambda):
 >
 > ```cpp
 > auto call = id(cover_1).make_call();
@@ -166,7 +187,7 @@ on_...:
 
 ### `cover.control` Action
 
-This [action](/automations/actions#all-actions) is a more generic version of the other cover actions and
+This [action](/automations/actions/#all-actions) is a more generic version of the other cover actions and
 allows all cover attributes to be set.
 
 ```yaml
@@ -180,8 +201,9 @@ on_...:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The cover to control.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The cover to control.
 - **stop** (*Optional*, boolean, [templatable](/automations/templates)): Whether to stop the cover.
+- **stop_tilt** (*Optional*, boolean, [templatable](/automations/templates/)): Whether to stop the cover tilt.
 - **state** (*Optional*, string, [templatable](/automations/templates)): The state to set the cover to - one of `OPEN` or `CLOSE`.
 - **position** (*Optional*, float, [templatable](/automations/templates)): The cover position to set.
 
@@ -191,7 +213,7 @@ Configuration variables:
 - **tilt** (*Optional*, float, [templatable](/automations/templates)): The tilt position to set. In range 0% - 100%.
 
 > [!NOTE]
-> This action can also be expressed in [lambdas](/automations/templates#config-lambda):
+> This action can also be expressed in [lambdas](/automations/templates/#config-lambda):
 >
 > ```cpp
 > auto call = id(cover_1).make_call();
@@ -204,7 +226,7 @@ Configuration variables:
 
 ### `cover.is_open` Condition
 
-This [condition](/automations/actions#all-conditions) checks if the cover with the given ID is fully open.
+This [condition](/automations/actions/#all-conditions) checks if the cover with the given ID is fully open.
 
 ```yaml
 on_...:
@@ -217,11 +239,11 @@ on_...:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The cover to check.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The cover to check.
 
 ### `cover.is_closed` Condition
 
-This [condition](/automations/actions#all-conditions) checks if the cover with the given ID is fully closed.
+This [condition](/automations/actions/#all-conditions) checks if the cover with the given ID is fully closed.
 
 ```yaml
 on_...:
@@ -234,7 +256,7 @@ on_...:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The cover to check.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The cover to check.
 
 ## Triggers
 
@@ -303,7 +325,7 @@ cover:
 
 ## Lambdas
 
-From [lambdas](/automations/templates#config-lambda), you can access the current state of the cover (note that these
+From [lambdas](/automations/templates/#config-lambda), you can access the current state of the cover (note that these
 fields are read-only, if you want to act on the cover, use the `make_call()` method as shown above).
 
 - `position`  : Retrieve the current position of the cover, as a value between `0.0` (closed) and `1.0` (open).
