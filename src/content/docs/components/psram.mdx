@@ -56,5 +56,5 @@ the datasheet for the module you are using to be sure.
   On boards that support 80MHz flash, set `esp32.flash_frequency: 80MHz` alongside `psram.speed: 80MHz`;
   setting only the PSRAM speed may leave it at 40MHz in the generated ESP-IDF configuration.
 - On the original ESP32 with revision-0 32-Mbit PSRAM, 80MHz PSRAM also occupies an SPI host for its clock. ESP-IDF
-  uses SPI3 (VSPI) by default, so peripherals assigned to SPI3 may fail to initialize. Use SPI2 (HSPI) if available,
-  software SPI, or retain 40MHz PSRAM when this host is needed.
+  uses SPI3 by default, so an [SPI](/components/spi/) bus assigned to `spi3` may fail to initialize. Keep SPI devices
+  on `spi2`, or keep the PSRAM at 40MHz if both hardware buses are needed.
