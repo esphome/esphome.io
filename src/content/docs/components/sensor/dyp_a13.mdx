@@ -50,10 +50,10 @@ Specify the `model` parameter (e.g., `model: A13NYTW`) to automatically configur
 - **blind_zone** (*Optional*, distance): Readings at or below this distance are reported as `unknown` (`NAN`). Defaults to the model's datasheet value (`25cm`) and can be overridden if needed.
 - **max_range** (*Optional*, distance): Readings above this distance are reported as `unknown` (`NAN`). Defaults to the model's datasheet value (`200cm`) and can be overridden if needed.
 - **trigger_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The GPIO pin used to trigger a reading in `CONTROLLED` mode. If omitted in `CONTROLLED` mode, the component triggers via the UART `tx_pin`.
-- **output_mode** (*Optional*, string): For `AUTO` mode sensors, determines the data processing algorithm. Requires `output_mode_pin` to be configured.
-  - `PROCESSED`: (Default when `output_mode_pin` is set) The sensor filters data for stability.
+- **filter_mode** (*Optional*, string): For `AUTO` mode sensors, determines the data filtering algorithm. Requires `filter_mode_pin` to be configured.
+  - `PROCESSED`: (Default when `filter_mode_pin` is set) The sensor filters data for stability.
   - `REALTIME`: The sensor outputs raw, faster updates.
-- **output_mode_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The GPIO pin connected to the sensor's mode selection pin (the sensor's RX pin) to switch between `PROCESSED` (HIGH) and `REALTIME` (LOW). If you only need RX on the UART bus, omit `tx_pin` from the `uart:` configuration and specify that GPIO here as `output_mode_pin`.
+- **filter_mode_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The GPIO pin connected to the sensor's mode selection pin (the sensor's RX pin) to switch between `PROCESSED` (HIGH) and `REALTIME` (LOW). If you only need RX on the UART bus, omit `tx_pin` from the `uart:` configuration and specify that GPIO here as `filter_mode_pin`.
 - **publish_mode** (*Optional*, string): **Only applies when mode is AUTO.**
   - `INTERVAL`: (Default) The sensor is polled according to `update_interval`, and the latest reading (or `unknown` if no reading arrived or the reading was out of range) is published. Recommended for Home Assistant to prevent flooding.
   - `IMMEDIATE`: Every frame received from the UART is immediately published (reporting `unknown` if the reading is within `blind_zone` or exceeds `max_range`).
