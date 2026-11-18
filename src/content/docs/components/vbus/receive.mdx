@@ -43,6 +43,35 @@ Interpretation, scaling, and valid identifiers depend on the command and control
 is signed, use `static_cast<int32_t>(value)` before applying its scale. Arguments are passed by value and remain
 available after a `delay` action. Multiple `on_datagram` automations can be configured.
 
+## Receive Diagnostics
+
+Set `rx_diagnostics: true` to count rejected P1 headers, P1 data frames and P2 datagrams:
+
+```yaml
+vbus:
+  id: solar_bus
+  uart_id: resol
+  rx_diagnostics: true
+
+sensor:
+  - platform: template
+    name: VBus Receive Errors
+    entity_category: diagnostic
+    accuracy_decimals: 0
+    state_class: total_increasing
+    lambda: return id(solar_bus).get_packet_error_count();
+    filters:
+      - delta: 0.5
+```
+
+The counter starts at zero after each restart. It includes checksum failures and P2 datagrams whose reserved septet
+bit is set. A datagram failing both checks counts once. The VBus checksum is an additive checksum, not a CRC.
+Noise, unsupported protocols and incomplete-message timeouts are not included. The counter does not change parsing,
+start transmissions or add polling. It only reports errors detected by this receiver.
+
+When enabled on any hub, this adds a 32-bit counter to each VBus hub in the build. Leaving it disabled everywhere
+adds no counter storage, and `get_packet_error_count()` is not available in lambdas.
+
 ## `custom` VBus Sensors
 
 Devices on a VBus are identified with a source address. There can be multiple devices on the same bus,
