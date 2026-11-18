@@ -109,9 +109,9 @@ Use [custom binary sensors](/components/vbus/receive/#custom-vbus-binary-sensors
 Keep the RX sensors above and use an [RX/TX interface](#hardware-connection). Reading a setting requires a transmitted
 request even when no value is changed. Receiving broadcasts alone still needs only the receiver.
 
-The generic transport requires documented addresses, commands and parameter IDs for the connected controller.
-It does not discover settings or create controller-specific controls. Use the advanced reference below for custom
-integration.
+Choose a controller with a settings profile in the table below and follow its model guide.
+The profile supplies protocol addresses, scaling, applicable options and write confirmation. Start with read-only
+settings scans, then enable explicit setting changes if required. Broadcast RX continues in both cases.
 
 ### Advanced Use
 
@@ -132,7 +132,9 @@ Open a model guide for the supported measurements and status fields.
 | [DeltaSol C](/components/vbus/deltasol_c/) | RX |
 | [DeltaSol CS2](/components/vbus/deltasol_cs2/) | RX |
 | [DeltaSol CS4](/components/vbus/deltasol_cs4/) | RX |
-| [DeltaSol CS Plus](/components/vbus/deltasol_cs_plus/) | RX |
+| [DeltaSol CS Plus](/components/vbus/deltasol_cs_plus/) | RX; [settings 1.11][cs-plus-settings] |
+
+[cs-plus-settings]: /components/vbus/deltasol_cs_plus/#basic-use
 
 The Dux H3214 uses the [BS 2009 decoder](/components/vbus/deltasol_bs_2009/); its pump 2 is unsupported.
 Citrin Solar CS 1.3 uses the [CS4 decoder](/components/vbus/deltasol_cs4/).
@@ -150,6 +152,10 @@ disable the UART
 
 - **uart_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the UART hub used to
   connect to the device.
+- **controller** (*Optional*, mapping): A [supported settings
+  profile](/components/vbus/deltasol_cs_plus/#deltasol-cs-plus-setting-snapshots).
+  Its protocol addresses are supplied automatically. This is equivalent to `transmit.transactions.controller`;
+  configure the profile in one location only.
 - **on_datagram** (*Optional*, [Automation](/automations/)): An automation to run when a valid VBus P2 datagram is
   received.
 
