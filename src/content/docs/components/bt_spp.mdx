@@ -1,0 +1,172 @@
+---
+description: "Instructions for using a Bluetooth Classic serial port (SPP) device as a UART in ESPHome"
+title: "Bluetooth SPP"
+---
+import APIRef from '@components/APIRef.astro';
+
+
+This component connects the ESP32 to a Bluetooth Classic device that offers the Serial Port Profile (SPP), and
+makes the connection available as a [UART bus](/components/uart/). Bytes received from the device can be read like
+UART data, and bytes written to the UART are sent to the device. Any component that has a `uart_id` option can use
+it, as can the [`uart.write`](/components/uart/#uartwrite-action) action and lambdas.
+
+Typical devices are Bluetooth OBD-II adapters (ELM327), serial Bluetooth modules such as the HC-05 and HC-06, and
+meters or scales with a Bluetooth serial port.
+
+The ESP32 is always the side that connects. It looks up the SPP channel of the device (an SDP query), connects, and
+connects again after `reconnect_interval` whenever the connection fails or drops.
+
+> [!IMPORTANT]
+> Bluetooth Classic is only available on the original ESP32. The ESP32-S3, ESP32-C3 and the other variants support
+> Bluetooth Low Energy only.
+>
+> This component uses the Bluetooth controller in Bluetooth Classic only mode, so it cannot be combined with
+> [ESP32 BLE](/components/esp32_ble/), the [ESP32 BLE Tracker](/components/esp32_ble_tracker/) or the
+> [Bluetooth Proxy](/components/bluetooth_proxy/) on the same device. Only one `bt_spp` connection can be configured.
+
+> [!NOTE]
+> While the connection is down, or while the send buffer is full, written bytes are dropped and a warning is logged.
+> Bytes that are not read before the receive buffer is full are dropped as well.
+
+```yaml
+# Example configuration entry
+bt_spp:
+  id: obd_adapter
+  mac_address: "8C:DE:52:CF:1C:4F"
+  pin: "1234"
+```
+
+## Pairing
+
+Most SPP devices ask for pairing before they accept a connection. The ESP32 pairs without user interaction:
+
+- **Legacy pairing** with a PIN code: set `pin`. Many devices use `1234` or `0000`; see the manual of your device.
+  Without `pin`, a PIN request is refused and a warning is logged.
+- **Secure Simple Pairing** in "Just Works" mode is accepted automatically.
+
+Pairing that needs a passkey to be entered or shown on a display is not supported. The pairing keys are stored in
+flash, so the device is paired only once.
+
+## Configuration Variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation. Use
+  this ID as `uart_id` in other components.
+- **mac_address** (**Required**, MAC Address): The Bluetooth address of the device to connect to. It is often printed
+  on the device or shown in the Bluetooth settings of a phone that is paired with it.
+- **pin** (*Optional*, string): The PIN code for legacy pairing, 1 to 16 characters.
+- **channel** (*Optional*, int): The RFCOMM channel of the SPP service, from `1` to `30`. When it is set, the SDP
+  query is skipped. By default the channel is looked up before the first connection and again after a failed one.
+- **name** (*Optional*, string): The Bluetooth name of the ESP32, which some devices show or store when pairing.
+  Defaults to the node name.
+- **enable_on_boot** (*Optional*, boolean): Whether to connect after boot. If `false`, the component waits for the
+  `bt_spp.connect` action. Defaults to `true`.
+- **reconnect_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The time between connection
+  attempts while the device is not connected, at least `1s`. A connection attempt that gets no answer is given up after
+  30 seconds. Defaults to `10s`.
+- **rx_buffer_size** (*Optional*, int): The size of the receive buffer in bytes, from `64` to `16384`. Defaults to
+  `512`.
+- **tx_buffer_size** (*Optional*, int): The size of the send buffer in bytes, from `32` to `4096`. A write that does
+  not fit is dropped as a whole. Defaults to `256`.
+- **baud_rate** (*Optional*, int): The baud rate reported to consuming components. The Bluetooth connection has no
+  baud rate; this only satisfies components that check it. Defaults to `9600`.
+- **data_bits** (*Optional*, int): The number of data bits reported to consuming components. Defaults to `8`.
+- **parity** (*Optional*): The parity reported to consuming components. One of `NONE`, `EVEN`, `ODD`. Defaults to
+  `NONE`.
+- **stop_bits** (*Optional*, int): The number of stop bits reported to consuming components. One of `1`, `2`.
+  Defaults to `1`.
+- **debug** (*Optional*): Log the sent and received bytes. The options are the same as for the
+  [UART debug option](/components/uart/#debugging).
+
+## Binary Sensor
+
+```yaml
+# Example configuration entry
+binary_sensor:
+  - platform: bt_spp
+    connected:
+      name: OBD Adapter Connected
+```
+
+### Configuration Variables
+
+- **bt_spp_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the Bluetooth SPP component.
+- **connected** (*Optional*): A binary sensor that reports whether the connection is open. All options from
+  [Binary Sensor](/components/binary_sensor/#config-binary_sensor) are supported.
+
+## Actions
+
+### `bt_spp.connect` Action
+
+Connects to the device now, and again whenever the connection drops. Use it after `enable_on_boot: false` or after
+`bt_spp.disconnect`.
+
+```yaml
+on_...:
+  - bt_spp.connect: obd_adapter
+```
+
+### `bt_spp.disconnect` Action
+
+Closes the connection and does not connect again until `bt_spp.connect` is called. This frees the device for
+another client, for example a phone app.
+
+```yaml
+on_...:
+  - bt_spp.disconnect: obd_adapter
+```
+
+## Conditions
+
+### `bt_spp.is_connected` Condition
+
+Checks whether the connection is open.
+
+```yaml
+on_...:
+  - if:
+      condition:
+        bt_spp.is_connected: obd_adapter
+      then:
+        - uart.write:
+            id: obd_adapter
+            data: "ATRV\r"
+```
+
+## Example: ELM327 OBD-II Adapter
+
+This sends a command to an ELM327 adapter every 10 seconds and logs the answer. The adapter ends each answer with
+the `>` prompt, which the debug option uses to split the log lines.
+
+```yaml
+bt_spp:
+  id: obd_adapter
+  mac_address: "8C:DE:52:CF:1C:4F"
+  pin: "1234"
+  debug:
+    direction: RX
+    dummy_receiver: true
+    after:
+      delimiter: ">"
+    sequence:
+      - lambda: UARTDebug::log_string(direction, bytes);
+
+interval:
+  - interval: 10s
+    then:
+      - if:
+          condition:
+            bt_spp.is_connected: obd_adapter
+          then:
+            - uart.write:
+                id: obd_adapter
+                data: "ATRV\r"
+```
+
+To use the answers, write a component or a lambda that reads from the UART, the same way as for an ELM327 adapter
+with a serial cable.
+
+## See Also
+
+- [UART Bus](/components/uart/)
+- [TCP UART](/components/tcp_uart/)
+- <APIRef text="bt_spp.h" path="bt_spp/bt_spp.h" />
