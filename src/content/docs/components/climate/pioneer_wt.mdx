@@ -9,14 +9,13 @@ These units are made by TCL and are also sold under other names, such as Parker 
 role of the Wi-Fi module and talks directly to the indoor unit, so the unit is controlled locally without a cloud
 service.
 
-The serial link runs at 115200 baud, 8N1. Each frame starts with the bytes `A5 01`. This is not the Tuya serial
-protocol, so the [Tuya Climate](/components/climate/tuya/) platform does not work with these units. It is also
-different from the serial protocol of other TCL units, which runs at 9600 baud.
+The serial link runs at 115200 baud, 8N1, and each frame starts with the bytes `A5 01`. It is different from the serial
+protocol of other TCL units, which runs at 9600 baud.
 
 The platform requires a [UART](/components/uart/) bus; the UART must use 115200 baud, 8N1, with both TX and RX.
 
 > [!NOTE]
-> Tested on one Pioneer WT series unit, with the original Wi-Fi module (a Tuya WBR3) running ESPHome and with an
+> Tested on one Pioneer WT series unit, with the original Wi-Fi module (a WBR3) running ESPHome and with an
 > ESP8266 wired to the same serial lines.
 
 ```yaml
@@ -79,7 +78,7 @@ There are two ways to connect ESPHome to the unit.
 
 ### Using the Original Module
 
-The original module contains a Tuya WBR3 (RTL8720CF), which ESPHome supports through the
+The original module contains a WBR3 (RTL8720CF), which ESPHome supports through the
 [RTL87xx](/components/libretiny/) platform. The WBR3 is connected to the unit on `PA14` (TX) and `PA13` (RX).
 Its log port is UART2, so the logger must stay on that port:
 
