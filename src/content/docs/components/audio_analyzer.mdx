@@ -1,11 +1,11 @@
 ---
-description: "Instructions for measuring the live power and frequency spectrum of an audio stream in ESPHome."
+description: "Instructions for measuring the live loudness and frequency spectrum of an audio stream in ESPHome."
 title: "Audio Analyzer"
 ---
 import APIRef from '@components/APIRef.astro';
 
-The `audio_analyzer` component measures the live power and frequency spectrum of an audio stream, about 30 times
-per second. Use it to drive audio visualizers, level meters or light effects that follow sound.
+The `audio_analyzer` component measures the live loudness (RMS level) and frequency spectrum of an audio stream,
+about 30 times per second. Use it to drive audio visualizers, level meters or light effects that follow sound.
 
 It can analyze two kinds of audio:
 
@@ -15,20 +15,23 @@ It can analyze two kinds of audio:
 
 Each analyzer gives:
 
-- **Power**: the loudness of the audio in dBFS, where `0 dB` is the loudest signal possible. It uses the same scale as
-  the RMS sensor of the [Sound Level](/components/sensor/sound_level/) sensor.
+- **RMS**: the loudness of the audio in dBFS, where `0 dB` is the loudest signal possible. It is the same
+  measurement as the RMS sensor of the [Sound Level](/components/sensor/sound_level/) sensor, and like it includes
+  any DC offset. For audio above 16 kHz sample rate it only covers the content below about 0.4 times the analysis
+  rate (6.4 kHz for 48 kHz audio), so audio with strong treble can read lower than Sound Level.
 - **12 frequency bands**: spaced evenly on a logarithmic scale between `min_frequency` and `max_frequency`, so each
-  band covers a similar musical interval. Band `0` is the lowest frequency.
+  band covers a similar musical interval. Band `0` is the lowest frequency. A DC offset never shows in the bands.
 
 Both are smoothed in dB with the `attack` and `release` times and also given as a level from `0` to `1`, mapped from
-`power_range` and `band_range`. Read them in
+`rms_range` and `band_range`. Read them in
 [lambdas](/automations/templates/#config-lambda) through the [getters](#lambda-calls), for example in an
 [addressable light effect](/components/light/#addressable-lambda-effect). The optional
 [sensor platform](#sensor-platform) publishes them at a low rate, for checking and tuning.
 
 Stereo audio is mixed down to mono, and audio above 16 kHz sample rate is filtered and reduced to at most 16 kHz
-before the analysis (48 kHz is analyzed at 16 kHz, 44.1 kHz at 14.7 kHz). Each analysis block is 512 samples, about
-32 ms at 16 kHz.
+before the analysis (48 kHz is analyzed at 16 kHz, 44.1 kHz at 14.7 kHz). The filter keeps the bands at the same
+level as for 16 kHz audio (within 0.1 dB), and higher sounds that would fold into the analyzed range are reduced by
+more than 45 dB. Each analysis block is 512 samples, about 32 ms at 16 kHz.
 
 This component only works on ESP32 based chips.
 
@@ -83,49 +86,53 @@ on_...:
 
 These options are shared by the `audio_analyzer` component and the speaker platform.
 
-- **min_frequency** (*Optional*, frequency): The lower edge of band `0`. Must be between `20Hz` and `6000Hz`.
+- **min_frequency** (*Optional*, frequency): The lower edge of band `0`. Must be between `20Hz` and `4000Hz`.
   Defaults to `100Hz`.
-- **max_frequency** (*Optional*, frequency): The upper edge of band `11`. Must be between `100Hz` and `6400Hz`, and
-  above `min_frequency`. Defaults to `4000Hz`. It can be at most 0.4 times the analysis rate: `6400Hz` at 16 kHz,
-  `5880Hz` for 44.1 kHz audio and `3200Hz` for 8 kHz audio. When the sample rate is known from the configuration, a
-  higher value is an error. When a stream with a lower rate arrives at run time, the bands are shrunk to fit and a
-  warning is logged.
+- **max_frequency** (*Optional*, frequency): The upper edge of band `11`. Must be between `100Hz` and `4800Hz`, and
+  above `min_frequency`. Defaults to `4000Hz`. It can be at most 0.3 times the analysis rate: `4800Hz` at 16 kHz
+  (16, 32 and 48 kHz audio), `4410Hz` for 44.1 kHz audio, `3600Hz` for 24 kHz audio and `2400Hz` for 8 kHz audio.
+  When the sample rate is known from the configuration, a higher value is an error. When a stream with a lower rate
+  arrives at run time, the bands are lowered to fit and a warning is logged.
 
-  The bands get narrower towards low frequencies. The lowest band must be at least 31.25 Hz wide (the analysis
-  resolution), so a narrow range with a low `min_frequency` is rejected: for example, `20Hz` to `200Hz` is too
-  narrow.
-- **power_range** (*Optional*): The power, in dBFS, that maps to the `0` to `1` power level.
+  The analysis has a resolution of 31.25 Hz at 16 kHz, and every band is at least 2 steps (62.5 Hz) wide. Where the
+  logarithmic spacing would give narrower bands, at the low end, those bands are 2 steps wide instead. So the range
+  must be wide enough for 12 bands of 62.5 Hz: for example, `20Hz` to `200Hz` is rejected. A tone near the edge of a
+  band also shows in the neighbouring band, about 8 dB lower, and a tone right on the edge is split between both.
+- **rms_range** (*Optional*): The RMS level, in dBFS, that maps to the `0` to `1` RMS level.
 
-  - **min_db** (*Optional*, float): The power that gives level `0`. Defaults to `-70`.
-  - **max_db** (*Optional*, float): The power that gives level `1`. Defaults to `-20`.
+  - **min_db** (*Optional*, float): The RMS level that gives level `0`. Between `-100` and `0`. Defaults to `-70`.
+  - **max_db** (*Optional*, float): The RMS level that gives level `1`. Between `-100` and `0`. Defaults to `-20`.
 
 - **band_range** (*Optional*): The band power, in dBFS, that maps to the `0` to `1` band levels.
 
-  - **min_db** (*Optional*, float): The band power that gives level `0`. Defaults to `-80`.
-  - **max_db** (*Optional*, float): The band power that gives level `1`. Defaults to `-30`.
+  - **min_db** (*Optional*, float): The band power that gives level `0`. Between `-100` and `0`. Defaults to `-80`.
+  - **max_db** (*Optional*, float): The band power that gives level `1`. Between `-100` and `0`. Defaults to `-30`.
 
-- **attack** (*Optional*, [Time](/guides/configuration-types/#time)): How fast the outputs follow rising audio. `0ms`
-  disables smoothing. Defaults to `30ms`.
+- **attack** (*Optional*, [Time](/guides/configuration-types/#time)): How fast the outputs follow rising audio: the
+  time to cover 63% of a step up. `0ms` disables smoothing. Defaults to `30ms`.
 - **release** (*Optional*, [Time](/guides/configuration-types/#time)): How fast the outputs follow falling audio and
-  fade out after the audio stops. `0ms` disables smoothing. Defaults to `250ms`.
+  fade out after the audio stops: the time to cover 63% of a step down. `0ms` disables smoothing. Defaults to
+  `250ms`.
 
 ## Speaker Platform
 
 The `audio_analyzer` speaker platform passes all audio unchanged to another speaker and analyzes it on the way. Place
 it in front of the speaker you want to analyze, for example between a
 [media player](/components/media_player/speaker/) pipeline and a [mixer](/components/speaker/mixer/) or
-[resampler](/components/speaker/resampler/) speaker.
+[resampler](/components/speaker/resampler/) speaker. It reports the same running and stopped states as the output
+speaker, so a media player sees no difference: for example, an announcement ends when the output speaker has played
+it.
 
 Audio sent to a speaker is usually played a few hundred milliseconds later, after the buffers of the speakers that
 follow. The analyzer counts the audio written to the output speaker that has not been played yet, and only analyzes
 audio once the output speaker reports that it was played, so the values match what you hear.
 
 The analysis is taken **before the volume**: the values do not change with the volume, only with the audio itself.
-While the speaker is muted, or its volume is `0`, it analyzes silence and the values fade to `-100 dB`.
+While the output speaker is muted, or its volume is `0`, it analyzes silence and the values fade to `-100 dB`.
 
-The audio keeps its format, so the analyzer takes the format and limits of its output speaker. Components that write
-to it, such as a media player, are checked against what the output speaker accepts. As for any inherited setting,
-define the analyzer before the components that use it in your configuration.
+The audio keeps its format, so you set the format of the audio sent to the analyzer (`bits_per_sample`,
+`num_channels`, `sample_rate`). The output speaker must accept it, and components that write to the analyzer, such as
+a media player, are checked against it.
 
 If the analysis falls far behind (the main loop was blocked), it skips ahead to the most recent audio instead of
 catching up.
@@ -136,36 +143,43 @@ speaker:
   - platform: audio_analyzer
     id: speaker_analyzer
     output_speaker: output_speaker_id
+    bits_per_sample: 16
+    num_channels: 1
+    sample_rate: 48000
 ```
 
 ### Configuration Variables
 
 - **output_speaker** (**Required**, [ID](/guides/configuration-types/#id)): The [speaker](/components/speaker/) that
   plays the audio.
+- **bits_per_sample** (**Required**, int): The bits per sample of the audio sent to the analyzer, between `8` and
+  `32`. Media players send `16`.
+- **num_channels** (**Required**, int): The number of channels of the audio sent to the analyzer, `1` or `2`.
+- **sample_rate** (**Required**, int): The sample rate of the audio sent to the analyzer, between `8000` and `48000`.
 - **buffer_duration** (*Optional*, [Time](/guides/configuration-types/#time)): The duration of the buffer holding
   audio until it is played. It must cover how far the audio runs ahead of what is heard. Must be between `100ms` and
   `5000ms`. Defaults to `1000ms`. The buffer holds mono 16-bit audio at 16 kHz whatever the input format, so it uses
-  32 KB per second (PSRAM when available), allocated once at boot. If it fills up, a warning is logged and the
-  analysis restarts from the newest audio.
+  32 KB per second (PSRAM when available), allocated once at boot. If it fills up, the analysis restarts from the
+  newest audio and the analyzer shows a warning status, with a log line giving how much audio the output holds. The
+  warning clears once the analysis works again; if it stays, raise `buffer_duration`.
 - All the [analysis options](#analysis-options).
 
-The format options (`bits_per_sample`, `num_channels`, `sample_rate`) and `audio_dac` are not accepted: set them on the
-output speaker.
+`audio_dac` is not accepted: set it on the output speaker.
 
 ## Sensor Platform
 
-The `audio_analyzer` sensor platform publishes an analyzer's power and bands in dBFS every `update_interval`. Each
-sensor publishes the highest value since its previous update, so short sounds are not missed at a low rate. When
-nothing was analyzed since the previous update (microphone stopped, nothing playing), the sensors become unknown, like
-the [Sound Level](/components/sensor/sound_level/) sensor. For animations, read the values in lambdas instead.
+The `audio_analyzer` sensor platform publishes an analyzer's RMS level and bands in dBFS every `update_interval`. Each
+sensor publishes the highest value since its previous update, so short sounds are not missed at a low rate. When the
+analyzer stopped receiving audio (microphone stopped, nothing playing), the sensors become unknown, like the
+[Sound Level](/components/sensor/sound_level/) sensor. For animations, read the values in lambdas instead.
 
 ```yaml
 # Example configuration entry
 sensor:
   - platform: audio_analyzer
     audio_analyzer_id: mic_analyzer
-    power:
-      name: "Microphone power"
+    rms:
+      name: "Microphone RMS"
     bands:
       - band: 0
         name: "Microphone bass"
@@ -179,7 +193,7 @@ sensor:
   or speaker. Can be left out when there is only one analyzer.
 - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often the sensors publish. The
   analysis itself always runs on every block of audio. Defaults to `1s`.
-- **power** (*Optional*): A sensor for the power, in dBFS.
+- **rms** (*Optional*): A sensor for the RMS level, in dBFS.
 
   - All options from [Sensor](/components/sensor/).
 
@@ -188,14 +202,14 @@ sensor:
   - **band** (**Required**, int): The band number, from `0` (lowest frequency) to `11`. Each band can have one sensor.
   - All options from [Sensor](/components/sensor/).
 
-At least one of `power` and `bands` is required.
+At least one of `rms` and `bands` is required.
 
 ## Lambda Calls
 
 From [lambdas](/automations/templates/#config-lambda), you can read the latest values of an analyzer:
 
-- `get_power_db()`: The power in dBFS, `-100` when silent.
-- `get_power_level()`: The power level from `0` to `1`, using `power_range`.
+- `get_rms_db()`: The RMS level in dBFS, `-100` when silent.
+- `get_rms_level()`: The RMS level from `0` to `1`, using `rms_range`.
 - `get_band_db(band)`: The power of a band in dBFS, `-100` when silent.
 - `get_band_level(band)`: The level of a band from `0` to `1`, using `band_range`.
 - `get_num_bands()`: The number of bands, `12`.
@@ -214,7 +228,7 @@ light:
           name: "Sound meter"
           update_interval: 30ms
           lambda: |-
-            const int lit = id(mic_analyzer).get_power_level() * it.size();
+            const int lit = id(mic_analyzer).get_rms_level() * it.size();
             for (int i = 0; i < it.size(); i++) {
               it[i] = i < lit ? current_color : Color::BLACK;
             }
@@ -233,9 +247,9 @@ light:
 - Each analyzer uses about 4.2 KB of RAM for the analysis. The constant tables (1 KB) are in flash.
 - The microphone analyzer adds a 120 ms buffer: 3.8 KB for 16 kHz audio.
 - The speaker platform adds its `buffer_duration` buffer: 32 KB per second.
-- One analysis block runs a 512-point FFT about 31 times per second on the main loop, roughly 1% of one core at
-  240 MHz. The speaker platform also filters and reduces audio above 16 kHz on the task that plays it, about as much
-  again for 48 kHz audio.
+- CPU, measured on an ESP32-S3 at 240 MHz: one analysis block (512-point FFT and bands) takes about 0.7 ms every
+  32 ms on the main loop, about 2% of one core per analyzer. For audio above 16 kHz, the speaker platform also
+  filters and reduces the audio on the task that plays it: about 3.5% of one core for 48 kHz audio.
 
 ## See Also
 
