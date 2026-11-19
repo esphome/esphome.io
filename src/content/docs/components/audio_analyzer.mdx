@@ -95,7 +95,8 @@ on_...:
 These options are shared by the `audio_analyzer` component and the speaker platform.
 
 - **min_frequency** (*Optional*, frequency): The lower edge of band `0`. Must be between `20Hz` and `4000Hz`.
-  Defaults to `100Hz`.
+  Defaults to `100Hz`. Band `0` starts at the third analysis step at the lowest (about 47 Hz at 16 kHz, 23 Hz at
+  8 kHz), so a DC offset stays out of the bands; a lower `min_frequency` starts there.
 - **max_frequency** (*Optional*, frequency): The upper edge of band `11`. Must be between `100Hz` and `4800Hz`, and
   above `min_frequency`. It can be at most 0.3 times the analysis rate: `4800Hz` at 16 kHz (16, 32 and 48 kHz audio),
   `4410Hz` for 44.1 kHz audio, `3600Hz` for 24 kHz audio and `2400Hz` for 8 kHz audio; a higher value is an error.
@@ -104,7 +105,8 @@ These options are shared by the `audio_analyzer` component and the speaker platf
   The analysis has a resolution of 31.25 Hz at 16 kHz (the analysis rate divided by 512), and every band is at least
   2 steps (62.5 Hz) wide. Where the
   logarithmic spacing would give narrower bands, at the low end, those bands are 2 steps wide instead. So the range
-  must be wide enough for 12 bands of 62.5 Hz: for example, `20Hz` to `200Hz` is rejected. A tone near the edge of a
+  must be wide enough for 12 bands of 62.5 Hz: for example, `20Hz` to `200Hz` is rejected. The configuration log shows
+the band edges actually used. A tone near the edge of a
   band also shows in the neighbouring band, about 8 dB lower, and a tone right on the edge is split between both.
 - **rms_range** (*Optional*): The RMS level, in dBFS, that maps to the `0` to `1` RMS level.
 
@@ -128,13 +130,16 @@ The `audio_analyzer` speaker platform passes all audio unchanged to another spea
 it in front of the speaker you want to analyze, for example between a
 [media player](/components/media_player/speaker/) pipeline and a [mixer](/components/speaker/mixer/) or
 [resampler](/components/speaker/resampler/) speaker. Once the output speaker started, the analyzer follows its
-running and stopped states: for example, an announcement ends when the output speaker has played it.
+running and stopped states: for example, an announcement ends when the output speaker has played it. If the output
+speaker does not start within a second (for example it refused the audio format), the analyzer stops too and logs a
+warning.
 
 Audio sent to a speaker is usually played a few hundred milliseconds later, after the buffers of the speakers that
 follow. The analyzer counts the audio written to the output speaker that has not been played yet, and only analyzes
 audio once the output speaker reports that it was played, so the values match what you hear. The output speaker must
 report the audio it played: the I2S, mixer, resampler, router and USB audio speakers do. If it does not, a warning is
-logged and nothing is analyzed.
+logged and nothing is analyzed. This is also why `buffer_duration` must cover the buffering of the speakers that
+follow.
 
 The analysis is taken **before the volume**: the values do not change with the volume, only with the audio itself.
 While the output speaker is muted, or its volume is `0`, it analyzes silence and the values fade to `-100 dB`.
@@ -166,10 +171,12 @@ speaker:
   `32`. Media players send `16`.
 - **num_channels** (**Required**, int): The number of channels of the audio sent to the analyzer, `1` or `2`.
 - **sample_rate** (**Required**, int): The sample rate of the audio sent to the analyzer, between `8000` and `48000`.
-- **buffer_duration** (*Optional*, [Time](/guides/configuration-types/#time)): The duration of the buffer holding
-  audio until it is played. It must cover how far the audio runs ahead of what is heard. Must be between `100ms` and
-  `5000ms`. Defaults to the sum of the `buffer_duration` of the speakers that follow (for example a resampler, a mixer
-  and an I2S speaker), plus 250 ms. The buffer holds mono 16-bit audio at the analysis rate, so it uses 32 KB per
+- **buffer_duration** (*Optional*, [Time](/guides/configuration-types/#time)): The duration of the analysis buffer.
+  It holds a copy of the audio until it is played, not audio waiting to play, so it adds no delay. It must cover how
+  far the audio runs ahead of what is heard. Must be between `100ms` and `5000ms`. Defaults to the sum of the
+  `buffer_duration` of the speakers that follow (for example a resampler, a mixer and an I2S speaker), plus 250 ms.
+  A value shorter than that sum is an error. With a [router](/components/speaker/router/) after the analyzer, set it
+  yourself: see [Known limitations](#known-limitations). The buffer holds mono 16-bit audio at the analysis rate, so it uses 32 KB per
   second for 16 kHz and 48 kHz audio, allocated once at boot (in PSRAM when available, otherwise in internal RAM,
   where tens of KB matter: set a shorter duration on boards without PSRAM if the default is too large). If it fills
   up, the analysis restarts from the newest audio and the analyzer shows a warning status, with a log line giving how
@@ -178,6 +185,15 @@ speaker:
 - All the [analysis options](#analysis-options).
 
 `audio_dac` is not accepted: set it on the output speaker.
+
+### Known limitations
+
+- The default `buffer_duration` only counts the speakers it can follow from `output_speaker`. It stops at a
+  [router](/components/speaker/router/), which has several outputs, and at a speaker without `buffer_duration`, such
+  as a USB audio speaker. With one of those after the analyzer, the default is too short: the values never move and
+  the "Analysis buffer full" warning stays. Set `buffer_duration` to the buffering of all the speakers after the
+  analyzer plus about 250 ms, for example `750ms` in front of a router to I2S speakers with their default `500ms`.
+- The first moment of each new stream (about one block of audio written to the speaker) is played but not analyzed.
 
 ## Sensor Platform
 
