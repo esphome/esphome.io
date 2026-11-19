@@ -52,6 +52,9 @@ microphone_http_stream:
 - `GET /audio/microphones/{stream_id}` streams the selected microphone. If every configured client slot is in use,
   another request receives HTTP `409`.
 
+Audio streaming requires a web server configured for HTTP. With HTTPS enabled, the stream endpoint returns HTTP `501`
+because streaming responses are not supported over HTTPS. The metadata endpoint remains available over HTTPS.
+
 Both endpoints apply the web server's `allowed_origins` policy to requests with an `Origin` header. Requests without
 an `Origin` header, such as those from native HTTP clients, remain allowed. Origin checks do not replace authentication.
 
