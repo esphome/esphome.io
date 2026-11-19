@@ -83,7 +83,7 @@ openthread:
   limits.
 - **poll_period** (*Optional*, [Time](/guides/configuration-types/#time)): When set on an MTD device, the parent
   router enqueues any messages and waits for the child to submit a poll data request.
-  The maximum is 7200 seconds (2 hours).
+  The maximum is 7200 seconds (2 hours); a larger value is limited to it with a warning.
 - **core_options** (*Optional*, mapping): OpenThread compile-time options to set. See
   [OpenThread Core Options](#openthread-core-options-esp32).
 
@@ -152,9 +152,9 @@ calculated from `poll_period` and are recalculated whenever the poll period chan
 - **Child Supervision Interval** - A configured interval that the parent uses to ensure at least one message
   is sent to SED. Set to the larger of 129 seconds or 2 * `poll_period` - 10 in seconds.
 
-Because these values are set at run time, an MTD cannot set `OPENTHREAD_CONFIG_MLE_CHILD_TIMEOUT_DEFAULT`,
-`OPENTHREAD_CONFIG_CHILD_SUPERVISION_CHECK_TIMEOUT` or `OPENTHREAD_CONFIG_CHILD_SUPERVISION_INTERVAL` in
-`core_options`.
+Because these values are set at run time, an MTD ignores `OPENTHREAD_CONFIG_MLE_CHILD_TIMEOUT_DEFAULT`,
+`OPENTHREAD_CONFIG_CHILD_SUPERVISION_CHECK_TIMEOUT` and `OPENTHREAD_CONFIG_CHILD_SUPERVISION_INTERVAL` in
+`core_options` with a warning. From 2027.6.0 they are rejected.
 
 ### Public API
 
