@@ -1,0 +1,49 @@
+---
+title: "RH Correction Filter"
+description: "Recompute relative humidity after a temperature offset"
+---
+### RH Correction Filter
+
+
+Recompute a relative humidity reading for a corrected temperature.
+
+Sensors such as the DHT or BME families are often mounted in an enclosure with other electronics and read
+a few degrees warm. The temperature can be fixed with an [offset](/components/sensor/filter/offset/) filter,
+but relative humidity depends on the temperature it was measured at, so the humidity error is not a constant.
+This filter uses the [Magnus formula](https://en.wikipedia.org/wiki/Dew_point) to rescale the humidity to
+the corrected temperature, assuming the vapor pressure is the same inside and outside the enclosure.
+
+Configuration variables:
+
+- **sensor_id** (**Required**, [ID](/guides/configuration-types/#id)): The temperature sensor that already
+  carries the same offset, so its state is the corrected temperature. Pointing it at the raw temperature gives
+  a wrong humidity without any warning.
+- **temperature_offset** (**Required**, float, [templatable](/automations/templates/#config-templatable)):
+  The offset that was applied to the temperature sensor, in the sensor's unit.
+- **use_fahrenheit** (*Optional*, boolean): Set to `true` when the temperature sensor reports °F.
+  Defaults to `false`.
+
+In this example a DHT sensor reads 6 °C high because of the heat dissipated inside its enclosure.
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: dht
+    pin: GPIOXX
+    temperature:
+      id: t_sensor
+      name: Temperature
+      filters:
+        - offset: -6
+    humidity:
+      name: Humidity
+      filters:
+        - rh_correction:
+            sensor_id: t_sensor
+            temperature_offset: -6
+```
+
+Until the temperature sensor has published its first value, or while the measured or corrected temperature is
+outside -40 to 50 °C (-40 to 122 °F), the humidity passes through uncorrected and a warning is logged once. When
+the temperature sensor publishes `NaN`, or the offset evaluates to `NaN`, the update is dropped with a one-time
+warning and the last corrected value stays.
