@@ -1,0 +1,341 @@
+---
+description: "Instructions for integrating Hoval TopTronic devices into ESPHome."
+title: "TopTronic"
+---
+
+import Figure from '@components/Figure.astro';
+import APIRef from '@components/APIRef.astro';
+
+The `toptronic` component allows you to integrate Hoval TopTronic devices into ESPHome. It
+communicates with the devices over a CAN bus and auto-generates all
+entities from the presets bundled with the component.
+
+<Figure
+  src="/images/toptronic.jpg"
+  width={374}
+  height={217}
+  alt="Hoval TopTronic thermostat and heating control device interface"
+  layout="constrained"
+/>
+
+Supported device types:
+
+| Device type | Description | Default address | Preset entities |
+| --- | --- | --- | --- |
+| `WEZ` | Heat generator | 1 | 58 |
+| `SOL` | Solar module | 16 | 65 |
+| `PS` | Buffer storage tank | 15 | 8 |
+| `FW` | District heating | 1 | 312 |
+| `HK` | Heating circuit | 9 | 81 |
+| `MWA` | Energy meter module | 13 | 176 |
+| `GLT` | Building management system (BMS) | 12 | 14 |
+| `HV` | HomeVent ventilation unit | 8 | 18 |
+| `BM` | Control module (display) | 8 | 1 |
+| `GW` | Gateway (Modbus/KNX) | — | 5 |
+
+## Component Configuration
+
+The `toptronic` hub is configured once per device (device type and bus address). You can
+declare multiple hubs to talk to several devices (e.g. `HV`, `BM` and `WEZ`) on the same bus.
+
+> [!IMPORTANT]
+> A working [CAN bus](/components/canbus/) component is mandatory. The bus must run at
+> **50 kbps**.
+
+```yaml
+# Example configuration entry
+toptronic:
+  - device_type: HV
+    device_addr: 8
+```
+
+### Configuration Variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for
+  code generation. Set it when entities need to name this hub with `toptronic_id`.
+- **canbus_id** (*Optional*, [ID](/guides/configuration-types#id)): The id of the CAN bus the
+  devices are connected to. Only needed when more than one CAN bus is configured. The bus must
+  run at **50 kbps**.
+- **device_type** (**Required**, string): One of the device types listed in the table above.
+  `BD` is accepted as another name for `BM`, but the presets only exist under `BM`, so use `BM`.
+- **device_addr** (**Required**, int): The bus address of the device, `0` to `63`. Typical
+  defaults are shown in the table above; the address is shown on the room control unit.
+- **language** (*Optional*, string): The preset language, one of `de`, `en`, `fr` or `it`.
+  Defaults to `en`. If a device type has no presets in the requested language, English is
+  used and a warning is logged.
+- **boot_refresh_delay** (*Optional*, [Time](/guides/configuration-types#time)): Delay before a
+  single full refresh after boot, so the entities show real values without waiting for their
+  first poll. The refresh covers every hub and runs once, when the first hub's delay ends.
+  Defaults to `30s`. Set to `0` to disable it for this hub.
+- **max_pending_messages** (*Optional*, int): Number of multi-frame messages from this device
+  that can be put back together at the same time. Each one reserves
+  `max_frames_per_message × 7` bytes of RAM, and the build reserves room for the largest value
+  of any hub. Range `1` to `16`, defaults to `2`.
+- **max_pending_age** (*Optional*, [Time](/guides/configuration-types#time)): A pending message
+  without a continuation frame for this long is considered lost. Defaults to `5000ms`.
+- **max_frames_per_message** (*Optional*, int): Maximum total frames a start frame may claim;
+  larger counts are rejected as corrupted headers. Range `3` to `31`, defaults to `8`.
+- **refresh_interval** (*Optional*, [Time](/guides/configuration-types#time)): Minimum spacing
+  between two GET requests during a full refresh, so the bus is not saturated by one burst. The
+  main loop ticks about every 16 ms, so values below `16ms` are clamped to `16ms`. Defaults to
+  `50ms`.
+- **max_refresh_retries** (*Optional*, int): Re-sends of an unanswered GET during a refresh
+  burst; `0` disables retries. Range `0` to `10`, defaults to `1`.
+- **refresh_retry_interval** (*Optional*, [Time](/guides/configuration-types#time)): Delay
+  before an unanswered GET in a burst is re-sent. Defaults to `200ms`.
+- **write_min_interval** (*Optional*, [Time](/guides/configuration-types#time)): Minimum delay
+  between two SET requests for the same datapoint, so a fast sequence of Home Assistant
+  actions cannot flood the boiler. It applies to numbers, selects and buttons. Defaults to
+  `2s`. Set to `0` to disable.
+- **reject_writes_before_read** (*Optional*, boolean): Reject a SET request for a datapoint
+  whose current value has not been read since boot, so a stale value cannot overwrite a value
+  someone entered on the unit. It only applies to a number or select that has a read entity
+  for the same datapoint; buttons and write-only datapoints are never rejected. Defaults to
+  `true`.
+
+### Multiple Devices
+
+```yaml
+toptronic:
+  - id: toptronic_HV
+    canbus_id: cbus
+    device_type: HV
+    device_addr: 8
+    language: en
+
+  - id: toptronic_BM
+    canbus_id: cbus
+    device_type: BM
+    device_addr: 8
+    language: en
+
+  - id: toptronic_WEZ
+    canbus_id: cbus
+    device_type: WEZ
+    device_addr: 1
+    language: en
+```
+
+## Presets
+
+Entities are generated automatically from the presets bundled with the component, so you do
+not need to declare any entity yourself. Depending on the device type, the presets contain
+`sensor`, `text_sensor`, `number` and `select` entities; the HomeVent unit also has a
+`button`.
+
+A preset number or select shows the value read by the preset sensor or text sensor for the
+same datapoint. Read entities that only exist to feed a number or select are marked
+`internal`, so the value appears once in Home Assistant, as the number or select.
+
+Every preset exists in the four languages `de`, `en`, `fr` and `it`, selected with the hub's
+`language` key. The entity counts in the table above are the same in every language.
+
+When more than one hub is configured, their preset entity names are prefixed with the device
+type and address (`HV 8: Normal ventilation modulation`) so they stay unique. The device
+types share many preset names, so the prefix is needed even when the hubs are of different
+types. With a single hub the names are used as they are.
+
+You can add your own entities next to the generated ones, for example to expose a datapoint
+the presets do not cover; see [Custom entities](#custom-entities).
+
+> [!NOTE]
+> For HomeVent units, ventilation modulation over the CAN bus only works in the matching
+> operation mode: normal modulation in "Constant operation mode" and eco modulation in
+> "Eco operation mode". The "Week 1" and "Week 2" schedules must be set up on the unit itself.
+
+## Refreshing Values
+
+Every read entity (sensor and text sensor) sends a GET request for its datapoint at its own
+`update_interval` (default `30s`). Numbers, selects and buttons never poll.
+
+A full refresh reads every read entity of a hub at once. It sends the requests as a paced
+burst set by `refresh_interval`, sends an unanswered request again according to
+`max_refresh_retries`, and gives up on the burst when no request is sent or answered for a
+while. The regular poll still covers a datapoint that did not answer. A full refresh runs once
+after boot (see `boot_refresh_delay`) and when the **Refresh all** button is pressed.
+
+The **Refresh all** button (entity category Config) is generated once per build, however many
+hubs there are. It starts a full refresh on every hub, one hub every 15 seconds, so the bus
+sees only one burst at a time. A refresh requested while one is still running on a hub runs
+again once it ends.
+
+While an OTA update is running, the hub stops sending requests and ignores incoming frames,
+then resumes when the update finishes or aborts.
+
+## Custom Entities
+
+Besides the presets you can declare your own entities on a hub. All of them need the
+datapoint addressing of the device:
+
+- **function_group** (**Required**, int): Function group of the datapoint, `0` to `255`.
+- **function_number** (**Required**, int): Function number of the datapoint, `0` to `255`.
+- **datapoint** (**Required**, int): Datapoint number, `0` to `65535`.
+- **toptronic_id** (*Optional*, [ID](/guides/configuration-types#id)): The hub to use. Only
+  needed when more than one hub is configured.
+- All other options of the platform, such as `name`, `icon` and `device_class`.
+
+### Sensor
+
+Read-only numeric value. The value is decoded using **type** (**Required**, string), one of
+`U8`, `U16`, `U32`, `S8`, `S16`, `S32` or `S64`.
+
+```yaml
+sensor:
+  - platform: toptronic
+    toptronic_id: toptronic_WEZ
+    name: Outdoor temperature
+    function_group: 0
+    function_number: 0
+    datapoint: 0
+    type: S16
+    accuracy_decimals: 1
+    unit_of_measurement: °C
+    device_class: temperature
+    state_class: measurement
+    filters:
+      - multiply: 0.1
+```
+
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): How often the
+  datapoint is polled. Defaults to `30s`.
+
+### Text Sensor
+
+Read-only value mapped to a text label. It needs **options** (a list of labels) and
+**values** (the matching integer codes); both lists must have the same length, and each value
+must be between `0` and `255`.
+
+```yaml
+text_sensor:
+  - platform: toptronic
+    toptronic_id: toptronic_WEZ
+    name: Heating operation choice
+    function_group: 1
+    function_number: 0
+    datapoint: 3050
+    options:
+      - Standby
+      - Week 1
+      - Week 2
+      - Constant
+      - Eco mode
+    values: [0, 1, 2, 4, 5]
+```
+
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): How often the
+  datapoint is polled. Defaults to `30s`.
+
+### Number Entity
+
+Writable numeric value. **type** is required (see above).
+
+A number shows the value of a sensor on the same hub with the same `function_group`,
+`function_number` and `datapoint`, divided by `10^decimal`. The raw value of the sensor is
+used, before any of its filters. Without such a sensor the number is write-only and never
+shows a value.
+
+```yaml
+number:
+  - platform: toptronic
+    toptronic_id: toptronic_WEZ
+    name: Normal room temperature
+    function_group: 1
+    function_number: 0
+    datapoint: 3051
+    type: S16
+    min_value: 100
+    max_value: 300
+    step: 5
+    decimal: 1
+    unit_of_measurement: °C
+    device_class: temperature
+```
+
+- **min_value** (**Required**, float): Lowest value, in device units.
+- **max_value** (**Required**, float): Highest value, in device units. It must be greater than
+  `min_value`.
+- **step** (**Required**, float): Step size, in device units.
+- **decimal** (*Optional*, float): Number of decimal places the device uses, `0` or more.
+  `min_value`, `max_value` and `step` are divided by `10^decimal` for the entity, so the
+  example above shows a `10.0` to `30.0 °C` control with `0.5 °C` steps. A value written from
+  the entity is multiplied by `10^decimal` before it is sent. Defaults to `0`.
+
+### Select Entity
+
+Writable value chosen from a list. It needs **options** and **values** with the same rules as
+the text sensor, and accepts **type** (*Optional*, default `U8`).
+
+Like a number, a select shows the value of a text sensor on the same hub with the same
+datapoint, such as the text sensor example above. Without one it is write-only and never
+shows a value.
+
+```yaml
+select:
+  - platform: toptronic
+    toptronic_id: toptronic_WEZ
+    name: Heating operation choice
+    function_group: 1
+    function_number: 0
+    datapoint: 3050
+    options:
+      - Standby
+      - Week 1
+      - Week 2
+      - Constant
+      - Eco mode
+    values: [0, 1, 2, 4, 5]
+```
+
+### Button Entity
+
+Sends one SET request when pressed. **type** and **value** (**Required**, int) describe the
+value to write; the value must fit the selected type and is checked when the configuration is
+loaded.
+
+```yaml
+button:
+  - platform: toptronic
+    toptronic_id: toptronic_HV
+    name: Acknowledge filter maintenance
+    function_group: 0
+    function_number: 0
+    datapoint: 21054
+    type: U8
+    value: 7
+```
+
+## Debug Logging
+
+The hub can log the raw CAN traffic to help find a datapoint or diagnose a device. One
+`switch` entry on the platform holds both debug switches; add only the ones you need:
+
+```yaml
+switch:
+  - platform: toptronic
+    toptronic_id: toptronic_HV
+    candump:
+      name: CAN dump
+    find_can_id:
+      name: Find CAN ID
+```
+
+- **toptronic_id** (*Optional*, [ID](/guides/configuration-types#id)): The hub to use. Only
+  needed when more than one hub is configured.
+- **candump** (*Optional*, [Switch](/components/switch/)): Logs every frame that is sent or
+  received under the `candump` tag, as `0x00000208 : 04 42 ...`. Received frames are limited
+  to one line per 33 ms; frames skipped by that limit are counted and reported with the next
+  line.
+- **find_can_id** (*Optional*, [Switch](/components/switch/)): Logs each received request and
+  response frame with the node that sent it, at WARN level, so it can be caught with
+  `logger.on_message`.
+- Both switches default to restore mode `ALWAYS_OFF`. The debug logs apply to the whole build,
+  so one switch of each kind is enough for all hubs.
+- Each debug log turns itself off after 120 seconds, so it cannot fill the log or the network
+  connection if it is left on.
+
+## See Also
+
+- [esp_canbus](https://github.com/nliaudat/esp_canbus)
+- [CAN Bus](/components/canbus/)
+- [ESP32 CAN](/components/canbus/esp32_can/)
+- <APIRef text="toptronic.h" path="toptronic/toptronic.h" />
