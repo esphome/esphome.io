@@ -26,7 +26,7 @@ canopen:
 ## Configuration Variables
 
 - **canbus_id** (*Optional*, [ID](/guides/configuration-types/#id)): The [CAN bus](/components/canbus/) to use. Required
-  if there is more than one bus.
+  if there is more than one bus. One `canopen` component per bus.
 - **response_timeout** (*Optional*, [Time](/guides/configuration-types/#time)): How long an SDO request waits for an
   answer. Up to `65535ms`. Defaults to `500ms`.
 - **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation and
@@ -58,7 +58,8 @@ Configuration variables:
 - **index** (**Required**, int, [templatable](/automations/templates/)): The object index.
 - **subindex** (*Optional*, int, [templatable](/automations/templates/)): The subindex. Defaults to `0`.
 - **size** (*Optional*, int): The size of the object in bytes: `1`, `2` or `4` (a different size gives
-  `SDO_RESULT_SIZE_MISMATCH`), or `0` for any size up to 4 bytes. Defaults to `0`.
+  `SDO_RESULT_SIZE_MISMATCH`), or `0` for any size up to 4 bytes (a longer object gives `SDO_RESULT_SIZE_MISMATCH`).
+  Defaults to `0`.
 - **on_value** (*Optional*, [Automation](/automations/)): Runs with the value read. Variable: `x` (`uint32_t`, little
   endian bytes as an unsigned number; cast it for signed objects, e.g. `(int16_t) x`).
 - **on_error** (*Optional*, [Automation](/automations/)): Runs when the read failed. Variables: `result`
@@ -96,9 +97,13 @@ Configuration variables:
 - **on_error** (*Optional*, [Automation](/automations/)): Runs when the write failed. Variables: `result`
   (`canopen::SDOResult`: `SDO_RESULT_ABORT`, `SDO_RESULT_TIMEOUT`, `SDO_RESULT_TRANSPORT_ERROR` or
   `SDO_RESULT_REJECTED`) and `abort_code` (`uint32_t`, the SDO abort code for `SDO_RESULT_ABORT` and
-  `SDO_RESULT_TIMEOUT`).
+  `SDO_RESULT_TIMEOUT`). After `SDO_RESULT_TIMEOUT` or `SDO_RESULT_TRANSPORT_ERROR` the write may still have been
+  carried out: the answer may have been lost, or the CAN controller may have sent the frame later.
 - **id** (*Optional*, [ID](/guides/configuration-types/#id)): The `canopen` component to use. Required if there is
   more than one.
+
+Another SDO client talking to the same node at the same time (a CANopen master, a PC tool) shares the node's SDO
+channel, so either side's requests can end with an abort: handle `on_error`.
 
 ## Lambdas
 
@@ -108,7 +113,8 @@ The SDO client has one channel; requests are queued (up to 16) and sent one afte
 exactly one callback, with a `canopen::SDOReply`: `result` (`SDO_RESULT_SUCCESS`, `SDO_RESULT_ABORT`,
 `SDO_RESULT_TIMEOUT`, `SDO_RESULT_SIZE_MISMATCH`, `SDO_RESULT_TRANSPORT_ERROR` or `SDO_RESULT_REJECTED`),
 `abort_code`, `value` / `size` for values and `data` / `len` for buffers (valid only during the callback). A rejected
-request (queue full, invalid arguments) calls back before the call returns `false`.
+request (queue full, invalid arguments, failed component) calls back before the call returns `false`. Requests made
+at boot, before the component is set up, wait in the queue.
 
 ```cpp
 // value read with a width check: a different width gives SIZE_MISMATCH
