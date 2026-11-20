@@ -47,16 +47,19 @@ voice_assistant:
   sent to the voice assist pipeline, which contains the context of the current assist pipeline. Defaults to `300s`.
 - **tts_playback_start_timeout** (*Optional*, [Time](/guides/configuration-types/#time)): How long to wait for the
   media player to start playing the TTS response. Must be at least `1ms`. Defaults to `15s`.
-  Increase this if a slow TTS engine, such as XTTS, takes longer than that to start. If playback has not started in
-  time, the response is treated as finished and the follow-up turn Home Assistant asked for is skipped. Continuous
-  mode (`voice_assistant.start_continuous`) still starts listening again. A larger value only delays recovery when
-  the media player never starts. Once playback has started, the response ends when the media player stops playing
-  it. With a `speaker` this option has no effect: the response finishes 2 seconds after the speaker stops, unless a
-  stream-end event ends it first.
+  Increase this if a slow TTS engine, such as XTTS, takes longer to start. If the player does not enter its
+  announcing state in time, the assistant cancels the pending announcement, reports failure to Home Assistant
+  and triggers `on_error` with the code `tts-start-timeout`. It skips the follow-up turn. Continuous mode
+  (`voice_assistant.start_continuous`) can still start a new session. Late TTS events cannot restart the
+  cancelled response. This timeout uses the media player's reported state.
+  With a `speaker`, the response finishes two seconds after playback stops unless a stream-end event ends it first.
 
 - **on_intent_start** (*Optional*, [Automation](/automations)): An automation to perform when intent processing starts.
 - **on_intent_progress** (*Optional*, [Automation](/automations)): An automation to perform when intent progress happens.
-  The variable `x` is a non-empty string containing the streaming TTS response URL only if it is sent to the media player.
+  The variable `x` contains the streaming TTS response URL when one is available, or an empty string otherwise.
+  For a streaming response, synchronous actions run before the URL is sent to the media player. Calling
+  `voice_assistant.stop` from those actions prevents playback. Asynchronous actions such as `delay` do not
+  postpone submission of the URL.
 
 - **on_intent_end** (*Optional*, [Automation](/automations)): An automation to perform when intent processing ends.
 - **on_listening** (*Optional*, [Automation](/automations)): An automation to
@@ -164,7 +167,10 @@ Call `voice_assistant.stop` to stop the cycle.
 
 ### `voice_assistant.stop` Action
 
-Stop listening for voice commands.
+Stop listening for voice commands. When a media player is handling the assistant's response,
+this action also stops its queued or playing announcement. Home Assistant receives the completion
+result once. An announcement interrupted by Stop reports failure. If playback has already finished,
+its successful result is preserved.
 
 ## Conditions
 
