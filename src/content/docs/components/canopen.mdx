@@ -105,6 +105,9 @@ Configuration variables:
 Another SDO client talking to the same node at the same time (a CANopen master, a PC tool) shares the node's SDO
 channel, so either side's requests can end with an abort: handle `on_error`.
 
+SDO frames carry no request id, so a late answer to a request that timed out can be taken as the answer to the next
+request for the same object of the same node, such as a retry. That request then gets the earlier request's result.
+
 ## Lambdas
 
 ### SDO Client
