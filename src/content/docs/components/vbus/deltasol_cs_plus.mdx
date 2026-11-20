@@ -1,0 +1,700 @@
+---
+title: "DeltaSol CS Plus VBus Guide"
+description: "VBus measurements and controls available for the DeltaSol CS Plus."
+---
+
+The `deltasol_cs_plus` RX decoder receives broadcasts from the DeltaSol CS Plus. Use the [VBus hardware
+guide](/components/vbus/#hardware-connection) and configure the UART first.
+
+## Receive Telemetry
+
+```yaml
+vbus:
+  uart_id: resol
+
+sensor:
+  - platform: vbus
+    model: deltasol_cs_plus
+    temperature_1:
+      name: Solar Temperature 1
+```
+
+Each field below is optional. Add only the measurements you need and name them for the controller terminals and
+hydraulic scheme in your installation. These are broadcast values; adding them does not poll settings.
+
+### Available Sensors
+
+- **Temperature 1**: `temperature_1`.
+- **Temperature 2**: `temperature_2`.
+- **Temperature 3**: `temperature_3`.
+- **Temperature 4**: `temperature_4`.
+- **Temperature 5**: `temperature_5`.
+- **Pump speed 1**: `pump_speed_1`.
+- **Pump speed 2**: `pump_speed_2`.
+- **Operating hours 1**: `operating_hours_1`.
+- **Operating hours 2**: `operating_hours_2`.
+- **Heat quantity**: `heat_quantity`.
+- **Time**: `time`.
+- **Version**: `version`.
+- **Flow rate**: `flow_rate`.
+
+All fields support the normal [Sensor](/components/sensor/) options.
+
+### Status And Fault Sensors
+
+- **Sensor 1 fault**: `sensor1_error`.
+- **Sensor 2 fault**: `sensor2_error`.
+- **Sensor 3 fault**: `sensor3_error`.
+- **Sensor 4 fault**: `sensor4_error`.
+
+Add these under `binary_sensor:` with `platform: vbus`, the same `model` and a `name` for each desired field.
+See the [binary sensor example](/components/vbus/#receive-only) and [Binary Sensor](/components/binary_sensor/) options.
+
+## Basic Use
+
+The settings profile below is qualified for **DeltaSol CS Plus firmware 1.11**. This firmware restriction applies to
+settings access, not to the general VBus RX component. Other firmware versions have no qualified settings profile.
+Use an [RX/TX interface](/components/vbus/#hardware-connection) with RX and TX UART pins.
+
+### Read Settings First
+
+```yaml
+vbus:
+  uart_id: resol
+  controller:
+    model: deltasol_cs_plus
+```
+
+This enables read-only settings scans after compatible telemetry arrives. It does not enable writes or add writable
+entities. Existing broadcast sensors can use the same hub. The profile supplies both protocol addresses automatically.
+
+### Add The Controls You Need
+
+```yaml
+vbus:
+  uart_id: resol
+  controller:
+    model: deltasol_cs_plus
+    writes: direct
+
+number:
+  - platform: vbus
+    min_pump_speed_1: {}
+    max_pump_speed_1: {}
+
+select:
+  - platform: vbus
+    display_language: {}
+```
+
+Extend the existing `vbus:` entry when adding controls.
+
+Controls show confirmed values. Changes are accepted only when they apply to the current hydraulic scheme
+and enabled functions. Enabling writes sends no settings at startup and does not restore values to the controller.
+Keep existing entity names and IDs when extending an installation.
+
+## Advanced Use
+
+The following reference covers refresh policy, validation and optional integrations.
+
+### DeltaSol CS Plus Setting Snapshots
+
+The controller profile reads settings from a **DeltaSol CS Plus with firmware 1.11**. Configure the
+[UART](/components/uart/) and [RX/TX hardware](/components/vbus/#hardware-connection) first. The profile supplies the
+protocol
+addresses and shares one receiver, transmitter and settings cache. Existing broadcast sensors continue receiving
+telemetry on the same hub. This example is read-only: it neither changes settings nor adds number or select entities.
+
+```yaml
+vbus:
+  id: solar_bus
+  controller:
+    id: solar_controller
+    model: deltasol_cs_plus
+    update_interval: 5min
+    on_snapshot:
+    - lambda: |-
+        int32_t language;
+        if (id(solar_controller).get_value(55, language)) {
+          ESP_LOGI("solar", "Confirmed language setting: %d", int(language));
+        }
+```
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): ID used by controller actions and lambdas.
+- **model** (**Required**, string): `deltasol_cs_plus`. Other models and firmware versions are not qualified.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): Time between scan attempts.
+  Defaults to `5min`; the minimum is `60s`. Set to `never` for manual scans only.
+- **on_snapshot** (*Optional*, [Automation](/automations/)): Runs after a complete settings snapshot, on its expiry,
+  or when an incompatible firmware broadcast invalidates it. Check `has_fresh_snapshot()` before using values.
+
+The profile supplies controller address `0x2211` and client address `0x0020`; explicit values must match.
+The nested `transmit.transactions.controller` spelling remains supported. Configure the profile in one location only.
+Advanced `transmit` options, such as a separate TX UART, can be combined with `controller`.
+Generic TX still requires an explicit destination. The profile owns the polling queue:
+`controller` and generic `polling` are mutually exclusive. Manual bus, raw transaction and queue actions on that hub
+are rejected. Hubs without the profile keep their existing behavior.
+
+#### Reading And Retaining Settings
+
+Automatic scanning starts no earlier than 30 seconds after startup, once firmware 1.11 telemetry is present.
+Each scan first reads the hydraulic scheme and unit system through P2. These settings determine which options and
+dependent values apply. The profile contains 84 setting definitions; only the applicable subset is requested.
+Clock data comes from the existing broadcast, and ordinary RX measurements are not polled again.
+
+Reads are queued in groups of at most 16. A lease may end before all 16 complete; remaining reads wait for a fresh
+grant. After each release, a new telemetry broadcast must arrive before the next group or snapshot completion.
+This keeps ordinary telemetry flowing during a scan. A missing response, incompatible value or missing telemetry
+abandons the scan. There is no automatic retry within that scan.
+
+A snapshot replaces the previous one only after every planned read succeeds and telemetry resumes. During refreshes
+and failed scans, the last complete snapshot remains available for up to 660 seconds. Reading an unchanged value
+does not require publishing a new sensor state. An incomplete first scan provides no settings. A broadcast identifying
+another firmware invalidates the snapshot immediately; returning firmware 1.11 requires a new complete scan.
+
+In a lambda, `id(solar_controller).get_value(value_id, raw_value)` returns `true` only for an available setting in a
+fresh, complete snapshot. Values are raw integers; scaling and applicability depend on the setting. The raw getter
+is intended for custom automations, rather than bypassing setting validation for writes.
+
+#### Manual Refresh And OTA
+
+```yaml
+button:
+  - platform: template
+    name: Refresh Solar Settings
+    on_press:
+      - vbus.scan_controller:
+          id: solar_controller
+```
+
+The `vbus.scan_controller` action requires the controller's `id`. A request is ignored while scanning, suspended,
+offline, or less than 60 seconds after the previous attempt. It cannot force a bus grant.
+
+Use `vbus.suspend_polling` and `vbus.resume_polling` with the **hub ID**, as in the [OTA
+example](/components/vbus/transmit/#suspend-and-resume-polling). Suspension
+abandons an incomplete scan and retains the last complete snapshot. Resuming requests a fresh scan, subject to the
+startup delay and 60-second minimum interval; it never resumes partial data. With `update_interval: never`, resuming
+only requests a scan if a manual scan has previously been attempted. Shutdown permanently stops the profile.
+
+### Validated CS Plus Setting Writes
+
+Writing settings is a separate opt-in on the DeltaSol CS Plus 1.11 profile. Without `writes`, setting actions are
+rejected during validation and the controller's write code is excluded from the firmware.
+
+```yaml
+vbus:
+  id: solar_bus
+  controller:
+    id: solar_controller
+    model: deltasol_cs_plus
+    writes:
+      require_write_arm: true
+      on_setting_result:
+      - lambda: |-
+          ESP_LOGI("solar", "Setting %u finished with status %u", value_id, unsigned(status));
+button:
+- platform: template
+  name: Use Italian Display Language
+  on_press:
+  - vbus.arm_writes:
+      id: solar_controller
+      enabled: true
+  - vbus.set_setting:
+      id: solar_controller
+      value_id: 55
+      value: 4
+```
+
+- **writes** (*Optional*, mapping or string): Enables validated controller writes. It sends nothing by itself.
+  Use `direct` for direct explicit changes or `armed` to require one-shot authorization. These are equivalent to
+  mappings with `require_write_arm: false` and `require_write_arm: true`, respectively. Use a mapping to add callbacks.
+  - **require_write_arm** (*Optional*, boolean): Require one-shot authorization, valid for 60 seconds and consumed
+    by one accepted setting request. Defaults to `true`. Set `false` for direct explicit controls without a separate arm
+    action.
+  - **on_setting_result** (*Optional*, [Automation](/automations/)): Runs when a request is rejected or an accepted
+    request finishes.
+    Arguments are `uint16_t value_id` and `vbus::SettingWriteStatus status`.
+
+The `vbus.set_setting` action requires the **controller ID**, a 16-bit `value_id` and a floating-point `value`.
+Both the value ID and value can be [templated](/automations/templates/). Values use each setting's scale, rather
+than the raw wire integer; for example, `60.0` represents 60 degrees for a setting with scale 0.1.
+Only the profile's 84 known settings can be requested. Out-of-range values, off-step values, unknown enum options,
+non-finite values, stale snapshots and settings that do not apply are rejected. A request also needs current telemetry,
+an idle controller and an unsuspended hub. Acceptance starts validation; it does not mean the change has been applied.
+Rejected requests report their own `value_id` through `on_setting_result`, including when another write is active.
+Rejecting a second request leaves the active write and its status unchanged.
+
+The `vbus.arm_writes` action requires the controller `id` and a templatable boolean `enabled`. Arming does not write
+anything. Suspension consumes the authorization. It cannot override stale data, an uncertain previous write or setting
+constraints.
+
+#### Validation And Confirmation
+
+Each accepted request first reads its dependencies again, including the hydraulic scheme, unit system, current value
+and related limits or function flags. It validates applicability, supported options, step sizes and relationships
+against
+these fresh replies. For example, a pump minimum must remain below its maximum. If the requested value already matches
+the freshly read value, the request finishes without sending a write.
+
+Otherwise, the existing transaction manager sends one `0x0200` write, receives a matching acknowledgement and reads the
+value back independently. Completion also requires a bus release and resumed firmware 1.11 telemetry. The complete job
+has a 15-second limit. Nothing is published optimistically, and no failed or interrupted write is retried automatically.
+No startup, refresh, restored-state or resume operation writes settings.
+
+Completion statuses are:
+
+- `SETTING_WRITE_STATUS_SUCCESS`: acknowledgement, matching readback, release and resumed telemetry confirmed the
+  change.
+- `SETTING_WRITE_STATUS_UNCHANGED`: fresh preflight already matched; no write was sent.
+- `SETTING_WRITE_STATUS_FAILED`: the request ended before any write was handed to the UART.
+- `SETTING_WRITE_STATUS_UNCERTAIN`: a write was handed to the UART, but complete confirmation was lost. The controller
+  may have changed.
+
+An uncertain result blocks further writes until a new complete settings scan establishes the current state. Retained
+values
+are not proof that the interrupted write had no effect. OTA cancellation has the same rule; late replies cannot restart
+verification or replay the write. `vbus.resume_polling` only resumes reads.
+
+Verified numeric changes update the confirmed cached value. A verified enum change or an uncertain write requests a
+fresh, read-only scan because the available controls or their units may have changed. This one refresh bypasses the
+usual 60-second scan limit and is prepared on the next main-loop iteration when telemetry and polling are available.
+If they are unavailable, the controller checks again once per second without keeping its loop busy.
+Until it completes, `has_fresh_snapshot()` is false and further writes are rejected. `has_recent_snapshot()` still
+reports
+whether the last complete snapshot is within its 660-second expiry, so displays can retain confirmed values while
+waiting.
+An incompatible firmware broadcast discards both fresh and retained context immediately. No refresh retries a write.
+
+### CS Plus Numeric Setting Controls
+
+The `vbus` number platform exposes confirmed numeric settings from a DeltaSol CS Plus 1.11 controller profile.
+It uses that profile's existing reads and write validation; adding a number does not create another polling cycle.
+
+For several controls on one controller, use setting names as keys under a single platform entry:
+
+```yaml
+number:
+  - platform: vbus
+    min_pump_speed_1:
+      name: Minimum Pump Speed
+    max_pump_speed_1: {}
+```
+
+Each setting accepts the usual Number options. An optional `controller_id` at the platform level binds all controls
+in that entry. The existing single-parameter form below remains supported; use one form per platform entry.
+
+```yaml
+vbus:
+  controller:
+    model: deltasol_cs_plus
+    writes: direct
+
+number:
+  - platform: vbus
+    parameter: min_pump_speed_1
+  - platform: vbus
+    parameter: delta_temperature_1_on
+    name: Circuit 1 Switch-On Temperature Difference
+```
+
+- **controller_id** (*Optional*, [ID](/guides/configuration-types/#id)): A qualified CS Plus profile with `writes`
+  enabled. Inferred when exactly one controller is configured; required when there are multiple controllers.
+- **parameter** (**Required** for the single-setting form, string): One of the numeric parameter keys below.
+- All other options from [Number](/components/number/). The default entity category is `config`.
+
+If both `name` and `id` are omitted, a display name is derived from `parameter`, for example `Minimum pump speed 1`.
+An explicit name, ID, unit, entity category or display mode always takes precedence. An explicit ID without a name
+keeps ESPHome's existing internal-entity behavior. Units default to the profile's engineering units: `%` for pump
+speeds, `°C` for temperatures, `K` for temperature differences, `L/min` for flow and `s`, `min` or `h` for durations.
+Clock values remain minutes after midnight; their default names include this explanation. Changing a unit label does
+not convert protocol values or change limits.
+
+`require_write_arm: false` permits direct explicit changes through the number entity. With the default `true`,
+arm the controller before a change using `vbus.arm_writes`. Neither mode writes values on startup or restores
+stored number states to the controller. A requested value is published only after acknowledgement, readback,
+bus release and resumed telemetry confirm it. Unchanged confirmed values are not published again.
+
+The current scheme, enabled functions and related settings determine whether a number is available and its allowed
+range. For example, a pump minimum remains below its configured maximum. Ranges and steps use the setting's scale;
+they cannot be overridden with arbitrary bounds. Commands are checked again against fresh dependency reads.
+An invalid or busy request is rejected and logged while retaining the confirmed state.
+
+During ordinary scans or failed refreshes, confirmed values remain available until the cache expiry described above.
+Numbers also retain their confirmed values while the controller refreshes context after a setting change or uncertain
+write; this retained display does not prove that an uncertain write had no effect. Further writes wait for fresh
+context.
+Actual expiry or inapplicability invalidates the value, while retaining the last advertised range. Recovery publishes
+one confirmed value. Entity updates are processed one per loop to bound work on smaller devices.
+
+Clock settings use minutes after midnight. `system_time` updates from valid, changed P1 broadcasts without P2 reads;
+an invalid clock field retains the last valid clock. A clock update does not trigger `on_snapshot` as a new complete
+scan.
+
+The native API's entity listing exposes updated bounds. Clients that cache metadata need to refresh that listing when
+bounds change. `id(solar_controller).metadata_revision()` advances once after a batch of actual range changes, rather
+than on every settings scan. Availability or value changes alone do not increment it.
+
+#### Numeric Parameter Keys
+
+These are the profile's numeric settings. Units below are the engineering units used by the profile; valid ranges,
+steps and availability are supplied by the controller context. A table entry does not mean that every hydraulic scheme
+supports that setting. Clock fields use minutes after midnight; native time controls are an alternative where available.
+
+**General Settings**
+
+- **Controller time (minutes after midnight)** (`min`): `system_time`.
+
+**Storage Loading**
+
+- **Loading break time** (`min`): `loading_break_time`.
+- **Loading run time** (`min`): `loading_run_time`.
+- **Parallel loading temperature difference** (`K`): `parallel_loading_delta`.
+- **Maximum storage temperature 2** (`°C`): `max_storage_temperature_2`.
+- **Maximum storage temperature 1** (`°C`): `max_storage_temperature_1`.
+
+**Pumps And Relays**
+
+- **Minimum pump speed 1** (`%`): `min_pump_speed_1`.
+- **Minimum pump speed 2** (`%`): `min_pump_speed_2`.
+- **Maximum pump speed 1** (`%`): `max_pump_speed_1`.
+- **Maximum pump speed 2** (`%`): `max_pump_speed_2`.
+
+**Cooling And Temperature Limits**
+
+- **System cooling delta on** (`K`): `system_cooling_delta_on`.
+- **System cooling delta off** (`K`): `system_cooling_delta_off`.
+- **Holiday temperature** (`°C`): `holiday_temperature`.
+
+**Heat Metering**
+
+- **Maximum flow rate** (`L/min`): `max_flow`.
+- **Antifreeze concentration** (`%`): `antifreeze_concentration`.
+
+**Temperature Control**
+
+- **Circuit 3 minimum limit** (`°C`): `circuit_3_minimum_limit`.
+- **Circuit 3 minimum recovery** (`°C`): `circuit_3_minimum_recovery`.
+- **Circuit 3 maximum limit** (`°C`): `circuit_3_maximum_limit`.
+- **Circuit 3 maximum recovery** (`°C`): `circuit_3_maximum_recovery`.
+- **Circuit 1 switch-on difference** (`K`): `delta_temperature_1_on`.
+- **Circuit 2 switch-on difference** (`K`): `delta_temperature_2_on`.
+- **Circuit 3 switch-on difference** (`K`): `delta_temperature_3_on`.
+- **Circuit 1 switch-off difference** (`K`): `delta_temperature_1_off`.
+- **Circuit 2 switch-off difference** (`K`): `delta_temperature_2_off`.
+- **Circuit 3 switch-off difference** (`K`): `delta_temperature_3_off`.
+- **Circuit 1 nominal difference** (`K`): `delta_temperature_1_nominal`.
+- **Circuit 2 nominal difference** (`K`): `delta_temperature_2_nominal`.
+- **Circuit 3 nominal difference** (`K`): `delta_temperature_3_nominal`.
+- **Circuit 1 rise increment** (`K`): `delta_temperature_1_rise`.
+- **Circuit 2 rise increment** (`K`): `delta_temperature_2_rise`.
+- **Circuit 3 rise increment** (`K`): `delta_temperature_3_rise`.
+
+**Collector Protection**
+
+- **Collector emergency temperature 1** (`°C`): `collector_emergency_temperature_1`.
+- **Collector emergency temperature 2** (`°C`): `collector_emergency_temperature_2`.
+- **Maximum collector temperature 1** (`°C`): `max_collector_temperature_1`.
+- **Maximum collector temperature 2** (`°C`): `max_collector_temperature_2`.
+- **Minimum collector temperature 1** (`°C`): `min_collector_temperature_1`.
+- **Minimum collector temperature 2** (`°C`): `min_collector_temperature_2`.
+- **Collector frost temperature 1** (`°C`): `collector_frost_temperature_1`.
+- **Collector frost temperature 2** (`°C`): `collector_frost_temperature_2`.
+
+**Thermal Disinfection**
+
+- **Disinfection period** (`h`): `disinfection_period`.
+- **Disinfection temperature** (`°C`): `disinfection_temperature`.
+- **Disinfection duration** (`min`): `disinfection_duration`.
+- **Disinfection start time** (`min`): `disinfection_start_time`.
+
+**DrainBack**
+
+- **Drainback activation time** (`s`): `drainback_activation_time`.
+- **Drainback fill time** (`min`): `drainback_fill_time`.
+- **Drainback stabilisation time** (`min`): `drainback_stabilisation_time`.
+
+**Thermostat And Time Windows**
+
+- **Thermostat on temperature** (`°C`): `thermostat_on_temperature`.
+- **Thermostat start time 1** (`min`): `thermostat_start_time_1`.
+- **Thermostat off temperature** (`°C`): `thermostat_off_temperature`.
+- **Thermostat end time 1** (`min`): `thermostat_end_time_1`.
+- **Thermostat start time 2** (`min`): `thermostat_start_time_2`.
+- **Thermostat end time 2** (`min`): `thermostat_end_time_2`.
+- **Thermostat start time 3** (`min`): `thermostat_start_time_3`.
+- **Thermostat end time 3** (`min`): `thermostat_end_time_3`.
+
+**Tube Collector**
+
+- **Tube collector start time** (`min`): `tube_collector_start_time`.
+- **Tube collector end time** (`min`): `tube_collector_end_time`.
+- **Tube collector run time** (`s`): `tube_collector_run_time`.
+- **Tube collector interval** (`min`): `tube_collector_interval`.
+
+
+### CS Plus Select Setting Controls
+
+As with numbers, several selects can share one platform entry and controller association:
+
+```yaml
+select:
+  - platform: vbus
+    display_language:
+      name: Controller Language
+    holiday_cooling: {}
+```
+
+Each nested setting accepts the usual Select options, including custom `options` labels. The single-parameter form
+below remains supported. A group must contain at least one known setting; do not combine `parameter` and setting keys
+within the same entry.
+
+The `vbus` select platform exposes the 26 enumerated settings of the DeltaSol CS Plus 1.11 profile.
+It shares the controller's existing scans and validated write path with number controls.
+
+```yaml
+# Uses the controller from the numeric controls example above.
+select:
+  - platform: vbus
+    parameter: display_language
+    name: Controller Display Language
+
+  - platform: vbus
+    parameter: relay_mode_1
+    name: Relay 1 Operating Mode
+    options:
+      0: "Off"
+      1: "Automatic"
+      2: "On"
+```
+
+- **controller_id** (*Optional*, [ID](/guides/configuration-types/#id)): A CS Plus controller with explicit `writes`
+  configuration. Inferred with one controller; required when there are multiple controllers.
+- **parameter** (**Required** for the single-setting form, string): One of the keys below. Numeric parameters belong to
+  the number platform.
+- **options** (*Optional*, mapping): Customize the display labels for the documented raw option values.
+  Supply every documented raw value exactly once, with unique, nonempty labels. Extra or missing values are rejected.
+  Labels do not change the protocol values or permit unsupported choices.
+- Other options from [Select](/components/select/) are supported. The default entity category is `config`.
+
+If both `name` and `id` are omitted, the parameter supplies the default display name, such as `Display language`.
+Existing explicit names, IDs and option labels are preserved. Default option labels remain unchanged so existing
+automations comparing those labels keep working.
+
+For automations using named settings, use the standard number/select actions instead of raw protocol IDs:
+
+```yaml
+select:
+  - platform: vbus
+    id: controller_language
+    parameter: display_language
+    name: Controller Language
+
+button:
+  - platform: template
+    name: Use Italian
+    on_press:
+      - select.set:
+          id: controller_language
+          option: Italian
+```
+
+This requires the controller's `writes` option. With `writes: armed`, arm the controller before the action.
+Use the configured label if `options` changes `Italian` to a translated label.
+
+With `require_write_arm: false`, selecting an option makes a direct explicit request. With the default `true`,
+arm the controller once before the change. No boot, restored state, polling or recovery operation writes settings.
+
+Only options allowed by the current hydraulic scheme, enabled functions and related settings are advertised.
+Commands are validated again against fresh dependency reads. A selected option is not published optimistically:
+acknowledgement, independent readback, bus release and resumed telemetry must confirm the write.
+Without adaptive polling, an enum change also requests a full context scan before updating select states. With adaptive
+polling, affected dependencies are refreshed where needed; a language-only change needs no extra scan.
+
+During this refresh or an uncertain write, recent confirmed states remain visible, and further writes wait for fresh
+context. A retained display is not proof that an uncertain write had no effect. Equal confirmed states are not published
+again, including when the option list changes the selected label's position. Actual expiry, incompatible firmware or
+verified inapplicability invalidates the value while retaining the last advertised options; recovery publishes one
+state.
+
+Options are updated without allocating memory during operation. Entity notification remains bounded to one per loop.
+The native API exposes updated option lists; cached clients need to refresh their entity listing when
+`id(solar_controller).metadata_revision()` changes. The revision advances once per batch of actual metadata changes.
+
+`system_scheme` can reinitialize other controller settings. Relay `Off`/`On` modes override automatic relay operation.
+For `disable_storage_safety_shutdown`, `On` means that the safety shutdown is disabled. Use clear names for these
+controls and consider `disabled_by_default: true` when adding them to Home Assistant.
+
+#### Select Parameter Keys and Raw Values
+
+The table lists all defined options. A controller may permit only a subset in its current context.
+Display labels can be translated with `options` while preserving these raw values.
+
+**General Settings**
+
+- **System scheme** (`system_scheme`):
+  - `1`: 1
+  - `2`: 2
+  - `3`: 3
+  - `4`: 4
+  - `5`: 5
+  - `6`: 6
+  - `7`: 7
+  - `8`: 8
+  - `9`: 9
+  - `10`: 10
+- **Temperature unit** (`temperature_unit`):
+  - `0`: °C
+  - `1`: °F
+- **Display language** (`display_language`):
+  - `1`: German
+  - `2`: English
+  - `3`: French
+  - `4`: Italian
+  - `5`: Spanish
+
+**Storage Loading**
+
+- **Storage priority** (`storage_priority`):
+  - `0`: Spread loading 1
+  - `1`: Spread loading 2
+  - `2`: Sequential loading 1
+  - `3`: Sequential loading 2
+  - `4`: Parallel loading
+  - `5`: Storage 1 priority
+  - `6`: Storage 2 priority
+
+**Cooling And Temperature Limits**
+
+- **Holiday cooling** (`holiday_cooling`):
+  - `0`: Off
+  - `1`: On
+- **Storage cooling** (`storage_cooling`):
+  - `0`: Off
+  - `1`: On
+- **Disable storage safety shutdown** (`disable_storage_safety_shutdown`):
+  - `0`: Off
+  - `1`: On
+- **System cooling** (`system_cooling`):
+  - `0`: Off
+  - `1`: On
+
+**Heat Metering**
+
+- **Flow sensor type** (`flow_sensor_type`):
+  - `0`: Off
+  - `1`: 12
+  - `2`: 40
+  - `3`: 40F
+- **Heat meter** (`heat_meter`):
+  - `0`: Off
+  - `1`: On
+- **Flow sensor position** (`flow_sensor_position`):
+  - `0`: Fixed flow
+  - `1`: Flow sensor
+  - `2`: Return sensor
+- **Heat transfer fluid** (`heat_transfer_fluid`):
+  - `0`: Water
+  - `1`: Propylene glycol
+  - `2`: Ethylene glycol
+  - `3`: Tyfocor LS / G-LS
+
+**Collector Protection**
+
+- **Collector cooling 1** (`collector_cooling_1`):
+  - `0`: Off
+  - `1`: On
+- **Collector cooling 2** (`collector_cooling_2`):
+  - `0`: Off
+  - `1`: On
+- **Collector minimum limit 1** (`collector_minimum_limit_1`):
+  - `0`: Off
+  - `1`: On
+- **Collector minimum limit 2** (`collector_minimum_limit_2`):
+  - `0`: Off
+  - `1`: On
+- **Collector antifreeze 1** (`collector_antifreeze_1`):
+  - `0`: Off
+  - `1`: On
+- **Collector antifreeze 2** (`collector_antifreeze_2`):
+  - `0`: Off
+  - `1`: On
+
+**Pumps And Relays**
+
+- **Relay mode 1** (`relay_mode_1`):
+  - `0`: Off
+  - `1`: Auto
+  - `2`: On
+- **Relay mode 2** (`relay_mode_2`):
+  - `0`: Off
+  - `1`: Auto
+  - `2`: On
+- **Pump control 1** (`pump_control_1`):
+  - `0`: OnOF
+  - `1`: PULS
+  - `2`: PSOL
+  - `3`: PRIS
+- **Pump control 2** (`pump_control_2`):
+  - `0`: OnOF
+  - `1`: PULS
+  - `2`: PSOL
+  - `3`: PRIS
+
+**Thermal Disinfection**
+
+- **Thermal disinfection** (`thermal_disinfection`):
+  - `0`: Off
+  - `1`: On
+
+**DrainBack**
+
+- **Drainback** (`drainback`):
+  - `0`: Off
+  - `1`: On
+- **Drainback booster** (`drainback_booster`):
+  - `0`: Off
+  - `1`: On
+
+**Tube Collector**
+
+- **Tube collector function** (`tube_collector_function`):
+  - `0`: Off
+  - `1`: On
+
+
+The pump-control labels follow the controller's display. According to the
+[RESOL manual](https://www.resol.de/Produktdokumente/Alte_Montageanleitungen/11204489_DeltaSol_CS_Plus.monit.pdf),
+`OnOF` is ordinary on/off control, `PULS` controls speed through the semiconductor relay, `PSOL` uses the solar-pump
+PWM curve and `PRIS` uses the heating-pump PWM curve. To use longer labels, set `options` explicitly; the raw values
+and existing default labels remain unchanged.
+
+### Existing Installations And Advanced Use
+
+Shortening the configuration does not require renaming entities, changing their domains or migrating Home Assistant
+history. Keep existing entity `name`, `id`, custom `options`, units and `disabled_by_default` choices. They override the
+new defaults. The following simplifications retain the existing choices:
+
+- Omit controller addresses only for a supported profile.
+- Omit `controller_id` only when there is exactly one controller.
+- Omit `entity_category: config` on setting controls and `disabled_by_default: false`; these are already defaults.
+- Keep explicit translated names and labels. Keep `mode: box` if that is the desired number control.
+- Group number or select controls under one platform entry if useful. Move each entity's options under its parameter
+  key, retaining its name and ID; place the shared `controller_id` at the platform level when needed.
+
+Existing clock controls remain numeric minutes after midnight, preserving their identities and special values.
+Two-state selects retain their domains and labels.
+
+The [generic transmit reference](/components/vbus/transmit/) covers transactions, polling and P2 sensors for documented
+custom applications. Set the correct destination and protocol IDs from the controller's documentation. Selecting
+an unsupported model is not a way to bypass the qualified CS Plus validation. For a separate transmitter UART, combine
+`controller` with `transmit.uart_id`; the same UART pin and framing requirements still apply.
+
+## Protocol Reference
+
+The broadcast source address is `0x2211`. Use it for [controller
+identification](/components/vbus/receive/#identify-a-controller)
+or documented custom decoding; ordinary `deltasol_cs_plus` RX sensors do not need an explicit address.
+
+## See Also
+
+- [VBus Component](/components/vbus/)
+- [Advanced Reception](/components/vbus/receive/)

@@ -1,0 +1,63 @@
+---
+title: "DeltaSol CS2 VBus Guide"
+description: "VBus measurements and controls available for the DeltaSol CS2."
+---
+
+The `deltasol_cs2` RX decoder receives broadcasts from the DeltaSol CS2. Use the [VBus hardware
+guide](/components/vbus/#hardware-connection) and configure the UART first.
+
+## Receive Telemetry
+
+```yaml
+vbus:
+  uart_id: resol
+
+sensor:
+  - platform: vbus
+    model: deltasol_cs2
+    temperature_1:
+      name: Solar Temperature 1
+```
+
+Each field below is optional. Add only the measurements you need and name them for the controller terminals and
+hydraulic scheme in your installation. These are broadcast values; adding them does not poll settings.
+
+### Available Sensors
+
+- **Temperature 1**: `temperature_1`.
+- **Temperature 2**: `temperature_2`.
+- **Temperature 3**: `temperature_3`.
+- **Temperature 4**: `temperature_4`.
+- **Pump speed**: `pump_speed`.
+- **Operating hours**: `operating_hours`.
+- **Heat quantity**: `heat_quantity`.
+- **Version**: `version`.
+
+All fields support the normal [Sensor](/components/sensor/) options.
+
+### Status And Fault Sensors
+
+- **Sensor 1 fault**: `sensor1_error`.
+- **Sensor 2 fault**: `sensor2_error`.
+- **Sensor 3 fault**: `sensor3_error`.
+- **Sensor 4 fault**: `sensor4_error`.
+
+Add these under `binary_sensor:` with `platform: vbus`, the same `model` and a `name` for each desired field.
+See the [binary sensor example](/components/vbus/#receive-only) and [Binary Sensor](/components/binary_sensor/) options.
+
+## Settings Access
+
+No built-in settings profile is available for this model. The RX decoder does not define writable parameters.
+Custom work with documented commands can use the [generic transmit reference](/components/vbus/transmit/).
+A matching address alone does not establish compatible settings or firmware.
+
+## Protocol Reference
+
+The broadcast source address is `0x1121`. Use it for [controller
+identification](/components/vbus/receive/#identify-a-controller)
+or documented custom decoding; ordinary `deltasol_cs2` RX sensors do not need an explicit address.
+
+## See Also
+
+- [VBus Component](/components/vbus/)
+- [Advanced Reception](/components/vbus/receive/)
