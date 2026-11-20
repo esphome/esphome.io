@@ -39,12 +39,8 @@ const sections = [
 
 <div class="blog-toolbar">
   <nav class="chips" aria-label="Blog topics">
-    {[facets.all, ...facets.tags].map((facet) => (
-      <a class="chip" href={facet.href} aria-current={ariaCurrent(facet)}>
-        {facet.label}
-        <span class="count">{facet.count}</span>
-      </a>
-    ))}
+    {/* The applied filter comes first: on phones the row scrolls sideways, and a chip at its end
+        starts off-screen. */}
     {applied && (
       <a class="chip applied" href="/blog/" aria-label={`Remove filter ${appliedLabel}`}>
         {appliedLabel}
@@ -53,6 +49,12 @@ const sections = [
         </svg>
       </a>
     )}
+    {[facets.all, ...facets.tags].map((facet) => (
+      <a class="chip" href={facet.href} aria-current={ariaCurrent(facet)}>
+        {facet.label}
+        <span class="count">{facet.count}</span>
+      </a>
+    ))}
   </nav>
   <div class="actions">
     <button type="button" class="filters-button" commandfor="blog-filters" command="show-modal">
