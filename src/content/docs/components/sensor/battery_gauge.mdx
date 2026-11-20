@@ -1,0 +1,193 @@
+---
+title: "Battery Gauge"
+description: "Instructions for setting up a coulomb-counting battery gauge hub and its sensors"
+---
+import APIRef from '@components/APIRef.astro';
+
+<span id="battery_gauge-component"></span>
+
+## Component/Hub
+
+The `battery_gauge` hub estimates the state of charge of a battery by *coulomb counting*:
+it integrates the battery current over time to track how much charge has flowed into and
+out of the pack. It takes its readings from two existing sensors — one measuring battery
+voltage and one measuring battery current — so it can be used with any voltage/current
+source you already have, such as an [INA226](/components/sensor/ina226/) or
+[INA219](/components/sensor/ina219/).
+
+The hub itself does not create any entities. Once configured, use the
+[Battery Gauge sensor platform](#sensor) to expose readings from it, such as the state
+of charge.
+
+```yaml
+# Example configuration entry
+battery_gauge:
+  id: my_battery
+  voltage_source: battery_voltage
+  current_source: battery_current
+  capacity: 3.0Ah
+  max_charge_voltage: 4.2V
+  chemistry: lifepo4
+
+sensor:
+  - platform: battery_gauge
+    battery_gauge_id: my_battery
+    name: Battery Level
+
+  # Any voltage and current source can be used, e.g. an INA226:
+  - platform: ina226
+    address: 0x40
+    shunt_resistance: 0.01 ohm
+    max_current: 5A
+    bus_voltage:
+      name: Battery Voltage
+      id: battery_voltage
+    current:
+      name: Battery Current
+      id: battery_current
+```
+
+Because charge is accumulated over time, the gauge persists the last known percentage to
+flash so the estimate survives reboots. It also resynchronises to 100% whenever the
+battery reaches its full-charge voltage at a low charge current, correcting any drift
+accumulated by the integration. Exactly what "low charge current" means, and how long the
+condition must hold before resynchronising, depends on the configured `chemistry`.
+
+### Configuration variables
+
+- **voltage_source** (**Required**, [ID](/guides/configuration-types#id)): The sensor that
+  measures the battery voltage, in volts.
+- **current_source** (**Required**, [ID](/guides/configuration-types#id)): The sensor that
+  measures the battery current, in amps. The value must be **positive while charging** and
+  **negative while discharging**.
+- **capacity** (**Required**, float): The battery capacity in amp-hours. An optional `Ah`
+  suffix may be given, e.g. `3.0Ah` or `3.0`.
+- **max_charge_voltage** (*Optional*, float): The voltage at which the battery is
+  considered fully charged. When the (filtered) voltage reaches this value while the charge
+  current is low, the gauge resynchronises its estimate to 100%. Exactly one of
+  `max_charge_voltage` or `cell_count` must be given.
+- **cell_count** (*Optional*, int): The number of cells in series, as an alternative to
+  giving `max_charge_voltage` directly. The full-charge voltage is derived by multiplying
+  this by the chemistry's standard per-cell full-charge voltage (see
+  [Chemistry options](#chemistry-options) below) — for example, `cell_count: 4` with
+  `chemistry: lifepo4` is equivalent to `max_charge_voltage: 14.6V`. Not available for
+  `chemistry: custom`, since it has no standard per-cell voltage to assume; use
+  `max_charge_voltage` instead. Exactly one of `max_charge_voltage` or `cell_count` must
+  be given.
+- **chemistry** (**Required**, string): The battery chemistry, which determines how charge
+  and discharge currents are derated and how a full charge is detected. One of:
+  - `lifepo4`: LiFePO4 or general lithium-ion. No charge-acceptance or rate-of-discharge
+    derating is applied. A full charge is detected as soon as the voltage and current
+    conditions are met, with no additional dwell time.
+  - `lead_acid_flooded`: Flooded lead-acid, with typical preset parameters (see
+    [Chemistry options](#chemistry-options) below).
+  - `lead_acid_agm`: AGM lead-acid, with typical preset parameters.
+  - `custom`: Lead-acid-style behaviour with all parameters set explicitly, for batteries
+    that don't match the built-in presets.
+- **efficiency** (*Optional*, percentage): The round-trip efficiency, applied to charging currents
+  only, to account for energy losses in the charge/discharge cycle. Defaults to `98%`.
+- **initial_state** (*Optional*, percentage): The charge state to assume on first boot,
+  before any value has been saved to flash. Must be between `0%` and `100%`. If not set,
+  the battery is assumed to start empty.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this
+  Battery Gauge hub. Use this if you want to use multiple battery gauges at once.
+- All other options from [Component](/components).
+
+The following options only apply when `chemistry` is `lead_acid_flooded`, `lead_acid_agm`,
+or `custom`; they are rejected if `chemistry` is `lifepo4`. For `lead_acid_flooded` and
+`lead_acid_agm` they default to preset values and only need to be given to override those
+presets. For `custom`, `peukert_exponent` and `capacity_rate` must be given together, and any
+of the five may be omitted, in which case it falls back to a no-op value (equivalent to
+`lifepo4` behaviour for that parameter).
+
+- **acceptance_knee** (*Optional*, percentage): The state of charge above which the
+  battery's ability to accept charge current starts to fall off. Defaults to `80%` for
+  the lead-acid presets.
+- **peukert_exponent** (*Optional*, float): The Peukert exponent, which derates the
+  effective capacity removed by a discharge current the further that current is from the
+  rate the battery is specified at — higher discharge currents remove more effective
+  capacity than the raw amp-hours would suggest. `1.0` means no derating. Defaults to
+  `1.25` for `lead_acid_flooded` and `1.15` for `lead_acid_agm`. Must be specified together
+  with `capacity_rate`.
+- **capacity_rate** ([*Optional*, Time](/guides/configuration-types#time)): The discharge
+  duration that the configured `capacity` is rated at, e.g. a battery rated at `3.0Ah` over
+  `20h` has a rated current of `0.15A`. Used together with `peukert_exponent` to derate
+  discharge currents that differ from this rate. Defaults to `20h` for the lead-acid
+  presets. Must be specified together with `peukert_exponent`.
+- **tail_current** (*Optional*, percentage): The charge current, as a fraction of
+  `capacity`, below which the battery is considered to be tapering off at the end of a
+  charge cycle. Together with `max_charge_voltage`, this forms the full-charge condition.
+  Defaults to `4%` for the lead-acid presets.
+- **full_charge_dwell** ([*Optional*, Time](/guides/configuration-types#time)): How long the
+  full-charge condition (voltage and tail current both met) must hold continuously before
+  the gauge resynchronises its estimate to 100%. Lead-acid batteries can reach their
+  absorption voltage well before they are actually full, so a brief instantaneous reading
+  is not a reliable signal on its own. Defaults to `3min` for the lead-acid presets.
+
+<span id="chemistry-options"></span>
+
+## Chemistry options
+
+- **`lifepo4`**: No charge-acceptance or discharge-rate derating is applied, and there is
+  no dwell requirement for full-charge detection — the gauge resynchronises to 100% as
+  soon as the voltage reaches `max_charge_voltage` while the current is below 2% of
+  `capacity`. This is also the correct choice for other lithium-ion chemistries. Standard
+  per-cell full-charge voltage for `cell_count`: `3.65V`.
+- **`lead_acid_flooded`** and **`lead_acid_agm`**: Charge acceptance falls off above
+  `acceptance_knee`, discharge currents are derated by Peukert's law using
+  `peukert_exponent` and the rated current implied by `capacity_rate`, and a full charge
+  requires the voltage and `tail_current` conditions to hold for `full_charge_dwell`
+  before the gauge resynchronises. Both presets use the same defaults except for
+  `peukert_exponent`, which is slightly lower for AGM batteries to reflect their lower
+  internal resistance. Standard per-cell full-charge voltage for `cell_count`: `2.45V`
+  for `lead_acid_flooded`, `2.40V` for `lead_acid_agm` (a lead-acid cell is nominally 2V,
+  so a common 12V/6-cell battery is `cell_count: 6`).
+- **`custom`**: The same lead-acid-style model as above, but with no preset — every
+  parameter must be given explicitly (except that any single one may be left out to fall
+  back to a no-op value for that parameter). Use this for chemistries that don't match the
+  built-in presets, such as gel or a lead-acid battery with unusual characteristics.
+  `cell_count` is not available for this chemistry; use `max_charge_voltage` directly.
+
+## Sensor
+
+The `battery_gauge` sensor platform exposes a reading from a
+[Battery Gauge hub](#battery_gauge-component) to Home Assistant. Currently only the state
+of charge is available; more reading types (such as time to full charge) may be added in
+future without changing the hub configuration.
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: battery_gauge
+    battery_gauge_id: my_battery
+    type: state_of_charge
+    name: Battery Level
+```
+
+### Configuration variables
+
+- **battery_gauge_id** (*Optional*, [ID](/guides/configuration-types#id)): The
+  [Battery Gauge hub](#battery_gauge-component) this sensor reads from. Only needs to be
+  given if you have more than one `battery_gauge` hub configured.
+- **type** (*Optional*, string): The reading to expose. Defaults to `state_of_charge`.
+  - `state_of_charge`: The estimated charge remaining, as a percentage of `capacity`.
+- All other options from [Sensor](/components/sensor).
+
+## Notes
+
+- The gauge relies on the **sign of the current** to distinguish charging from discharging.
+  If your current sensor reports the opposite sign, use a
+  [`multiply` filter](/components/sensor#sensor-filters) of `-1` on that sensor.
+- The accuracy of the estimate depends on the accuracy of the current measurement, on a
+  correctly configured `capacity`, and on choosing the `chemistry` that best matches the
+  battery. The periodic full-charge resynchronisation corrects long-term drift, so reaching
+  a full charge regularly keeps the reading accurate.
+- The state of charge is saved to flash whenever it changes by 0.1% or more, so the estimate
+  is restored after a restart or power loss.
+
+## See Also
+
+- [Sensor Filters](/components/sensor#sensor-filters)
+- [Coulomb counting on Wikipedia](https://en.wikipedia.org/wiki/State_of_charge#Coulomb_counting)
+- [Peukert's law on Wikipedia](https://en.wikipedia.org/wiki/Peukert's_law)
+- <APIRef text="battery_gauge.h" path="battery_gauge/battery_gauge.h" />
