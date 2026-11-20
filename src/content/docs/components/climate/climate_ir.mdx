@@ -719,6 +719,23 @@ climate:
     use_fahrenheit: true
 ```
 
+The `pd_pioneer_ir` switch platform turns the display on the front of the indoor unit on or off:
+
+- **pd_pioneer_ir_id** (*Optional*, [ID](/guides/configuration-types/#id)): The `pd_pioneer_ir` climate the switch
+  belongs to. Only needed with more than one.
+- **display** (*Optional*, [Switch](/components/switch/#config-switch)): The display switch.
+  `restore_mode` defaults to `RESTORE_DEFAULT_ON`. The restored setting is not sent at boot; it goes out with the
+  next command. The setting is only sent while the unit is on, and with a receiver the switch follows the
+  display button of the remote.
+
+```yaml
+# Example configuration entry for the switch
+switch:
+  - platform: pd_pioneer_ir
+    display:
+      name: "AC Display"
+```
+
 > [!NOTE]
 > See [Transmit PD Pioneer](/components/remote_transmitter/#remote_transmitter-transmit_pd_pioneer-action) to send
 > custom raw frames for debugging or advanced use.
