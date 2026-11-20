@@ -67,8 +67,15 @@ Advanced options:
 
 - **comment** (*Optional*, string): Additional text information about this node. Only for display in UI.
 - **name_add_mac_suffix** (*Optional*, boolean): Appends the last 3 bytes of the mac address of the device to
-  the name in the form `<name>-aabbcc`. Defaults to `false`.
+  the name in the form `<name>-aabbcc`, and to the friendly name in the form `<friendly_name> aabbcc` (the
+  separator can be changed with `friendly_name_separator`).
+  Defaults to `false`.
   See [Adding the MAC address as a suffix to the device name](#esphome-mac_suffix).
+
+- **friendly_name_separator** (*Optional*, string): The text placed between the friendly name and the MAC
+  address suffix. Only used when `name_add_mac_suffix` is `true`. May be empty and at most 3 bytes long
+  (non-ASCII characters take more than one byte). Defaults to a space. Set it to `"-"` to get
+  `Kitchen-aabbcc` instead of `Kitchen aabbcc`.
 
 - **project** (*Optional*): ESPHome Creator's Project information. See [Project information](#esphome-creators_project).
 
