@@ -33,15 +33,15 @@ connects again after `reconnect_interval` whenever the connection fails or drops
 bt_spp:
   id: obd_adapter
   mac_address: "8C:DE:52:CF:1C:4F"
-  pin: "1234"
+  pin_code: "1234"
 ```
 
 ## Pairing
 
 Most SPP devices ask for pairing before they accept a connection. The ESP32 pairs without user interaction:
 
-- **Legacy pairing** with a PIN code: set `pin`. Many devices use `1234` or `0000`; see the manual of your device.
-  Without `pin`, a PIN request is refused and a warning is logged.
+- **Legacy pairing** with a PIN code: set `pin_code`. Many devices use `1234` or `0000`; see the manual of your
+  device. Without `pin_code`, a PIN request is refused and a warning is logged.
 - **Secure Simple Pairing** in "Just Works" mode is accepted automatically.
 
 Pairing that needs a passkey to be entered or shown on a display is not supported. The pairing keys are stored in
@@ -53,7 +53,7 @@ flash, so the device is paired only once.
   this ID as `uart_id` in other components.
 - **mac_address** (**Required**, MAC Address): The Bluetooth address of the device to connect to. It is often printed
   on the device or shown in the Bluetooth settings of a phone that is paired with it.
-- **pin** (*Optional*, string): The PIN code for legacy pairing, 1 to 16 characters.
+- **pin_code** (*Optional*, string): The PIN code for legacy pairing, 1 to 16 bytes.
 - **channel** (*Optional*, int): The RFCOMM channel of the SPP service, from `1` to `30`. When it is set, the SDP
   query is skipped. By default the channel is looked up before the first connection and again after a failed one.
 - **name** (*Optional*, string): The Bluetooth name of the ESP32, which some devices show or store when pairing.
@@ -141,7 +141,7 @@ the `>` prompt, which the debug option uses to split the log lines.
 bt_spp:
   id: obd_adapter
   mac_address: "8C:DE:52:CF:1C:4F"
-  pin: "1234"
+  pin_code: "1234"
   debug:
     direction: RX
     dummy_receiver: true
