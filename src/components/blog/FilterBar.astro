@@ -191,9 +191,27 @@ const sections = [
     white-space: nowrap;
   }
 
-  .chip:hover {
-    border-color: var(--sl-color-text-accent);
-    color: var(--sl-color-white);
+  /* Hover styles only where a pointer can hover; touch browsers keep :hover on the last tapped
+     element, which left a drawer row highlighted after the sheet opened. */
+  @media (hover: hover) {
+    .chip:hover {
+      border-color: var(--sl-color-text-accent);
+      color: var(--sl-color-white);
+    }
+
+    .filters-button:hover,
+    .rss:hover {
+      border-color: var(--sl-color-text-accent);
+    }
+
+    .close:hover {
+      color: var(--sl-color-white);
+    }
+
+    .drawer-body a:hover {
+      background: var(--sl-color-gray-6);
+      color: var(--sl-color-white);
+    }
   }
 
   .chip[aria-current="page"],
@@ -231,11 +249,6 @@ const sections = [
     font-weight: 500;
     text-decoration: none;
     cursor: pointer;
-  }
-
-  .filters-button:hover,
-  .rss:hover {
-    border-color: var(--sl-color-text-accent);
   }
 
   .badge {
@@ -410,10 +423,6 @@ const sections = [
     cursor: pointer;
   }
 
-  .close:hover {
-    color: var(--sl-color-white);
-  }
-
   /* The list scrolls; the header and the footer actions stay in reach. */
   .drawer-body {
     flex-grow: 1;
@@ -445,11 +454,6 @@ const sections = [
     border-radius: 0.5rem;
     color: var(--sl-color-gray-1);
     text-decoration: none;
-  }
-
-  .drawer-body a:hover {
-    background: var(--sl-color-gray-6);
-    color: var(--sl-color-white);
   }
 
   .drawer-body a[aria-current="page"] {
