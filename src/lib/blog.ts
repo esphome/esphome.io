@@ -20,8 +20,11 @@ import { slug } from "github-slugger";
 
 import { authors as authorConfig } from "../authors.mjs";
 
-/** Posts on the first page of /blog/: the featured post plus three rows of three cards. */
-export const FIRST_PAGE_SIZE = 10;
+/**
+ * Posts on the first page of /blog/: the featured post plus twelve cards, which fill the last row of
+ * both the two- and three-column grids.
+ */
+export const FIRST_PAGE_SIZE = 13;
 /** Posts on every other listing page: four rows of three cards. */
 export const PAGE_SIZE = 12;
 
