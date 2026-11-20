@@ -1,0 +1,80 @@
+---
+description: "Instructions for reading seven-segment displays from an ESP32 camera in ESPHome."
+title: "SSOCR Reader"
+---
+import { Image } from 'astro:assets';
+
+The `ssocr_reader` component reads a seven-segment display, such as the counter of an energy or water meter, out of
+frames from an [ESP32 Camera](/components/esp32_camera/). It decodes each frame once, crops the configured rectangle
+out of that image and reads the digits with `seven_segment_ocr`. No trained model is involved: the crop is thresholded
+and every digit is recognised from its seven segments, so a clean, tightly cropped and evenly lit display is needed.
+
+<Image src="/images/7_segment_display.png" width={350} height={350} layout="constrained" alt="A seven-segment display with the segments labelled A to G and the decimal point DP" />
+
+A seven-segment display draws each digit from the seven segments labelled A to G.
+
+```yaml
+camera_decoder:
+  id: meter_decoder
+  output_type: GRAYSCALE
+
+ssocr_reader:
+  camera_id: my_camera
+  decoder_id: meter_decoder
+  crop_x: 100
+  crop_y: 200
+  crop_w: 300
+  crop_h: 80
+  digit_count: 6
+  value:
+    name: "Water meter"
+  confidence:
+    name: "Water meter confidence"
+```
+
+## Configuration variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The reader ID.
+- **camera_id** (**Required**, [ID](/guides/configuration-types/#id)): The `esp32_camera` that produces the frames.
+- **decoder_id** (**Required**, [ID](/guides/configuration-types/#id)): The `camera_decoder` that decodes the frames.
+  `output_type: GRAYSCALE` uses the least RAM; `RGB888` also works and is converted to grayscale.
+- **crop_x** (*Optional*, int): Left edge of the crop in the decoded frame. Defaults to `0`.
+- **crop_y** (*Optional*, int): Top edge of the crop. Defaults to `0`.
+- **crop_w** (**Required**, int): Width of the rectangle around the digits.
+- **crop_h** (**Required**, int): Height of the rectangle around the digits.
+- **threshold_level** (*Optional*, int): Pixels above this level, from 0 to 255, count as lit. Defaults to `128`.
+- **digit_count** (*Optional*, int): How many digits to read, from 1 to 16. Defaults to `6`.
+- **value** (*Optional*, [Sensor](/components/sensor/)): The reading.
+- **confidence** (*Optional*, [Sensor](/components/sensor/)): How confident the recognition is, from 0 to 100 %.
+- **debug** (*Optional*, boolean): Log the update cycle and each reading. Defaults to `false`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often to request a frame.
+  Defaults to `60s`.
+
+## How a display is read
+
+1. The camera frame is decoded once.
+2. The configured rectangle is copied out as one byte per pixel. An `RGB888` decoder is converted to luma.
+3. `seven_segment_ocr` thresholds the crop, groups the lit columns into digit runs and samples the seven segments of
+   each run.
+4. When exactly `digit_count` digits were found and all of them were recognised, `value` and `confidence` are
+   published.
+
+A digit run narrower than a third of the image height is a single bar and is read as a `1`.
+
+## Requirements and behaviour
+
+- The camera must deliver JPEG frames. Use `pixel_format: JPEG`, or set `jpeg_quality` on a camera with another pixel
+  format so the frames are converted to JPEG for the reader.
+- The crop must contain only the digits and must be aligned with them: the reader does not rotate, deskew or scale.
+- The digits must be bright on a dark background. If the display is dark on a light background, the reader cannot
+  read it.
+- The digits must sit in one row and have the same size.
+- When a digit is missing or unknown, nothing is published and a warning reports how many digits were found.
+  `debug: true` adds each reading to the log.
+- The frame size is taken from the camera's `resolution`. A `camera_window` that makes the frames smaller is
+  supported as long as the crop still fits.
+
+## See Also
+
+- [ESP32 Camera](/components/esp32_camera/)
+- [Sensor Filters](/components/sensor/#sensor-filters)
