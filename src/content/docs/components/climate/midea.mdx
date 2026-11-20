@@ -111,6 +111,224 @@ climate:
   - All options from [Sensor](/components/sensor).
 - All other options from [Climate](/components/climate/#config-climate).
 
+## Sensor
+
+The `midea` sensor platform reads values the appliance reports only on request: compressor and refrigerant circuit
+data, fan speeds, energy, measured humidity, outdoor unit power and louver angles. Each configured sensor adds a query
+that takes turns with the status query, so with any of them configured the climate state refreshes every second
+request (`period` apart). An appliance that does not report a value leaves its sensor unknown.
+
+```yaml
+# Example configuration entry
+climate:
+  - platform: midea
+    id: midea_ac
+    name: Midea Climate
+
+sensor:
+  - platform: midea
+    midea_id: midea_ac
+    energy_format: BCD
+    error_code:
+      name: Error Code
+    indoor_humidity:
+      name: Indoor Humidity
+    compressor_frequency:
+      name: Compressor Frequency
+    indoor_fan_speed:
+      name: Indoor Fan Speed
+    total_energy:
+      name: Total Energy
+```
+
+### Configuration Variables
+
+- **midea_id** (*Optional*, [ID](/guides/configuration-types/#id)): The `midea` climate to read from. Only needed with
+  more than one.
+- **energy_format** (*Optional*, string): How the appliance encodes `total_energy`, `current_energy` and
+  `real_time_power`. One of `BCD` (most appliances) or `BINARY`. If the values look wrong, try the other one. Defaults
+  to `BCD`.
+- **error_code** (*Optional*): The appliance error code; `0` means no error. All options from
+  [Sensor](/components/sensor/).
+- **compressor_frequency** (*Optional*): Compressor frequency in Hz. All options from [Sensor](/components/sensor/).
+- **compressor_target_frequency** (*Optional*): Compressor target frequency in Hz. All options from
+  [Sensor](/components/sensor/).
+- **compressor_current** (*Optional*): Compressor current in A. All options from [Sensor](/components/sensor/).
+- **compressor_voltage** (*Optional*): Compressor voltage in V. All options from [Sensor](/components/sensor/).
+- **indoor_coil_temperature** (*Optional*): Indoor heat exchanger temperature (T2) in °C. All options from
+  [Sensor](/components/sensor/).
+- **outdoor_coil_temperature** (*Optional*): Outdoor heat exchanger temperature (T3) in °C. All options from
+  [Sensor](/components/sensor/).
+- **discharge_temperature** (*Optional*): Compressor discharge pipe temperature (TP) in °C. All options from
+  [Sensor](/components/sensor/).
+- **indoor_fan_speed** (*Optional*): Indoor fan speed in RPM. All options from [Sensor](/components/sensor/).
+- **indoor_fan_target_speed** (*Optional*): Indoor fan target speed in RPM. All options from
+  [Sensor](/components/sensor/).
+- **total_energy** (*Optional*): Total energy use in kWh. All options from [Sensor](/components/sensor/).
+- **current_energy** (*Optional*): Energy use of the current run in kWh. All options from [Sensor](/components/sensor/).
+- **real_time_power** (*Optional*): Power use in W, from the same report as the energy values. All options from
+  [Sensor](/components/sensor/).
+- **indoor_humidity** (*Optional*): Measured indoor humidity in %, on appliances with a humidity sensor. The climate's
+  `humidity_setpoint` sensor is the humidity setpoint, not this measurement. All options from
+  [Sensor](/components/sensor/).
+- **outdoor_fan_speed** (*Optional*): Outdoor fan speed in RPM. All options from [Sensor](/components/sensor/).
+- **outdoor_unit_power** (*Optional*): Power use of the outdoor unit in W. All options from
+  [Sensor](/components/sensor/).
+- **horizontal_louver_angle** (*Optional*): Horizontal louver angle in degrees. All options from
+  [Sensor](/components/sensor/).
+- **vertical_louver_angle** (*Optional*): Vertical louver angle in degrees. All options from
+  [Sensor](/components/sensor/).
+
+## Binary Sensor
+
+```yaml
+# Example configuration entry
+binary_sensor:
+  - platform: midea
+    midea_id: midea_ac
+    defrost:
+      name: Defrost
+    filter_alert:
+      name: Filter Alert
+```
+
+### Configuration Variables
+
+- **midea_id** (*Optional*, [ID](/guides/configuration-types/#id)): The `midea` climate to read from. Only needed with
+  more than one.
+- **defrost** (*Optional*): On while the outdoor unit defrosts. All options from
+  [Binary Sensor](/components/binary_sensor/).
+- **water_pump** (*Optional*): On while the condensate pump runs. All options from
+  [Binary Sensor](/components/binary_sensor/).
+- **filter_alert** (*Optional*): On when the appliance asks for the filter to be cleaned. All options from
+  [Binary Sensor](/components/binary_sensor/).
+- **display** (*Optional*): On while the appliance display is lit. All options from
+  [Binary Sensor](/components/binary_sensor/).
+- **follow_me** (*Optional*): On while the appliance uses the FollowMe temperature. All options from
+  [Binary Sensor](/components/binary_sensor/).
+- **self_cleaning** (*Optional*): On while the self clean cycle runs. All options from
+  [Binary Sensor](/components/binary_sensor/).
+
+## Switch
+
+The `midea` switch, select, number and button platforms control settings the climate entity does not cover. They are
+not detected from the appliance, so configure only the ones your appliance supports. A change is sent right away and
+the entity changes when the appliance confirms it, so a setting the appliance refuses keeps its old value. The climate's
+`beeper` setting also applies to these changes.
+
+```yaml
+# Example configuration entry
+switch:
+  - platform: midea
+    midea_id: midea_ac
+    purifier:
+      name: Purifier
+    jet_cool:
+      name: Jet Cool
+```
+
+### Configuration Variables
+
+- **midea_id** (*Optional*, [ID](/guides/configuration-types/#id)): The `midea` climate to control. Only needed with
+  more than one.
+- **purifier** (*Optional*): Ionizer / air purifier. All options from [Switch](/components/switch/).
+- **fahrenheit** (*Optional*): Show °F on the appliance display. All options from [Switch](/components/switch/).
+- **jet_cool** (*Optional*): Jet cool (flash). All options from [Switch](/components/switch/).
+- **breeze_away** (*Optional*): Breeze away, on appliances without `breeze_mode`. All options from
+  [Switch](/components/switch/).
+- **breezeless** (*Optional*): Breezeless, on appliances without `breeze_mode`. All options from
+  [Switch](/components/switch/).
+- **out_silent** (*Optional*): Outdoor unit silent mode. All options from [Switch](/components/switch/).
+- **ieco** (*Optional*): iECO mode. All options from [Switch](/components/switch/), and:
+
+  - **ieco_number** (*Optional*, int): The iECO number the appliance expects. Defaults to `1`.
+
+- **sound** (*Optional*): The appliance sound setting. All options from [Switch](/components/switch/).
+
+The switches show the state the appliance reports; their `restore_mode` defaults to `DISABLED`. `purifier` and
+`fahrenheit` are ignored until the appliance has sent its first status report.
+
+## Select
+
+```yaml
+# Example configuration entry
+select:
+  - platform: midea
+    midea_id: midea_ac
+    vertical_swing_angle:
+      name: Vertical Swing Angle
+    rate_select:
+      name: Rate Select
+      levels: 5
+```
+
+### Configuration Variables
+
+- **midea_id** (*Optional*, [ID](/guides/configuration-types/#id)): The `midea` climate to control. Only needed with
+  more than one.
+- **aux_heat_mode** (*Optional*): Electric auxiliary heater: `Off`, `Aux Heat` or `Aux Only`. Ignored until the
+  appliance has sent its first status report. All options from [Select](/components/select/).
+- **vertical_swing_angle** (*Optional*): Fixed vertical louver position: `Off`, `Position 1` to `Position 5`. All
+  options from [Select](/components/select/).
+- **horizontal_swing_angle** (*Optional*): Fixed horizontal louver position: `Off`, `Position 1` to `Position 5`. All
+  options from [Select](/components/select/).
+- **cascade** (*Optional*): Cascade (wind around) airflow: `Off`, `Up` or `Down`. All options from
+  [Select](/components/select/).
+- **fresh_air** (*Optional*): Fresh air fan: `Off`, `Low`, `Medium`, `High` or `Boost`. All options from
+  [Select](/components/select/).
+- **rate_select** (*Optional*): Power limit (gear). All options from [Select](/components/select/), and:
+
+  - **levels** (*Optional*, int): The levels the appliance has: `2` (`Off`, `75%`, `50%`) or `5` (`Off`, `Level 5` to
+    `Level 1`). Defaults to `5`.
+
+- **breeze_mode** (*Optional*): `Off`, `Breeze Away`, `Breeze Mild` or `Breezeless`, on appliances with breeze
+  control. All options from [Select](/components/select/).
+- **breeze_away_direction** (*Optional*): `Off`, `Up` or `Down`. All options from [Select](/components/select/).
+
+When the appliance reports a swing angle or fresh air speed between two options, for example one set with the remote,
+the select shows the nearest option. Any other reported value without an option is logged as a warning and leaves the
+select unchanged; with `rate_select`, this usually means `levels` does not match the appliance.
+
+## Number
+
+```yaml
+# Example configuration entry
+number:
+  - platform: midea
+    midea_id: midea_ac
+    fan_speed:
+      name: Fan Speed
+```
+
+### Configuration Variables
+
+- **midea_id** (*Optional*, [ID](/guides/configuration-types/#id)): The `midea` climate to control. Only needed with
+  more than one.
+- **fan_speed** (*Optional*): Fan speed in percent (1-100), on appliances with stepless fan control. While it is set to
+  a value other than a preset, the climate shows the fan mode as Auto; while the fan runs on auto, the number is
+  unknown. All options from [Number](/components/number/).
+- **target_humidity** (*Optional*): Humidity setpoint in percent (30-90) for the dry modes. All options from
+  [Number](/components/number/).
+
+Both are ignored until the appliance has sent its first status report.
+
+## Button
+
+```yaml
+# Example configuration entry
+button:
+  - platform: midea
+    midea_id: midea_ac
+    self_clean:
+      name: Self Clean
+```
+
+### Configuration Variables
+
+- **midea_id** (*Optional*, [ID](/guides/configuration-types/#id)): The `midea` climate to control. Only needed with
+  more than one.
+- **self_clean** (*Optional*): Starts the self clean cycle. All options from [Button](/components/button/).
+
 ## Automations
 
 ### `midea_ac.power_on` Action
