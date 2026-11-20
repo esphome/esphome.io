@@ -232,6 +232,40 @@ on_...:
 - **data** (**Required**, list, [templatable](/automations/templates)): The packet to send, length should match the configured
   payload_length.
 
+## Noise Floor Sensor
+
+The `sx126x` sensor platform reports the noise floor: the power on the channel while the radio listens with no
+packet arriving. It samples the radio's instantaneous RSSI at the sample interval, skips samples taken while a packet
+is being received, or while the radio is sending or asleep, and publishes the median of each update interval. A
+noise floor well above the radio's own (with a 50 ohm load in place of the antenna) shows interference that limits
+range. The radio reports the power in steps of 0.5 dB.
+
+Samples are taken only while the radio is in receive mode, so set `rx_start: true` or use the
+`sx126x.set_mode_rx` action. If no sample could be taken in an update interval, the sensor publishes `NaN`.
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: sx126x
+    noise_floor:
+      name: "Noise floor"
+```
+
+### Configuration Variables
+
+- **sx126x_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `sx126x` component, if there is
+  more than one.
+
+- **sample_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often the channel is sampled; at
+  least 10ms. Defaults to `100ms`.
+
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often the median of the samples is
+  published. At most 1000 samples are kept, so this may be at most 1000 times `sample_interval`. Defaults to `10s`.
+
+- **noise_floor** (*Optional*): The noise floor in dBm.
+
+  - All options from [Sensor](/components/sensor/).
+
 ## LoRa
 
 LoRa example using an explicit header, spreading factor 7 and coding rate 4/6.
