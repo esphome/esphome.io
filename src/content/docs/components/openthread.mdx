@@ -147,19 +147,18 @@ are calculated from `poll_period` and are recalculated whenever the poll period 
 `openthread.set_poll_period` action:
 
 - **Child Timeout** - The maximum time (in seconds) a parent will wait without hearing from a SED before
-  assuming the child has detached. Set to the larger of 240 seconds or 4 * `poll_period` in seconds.
+  assuming the child has detached. Set to the larger of 240 seconds (or its `core_options` value) or
+  4 * `poll_period` in seconds.
 - **Child Supervision Check Timeout** - The duration a SED waits to receive a message from its parent.
-  Set to the larger of 190 seconds or 3 * `poll_period` + 10 in seconds.
+  Set to the larger of 190 seconds (or its `core_options` value) or 3 * `poll_period` + 10 in seconds.
 - **Child Supervision Interval** - A configured interval that the parent uses to ensure at least one message
-  is sent to SED. Set to the larger of 129 seconds or 2 * `poll_period` - 10 in seconds.
+  is sent to SED. Set to the larger of 129 seconds (or its `core_options` value) or 2 * `poll_period` - 10 in seconds.
 
 When the poll period changes back to 0, the three values return to these minimums.
 
-Because these values are set at run time, a configuration with a `poll_period` above 0 ignores
 `OPENTHREAD_CONFIG_MLE_CHILD_TIMEOUT_DEFAULT`, `OPENTHREAD_CONFIG_CHILD_SUPERVISION_CHECK_TIMEOUT` and
-`OPENTHREAD_CONFIG_CHILD_SUPERVISION_INTERVAL` in `core_options` with a warning. From 2027.6.0 they are rejected.
-Without a `poll_period`, these options are kept and replace 240, 190 and 129 as the minimums above, so the
-values return to them when `openthread.set_poll_period` sets the poll period back to 0.
+`OPENTHREAD_CONFIG_CHILD_SUPERVISION_INTERVAL` in `core_options` replace 240, 190 and 129 as these minimums. On an MTD
+they must be whole numbers of seconds, not expressions.
 
 ### Public API
 
