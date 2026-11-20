@@ -1,0 +1,79 @@
+---
+/**
+ * Numbered pagination for the blog listing pages. Every page is a real link, so crawlers can reach
+ * every post through the listing, and page 1 always links to the listing root, never /page/1/.
+ * The previous and next pages are also announced with <link rel="prev|next"> in the page head.
+ */
+import { getPageNumbers, pageHref, type ListingPage } from "../../lib/blog";
+
+interface Props {
+  listing: ListingPage;
+}
+
+const { listing } = Astro.props;
+const { facet, page, totalPages } = listing;
+---
+
+{totalPages > 1 && (
+  <nav class="blog-pagination" aria-label="Blog pages">
+    <ol>
+      {getPageNumbers(page, totalPages).map((number) =>
+        number === null ? (
+          <li class="gap" aria-hidden="true">
+            …
+          </li>
+        ) : (
+          <li>
+            <a
+              href={pageHref(facet, number)}
+              aria-current={number === page ? "page" : undefined}
+              aria-label={`Page ${number}`}
+            >
+              {number}
+            </a>
+          </li>
+        ),
+      )}
+    </ol>
+  </nav>
+)}
+
+<style>
+  .blog-pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 3rem;
+  }
+
+  ol {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li a,
+  .gap {
+    display: grid;
+    place-items: center;
+    min-width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.5rem;
+    color: var(--sl-color-gray-2);
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  li a:hover {
+    background: var(--sl-color-gray-6);
+    color: var(--sl-color-white);
+  }
+
+  li a[aria-current="page"] {
+    background: var(--sl-color-text-accent);
+    color: var(--sl-color-text-invert);
+  }
+</style>

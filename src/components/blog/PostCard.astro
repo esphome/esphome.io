@@ -1,0 +1,327 @@
+---
+/**
+ * A blog post card for the listing pages. The whole card is clickable through the title link's
+ * ::after overlay, so there is one link per card for screen readers and keyboard users.
+ * `featured` renders the wide image-left layout used for the newest post on /blog/.
+ */
+import { Image } from "astro:assets";
+
+import type { BlogPost } from "../../lib/blog";
+
+interface Props {
+  post: BlogPost;
+  featured?: boolean;
+  /** Heading level of the post title. Listing pages sit directly under the page h1, so h2. */
+  headingLevel?: 2 | 3;
+}
+
+const { post, featured = false, headingLevel = 2 } = Astro.props;
+const Heading = `h${headingLevel}` as const;
+
+const date = post.date.toLocaleDateString("en-US", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+  timeZone: "UTC",
+});
+const chip = post.tags[0];
+const loading = featured ? "eager" : "lazy";
+const sizes = featured
+  ? "(max-width: 800px) 100vw, 44rem"
+  : "(max-width: 640px) 100vw, (max-width: 1000px) 50vw, 24rem";
+---
+
+<article class:list={["blog-card", { featured }]}>
+  <div class="cover">
+    <span class="placeholder" aria-hidden="true">
+      <img src="/favicon.svg" alt="" width="48" height="48" />
+    </span>
+    {post.cover &&
+      (typeof post.cover.image === "string" ? (
+        // Remote covers are the generated OpenGraph card. A plain <img> keeps the build from
+        // fetching every one of them to probe its size; the card is always 1200x630.
+        <img
+          class:list={["cover-image", { "light:sl-hidden": post.cover.light }]}
+          src={post.cover.image}
+          alt=""
+          width="1200"
+          height="630"
+          loading={loading}
+          decoding="async"
+          fetchpriority={featured ? "high" : undefined}
+        />
+      ) : (
+        <Image
+          class:list={["cover-image", { "light:sl-hidden": post.cover.light }]}
+          src={post.cover.image}
+          alt=""
+          widths={[480, 800, 1200]}
+          sizes={sizes}
+          loading={loading}
+          fetchpriority={featured ? "high" : undefined}
+        />
+      ))}
+    {post.cover?.light &&
+      (typeof post.cover.light === "string" ? (
+        <img
+          class="cover-image dark:sl-hidden"
+          src={post.cover.light}
+          alt=""
+          width="1200"
+          height="630"
+          loading={loading}
+          decoding="async"
+        />
+      ) : (
+        <Image
+          class="cover-image dark:sl-hidden"
+          src={post.cover.light}
+          alt=""
+          widths={[480, 800, 1200]}
+          sizes={sizes}
+          loading={loading}
+        />
+      ))}
+  </div>
+  <div class="body">
+    <p class="meta">
+      {chip && <span class="chip">{chip.label}</span>}
+      <time datetime={post.date.toISOString()}>{date}</time>
+    </p>
+    <Heading class="title">
+      <a href={post.href}>{post.title}</a>
+    </Heading>
+    <p class="excerpt">{post.excerpt}</p>
+    {post.source && (
+      <p class="source">
+        <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+          <path d="M19.33 10.18a1 1 0 0 1-.77 0 1 1 0 0 1-.62-.93l.01-1.83-8.2 8.2a1 1 0 0 1-1.41-1.42l8.2-8.2H14.7a1 1 0 0 1 0-2h4.25a1 1 0 0 1 1 1v4.25a1 1 0 0 1-.62.93Z" />
+          <path d="M11 4a1 1 0 1 1 0 2H7a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-4a1 1 0 1 1 2 0v4a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h4Z" />
+        </svg>
+        Shared from the {post.source}
+      </p>
+    )}
+    {featured && post.authors.length > 0 && (
+      <p class="authors">
+        {post.authors.map((author) => (
+          <span class="author">
+            {author.picture && <img src={author.picture} alt="" width="28" height="28" loading="eager" />}
+            {author.name}
+          </span>
+        ))}
+      </p>
+    )}
+  </div>
+</article>
+
+<style>
+  .blog-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: 0.75rem;
+    background: var(--sl-color-bg-nav);
+    transition: border-color 0.2s ease;
+  }
+
+  .blog-card:hover {
+    border-color: var(--sl-color-text-accent);
+  }
+
+  .blog-card:focus-within {
+    outline: 2px solid var(--sl-color-text-accent);
+    outline-offset: 2px;
+  }
+
+  .cover {
+    display: grid;
+    aspect-ratio: 1200 / 630;
+    overflow: hidden;
+    border-bottom: 1px solid var(--sl-color-hairline-light);
+    background: var(--sl-color-gray-6);
+  }
+
+  /* The placeholder and the image share one grid cell, so the placeholder shows until the
+     image paints over it, and stays when a post has no cover. */
+  .cover > * {
+    grid-area: 1 / 1;
+  }
+
+  /* position: relative puts the image in the same paint layer as the placeholder, whose opacity
+     would otherwise paint it above a plain in-flow image; later in the DOM, the image wins. */
+  /* max-height: none undoes the 400px cap custom.css puts on images in page content, which left a
+     gap under the featured cover once the card grew taller than that. */
+  .cover :global(.cover-image) {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    max-height: none;
+    object-fit: cover;
+  }
+
+  .placeholder {
+    display: grid;
+    place-items: center;
+    opacity: 0.5;
+  }
+
+  .body {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    padding: 1.25rem;
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 0.625rem;
+    color: var(--sl-color-gray-3);
+    font-size: var(--sl-text-xs);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .chip {
+    padding: 0.125rem 0.5rem;
+    border: 1px solid var(--sl-color-text-accent);
+    border-radius: 999px;
+    color: var(--sl-color-text-accent);
+  }
+
+  .title {
+    margin: 0 0 0.625rem;
+    color: var(--sl-color-white);
+    font-size: var(--sl-text-xl);
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  .title a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* Stretch the title link over the whole card. */
+  .title a::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+
+  .title a:focus-visible {
+    outline: none;
+  }
+
+  .blog-card:hover .title {
+    color: var(--sl-color-text-accent);
+  }
+
+  .excerpt {
+    display: -webkit-box;
+    margin: 0;
+    overflow: hidden;
+    color: var(--sl-color-gray-2);
+    font-size: var(--sl-text-sm);
+    line-height: 1.55;
+    -webkit-box-orient: vertical;
+    /* Enough for a full post description (about 160 characters) at the narrowest card width. */
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
+  }
+
+  /* Crossposts: the card links to a page that redirects off-site, so say where it goes.
+     margin-top: auto keeps the pill on the bottom edge of the card. */
+  .source {
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+    gap: 0.35rem;
+    margin: auto 0 0;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    background: var(--sl-color-text-accent);
+    color: var(--sl-color-text-invert);
+    font-size: var(--sl-text-xs);
+    font-weight: 600;
+  }
+
+  .excerpt:has(+ .source) {
+    margin-bottom: 1rem;
+  }
+
+  /* The featured card centres its text, so keep the pill with the excerpt there. */
+  .featured .source {
+    margin-top: 0;
+  }
+
+  .source svg {
+    flex-shrink: 0;
+    fill: currentColor;
+  }
+
+  .authors {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin: 1.25rem 0 0;
+    color: var(--sl-color-gray-2);
+    font-size: var(--sl-text-sm);
+  }
+
+  .author {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .author img {
+    border-radius: 50%;
+  }
+
+  /* Featured: image on the left, text on the right; stacks like a normal card on narrow screens. */
+  .featured {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  }
+
+  /* Let the cover fill the row when the text column is the taller of the two. */
+  .featured .cover {
+    aspect-ratio: auto;
+    min-height: 100%;
+    border-right: 1px solid var(--sl-color-hairline-light);
+    border-bottom: 0;
+  }
+
+  .featured .body {
+    justify-content: center;
+    padding: clamp(1.25rem, 4vw, 2.5rem);
+  }
+
+  .featured .title {
+    font-size: clamp(1.5rem, 2.6vw, 2.125rem);
+  }
+
+  .featured .excerpt {
+    font-size: var(--sl-text-base);
+    -webkit-line-clamp: 5;
+    line-clamp: 5;
+  }
+
+  @media (max-width: 800px) {
+    .featured {
+      display: flex;
+    }
+
+    .featured .cover {
+      aspect-ratio: 1200 / 630;
+      border-right: 0;
+      border-bottom: 1px solid var(--sl-color-hairline-light);
+    }
+  }
+</style>
