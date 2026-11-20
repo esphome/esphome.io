@@ -24,18 +24,27 @@ speaker:
     sample_rate: 48000
 ```
 
-## Configuration variables
+## Configuration Variables
 
 - **output_speaker** (**Required**, [ID](/guides/configuration-types/#id)): The [speaker](/components/speaker/) to output the resampled audio.
-- **buffer_duration** (*Optional*, [Time](/guides/configuration-types/#time)): The duration of the internal ring buffer. Larger values may reduce stuttering but use more memory. Defaults to `500ms`.
+- **buffer_duration** (*Optional*, [Time](/guides/configuration-types/#time)): Duration of the internal ring buffer.
+  Defaults to `100ms`. Larger values may reduce stuttering but use more memory.
 - **bits_per_sample** (*Optional*, positive integer or `passthrough`): The audio sample bit depth after resampling. Defaults to `passthrough`, where the bit depth matches the input audio.
 - **sample_rate** (*Optional*, positive integer): Sample rate to convert to. Must be between `8000` and `48000`. Defaults to the output speaker's sample rate.
 - **filters** (*Optional*, positive integer): The number of windowed sinc interpolation filters to use. Must be between `2` and `1024`. Defaults to `16`.
 - **taps** (*Optional*, positive integer): The number of taps per windowed sinc interpolation filter. Must between `16` and `128` and divisible by 4. Defaults to `16`.
 - **task_stack_in_psram** (*Optional*, boolean): Run the audio tasks in external memory. Defaults to `false`.
+- **task_core** (*Optional*, integer): CPU core for this speaker's resampling task. Use `0` or `1` to select a core,
+  or `-1` (the default) to let FreeRTOS choose. Core `1` requires a dual-core ESP32 running FreeRTOS in dual-core mode.
 - All other options from [Speaker Component](/components/speaker/#config-speaker).
 
-## Improving quality
+## Task Core
+
+Each resampler speaker can use a different core. The setting applies only when the audio needs resampling.
+On ESP32 targets with a floating-point unit, FreeRTOS can pin an initially unpinned task to the core where it
+first uses floating-point arithmetic. Setting `task_core` makes that placement explicit.
+
+## Improving Quality
 
 Resampling is processor intensive and should be avoided as much as possible. The audio quality is effected by the number of filters and the number of taps. Increasing the number of filters will increase the memory load. Increasing the number of taps will increase the CPU load.
 
