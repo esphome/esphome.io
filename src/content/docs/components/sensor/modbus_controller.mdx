@@ -40,7 +40,7 @@ and requires [Modbus Controller](/components/modbus_controller/) to be configure
 > the same as `_R` (word order reversed / **low word first** across multiple registers).
 
 
-- **bitmask** (*Optional*, int): sometimes multiple values are packed in a single register's response. The bitmask can be used to extract a value from the response. See [Bitmasks](/components/modbus_controller#bitmasks).
+- **bitmask** (*Optional*, int): sometimes multiple values are packed in a single register's response. The bitmask can be used to extract a value from the response. See [Bitmasks](/components/modbus_controller/#bitmasks).
 - **skip_updates** (*Optional*, int): **Deprecated and no longer has any effect** — every register range is polled on
   each `update_interval`. The key is still accepted (logging a config-time warning) and will be removed in 2027.3.0.
   To poll some registers less often, place those sensors on a second `modbus_controller` with the same `address:` and a
@@ -54,7 +54,7 @@ and requires [Modbus Controller](/components/modbus_controller/) to be configure
   it). See [Register ranges](/components/modbus_controller/#modbus_register_count). Replaces the deprecated
   `force_new_range` and `register_count` options, which will be removed in 2027.3.0 — the linked section covers
   migration.
-- **lambda** (*Optional*, [lambda](/automations/templates#config-lambda)):
+- **lambda** (*Optional*, [lambda](/automations/templates/#config-lambda)):
   Lambda to be evaluated every update interval to get the new value of the sensor.
 
   Parameters passed into the lambda
@@ -113,7 +113,7 @@ The example below will send 2 modbus commands (device address 1 assumed):
 ```
 
 The `modbus` sensor platform allows you use a lambda that gets called before data is published
-using [lambdas](/automations/templates#config-lambda).
+using [lambdas](/automations/templates/#config-lambda).
 
 The example below logs the value as parsed and the raw modbus bytes received for this register range:
 
@@ -129,7 +129,7 @@ sensor:
     value_type: U_WORD
     lambda: |-
         ESP_LOGI("","Lambda incoming value=%f - data array size is %d",x,data.size());
-        ESP_LOGI("","Sensor properties: adress = 0x%X, offset = 0x%X value type=%d",item->start_address,item->offset,item->sensor_value_type);
+        ESP_LOGI("","Sensor properties: address = 0x%X, offset = 0x%X value type=%d",item->start_address,item->offset,item->sensor_value_type);
         int i=0 ;
         for (auto val : data) {
           ESP_LOGI("","data[%d]=0x%02X (%d)",i,data[i],data[i]);
