@@ -83,7 +83,7 @@ openthread:
   limits.
 - **poll_period** (*Optional*, [Time](/guides/configuration-types/#time)): When set on an MTD device, the parent
   router enqueues any messages and waits for the child to submit a poll data request.
-  The maximum is 7200 seconds (2 hours); a larger value is limited to it with a warning.
+  The maximum is 7200 seconds (2 hours); a larger value is limited to it with a warning, and is rejected from 2027.6.0.
 - **core_options** (*Optional*, mapping): OpenThread compile-time options to set. See
   [OpenThread Core Options](#openthread-core-options-esp32).
 
@@ -125,7 +125,8 @@ on_...:
 
 - **poll_period** (**Required**, [Time](/guides/configuration-types/#time)): The poll period to apply, e.g. the
   short form `openthread.set_poll_period: 5s`. The maximum is 7200 seconds (2 hours); a larger value is limited to
-  it, with a warning when the configuration is validated.
+  it, with a warning when the configuration is validated, and is rejected from 2027.6.0. A value from a lambda is
+  limited at run time.
 
 ## OpenThread Device Type
 
