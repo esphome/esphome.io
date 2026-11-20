@@ -27,7 +27,7 @@ const date = post.date.toLocaleDateString("en-US", {
 const chip = post.tags[0];
 const loading = featured ? "eager" : "lazy";
 const sizes = featured
-  ? "(max-width: 800px) 100vw, 44rem"
+  ? "(max-width: 75rem) 100vw, 44rem"
   : "(max-width: 640px) 100vw, (max-width: 1000px) 50vw, 24rem";
 ---
 
@@ -286,23 +286,25 @@ const sizes = featured
     border-radius: 50%;
   }
 
-  /* Featured: image on the left, text on the right; stacks like a normal card on narrow screens. */
+  /* Featured: image on the left, text on the right; stacks like a normal card below 75rem.
+     Covers carry lettering up to their edges, so the cover keeps its own aspect ratio rather than
+     stretching to the text column's height, which cropped it. Below 75rem the text column is taller
+     than the image, so the card stacks there instead. When the text is a little taller above that,
+     the cover sits centred and the divider on the text column still spans the full height. */
   .featured {
     display: grid;
     grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
   }
 
-  /* Let the cover fill the row when the text column is the taller of the two. */
   .featured .cover {
-    aspect-ratio: auto;
-    min-height: 100%;
-    border-right: 1px solid var(--sl-color-hairline-light);
+    align-self: center;
     border-bottom: 0;
   }
 
   .featured .body {
     justify-content: center;
     padding: clamp(1.25rem, 4vw, 2.5rem);
+    border-left: 1px solid var(--sl-color-hairline-light);
   }
 
   .featured .title {
@@ -315,15 +317,17 @@ const sizes = featured
     line-clamp: 5;
   }
 
-  @media (max-width: 800px) {
+  @media (max-width: 75rem) {
     .featured {
       display: flex;
     }
 
     .featured .cover {
-      aspect-ratio: 1200 / 630;
-      border-right: 0;
       border-bottom: 1px solid var(--sl-color-hairline-light);
+    }
+
+    .featured .body {
+      border-left: 0;
     }
   }
 </style>
