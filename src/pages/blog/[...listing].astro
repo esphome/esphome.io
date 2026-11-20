@@ -1,0 +1,121 @@
+---
+/**
+ * Blog listing pages: /blog/, /blog/page/<n>/, and the tag, author and year listings with their
+ * own /page/<n>/ pages. See src/lib/blog.ts for the URL scheme and why these replace the
+ * starlight-blog index, tag and author pages.
+ */
+import type { InferGetStaticPropsType } from "astro";
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+
+import FilterBar from "@components/blog/FilterBar.astro";
+import Pagination from "@components/blog/Pagination.astro";
+import PostCard from "@components/blog/PostCard.astro";
+import { getListingStaticPaths } from "../../lib/blog";
+
+export const prerender = true;
+
+export function getStaticPaths() {
+  return getListingStaticPaths();
+}
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { listing, facets } = Astro.props;
+const { facet, page, totalPages, posts, featured, prevHref, nextHref } = listing;
+
+const headings = {
+  all: { title: "Blog", description: "Release notes, project news and announcements from the ESPHome team." },
+  tag: { title: facet.label, description: `ESPHome blog posts tagged ${facet.label}.` },
+  author: { title: `Posts by ${facet.label}`, description: `ESPHome blog posts written by ${facet.label}.` },
+  year: { title: `Posts from ${facet.label}`, description: `ESPHome blog posts published in ${facet.label}.` },
+};
+const { title, description } = headings[facet.kind];
+
+// Each page keeps a self-referencing canonical (Starlight adds it from the URL) and gets its own
+// <title> and description, so paginated pages are not reported as duplicates of page 1.
+const pageSuffix = page > 1 ? ` - Page ${page} of ${totalPages}` : "";
+const head = [
+  ...(page > 1 ? [{ tag: "title" as const, content: `${title}${pageSuffix} - ESPHome - Smart Home Made Simple` }] : []),
+  ...(prevHref ? [{ tag: "link" as const, attrs: { rel: "prev", href: prevHref } }] : []),
+  ...(nextHref ? [{ tag: "link" as const, attrs: { rel: "next", href: nextHref } }] : []),
+];
+
+const [first, ...rest] = posts;
+const gridPosts = featured ? rest : posts;
+---
+
+<StarlightPage
+  frontmatter={{
+    title,
+    description: page > 1 ? `${description} Page ${page} of ${totalPages}.` : description,
+    template: "splash",
+    // Listing pages only repeat post titles and excerpts; keep them out of site search.
+    pagefind: false,
+    head,
+  }}
+  hasSidebar={false}
+>
+  <div class="blog-listing not-content">
+    <p class="intro">
+      {description}
+      {page > 1 && (
+        <span class="page-count">
+          Page {page} of {totalPages}
+        </span>
+      )}
+    </p>
+
+    <FilterBar facets={facets} current={{ kind: facet.kind, slug: facet.slug }} />
+
+    {featured && first && <PostCard post={first} featured />}
+
+    <div class="grid">
+      {gridPosts.map((post) => (
+        <PostCard post={post} />
+      ))}
+    </div>
+
+    <Pagination listing={listing} />
+  </div>
+</StarlightPage>
+
+<style>
+  .blog-listing {
+    min-width: 0;
+    margin-top: 0.5rem;
+  }
+
+  .intro {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.25rem 1rem;
+    margin: 0 0 2rem;
+    color: var(--sl-color-gray-2);
+    font-size: var(--sl-text-lg);
+  }
+
+  .page-count {
+    color: var(--sl-color-gray-3);
+    font-size: var(--sl-text-sm);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  @media (max-width: 64rem) {
+    .grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 40rem) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
