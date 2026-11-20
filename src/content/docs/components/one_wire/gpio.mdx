@@ -5,7 +5,10 @@ title: "1-Wire Bus via GPIO"
 import APIRef from '@components/APIRef.astro';
 
 
-The `gpio` platform uses the CPU to generate the bus signals on an on-board GPIO pin.
+The `gpio` platform generates the bus signals on an on-board GPIO pin. By default the CPU does this: it switches the
+pin at the right moments and disables interrupts during each reset pulse and bit slot. The main loop waits while a
+transfer runs. On ESP32 variants with an RMT peripheral the RMT hardware can generate and measure the signals instead,
+see `use_rmt` below.
 
 ```yaml
 # Example configuration entry
@@ -14,11 +17,42 @@ one_wire:
     pin: GPIOXX
 ```
 
+To use the RMT peripheral on an ESP32:
+
+```yaml
+one_wire:
+  - platform: gpio
+    pin: GPIOXX
+    use_rmt: true
+```
+
 ## Configuration variables
 
 - **pin** (**Required**, number): The pin which will be use for bus communication. Note that 1-wire is a bi-directional
   bus so the selected GPIO pin must support both input and output. This must be a GPIO pin internal to the
   microcontroller and cannot be a pin located on an I/O expander or similar device.
+
+- **use_rmt** (*Optional*, boolean): Use the RMT peripheral of the ESP32 to generate and read the bus signals. The
+  hardware keeps the timing, so interrupts stay enabled and transfers run in the background instead of blocking the
+  main loop. Defaults to `false`. Only available on ESP32 variants with RMT hardware (not on the ESP32-C2 and
+  ESP32-C61), with ESP-IDF 5.5 or later (Arduino 3.3 or later). Each bus uses one transmit and one receive RMT
+  channel, which other components such as [`remote_receiver`](/components/remote_receiver/) or
+  [`remote_transmitter`](/components/remote_transmitter/) cannot use at the same time. ESPHome checks this when it
+  validates the configuration and reports an error if the chip has too few free channels.
+
+  With `use_rmt: true` the pin needs an external pullup resistor (typically 4.7 kΩ to 3.3 V). The RMT driver does not
+  apply these pin options, so ESPHome rejects them: `inverted`, `pullup` and `pulldown` in the pin `mode`,
+  `drive_strength` other than `20mA`, and `hold_state`. Parasite power (sensors without their own supply) is not
+  supported.
+
+- **rmt_timing** (*Optional*): Bus timing for `use_rmt: true`. The defaults suit most sensors; change them only for
+  long or heavily loaded lines.
+  - **write0_low** (*Optional*, [Time](/guides/configuration-types/#time)): How long the pin is held low to write a
+    0 bit. Range 60–105 µs, defaults to `90us`.
+  - **slot** (*Optional*, [Time](/guides/configuration-types/#time)): Length of one bit slot. Must be at least
+    `write0_low` + 11 µs. Range 71–120 µs, defaults to `110us`.
+  - **read_threshold** (*Optional*, [Time](/guides/configuration-types/#time)): A read slot whose low phase is shorter
+    than this is a 1 bit, a longer one is a 0 bit. Range 10–25 µs, defaults to `14us`.
 
 - **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation. Required if you have
   multiple busses.
