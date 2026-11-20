@@ -1,0 +1,97 @@
+---
+description: "Instructions for detecting the needle angle of analog gauges in an image in ESPHome."
+title: "Gauge Needle Detector"
+---
+import { Image } from 'astro:assets';
+import APIRef from '@components/APIRef.astro';
+
+The `gauge_needle_detector` component finds the needle angle in a grayscale
+image of an analog dial. It is a developer-facing library component: it has no
+YAML configuration of its own, and a consumer instantiates it and feeds it dial
+crops.
+
+<Image src="/images/gauge_needle_detector.png" width={135} height={124} layout="constrained" alt="A dial crop with the crop box, the ignored centre circle and the detected needle" />
+
+The picture shows the three things the caller controls: the orange box is the
+dial crop the consumer passes in, the cyan circle is `deadzone_diameter` and the
+red line is the needle the detector found.
+
+## How a consumer uses it
+
+The detector keeps its working buffers between frames, so a consumer creates one
+instance, calls `reserve()` once at setup, and then calls `detect()` for each
+crop:
+
+```cpp
+gauge_needle_detector::NeedleDetector detector;
+detector.reserve(crop_width, crop_height);  // once, in setup()
+
+gauge_needle_detector::DetectorConfig config;
+config.id = "dial_1";
+config.algorithm = gauge_needle_detector::ALGORITHM_RADIAL_PROFILE;
+config.needle_type = gauge_needle_detector::NEEDLE_TYPE_DARK;
+
+auto result = detector.detect(grayscale_crop, crop_width, crop_height, config);
+// result.angle: degrees, 0 = East, clockwise
+// result.confidence: 0 to 1
+```
+
+`DetectorConfig` also says whether the needle is dark or light (`needle_type`),
+carries the scan window (`min_scan_radius`, `max_scan_radius`, both fractions of
+the dial radius), the ignored centre circle (`deadzone_diameter`, in pixels) and
+a `debug` flag that makes every compiled-in algorithm run and log its result.
+
+The crop is one byte per pixel. The detector does not crop, rotate or scale, and
+it does not publish anything; the consumer owns the entities and the value
+mapping.
+
+## Algorithms
+
+| `algorithm` | Behaviour |
+| --- | --- |
+| `radial_profile` | Traces rays from the centre and keeps the longest bright run. Good default. |
+| `legacy` | Scores each ray of the raw crop by how many needle-coloured pixels it crosses. Smallest and fastest. |
+| `hough_transform` | Votes edge pixels into a radial histogram, weighted by edge magnitude. Best for broken or cluttered needles. |
+| `template_match` | Searches ray angles for the brightest average line. Slowest, useful as a cross-check. |
+| `auto` | Runs every compiled-in algorithm and keeps the most confident result. |
+
+The first three work on a preprocessed image (CLAHE, a top-hat filter sized from
+the dial radius, and a median filter); `legacy` works on the raw crop. The
+detector preprocesses once per `detect()` call and shares the result between the
+filtered algorithms.
+
+## Compile-time selection
+
+Each algorithm is a separate translation unit behind its own define, so a build
+only carries the algorithms it uses. A consumer enables them from Python with
+the names above:
+
+```python
+import esphome.codegen as cg
+from esphome.components import gauge_needle_detector
+
+gauge_needle_detector.enable_detectors({"radial_profile"})
+```
+
+| Define | Algorithm |
+| --- | --- |
+| `USE_GAUGE_NEEDLE_INTENSITY_SCAN` | `legacy` |
+| `USE_GAUGE_NEEDLE_RADIAL_PROFILE` | `radial_profile` |
+| `USE_GAUGE_NEEDLE_HOUGH_TRANSFORM` | `hough_transform` |
+| `USE_GAUGE_NEEDLE_TEMPLATE_MATCH` | `template_match` |
+
+`USE_GAUGE_NEEDLE_DETECTOR` enables the component itself. `auto` and debug
+logging compare every algorithm, so they need all four algorithm defines.
+
+## Memory
+
+The preprocessing buffers are three bytes per crop pixel and the Hough edge map
+is one byte per pixel, all kept between calls. `reserve()` sizes them at setup,
+so a steady stream of equally sized crops does not allocate. The 360-entry angle
+tables are fixed-size `std::array`s, so combining results does not allocate
+either. The sin/cos lookup tables live in RAM and are built on first use.
+
+## See Also
+
+- [ESP32 Camera](/components/esp32_camera/)
+- <APIRef text="gauge_needle_detector.h" path="gauge_needle_detector/gauge_needle_detector.h" />
