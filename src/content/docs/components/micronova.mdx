@@ -164,7 +164,26 @@ number:
   - All other options from [Number](/components/number/#config-number).
 - **power_level** (*Optional*): Number that sets/reads the requested stove power.
   - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval that the sensors should be checked. Defaults to 60 seconds.
+  - **power_level_offset** (*Optional*, int): Some boards store the power level with a fixed offset (for example
+    137–141 for levels 1–5). The offset is added when writing and subtracted when reading. Defaults to `0`.
+  - **ram_write_address** (*Optional*): Some boards only apply a new power level once its RAM copy is written as well.
+    When set, the same raw value is also written to this address. Not set by default.
+  - **ram_write_location** (*Optional*): The memory location for the **ram_write_address** write. The write bit is set
+    automatically. Defaults to `0x00` (RAM).
   - All options from [Number](/components/number/#config-number).
+
+Example for a board that stores the power level with an offset and keeps a RAM copy of it:
+
+```yaml
+number:
+  - platform: micronova
+    power_level:
+      name: Power level
+      memory_location: 0x20
+      memory_address: 0x60
+      power_level_offset: 136
+      ram_write_address: 0x37
+```
 
 ## Buttons
 
