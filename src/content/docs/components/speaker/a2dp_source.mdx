@@ -1,0 +1,100 @@
+---
+description: "Send ESPHome audio to a Bluetooth Classic A2DP speaker or headphones."
+title: "Bluetooth A2DP Source Speaker"
+---
+
+The `a2dp_source` speaker platform sends audio from an original ESP32 to a Bluetooth Classic A2DP receiver, such as
+headphones or a speaker. It requires the ESP-IDF framework and `classic_bt: true` in
+[BLE Component](/components/esp32_ble/).
+It accepts 16-bit stereo PCM at 44.1 kHz. Bluetooth LE can remain enabled, but the two Bluetooth modes share a radio.
+
+```yaml
+# Example configuration entry
+speaker:
+  - platform: a2dp_source
+    id: bluetooth_audio
+    address: "02:23:45:67:89:AB"  # Replace with your receiver's Bluetooth Classic address.
+    num_channels: 2
+    sample_rate: 44100
+```
+
+## Configuration variables
+
+- **address** (**Required**, MAC address): Bluetooth Classic address of the receiver.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): ID of the speaker.
+- All other options from [Speaker Component](/components/speaker/). This platform uses 16-bit stereo audio at 44.1 kHz.
+
+This version supports one configured A2DP receiver. After playback stops, the A2DP link disconnects. The receiver
+must accept pairing without a PIN or an interactive confirmation. This platform does not expose receiver discovery,
+PIN entry, bond management, or runtime receiver selection.
+
+## Speaker media player
+
+The [Speaker Audio Media Player](/components/media_player/speaker/) can connect to the Bluetooth receiver before it
+downloads audio. Set `preconnect_speaker` to the A2DP speaker and use one `announcement_pipeline`. The media player
+waits for the A2DP connection and an AVRCP volume response. The receiver must support AVRCP absolute volume for this
+path. Set `preconnect_timeout` long enough for connection retries; a timed-out request returns the media player to
+`idle` without fetching audio.
+
+```yaml
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+
+esp32_ble:
+  classic_bt: true
+
+speaker:
+  - platform: a2dp_source
+    id: bluetooth_audio
+    address: "02:23:45:67:89:AB"  # Replace with your receiver's Bluetooth Classic address.
+
+media_player:
+  - platform: speaker
+    name: Bluetooth Audio
+    preconnect_speaker: bluetooth_audio
+    preconnect_timeout: 60s
+    announcement_pipeline:
+      speaker: bluetooth_audio
+      format: MP3
+      sample_rate: 44100
+      num_channels: 2
+```
+
+Place the receiver in pairing mode before its first connection. Receivers requiring a PIN or interactive confirmation
+are outside this version's scope. The example address is illustrative and is not tied to a particular receiver.
+
+Wi-Fi, Bluetooth Classic and BLE share the ESP32 radio. Streaming audio and scanning BLE devices at the same time can
+increase connection times or packet loss. Test both the audio path and BLE reception with your own receiver and radio
+conditions before relying on the device as a Bluetooth proxy.
+
+## Logging and diagnostics
+
+A2DP connection and disconnection state changes use the `a2dp_source.connection` tag at `INFO` level. AVRCP negotiation
+and BLE scan coordination use `a2dp_source.avrcp` and `a2dp_source.coexistence` at `DEBUG` level; failures remain at
+`WARN` or `ERROR`. When the speaker media player begins sending audio through a configured `preconnect_speaker`,
+`speaker_media_player.stream` logs the complete source URL at `INFO` level. The URL can contain query parameters.
+
+With `logger.level: DEBUG`, the firmware continuously counts audio callbacks, PCM bytes and underruns, and tracks the
+maximum gap between callbacks. The runtime log level only controls which messages are shown; these counters continue
+updating even while `initial_level` or `logger.logs` sets the displayed level to `INFO`. A firmware built with
+`logger.level: INFO` omits the diagnostic calculations and cannot enable them by changing the runtime log level.
+Entries in `logger.logs` match exact tag names; `a2dp_source` does not set the level of its dotted tags.
+
+```yaml
+logger:
+  level: DEBUG  # Include diagnostic calculations in the firmware.
+  initial_level: INFO
+  logs:
+    a2dp_source: INFO  # Filter output; diagnostic counters still update.
+    a2dp_source.avrcp: WARN
+    a2dp_source.coexistence: WARN
+    speaker_media_player.stream: INFO
+```
+
+## See Also
+
+- [BLE Component](/components/esp32_ble/)
+- [Bluetooth Proxy](/components/bluetooth_proxy/)
+- [Speaker Audio Media Player](/components/media_player/speaker/)
