@@ -1,0 +1,143 @@
+---
+description: "Instructions for reading analog gauges from an ESP32 camera in ESPHome."
+title: "Analog Gauge Reader"
+---
+import { Image } from 'astro:assets';
+
+The `analog_gauge_reader` component reads one or more analog dials out of frames from an
+[ESP32 Camera](/components/esp32_camera/). It decodes each frame once through a `camera_decoder`, crops every
+configured dial out of that single decoded image, finds the needle angle of each crop with `gauge_needle_detector`
+and publishes the dial values.
+
+It is a computer-vision alternative to a model-based meter reader: it needs no trained model, runs in a few
+milliseconds per dial, and works on clean, well-cropped dials.
+
+<Image src="/images/gauge_needle_detector.png" width={135} height={124} layout="constrained" alt="A dial crop with the crop box, the ignored centre circle and the detected needle" />
+
+The orange box is the dial crop, the cyan circle is the centre the detection ignores (`deadzone_diameter`), and the
+red line is the detected needle.
+
+A minimal configuration:
+
+```yaml
+camera_decoder:
+  id: gauge_decoder
+  output_type: RGB888
+
+analog_gauge_reader:
+  camera_id: my_camera
+  decoder_id: gauge_decoder
+  value_sensor:
+    name: "Water meter"
+  dials:
+    - id: dial_1
+      crop_x: 0
+      crop_y: 0
+      crop_w: 64
+      crop_h: 64
+      scale: 1.0
+      min_value: 0
+      max_value: 10
+      min_angle: 0
+      max_angle: 360
+```
+
+## Configuration variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The reader ID.
+- **camera_id** (**Required**, [ID](/guides/configuration-types/#id)): The `esp32_camera` that produces the frames.
+- **decoder_id** (**Required**, [ID](/guides/configuration-types/#id)): The `camera_decoder` that decodes the frames.
+  A `camera_decoder` with `output_type: RGB888` is required for dials that read a colour.
+- **value_sensor** (*Optional*, [Sensor](/components/sensor/)): The combined value of all dials.
+- **dials** (**Required**, list): The dials to read, see below.
+- **stacked_digits** (*Optional*, boolean): Treat the dials as the digits of one odometer reading, sorted by
+  `scale`, instead of summing their values. Defaults to `false`.
+- **paused** (*Optional*, boolean): Start paused. Defaults to `false`.
+- **debug** (*Optional*, boolean): Log every detection result and the comparison between algorithms.
+  Defaults to `false`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often to request a frame.
+  Defaults to `60s`.
+
+### Dial configuration variables
+
+Each entry of `dials` describes one dial in the frame:
+
+- **id** (**Required**, string): The dial name, used in the logs.
+- **crop_x** (*Optional*, int): Left edge of the dial crop. Defaults to `0`.
+- **crop_y** (*Optional*, int): Top edge of the dial crop. Defaults to `0`.
+- **crop_w** (*Optional*, int): Width of the crop. Defaults to `64`.
+- **crop_h** (*Optional*, int): Height of the crop. Defaults to `64`.
+- **scale** (*Optional*, float): How much one unit of this dial is worth in the combined value.
+  Defaults to `1.0`.
+- **min_angle** (*Optional*, float): Angle of `min_value`, in degrees. Defaults to `0`.
+- **max_angle** (*Optional*, float): Angle of `max_value`, in degrees. Defaults to `360`.
+  A `min_angle` greater than `max_angle` selects the wrap-around part of the scale.
+- **angle_offset** (*Optional*, float): Rotation of the dial's coordinate system, in degrees, where `0` is north
+  (12 o'clock), `90` east, `180` south and `270` west. Defaults to `0`.
+- **clockwise** (*Optional*, boolean): Whether the value increases clockwise. Defaults to `true`.
+- **min_value** (*Optional*, float): Value at `min_angle`. Defaults to `0`.
+- **max_value** (*Optional*, float): Value at `max_angle`. Defaults to `10`.
+- **calibration** (*Optional*, list): Points that replace the linear angle-to-value mapping with a piecewise linear
+  one. Each point has a **raw** angle and the **mapped** value at that angle.
+- **needle_type** (*Optional*): `DARK` (default) when the needle is darker than the face, `LIGHT` when it is
+  brighter.
+- **algorithm** (*Optional*): `radial_profile` (default), `legacy`, `hough_transform`, `template_match` or `auto`.
+  `auto` runs every algorithm and keeps the most confident result.
+- **min_scan_radius** (*Optional*, float): Inner end of the scan window, as a fraction of the dial radius.
+  Defaults to `0.3`.
+- **max_scan_radius** (*Optional*, float): Outer end of the scan window, as a fraction of the dial radius.
+  Defaults to `0.9`.
+- **deadzone_diameter** (*Optional*, float): Diameter of the centre circle that the detection ignores, in pixels.
+  It must be smaller than the crop. Defaults to `0.0`.
+- **auto_contrast** (*Optional*, boolean): Stretch the crop's contrast before detecting. Defaults to `true`.
+- **contrast** (*Optional*, float): Multiplier applied to the crop. Defaults to `1.0`.
+- **process_channel** (*Optional*): `GRAYSCALE` (default), `RED`, `GREEN` or `BLUE`. Use a colour channel when the
+  needle stands out in one channel only.
+- **target_color** (*Optional*, hex): Read the dial by distance from this colour instead of by brightness, for
+  example a red needle on a dark face.
+- **color_tolerance** (*Optional*, float): Distance from `target_color` that still counts as the needle.
+  `0` uses the legacy linear mapping. Defaults to `0.0`.
+
+Each dial can also publish its own sensors:
+
+- **value** (*Optional*, [Sensor](/components/sensor/)): The dial value. In `stacked_digits` mode it publishes the
+  dial's digit instead.
+- **confidence** (*Optional*, [Sensor](/components/sensor/)): How confident the detection is, from 0 to 1.
+- **angle** (*Optional*, [Sensor](/components/sensor/)): The detected needle angle, in degrees, where 0 is north.
+
+## How a dial is read
+
+Every dial starts from the same decoded frame. The reader crops its rectangle, turns the crop into one byte per
+pixel and passes it to the needle detector, which returns the angle. The picture follows one dial through the
+stages:
+
+<Image src="/images/gauge_needle_detector_process.png" width={1259} height={255} layout="constrained" alt="The six stages of one dial: raw RGB crop, colour-distance map, CLAHE, top-hat filter, median filter and the detected needle" />
+
+1. **Raw crop** - the dial rectangle taken from the decoded frame.
+2. **Colour-distance map** - with `target_color` set, each pixel becomes its distance from that colour, so the
+   needle becomes the darkest part of the picture and `color_tolerance` stretches the useful part of the range.
+   Without `target_color`, the reader takes `process_channel` and applies `auto_contrast` and `contrast`.
+3. **CLAHE** - evens out uneven lighting across the crop before anything looks for the needle.
+4. **Top-hat** - removes the slowly changing background and keeps structures about the size of a needle.
+5. **Median 3x3** - removes the single-pixel noise the previous stage leaves behind.
+6. **Processed needle** - the detector follows rays from the crop centre between `min_scan_radius` and
+   `max_scan_radius`, ignores the centre circle (`deadzone_diameter`) and keeps the ray with the best score.
+
+Steps 3 to 5 run only for the algorithms that use the filtered image. `legacy` reads step 2 directly, which makes
+it the cheapest option and the one that suffers most from shadows and glare.
+
+## Requirements and behaviour
+
+- The camera must deliver JPEG frames. Use `pixel_format: JPEG`, or set `jpeg_quality` on a camera with another
+  pixel format so the frames are converted to JPEG for the reader.
+- The dial crop must be centred on the dial: the detection measures the angle from the centre of the crop, and
+  `deadzone_diameter` and the scan radii are in crop pixels.
+- All dials share one decoded frame. A frame is decoded once per update and every dial crops out of that buffer, so
+  adding dials does not add decodes.
+- The frame size is taken from the camera's `resolution`. A `camera_window` that makes the frames smaller is
+  supported as long as the crops still fit.
+
+## See Also
+
+- [ESP32 Camera](/components/esp32_camera/)
+- [Sensor Filters](/components/sensor/#sensor-filters)
