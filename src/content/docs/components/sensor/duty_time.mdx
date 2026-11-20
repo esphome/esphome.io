@@ -81,16 +81,16 @@ on_...:
     - sensor.duty_time.reset: my_climate_work_time
 ```
 
-### `sensor.duty_time.set` Action
+### `sensor.duty_time.set_value` Action
 
-This action sets the accumulated duty time to a specified number of seconds and publishes the new sensor state.
+This action sets the accumulated duty time and publishes the new sensor state.
 It does not change whether the counter is running, or update the `last_time` sensor. Use it to restore a previously
 backed-up counter value after replacing a device or erasing its flash.
 
 ```yaml
 on_...:
   then:
-    - sensor.duty_time.set:
+    - sensor.duty_time.set_value:
         id: my_climate_work_time
         value: 450000
 ```
@@ -98,15 +98,15 @@ on_...:
 Configuration variables:
 
 - **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the `duty_time` sensor.
-- **value** (**Required**, integer, [templatable](/automations/templates/)): The accumulated time in seconds,
-  from `0` to `4294967295` (unsigned 32-bit integer).
+- **value** (**Required**, [Time](/guides/configuration-types/#time), [templatable](/automations/templates/)): The
+  accumulated time, for example `125h`. A plain number is seconds; a lambda returns seconds.
 
 The value can also be supplied by a lambda:
 
 ```yaml
 on_...:
   then:
-    - sensor.duty_time.set:
+    - sensor.duty_time.set_value:
         id: my_climate_work_time
         value: !lambda "return 450000U;"
 ```
@@ -127,7 +127,7 @@ api:
       variables:
         seconds: int
       then:
-        - sensor.duty_time.set:
+        - sensor.duty_time.set_value:
             id: my_climate_work_time
             value: !lambda "return seconds;"
 ```
