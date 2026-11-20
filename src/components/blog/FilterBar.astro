@@ -277,6 +277,13 @@ const sections = [
     }
   }
 
+  /* A modal dialog does not stop the page behind it from scrolling, so lock it while the drawer is
+     open. scrollbar-gutter keeps the layout from shifting when the scrollbar goes away. */
+  :global(html:has(#blog-filters[open])) {
+    overflow: hidden;
+    scrollbar-gutter: stable;
+  }
+
   /* Drawer: a side sheet on wide screens, a bottom sheet on narrow ones. */
   .filters-drawer {
     width: min(24rem, 100vw);
