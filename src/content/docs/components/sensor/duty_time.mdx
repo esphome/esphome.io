@@ -114,10 +114,27 @@ on_...:
 When `restore: true` is configured on the sensor, the new value is saved using ESPHome's
 [preferences](/components/preferences/) mechanism. The action does not retrieve a backup automatically.
 
+<span id="sensor-duty_time-is_running_action"></span>
+<span id="sensor-duty_time-is_not_running_action"></span>
 
-### Example: Restore a Saved Value from Home Assistant
+### `sensor.duty_time.is_running` / `sensor.duty_time.is_not_running` Condition
 
-A [user-defined API action](/components/api/#api-device-actions) can accept a runtime value from Home Assistant,
+This [Condition](/automations/actions/#all-conditions) checks if the `duty_time` counter is currently running (or suspended). In lambdas, you may use the `is_running()` method.
+
+```yaml
+# In some trigger:
+on_...:
+  if:
+    condition:
+      # Same syntax for 'is_not_running'
+      sensor.duty_time.is_running: my_climate_work_time
+```
+
+## Examples
+
+### Restore a Saved Value from Home Assistant
+
+A [user-defined API action](/components/api/#user-defined-actions) can accept a runtime value from Home Assistant,
 so the value does not need to be hard-coded in ESPHome. For example, add this to the ESPHome configuration:
 
 ```yaml
@@ -129,11 +146,12 @@ api:
       then:
         - sensor.duty_time.set_value:
             id: my_climate_work_time
-            value: !lambda "return seconds;"
+            value: !lambda "return seconds < 0 ? 0 : seconds;"
 ```
 
 After flashing the configuration, a Home Assistant script can restore the saved value. For a device named
-`my_device` and a numeric helper called `input_number.duty_time_backup`, use:
+`my_device` and a numeric helper called `input_number.duty_time_backup`, use the script below. A new
+`input_number` helper has a maximum of 100, so set its maximum to the largest runtime you expect and its step to 1.
 
 ```yaml
 # Home Assistant configuration
@@ -156,22 +174,6 @@ non-numeric, negative, or beyond the signed 32-bit range accepted by the API act
 This example assumes the helper already contains the desired runtime in seconds; it does not create or update
 the backup. Trigger restoration intentionally, such as after replacing a device or erasing its flash.
 Do not restore on every startup, since an older backup can overwrite newer accumulated runtime.
-
-<span id="sensor-duty_time-is_running_action"></span>
-<span id="sensor-duty_time-is_not_running_action"></span>
-
-### `sensor.duty_time.is_running` / `sensor.duty_time.is_not_running` Condition
-
-This [Condition](/automations/actions/#all-conditions) checks if the `duty_time` counter is currently running (or suspended). In lambdas, you may use the `is_running()` method.
-
-```yaml
-# In some trigger:
-on_...:
-  if:
-    condition:
-      # Same syntax for 'is_not_running'
-      sensor.duty_time.is_running: my_climate_work_time
-```
 
 ## See Also
 
