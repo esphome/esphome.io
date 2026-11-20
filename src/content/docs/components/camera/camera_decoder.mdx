@@ -1,0 +1,70 @@
+---
+description: "Instructions for decoding JPEG camera frames into pixel buffers in ESPHome."
+title: "Camera Decoder"
+---
+import APIRef from '@components/APIRef.astro';
+
+The `camera_decoder` component decodes JPEG frames from a camera into a pixel
+buffer. It is the decoder counterpart of
+[camera_encoder](/components/camera/camera_encoder/), for components that need
+pixels rather than the encoded JPEG.
+
+```yaml
+camera_decoder:
+  id: camera_pixels
+  output_type: RGB888
+  rotation: 0
+```
+
+The decoder owns its output buffer and reuses it across decodes when the size
+allows, so a consumer can decode repeatedly without allocating every frame.
+
+## Configuration variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The decoder ID.
+- **output_type** (*Optional*): `RGB888` (default), `RGB565`, `YUV422` or
+  `GRAYSCALE`.
+- **rotation** (*Optional*, int): `0` (default), `90`, `180` or `270` degrees,
+  applied while decoding. The image dimensions must be multiples of 8 for
+  rotation.
+
+> [!WARNING]
+> **Grayscale costs three times the frame RAM while decoding.** `esp_new_jpeg`
+> 1.0.2 cannot decode to one channel, so `GRAYSCALE` first decodes the frame as
+> `RGB888` and then compacts it to one byte per pixel in place. The published
+> buffer is 1 byte per pixel, but its allocation is sized for `RGB888`, so peak
+> RAM is 3x the grayscale frame size (1.5x a `YUV422` buffer).
+
+## C++ API
+
+The decoder implements `camera::Decoder`:
+
+```cpp
+auto error = decoder->decode(data, length, &spec);
+if (error == camera::DECODER_ERROR_SUCCESS) {
+  camera::Buffer *pixels = decoder->get_output_buffer();
+  // spec.width, spec.height and spec.format describe the buffer.
+}
+```
+
+`spec` is a `camera::CameraImageSpec`. Supported output formats are
+`camera::PIXEL_FORMAT_RGB888`, `PIXEL_FORMAT_RGB565`, `PIXEL_FORMAT_CBYCRY`
+(packed YUV 4:2:2, the `YUV422` option) and `PIXEL_FORMAT_GRAYSCALE`.
+
+## Notes
+
+- Decoding uses `espressif/esp_new_jpeg` 1.0.2, which is resolved through the
+  ESP-IDF component manager for both the ESP-IDF and the Arduino frameworks.
+- ESP32-H2 and ESP32-H21 are not supported, because `esp_new_jpeg` ships no
+  build for them.
+- `GRAYSCALE` output is reduced in software; see the warning above for its peak
+  RAM cost.
+- This component does not crop, scale, split zones or normalize output. Use it
+  together with a consumer that does.
+
+## See Also
+
+- [Camera Encoder](/components/camera/camera_encoder/)
+- [ESP32 Camera](/components/esp32_camera/)
+- <APIRef text="decoder.h" path="camera/decoder.h" />
+- <APIRef text="esp32_camera_jpeg_decoder.h" path="camera_decoder/esp32_camera_jpeg_decoder.h" />
