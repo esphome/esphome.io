@@ -106,6 +106,26 @@ esp32_ble:
 
 - **use_psram** (*Optional*, boolean): Requests that the Bluetooth stack allocate its memory buffers from PSRAM instead of internal RAM, freeing approximately 40 kB for other uses. Defaults to `false`. Requires PSRAM to be configured.
 
+- **classic_bt** (*Optional*, boolean): Enable the Bluetooth Classic controller alongside BLE on the original ESP32
+  with the ESP-IDF framework. Defaults to `false`. Other ESP32 variants and the Arduino framework are not supported.
+
+- **classic_max_acl_connections** (*Optional*, integer): Maximum number of simultaneous Bluetooth Classic BR/EDR ACL
+  connections, from `1` to `7`. Defaults to `1`. Requires `classic_bt: true`.
+
+These options make the controller available to components that use Bluetooth Classic. They do not create a Classic
+connection on their own.
+
+```yaml
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+
+esp32_ble:
+  classic_bt: true
+  classic_max_acl_connections: 2
+```
+
 ## `ble.disable` Action
 
 This action turns off the BLE interface on demand.
