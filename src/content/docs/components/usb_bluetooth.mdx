@@ -1,0 +1,112 @@
+---
+description: "Instructions for using a USB Bluetooth dongle as the Bluetooth controller of an ESP32 in ESPHome"
+title: "USB Bluetooth"
+---
+import APIRef from '@components/APIRef.astro';
+
+The `usb_bluetooth` component connects a USB Bluetooth dongle (a USB HCI controller) to an ESP32 with a USB host
+port: the ESP32-S2, ESP32-S3, ESP32-S31, ESP32-P4 and ESP32-H4. It builds on the [USB Host](/components/usb_host/)
+component.
+
+The dongle can be used in two ways:
+
+- **Detection only** (the default): the controller is reset and identified, and its Bluetooth version, manufacturer,
+  address and name are logged. This is useful for checking that a dongle works before using it.
+- **As the controller of `esp32_ble`**: with `bluedroid: true`, the ESP-IDF Bluedroid host runs on the dongle
+  instead of on a built-in radio or an [ESP32 Hosted](/components/esp32_hosted/) co-processor. Everything built on
+  [ESP32 BLE](/components/esp32_ble/) then uses the dongle, including the
+  [Bluetooth Proxy](/components/bluetooth_proxy/), [ESP32 BLE Tracker](/components/esp32_ble_tracker/) and
+  [BLE Client](/components/ble_client/). This gives Bluetooth to chips without a radio, like the ESP32-P4, and lets
+  the radio sit at the end of a USB cable, away from the ESP32.
+
+```yaml
+# Example configuration entry
+usb_bluetooth:
+```
+
+The [USB Host](/components/usb_host/) component is loaded automatically; configure it for options such as
+`max_packet_size` or `enable_hubs`.
+
+## Configuration Variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The id to use for this component.
+- **vid** (*Optional*, int): The USB vendor ID of the dongle. Defaults to `0`, which matches any device.
+- **pid** (*Optional*, int): The USB product ID of the dongle. Defaults to `0`, which matches any device.
+- **manufacturer** (*Optional*, string): Only match a dongle whose USB manufacturer string is exactly this.
+- **product** (*Optional*, string): Only match a dongle whose USB product string is exactly this.
+- **interface_description** (*Optional*, string): Only match a dongle one of whose USB interfaces has exactly this
+  interface string.
+- **firmware** (*Optional*, filename): A Realtek firmware file to download into the controller at every start. See
+  [Realtek Dongles](#realtek-dongles).
+- **firmware_config** (*Optional*, filename): The Realtek configuration file that belongs with `firmware`. Requires
+  `firmware`.
+- **bluedroid** (*Optional*, boolean): Use this dongle as the controller of the Bluedroid host of
+  [ESP32 BLE](/components/esp32_ble/). Requires `esp32_ble` and cannot be combined with `esp32_hosted`. Only one
+  `usb_bluetooth` entry can set this. Defaults to `false`.
+
+With `vid` and `pid` left at `0`, the component takes the first connected device with a Bluetooth controller interface
+(USB class `E0`, subclass `01`, protocol `01`) and ignores every other device. More than one entry is allowed, but then
+each needs a `vid` and `pid`. The matching filters work as described for
+[USB Host devices](/components/usb_host/#device-configuration-options).
+
+## Realtek Dongles
+
+Most cheap USB Bluetooth 5 dongles (for example the TP-Link UB500 and others with the RTL8761BU chip) start with
+firmware in ROM that is too old to be used. Like the Linux `btrtl` driver, the component downloads a firmware patch
+into the controller each time it starts. The firmware is not included in ESPHome: download the files for your chip
+from the `rtl_bt/` folder of
+[linux-firmware](https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/tree/rtl_bt)
+and put them next to your configuration. For the RTL8761BU these are `rtl8761bu_fw.bin` and `rtl8761bu_config.bin`.
+
+The file is checked when the configuration is validated, and the patch that matches the ROM version reported by the
+controller is chosen at run time. A firmware fragment is sent as one USB control transfer of more than 256 bytes, so
+the [USB Host](/components/usb_host/) `max_packet_size` must be set to `512` or more.
+
+When the download works, the log shows the controller with its new version:
+
+```text
+[I][usb_bluetooth]: Controller ready: Bluetooth 5.1, Realtek Semiconductor, address 8C:90:2D:xx:xx:xx, name "UB500"
+```
+
+Dongles that need no firmware (for example many with Intel, Broadcom or CSR chips) can be used without `firmware`.
+Only the RTL8761BU has been tested so far.
+
+## Notes
+
+- On the ESP32-P4, a full-speed dongle connected through a hub (including a hub built into the development board)
+  needs `full_speed_only: true` on [USB Host](/components/usb_host/), because the ESP-IDF USB host does not support
+  split transactions.
+- With `bluedroid: true`, the USB host library runs in its own task instead of in the main loop, so that Bluedroid
+  can wait for the dongle's replies while it starts.
+- When the dongle is unplugged, Bluetooth is stopped; when it is plugged back in, it is set up again and Bluetooth
+  is restarted. Connections made through the dongle are lost when it is unplugged.
+- Only Bluetooth LE is supported. Classic Bluetooth (for example A2DP audio) is not.
+
+## Examples
+
+### Bluetooth Proxy on a USB Dongle
+
+An ESP32-P4 with Ethernet as a [Bluetooth Proxy](/components/bluetooth_proxy/), with a Realtek RTL8761BU dongle as
+its radio:
+
+```yaml
+usb_host:
+  max_packet_size: 512  # Needed to download Realtek firmware
+
+usb_bluetooth:
+  - firmware: firmware/rtl8761bu_fw.bin
+    firmware_config: firmware/rtl8761bu_config.bin
+    bluedroid: true
+
+esp32_ble:
+
+bluetooth_proxy:
+  active: true
+```
+
+## See Also
+
+- [USB Host Interface](/components/usb_host/)
+- [ESP32 BLE](/components/esp32_ble/)
+- [Bluetooth Proxy](/components/bluetooth_proxy/)
+- <APIRef text="usb_bluetooth.h" path="usb_bluetooth/usb_bluetooth.h" />
