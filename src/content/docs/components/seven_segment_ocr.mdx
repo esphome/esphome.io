@@ -21,7 +21,8 @@ setup with the widest crop, and calls `recognize()` for each crop:
 
 ```cpp
 seven_segment_ocr::SevenSegmentOCR ocr;
-ocr.reserve(crop_width);  // once, in setup(), with the widest crop
+if (!ocr.reserve(crop_width))  // once, in setup(), with the widest crop
+  return;                      // or mark the component failed
 
 const auto result = ocr.recognize(grayscale_crop, crop_width, crop_height, digit_count);
 if (result.complete())
