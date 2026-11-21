@@ -150,19 +150,19 @@ Every dial starts from the same decoded frame. The reader crops its rectangle, t
 pixel and passes it to the needle detector, which returns the angle. The picture follows one dial through the
 stages:
 
-<Image src="/images/gauge_needle_detector_process.png" width={1259} height={255} layout="constrained" alt="The six stages of one dial: raw RGB crop, colour-distance map, CLAHE, top-hat filter, median filter and the detected needle" />
+<Image src="/images/gauge_needle_detector_process.png" width={1250} height={225} layout="constrained" alt="The five stages of one dial: raw RGB crop, colour-distance map, contrast stretch, top-hat filter and the detected needle" />
 
 1. **Raw crop** - the dial rectangle taken from the decoded frame.
 2. **Colour-distance map** - with `target_color` set, each pixel becomes its distance from that colour, so the
    needle becomes the darkest part of the picture and `color_tolerance` stretches the useful part of the range.
    Without `target_color`, the reader takes `process_channel` and applies `auto_contrast` and `contrast`.
-3. **CLAHE** - evens out uneven lighting across the crop before anything looks for the needle.
+3. **Contrast stretch** - evens out uneven lighting across the crop. The histogram is clipped so a large flat
+   background cannot flatten the needle.
 4. **Top-hat** - removes the slowly changing background and keeps structures about the size of a needle.
-5. **Median 3x3** - removes the single-pixel noise the previous stage leaves behind.
-6. **Processed needle** - the detector follows rays from the crop centre between `min_scan_radius` and
+5. **Processed needle** - the detector follows rays from the crop centre between `min_scan_radius` and
    `max_scan_radius`, ignores the centre circle (`deadzone_diameter`) and keeps the ray with the best score.
 
-Steps 3 to 5 run only for the algorithms that use the filtered image. `legacy` reads step 2 directly, which makes
+Steps 3 and 4 run only for the algorithms that use the filtered image. `legacy` reads step 2 directly, which makes
 it the cheapest option and the one that suffers most from shadows and glare.
 
 ## Requirements and behaviour
