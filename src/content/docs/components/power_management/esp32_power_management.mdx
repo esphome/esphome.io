@@ -28,7 +28,8 @@ power_management:
   least `10MHz` on the ESP32 and `2MHz` on the other variants, and be no higher than the maximum. Defaults to
   the crystal frequency, limited to the maximum.
 - **enable_light_sleep** (*Optional*, boolean): Enter light sleep automatically whenever no task is runnable,
-  which also stops the periodic tick interrupt while idle. Defaults to `false`.
+  which also stops the periodic tick interrupt while idle. A [UART](/components/uart/) cannot receive while the
+  chip sleeps, so this is rejected when a UART has an `rx_pin`. Defaults to `false`.
 - **idle_time_before_sleep** (*Optional*, int): How many FreeRTOS ticks (1 ms each, as ESPHome runs the ESP32
   tick at 1 kHz) the system must stay idle before it enters light sleep. Minimum `2`. Defaults to `3`.
 - **power_down_flash** (*Optional*, boolean): Power down the flash chip during light sleep. Requires
@@ -66,7 +67,8 @@ between.
 The price is interrupt latency, which can grow to around 40 µs, and peripheral behaviour under a changing
 APB frequency. Timers in the Timer Group peripheral, for example, keep counting but at a rate that follows
 the APB frequency. SPI, I²C, SDMMC, Ethernet, Wi-Fi, OpenThread, Bluetooth and CAN hold locks and behave
-well. Read ESP-IDF's
+well. A UART holds one only while sending, so ESPHome moves UARTs to a clock that does not follow APB (see
+[UART `clock_source`](/components/uart/#configuration-variables)). Read ESP-IDF's
 [Dynamic Frequency Scaling and Peripheral Drivers](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/power_management.html#dynamic-frequency-scaling-and-peripheral-drivers)
 before enabling this on a device with other peripherals.
 

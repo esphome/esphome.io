@@ -86,10 +86,12 @@ uart:
   unsupported selection is rejected during configuration validation.
 
 > [!NOTE]
-> The default clock is the right choice unless you have enabled ESP-IDF dynamic frequency scaling yourself, for
-> example with `CONFIG_PM_ENABLE` under `sdkconfig_options` in the [esp32](/components/esp32/) component. ESPHome does
-> not enable it. With scaling active the APB frequency changes at runtime, so a UART clocked from APB loses its baud
-> rate. On those builds pick a source that does not follow APB:
+> Dynamic frequency scaling changes the APB frequency at runtime, so a UART clocked from APB receives at the wrong
+> baud rate whenever the CPU slows down; ESP-IDF keeps APB at full speed only while the UART is sending. When the
+> [ESP32 Power Management](/components/power_management/esp32_power_management/) platform is configured, a UART
+> without `clock_source` therefore uses `REF_TICK` on the original ESP32 and ESP32-S2 (at up to 250000 baud) and
+> `XTAL` on the ESP32-C3 and ESP32-S3. If you enable scaling another way, for example with `CONFIG_PM_ENABLE` under
+> `sdkconfig_options` in the [esp32](/components/esp32/) component, pick one of these sources yourself:
 >
 > - `XTAL` is the external crystal and keeps the full baud rate range. It is available on every variant except the
 >   original ESP32 and ESP32-S2.
