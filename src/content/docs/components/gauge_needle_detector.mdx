@@ -24,7 +24,9 @@ crop:
 
 ```cpp
 gauge_needle_detector::NeedleDetector detector;
-detector.reserve(crop_width, crop_height);  // once, in setup()
+if (!detector.reserve(crop_width, crop_height)) {  // once, in setup()
+  // not enough memory for the preprocessing buffers
+}
 
 gauge_needle_detector::DetectorConfig config;
 config.id = "dial_1";
@@ -55,8 +57,8 @@ mapping.
 | `template_match` | Searches ray angles for the brightest average line. Slowest, useful as a cross-check. |
 | `auto` | Runs every compiled-in algorithm and keeps the most confident result. |
 
-The first three work on a preprocessed image (CLAHE, a top-hat filter sized from
-the dial radius, and a median filter); `legacy` works on the raw crop. The
+The first three work on a preprocessed image (a clipped contrast stretch and a
+top-hat filter sized from the dial radius); `legacy` works on the raw crop. The
 detector preprocesses once per `detect()` call and shares the result between the
 filtered algorithms.
 
@@ -85,11 +87,12 @@ logging compare every algorithm, so they need all four algorithm defines.
 
 ## Memory
 
-The preprocessing buffers are three bytes per crop pixel and the Hough edge map
-is one byte per pixel, all kept between calls. `reserve()` sizes them at setup,
-so a steady stream of equally sized crops does not allocate. The 360-entry angle
-tables are fixed-size `std::array`s, so combining results does not allocate
-either. The sin/cos lookup tables live in RAM and are built on first use.
+The preprocessing buffers are three bytes per crop pixel, allocated by
+`reserve()` and kept between calls; a crop larger than the reservation is
+rejected instead of growing the heap. The detectors share one 360-entry score
+workspace, and the sine table lives in flash, so neither adds RAM per instance.
+`enable_detectors({"auto"})` compiles in all four algorithms; an unknown name is
+a code-generation error.
 
 ## See Also
 
