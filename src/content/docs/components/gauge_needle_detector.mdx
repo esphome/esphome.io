@@ -1,4 +1,4 @@
----
+﻿---
 description: "Instructions for detecting the needle angle of analog gauges in an image in ESPHome."
 title: "Gauge Needle Detector"
 ---
@@ -90,7 +90,7 @@ logging compare every algorithm, so they need all four algorithm defines.
 The preprocessing buffers are three bytes per crop pixel, allocated by
 `reserve()` and kept between calls; a crop larger than the reservation is
 rejected instead of growing the heap. The detectors share one 360-entry score
-workspace, and the sine table lives in flash, so neither adds RAM per instance.
+workspace instead of keeping one each, and the sine table lives in flash.
 `enable_detectors({"auto"})` compiles in all four algorithms; an unknown name is
 a code-generation error.
 
@@ -98,3 +98,4 @@ a code-generation error.
 
 - [ESP32 Camera](/components/esp32_camera/)
 - <APIRef text="gauge_needle_detector.h" path="gauge_needle_detector/gauge_needle_detector.h" />
+
