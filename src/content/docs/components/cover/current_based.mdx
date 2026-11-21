@@ -115,7 +115,7 @@ cover:
 With `learn_durations: true`, the cover measures the time of each full travel and uses it to estimate the position.
 A travel is measured only when all of these are true:
 
-- it starts at one end, where the cover stopped because the motor current dropped,
+- it starts at one end, where the cover stopped because the motor current dropped after the motor had been running,
 - motor current is seen during the travel,
 - it ends at the other end because the motor current dropped, without being stopped, reversed or interrupted.
 
@@ -125,12 +125,15 @@ saved in flash, so they are kept after a reboot. The configured `open_duration` 
 a duration is learned. Changing them in the configuration discards the learned durations.
 
 With `learn_durations: true` there is no need to measure `open_duration` and `close_duration`. If you do not know
-them, set both to a value longer than the real travel, for example `200s`. The first full travel down and up then
-replaces them with the measured times.
+them, set both to a value longer than the real travel, for example `200s`. They are replaced with the measured times
+once the cover has reached an end with the motor running and then made one full travel in each direction.
 
 The measured time includes the delay of the current sensor, so a shorter `update_interval` of the current sensor gives
-more accurate durations. To learn both durations right away, close the cover fully, then open it fully and close it
-fully again.
+more accurate durations. If the motor stops in the middle of a travel, for example because of a thermal cut-out, the
+shorter time is learned and corrected by the next full travel.
+
+To learn both durations right away, open the cover fully, close it fully, open it fully and close it fully again.
+The first travel that actually runs the motor only finds the end position.
 
 The durations in use, in milliseconds, are available in lambdas through `get_open_duration()` and
 `get_close_duration()`, for example to show them in Home Assistant:
