@@ -124,9 +124,9 @@ A measured time replaces the current duration only when it differs by more than 
 saved in flash, so they are kept after a reboot. The configured `open_duration` and `close_duration` are used until
 a duration is learned. Changing them in the configuration discards the learned durations.
 
-With `learn_durations: true` there is no need to measure `open_duration` and `close_duration`: any rough value, for
-example `60s`, works. It is only used to estimate the position until the first full travel in each direction replaces
-it with the measured time.
+With `learn_durations: true` there is no need to measure `open_duration` and `close_duration`. If you do not know
+them, set both to a value longer than the real travel, for example `200s`. The first full travel down and up then
+replaces them with the measured times.
 
 The measured time includes the delay of the current sensor, so a shorter `update_interval` of the current sensor gives
 more accurate durations. To learn both durations right away, close the cover fully, then open it fully and close it
