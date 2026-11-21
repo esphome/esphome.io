@@ -36,6 +36,15 @@ voice_assistant:
 - **micro_wake_word** (*Optional*, [ID](/guides/configuration-types/#id)): The [micro_wake_word](/components/micro_wake_word/)
   component used for wake word detection. Configuring this allows Home Assistant to change which wake word model is enabled.
 
+- **wake_word_audio** (*Optional*): Lets Home Assistant verify each wake word that `micro_wake_word` detects. Requires
+  `micro_wake_word`. See [Wake Word Verification](#wake-word-verification) below.
+
+  - **buffer_duration** (*Optional*, [Time](/guides/configuration-types/#time)): How much audio from before each
+    detection to send to Home Assistant. Between `100ms` and `5s`. Defaults to `1500ms`.
+  - **timeout** (*Optional*, [Time](/guides/configuration-types/#time)): How long to wait for Home Assistant to accept
+    or reject a detection. When it expires, the run stops and `on_error` is called with the code
+    `wake-word-verification-timeout`. Defaults to `2s`.
+
 - **speaker** (*Optional*, [ID](/guides/configuration-types/#id)): The [speaker](/components/speaker/) to use to output
   the response. Cannot be used with `media_player` below.
 
@@ -67,6 +76,9 @@ voice_assistant:
 
 - **on_wake_word_detected** (*Optional*, [Automation](/automations)): An automation
   to perform when the assist pipeline has detected a wake word.
+
+- **on_wake_word_rejected** (*Optional*, [Automation](/automations/)): An automation to perform when Home Assistant
+  rejects a wake word detected on the device. Requires `wake_word_audio`.
 
 - **on_end** (*Optional*, [Automation](/automations)): An automation to perform
   when the voice assistant is finished all tasks.
@@ -203,6 +215,61 @@ voice_assistant:
 
 See our [example YAML files on GitHub](https://github.com/esphome/wake-word-voice-assistants/blob/main/m5stack-atom-echo/m5stack-atom-echo.yaml)
 for continuous wake word detection.
+
+## Wake Word Verification
+
+With `wake_word_audio`, Home Assistant can check each wake word that [Micro Wake Word](/components/micro_wake_word/)
+detects. A device can then detect at a lower probability cutoff without more false activations.
+
+```yaml
+voice_assistant:
+  id: va
+  microphone: mic_id
+  micro_wake_word: mww
+  wake_word_audio:
+    buffer_duration: 1500ms
+```
+
+The device only does this while Home Assistant asks for it, and otherwise behaves as if `wake_word_audio` was not
+configured. While it is active:
+
+- The device keeps the last `buffer_duration` of audio from each microphone channel.
+- After a detection, `voice_assistant.start` sends that audio and then the live audio to Home Assistant, without
+  waiting for a response. Call it right away from the `on_wake_word_detected` automation of `micro_wake_word`: when it
+  starts more than one second after the detection, the run starts without verification. Don't play a wake sound
+  before it.
+- If Home Assistant accepts the wake word, the run continues as usual. If it rejects it, the device stops streaming
+  and calls `on_wake_word_rejected`. Without an answer within `timeout`, `on_error` is called with the code
+  `wake-word-verification-timeout`.
+- The `vad` model of `micro_wake_word` is disabled, because it blocks detections at lower cutoffs.
+
+Use `id(va).is_wake_word_audio_active()` in a lambda to change the device's behavior only while Home Assistant
+verifies wake words, for example to lower the wake word model's cutoff when Home Assistant connects. The cutoff is
+set as an integer from 0 to 255, the probability multiplied by 255.
+
+```yaml
+micro_wake_word:
+  id: mww
+  microphone: mic_id
+  models:
+    - model: okay_nabu
+      id: okay_nabu
+
+voice_assistant:
+  id: va
+  # ...
+  on_client_connected:
+    - lambda: |-
+        // 0.40 while Home Assistant verifies detections, 0.85 otherwise
+        id(okay_nabu).set_probability_cutoff(id(va).is_wake_word_audio_active() ? 102 : 217);
+    - micro_wake_word.start:
+```
+
+> [!NOTE]
+> Each microphone channel needs a buffer of 32 bytes for every millisecond of `buffer_duration` plus one second, about
+> 80 kB with the default, kept for as long as Home Assistant is connected. A device without PSRAM may not have enough
+> memory. If the buffers can't be allocated, the device logs an error and detects wake words without verification
+> until Home Assistant reconnects. Home Assistant 20XX.X or later is required.
 
 ## Push to Talk
 
