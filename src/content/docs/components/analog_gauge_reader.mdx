@@ -25,10 +25,9 @@ camera_decoder:
   output_type: RGB888
 
 analog_gauge_reader:
+  id: gauge
   camera_id: my_camera
   decoder_id: gauge_decoder
-  value_sensor:
-    name: "Water meter"
   dials:
     - id: dial_1
       crop_x: 0
@@ -40,6 +39,20 @@ analog_gauge_reader:
       max_value: 10
       min_angle: 0
       max_angle: 360
+
+sensor:
+  - platform: analog_gauge_reader
+    analog_gauge_reader_id: gauge
+    value:
+      name: "Water meter"
+    dials:
+      - dial: dial_1
+        value:
+          name: "Water meter dial"
+        angle:
+          name: "Water meter needle angle"
+        confidence:
+          name: "Water meter confidence"
 ```
 
 ## Configuration variables
@@ -47,8 +60,7 @@ analog_gauge_reader:
 - **id** (*Optional*, [ID](/guides/configuration-types/#id)): The reader ID.
 - **camera_id** (**Required**, [ID](/guides/configuration-types/#id)): The `esp32_camera` that produces the frames.
 - **decoder_id** (**Required**, [ID](/guides/configuration-types/#id)): The `camera_decoder` that decodes the frames.
-  A `camera_decoder` with `output_type: RGB888` is required for dials that read a colour.
-- **value_sensor** (*Optional*, [Sensor](/components/sensor/)): The combined value of all dials.
+  It must output `RGB888` or `GRAYSCALE`; dials that read a colour need `RGB888`.
 - **dials** (**Required**, list): The dials to read, see below.
 - **stacked_digits** (*Optional*, boolean): Treat the dials as the digits of one odometer reading, sorted by
   `scale`, instead of summing their values. Defaults to `false`.
@@ -73,12 +85,14 @@ Each entry of `dials` describes one dial in the frame:
 - **max_angle** (*Optional*, float): Angle of `max_value`, in degrees. Defaults to `360`.
   A `min_angle` greater than `max_angle` selects the wrap-around part of the scale.
 - **angle_offset** (*Optional*, float): Rotation of the dial's coordinate system, in degrees, where `0` is north
-  (12 o'clock), `90` east, `180` south and `270` west. Defaults to `0`.
+  (12 o'clock), `90` east, `180` south and `270` west. The offset is removed before `clockwise` mirrors the
+  angle, so it always names the dial's physical origin. Defaults to `0`.
 - **clockwise** (*Optional*, boolean): Whether the value increases clockwise. Defaults to `true`.
 - **min_value** (*Optional*, float): Value at `min_angle`. Defaults to `0`.
 - **max_value** (*Optional*, float): Value at `max_angle`. Defaults to `10`.
 - **calibration** (*Optional*, list): Points that replace the linear angle-to-value mapping with a piecewise linear
-  one. Each point has a **raw** angle and the **mapped** value at that angle.
+  one. Each point has a **raw** angle and the **mapped** value at that angle. The map takes precedence over the
+  `min_angle` to `max_angle` range, including a wrap-around range.
 - **needle_type** (*Optional*): `DARK` (default) when the needle is darker than the face, `LIGHT` when it is
   brighter.
 - **algorithm** (*Optional*): `radial_profile` (default), `legacy`, `hough_transform`, `template_match` or `auto`.
@@ -98,12 +112,37 @@ Each entry of `dials` describes one dial in the frame:
 - **color_tolerance** (*Optional*, float): Distance from `target_color` that still counts as the needle.
   `0` uses the legacy linear mapping. Defaults to `0.0`.
 
-Each dial can also publish its own sensors:
+Each dial can also publish its own sensors, and the reader can publish the combined value. See the sensor platform
+below.
 
-- **value** (*Optional*, [Sensor](/components/sensor/)): The dial value. In `stacked_digits` mode it publishes the
-  dial's digit instead.
-- **confidence** (*Optional*, [Sensor](/components/sensor/)): How confident the detection is, from 0 to 1.
-- **angle** (*Optional*, [Sensor](/components/sensor/)): The detected needle angle, in degrees, where 0 is north.
+## Sensor platform
+
+The `analog_gauge_reader` sensor platform publishes the reader's values. Every sensor is optional.
+
+```yaml
+sensor:
+  - platform: analog_gauge_reader
+    analog_gauge_reader_id: gauge
+    value:
+      name: "Water meter"
+    dials:
+      - dial: dial_1
+        value:
+          name: "Water meter dial"
+        confidence:
+          name: "Water meter confidence"
+        angle:
+          name: "Water meter needle angle"
+```
+
+- **analog_gauge_reader_id** (**Required**, [ID](/guides/configuration-types/#id)): The reader to read from.
+- **value** (*Optional*, [Sensor](/components/sensor/)): The combined value of all dials.
+- **dials** (*Optional*, list): Sensors for individual dials.
+  - **dial** (**Required**, string): The `id` of a dial in the reader's `dials` list.
+  - **value** (*Optional*, [Sensor](/components/sensor/)): The dial value. In `stacked_digits` mode it publishes
+    the dial's digit instead.
+  - **confidence** (*Optional*, [Sensor](/components/sensor/)): How confident the detection is, from 0 to 1.
+  - **angle** (*Optional*, [Sensor](/components/sensor/)): The detected needle angle, in degrees, where 0 is north.
 
 ## How a dial is read
 
@@ -130,12 +169,18 @@ it the cheapest option and the one that suffers most from shadows and glare.
 
 - The camera must deliver JPEG frames. Use `pixel_format: JPEG`, or set `jpeg_quality` on a camera with another
   pixel format so the frames are converted to JPEG for the reader.
+- The `camera_decoder` must output `RGB888` or `GRAYSCALE`. Dials that use `target_color` or a colour
+  `process_channel` need `RGB888`.
 - The dial crop must be centred on the dial: the detection measures the angle from the centre of the crop, and
   `deadzone_diameter` and the scan radii are in crop pixels.
 - All dials share one decoded frame. A frame is decoded once per update and every dial crops out of that buffer, so
   adding dials does not add decodes.
-- The frame size is taken from the camera's `resolution`. A `camera_window` that makes the frames smaller is
-  supported as long as the crops still fit.
+- The frame size is taken from the camera's `resolution`, after the decoder's `rotation`. A `camera_window` that
+  makes the frames smaller is supported as long as the crops still fit.
+- Every dial needs a non-zero angle sweep, unless it uses a calibration map or the full `0` to `360` range.
+- `stacked_digits` requires dial scales that are consecutive powers of ten (`1`, `10`, `100`, ...).
+- A frame is dropped when a crop does not fit the decoded frame or when a dial has no needle. The sensors keep
+  their previous state instead of publishing a made-up value.
 
 ## See Also
 
