@@ -117,7 +117,8 @@ exactly one callback, with a `canopen::SDOReply`: `result` (`SDO_RESULT_SUCCESS`
 `SDO_RESULT_TIMEOUT`, `SDO_RESULT_SIZE_MISMATCH`, `SDO_RESULT_TRANSPORT_ERROR` or `SDO_RESULT_REJECTED`),
 `abort_code`, `value` / `size` for values and `data` / `len` for buffers (valid only during the callback). A rejected
 request (queue full, invalid arguments, failed component) calls back before the call returns `false`. Requests made
-at boot, before the component is set up, wait in the queue.
+at boot, before the component is set up, wait in the queue; if the setup fails (for example on a failed CAN bus), they
+are rejected then.
 
 ```cpp
 // value read with a width check: a different width gives SIZE_MISMATCH
