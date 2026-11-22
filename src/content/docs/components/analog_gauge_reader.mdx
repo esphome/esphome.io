@@ -99,7 +99,8 @@ Each entry of `dials` describes one dial in the frame:
 - **needle_type** (*Optional*): `DARK` (default) when the needle is darker than the face, `LIGHT` when it is
   brighter.
 - **algorithm** (*Optional*): `radial_profile` (default), `legacy`, `hough_transform`, `template_match` or `auto`.
-  `auto` runs every algorithm and keeps the most confident result.
+  `auto` runs every filtered algorithm and keeps the most confident result. It skips `legacy`, whose raw-image
+  confidence is not comparable, unless `legacy` is the only one built.
 - **min_scan_radius** (*Optional*, float): Inner end of the scan window, as a fraction of the dial radius.
   Defaults to `0.3`.
 - **max_scan_radius** (*Optional*, float): Outer end of the scan window, as a fraction of the dial radius.
