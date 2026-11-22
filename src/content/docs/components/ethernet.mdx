@@ -9,7 +9,7 @@ This ESPHome component enables *wired* Ethernet connections for ESP32 and RP2040
 
 - **ESP32**: Supports RMII PHY chips (LAN8720, RTL8201, etc.) and SPI Ethernet chips (W5500, DM9051, CH390,
   KSZ8851SNL, ENC28J60).
-- **RP2040/RP2350**: Supports SPI/PIO Ethernet chips (W5100, W5500, W6100, W6300, ENC28J60).
+- **RP2040/RP2350**: Supports SPI/PIO Ethernet chips (W5100, W5500, W6100, W6300, ENC28J60) and USB.
 
 On ESP32 family devices, Ethernet may be configured alongside [WiFi](/components/wifi/) in the same configuration;
 this requires a `network:` `priority:` list naming both interfaces — see
@@ -126,6 +126,7 @@ wifi:
   - `LAN8670` (RMII, ESP32 only)
   - `GENERIC` (RGMII, ESP32-S31 only)
   - `YT8531` (RGMII, ESP32-S31 only)
+  - `USB` (USB, RP2040/RP2350 only)
 
 ### RMII configuration variables
 
@@ -662,6 +663,23 @@ ethernet:
   reset_pin: 20
 ```
 
+**USB** (RP2040/RP2350):
+
+```yaml
+rp2:
+  board: rpipico
+
+ethernet:
+  type: usb
+  manual_ip:
+    static_ip: 192.168.137.100
+    gateway: 192.168.137.1
+    subnet: 255.255.255.0
+```
+
+> [!NOTE]
+> See [Ethernet over USB](/components/usb_ethernet#configuring-the-pc) for instructions on how to configure the PC correctly.
+
 ## `on_connect` / `on_disconnect` Trigger
 
 This trigger is activated when an Ethernet connection is established or dropped.
@@ -746,3 +764,4 @@ The lambda equivalent for this is `id(ethernet_id).is_enabled()`.
 - [WiFi component](/components/wifi/)
 - [ESP32 Ethernet PHY connection info](https://pcbartists.com/design/embedded/esp32-ethernet-phy-schematic-design/)
 - <APIRef text="ethernet_component.h" path="ethernet/ethernet_component.h" />
+
