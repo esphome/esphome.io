@@ -18,6 +18,7 @@ of their own:
 | `tflite_op_processor` | Reads the operators from the model and registers exactly those, on a resolver sized for the build. |
 | `tflite_memory_handler` | Allocates the tensor arena in PSRAM or internal RAM and probes the size the model needs. |
 | `tflite_output_processor` | Turns the raw output tensor into a class and a confidence. |
+| `tflite_model_io` | Reads the model at configuration time: operators, input and output tensors, arena estimate. |
 | `tflite_model_loader` | Loads the model into a `MicroInterpreter`, verifies its CRC32 and exposes the `ModelHandler` facade. |
 | `tflite_model_debug` | The diagnostics behind `debug:`. |
 
@@ -31,6 +32,10 @@ ESP32-C3 is available on the `next` branch of
 > This is a **helper/library component** that is typically used as a dependency by other components. It does not
 > expose sensors or entities directly. It currently supports **ESP32** targets with the **ESP-IDF** framework
 > only.
+
+The core itself takes `model`, `tensor_arena_size` and `debug`. A model kind component adds
+`model_type` and the options that describe the model's tensors; without one, an entry accepts a raw
+input buffer and leaves the output tensors to the consumer.
 
 ## Sample Configuration
 
@@ -147,6 +152,25 @@ tflite_micro_runtime:
     probability_cutoff: 0.5
 ```
 
+## Model Kinds
+
+The core loads a model and runs it; what its tensors mean is decided by a **model kind**, a component that
+adds a `model_type` value and its options to the runtime entry:
+
+| `model_type` | Component | Options | Output |
+|---|---|---|---|
+| `image` | `tflite_image` | `input_width`, `input_height`, `input_channels`, `input_type`, `input_order`, `normalize`, `invert` | a class and a confidence |
+| `detection` | `tflite_detection` | the image options, plus `score_threshold`, `max_detections`, `iou_threshold` | boxes, classes and scores |
+| `segmentation` | `tflite_segmentation` | the image options | one class id per pixel |
+| `pose` | `tflite_pose` | the image options | keypoints and their scores |
+| `tabular` | `tflite_tabular` | none | a regression value, or a class and a confidence |
+| `text` | `tflite_text` | `max_sequence_length` | logits, or start and end positions |
+| `audio` | `tflite_audio` | `probability_cutoff`, `sliding_window_size`, `features_step_size`, `feature_count` | windowed probabilities |
+
+Each kind is a separate component. The options the kinds share are described under
+[Configuration Variables](#configuration-variables), and the image options apply to every kind that consumes a
+frame.
+
 ## Configuration Variables
 
 All options are listed per instance below. Five of the six library components loaded by this one have no
@@ -178,7 +202,7 @@ configuration of their own; `tflite_op_processor` also accepts an `operators:` l
 
 ### Image Model Configuration Variables
 
-When `model_type: image`, the following variables are available to describe the model's expected input format.
+When `model_type: image` (the `tflite_image` component), the following variables are available to describe the model's expected input format.
 The input shape and data type are read from the model itself, and the remaining values come from the `.txt`
 report file when the model has one (see [Model Report File](#model-report-file)). Any of them can be set
 explicitly, and a value set in YAML wins over the model and the report.
@@ -213,7 +237,7 @@ explicitly, and a value set in YAML wins over the model and the report.
 
 ### Audio Model Configuration Variables
 
-When `model_type: audio`, the following variables configure streaming audio classification. The official audio
+When `model_type: audio` (the `tflite_audio` component), the following variables configure streaming audio classification. The official audio
 models ship as JSON manifests that only name the `.tflite` file (see
 [Model Source Resolution](#model-source-resolution)); the streaming settings the model does not carry must be
 set here explicitly:
