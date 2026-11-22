@@ -88,12 +88,16 @@ Here is another example output for a Tuya ME-81H thermostat:
     `reboot`.
 
     - `reboot`: Reboots the module, as the original Tuya module firmware does.
+    - `reset`: Holds the TX pin of the UART bus low for `reset_time`, without a reboot of the module.
     - `disable`: Turns the watchdog off, for a configuration that gets the block from a package.
 
   - **missed_heartbeats** (*Optional*, int): The number of unanswered heartbeats that starts the action.
     Range `1` to `20`. Defaults to `6`, the value of the original Tuya module firmware (TuyaOS 3.11): six 15 second
     heartbeats.
     Not accepted with `action: disable`.
+
+  - **reset_time** (*Optional*, [Time](/guides/configuration-types/#time)): How long the TX pin is held low.
+    Range `50ms` to `5s`. Defaults to `500ms`. Only accepted with `action: reset`.
 
 Automations:
 
@@ -199,6 +203,52 @@ configuration dump says that the watchdog is not armed yet:
 ```text
 [W][tuya]: MCU left 6 heartbeats unanswered before the working mode reply, not rebooting
 [C][tuya]:   MCU Watchdog is not armed before the working mode reply of the MCU
+```
+
+### Reset
+
+`action: reset` holds the TX pin of the UART bus low for `reset_time` and then releases it. On the BHT-002 thermostat
+MCU this ends the stall, and the module keeps running: WiFi and the API connection stay up. The MCU keeps running and
+keeps its settings. The pin is the `tx_pin` of the [UART bus](/components/uart/), there is no pin option of its own.
+
+```yaml
+tuya:
+  mcu_watchdog:
+    action: reset
+    missed_heartbeats: 6
+    reset_time: 500ms
+```
+
+- It needs a UART bus of the microcontroller itself with an `rx_pin` and a `tx_pin` that is not inverted, on ESP32,
+  ESP8266, RP2040, BK72xx, RTL87xx or LN882x. Other buses are rejected when the configuration is validated.
+  On RTL8710B the bus must be on the pins of a hardware UART and its pins must not set `open_drain`, `pullup` or
+  `pulldown`. No other component may use the bus, and on ESP8266, BK72xx, RTL87xx and LN882x the logger must not
+  write to its UART.
+- It has been tested on BK72xx with the BHT-002 thermostat MCU. Whether a low TX line ends a stall of another MCU
+  is not known; `reboot` is the action of the original firmware.
+- Unlike `reboot` it also runs before the MCU has answered the working mode query.
+- While the pin is held low nothing is sent and nothing is read. Afterwards the datapoints are queried again.
+- The component shows a warning status until the MCU answers a heartbeat at the first send again. A late reply or a
+  reply to the second send does not end it. When the MCU still leaves `missed_heartbeats` heartbeats unanswered after
+  a reset, the pin is held low again.
+- After three resets in a row that were skipped or brought no answer the module reboots, under the rule of
+  `reboot`: not before the MCU has answered the working mode query. Until then the resets go on.
+- The module also reboots, under the same rule, when the UART bus refuses to hold the pin low at run time, and it
+  always reboots when the bus does not release the pin.
+- A reset is skipped when the bus has not finished sending. The next `missed_heartbeats` unanswered heartbeats try
+  again. A skipped reset counts as a reset that brought no answer.
+
+The log shows the reset and its result. The configuration dump counts the resets since boot as `MCU Resets`, which
+is the number of times the pin was held low:
+
+```text
+[W][tuya]: MCU left 6 heartbeats unanswered, holding TX low
+[I][tuya]: MCU answers heartbeats again after the reset
+[E][tuya]: MCU left 6 heartbeats unanswered after a reset, holding TX low again
+[W][tuya]: UART bus did not finish sending, MCU reset skipped
+[E][tuya]: MCU did not answer after 3 reset attempts in a row, rebooting
+[E][tuya]: UART bus cannot hold TX low, rebooting
+[E][tuya]: UART bus did not release TX after the MCU reset, rebooting
 ```
 
 ### Disable
