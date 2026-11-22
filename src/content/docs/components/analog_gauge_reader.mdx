@@ -85,7 +85,8 @@ Each entry of `dials` describes one dial in the frame:
 - **max_angle** (*Optional*, float): Angle of `max_value`, in degrees. Defaults to `360`.
   A `min_angle` greater than `max_angle` selects the wrap-around part of the scale. Angles outside the sweep
   clamp to the nearer end, so a needle resting just before `min_angle`, for example against its stop pin, reads
-  `min_value` rather than wrapping round to `max_value`.
+  `min_value` rather than wrapping round to `max_value`. A sweep may start or end at North (`0` or `360`) like
+  any other angle, so `0` to `270` and `90` to `360` need no special case.
 - **angle_offset** (*Optional*, float): Rotation of the dial's coordinate system, in degrees, where `0` is north
   (12 o'clock), `90` east, `180` south and `270` west. The offset is removed before `clockwise` mirrors the
   angle, so it always names the dial's physical origin. Defaults to `0`.
