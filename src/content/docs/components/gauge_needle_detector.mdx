@@ -42,6 +42,9 @@ auto result = detector.detect(grayscale_crop, crop_width, crop_height, config);
 carries the scan window (`min_scan_radius`, `max_scan_radius`, both fractions of
 the dial radius), the ignored centre circle (`deadzone_diameter`, in pixels) and
 a `debug` flag that makes every compiled-in algorithm run and log its result.
+A `deadzone_diameter` that reaches past `max_scan_radius` leaves no pixels to
+sample: `detect()` then returns a zero-confidence result and logs one warning,
+not one per frame.
 
 The crop is one byte per pixel. The detector does not crop, rotate or scale, and
 it does not publish anything; the consumer owns the entities and the value
@@ -60,7 +63,9 @@ mapping.
 The first three work on a preprocessed image (a clipped contrast stretch and a
 top-hat filter sized from the dial radius); `legacy` works on the raw crop. The
 detector preprocesses once per `detect()` call and shares the result between the
-filtered algorithms.
+filtered algorithms. Each algorithm reports `confidence` between 0 and 1 on a
+comparable scale, so `auto` can rank them: it combines how much of the ray the
+needle covers with how clearly it stands out from the rest of the crop.
 
 ## Compile-time selection
 
