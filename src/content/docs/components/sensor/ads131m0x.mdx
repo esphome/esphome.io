@@ -18,6 +18,10 @@ mean and AC RMS value of every channel over a configurable window. Individual se
 This component is supported on ESP32 only. The `drdy_pin` is required because the ADC has no FIFO: the DRDY signal
 tells the firmware when a conversion is ready.
 
+The SPI bus must be a hardware bus (the default `interface: any` selects one on ESP32). The background task shares the
+bus with the main loop, and only the hardware SPI driver locks the bus for each transaction, so other devices on the
+same bus keep working. A bus with `interface: software` is rejected.
+
 A typical use is measuring AC current with a current transformer (CT). The RMS value removes the DC offset of the
 burden voltage, so the reading stays correct when the CT is biased to half the supply voltage.
 
@@ -135,6 +139,8 @@ The hub is designed to keep working through electrical disturbances:
 - The STATUS word is checked on every frame. If the device reports a reset, for example after a supply dip, the hub
   detects it, writes the configuration again and resumes sampling. Without this step the device would keep its default
   gain and data rate.
+- If the device does not respond during configuration, the first failure is logged as a warning and the hub retries
+  every second; later failures are logged at debug level.
 - If no data arrives, the component shows a warning status with the message "No data from ADC" and the log shows the
   sample rate. The sensors publish `NaN` until data arrives again.
 
