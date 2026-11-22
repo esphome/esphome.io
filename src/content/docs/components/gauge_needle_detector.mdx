@@ -62,16 +62,21 @@ mapping.
 | `legacy` | Scores each ray of the raw crop by how many needle-coloured pixels it crosses. Smallest and fastest. |
 | `hough_transform` | Votes edge pixels into a radial histogram, weighted by edge magnitude. Best for broken or cluttered needles. |
 | `template_match` | Searches ray angles for the brightest average line. Slowest, useful as a cross-check. |
-| `auto` | Runs every compiled-in algorithm and keeps the most confident result. |
+| `auto` | Runs the compiled-in filtered algorithms and keeps the most confident result. |
 
 The first three work on a preprocessed image (a clipped contrast stretch and a
 top-hat filter sized from the dial radius); `legacy` works on the raw crop. The
 detector preprocesses once per `detect()` call and shares the result between the
 filtered algorithms. The top-hat kernel is at least seven pixels across and
-grows with the dial radius, so needles up to six pixels wide survive it. Each
-algorithm reports `confidence` between 0 and 1 on a comparable scale, so `auto`
-can rank them: it combines how much of the ray the needle covers with how
-clearly it stands out from the rest of the crop.
+grows with the dial radius, so needles up to six pixels wide survive it. The
+filtered algorithms report `confidence` between 0 and 1 on a comparable scale,
+so `auto` can rank them: it combines how much of the ray the needle covers with
+how clearly it stands out from the rest of the crop.
+
+`legacy` scores the raw brightness, so a bright or busy background counts in its
+favour and its confidence is not comparable with the others. It still weighs the
+best ray against the average one, but `auto` leaves it out when a filtered
+algorithm is built and uses it only when nothing else is.
 
 ## Compile-time selection
 
