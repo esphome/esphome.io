@@ -72,3 +72,71 @@ readback if you want to verify that the controller applied the value.
 
 Use one transmitting client on the bus and keep its TX UART exclusive to VBus. If the lease expires or the controller
 resumes transmission, the hub abandons the exchange without sending a late frame or retrying the request.
+
+## P2 Value Transactions
+
+Use `vbus.read_value` to read a raw parameter, or `vbus.write_value` to write a parameter and check its value by
+reading it back. Enable `transactions` under `transmit`. Both actions acquire and release the bus automatically.
+This example reads the system scheme on a DeltaSol CS Plus with firmware 1.11:
+
+```yaml
+vbus:
+  id: solar_bus
+  uart_id: resol_uart
+  transmit:
+    destination: 0x2211
+    transactions:
+      on_result:
+        - lambda: |-
+            if (status == vbus::TransactionStatus::TRANSACTION_STATUS_SUCCESS) {
+              ESP_LOGI("vbus", "Parameter %u returned %" PRIu32, value_id, value);
+            }
+
+button:
+  - platform: template
+    name: "Read System Scheme"
+    on_press:
+      - vbus.read_value:
+          id: solar_bus
+          value_id: 1
+```
+
+Only one request can be pending per hub. A second action invoked while the first waits for the bus or its result is
+rejected and receives no result. An accepted action stores its arguments when invoked and returns immediately.
+The component then waits for a fresh grant and sends the stored request on that hub.
+
+### Transaction Configuration
+
+- **response_timeout** (*Optional*, Time): Maximum wait per reply or verification-send phase. Defaults to `100ms`;
+  accepts `20ms` to `1000ms`. The remaining lease can limit how long an exchange takes.
+- **on_result** (*Optional*, [Automation](/automations/)): Runs on completion of an accepted operation, except at
+  shutdown. It provides the request `command` and `value_id` (both `uint16_t`), returned `value` (`uint32_t`),
+  `status` (`vbus::TransactionStatus`), and the numeric lease identifier `grant_id` (`uint32_t`, zero before
+  acquisition). Read `status` before using `value` as a measurement.
+
+| Status | Meaning |
+|---|---|
+| `TRANSACTION_STATUS_SUCCESS` | Valid read reply, or write ACK and matching readback. |
+| `TRANSACTION_STATUS_TIMEOUT` | A reply or verification send exceeded its timeout. |
+| `TRANSACTION_STATUS_BUS_LOST` | A usable grant could not be acquired or ended before completion. |
+| `TRANSACTION_STATUS_VERIFY_MISMATCH` | The verified read returned a different value, reported in `value`. |
+
+### Read And Write Actions
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): VBus hub with transactions enabled.
+- **value_id** (**Required**, integer, templatable): Raw 16-bit parameter identifier.
+- **value** (**Required** for writes, integer, templatable): Raw 32-bit value to set.
+- **command** (*Optional*, integer, templatable, writes only): `0x0200` (default) or `0x0400`, according to the
+  controller documentation.
+
+A read sends `0x0300`. Its matching reply comes from the controller to this client, with command `0x0100` and the
+requested parameter ID. A write sends the selected command once, waits for its ACK, and then reads the same ID.
+A matching readback confirms the value on the controller at that moment.
+
+If a write was sent but verification timed out or the bus was lost, the setting may already have changed. Read the
+value before deciding whether to try again. The transaction manager does not automatically repeat the write.
+
+## See Also
+
+- [VBus Component](/components/vbus/)
+- [Receive Guide](/components/vbus/receive/)
