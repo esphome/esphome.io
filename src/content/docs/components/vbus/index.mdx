@@ -103,7 +103,10 @@ Use [custom binary sensors](/components/vbus/receive/#custom-vbus-binary-sensors
 
 ## Receive And Transmit
 
-To request a parameter, connect an [RX/TX interface](#hardware-connection), configure the controller address,
+For a DeltaSol CS Plus running firmware 1.11, start with the
+[settings profile](/components/vbus/deltasol_cs_plus/#basic-use) to read a snapshot.
+
+To request a raw parameter directly, connect an [RX/TX interface](#hardware-connection), configure the controller address,
 and call `vbus.send_datagram` from an automation.
 The [transmit guide](/components/vbus/transmit/) shows two buttons reading different settings on the same bus.
 For [P2 value transactions](/components/vbus/transmit/#p2-value-transactions), request a read or a verified write.
@@ -144,6 +147,10 @@ disable the UART
   connect to the device.
 - **on_datagram** (*Optional*, [Automation](/automations/)): An automation to run when a valid VBus P2 datagram is
   received.
+- **controller** (*Optional*, mapping): A [supported settings
+  profile](/components/vbus/deltasol_cs_plus/#deltasol-cs-plus-setting-snapshots).
+  Its protocol addresses are supplied automatically. This is equivalent to `transmit.transactions.controller`;
+  configure the profile in one location only.
 - **transmit** (*Optional*, mapping): Enable the [generic transmitter](/components/vbus/transmit/).
 
 > [!NOTE]
