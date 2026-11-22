@@ -14,6 +14,35 @@ Compare it with the protocol address in the [model guides](/components/vbus/#sup
 An address match helps identify the RX decoder; controller-specific settings still require a qualified profile.
 Return to your normal log level after identification.
 
+## P2 Datagram Automation
+
+The `on_datagram` trigger receives raw datagrams with protocol version `0x20`, after checksum and septet validation.
+It is independent of the P1 sensor and binary sensor decoders. It only reports traffic already present on the bus;
+it does not send requests, poll parameters, or change controller settings. A bus carrying only P1 telemetry does not
+trigger this automation.
+
+```yaml
+vbus:
+  uart_id: resol
+  on_datagram:
+    then:
+      - lambda: |-
+          ESP_LOGI("vbus", "C%04x %04x->%04x: %04x %08" PRIx32,
+                   command, source, destination, value_id, value);
+```
+
+The lambda receives five arguments:
+
+- `command` (`uint16_t`): The datagram command.
+- `source` (`uint16_t`): The sender address.
+- `destination` (`uint16_t`): The recipient address.
+- `value_id` (`uint16_t`): The datagram's 16-bit parameter, also used as a value identifier by some commands.
+- `value` (`uint32_t`): The raw 32-bit parameter, with all bits preserved.
+
+Interpretation, scaling, and valid identifiers depend on the command and controller model. When a documented value
+is signed, use `static_cast<int32_t>(value)` before applying its scale. Arguments are passed by value and remain
+available after a `delay` action. Multiple `on_datagram` automations can be configured.
+
 ## `custom` VBus Sensors
 
 Devices on a VBus are identified with a source address. There can be multiple devices on the same bus,
