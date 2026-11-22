@@ -104,7 +104,7 @@ Each entry of `dials` describes one dial in the frame:
 - **min_scan_radius** (*Optional*, float): Inner end of the scan window, as a fraction of the dial radius.
   Defaults to `0.3`.
 - **max_scan_radius** (*Optional*, float): Outer end of the scan window, as a fraction of the dial radius.
-  Defaults to `0.9`.
+  It must be larger than `min_scan_radius`, or the window holds no pixel. Defaults to `0.9`.
 - **deadzone_diameter** (*Optional*, float): Diameter of the centre circle that the detection ignores, in pixels.
   It must be smaller than the crop. Defaults to `0.0`.
 - **auto_contrast** (*Optional*, boolean): Stretch the crop's contrast before detecting. Defaults to `true`.
@@ -143,7 +143,8 @@ sensor:
 - **analog_gauge_reader_id** (*Optional*, [ID](/guides/configuration-types/#id)): The reader to read from.
   May be omitted when there is only one reader.
 - **value** (*Optional*, [Sensor](/components/sensor/)): The combined value of all dials.
-- **dials** (*Optional*, list): Sensors for individual dials.
+- **dials** (*Optional*, list): Sensors for individual dials. Each dial can appear once here; a second entry for the
+  same dial is rejected, because both would try to publish to the same sensors.
   - **dial** (**Required**, string): The `id` of a dial in the reader's `dials` list.
   - **value** (*Optional*, [Sensor](/components/sensor/)): The dial value. In `stacked_digits` mode it publishes
     the dial's digit instead.
