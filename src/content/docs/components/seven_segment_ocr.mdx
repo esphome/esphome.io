@@ -36,8 +36,8 @@ a column projection, splits it into digit runs and samples the seven segment pos
 `OcrResult` reports how many runs were found (`digits`), how many the caller asked for (`expected`), how many did not
 match a digit (`unknown`) and the mean segment confidence. `overflow` is set when the digits do not fit in the 32-bit
 `value`. `complete()` is true when exactly the expected digits were found, all of them were recognised and the value
-did not overflow, so a consumer can decide whether to publish a value. `value` is only meaningful when `complete()` is
-true.
+did not overflow, so a consumer can decide whether to publish a value. Runs past the expected count are still counted,
+so a crop with extra digits is not complete. `value` is only meaningful when `complete()` is true.
 
 A run narrower than a third of the image height is a single bar and is read as a `1` when both of its halves are lit.
 
