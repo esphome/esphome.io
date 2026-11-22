@@ -43,8 +43,8 @@ carries the scan window (`min_scan_radius`, `max_scan_radius`, both fractions of
 the dial radius), the ignored centre circle (`deadzone_diameter`, in pixels) and
 a `debug` flag that makes every compiled-in algorithm run and log its result.
 A `deadzone_diameter` that reaches past `max_scan_radius` leaves no pixels to
-sample: `detect()` then returns a zero-confidence result and logs one warning,
-not one per frame.
+sample: `detect()` then returns a zero-confidence result and logs one warning
+per dial, not one per frame.
 
 The crop is one byte per pixel. The detector does not crop, rotate or scale, and
 it does not publish anything; the consumer owns the entities and the value
@@ -90,14 +90,17 @@ gauge_needle_detector.enable_detectors({"radial_profile"})
 `USE_GAUGE_NEEDLE_DETECTOR` enables the component itself, and
 `enable_detectors()` sets it too, so a consumer only has to call that. `auto`
 and debug logging compare every algorithm, so they need all four algorithm
-defines.
+defines. Selecting an algorithm that was not compiled in returns a
+zero-confidence result and logs one error per dial, not one per frame.
 
 ## Memory
 
 The preprocessing buffers are three bytes per crop pixel, allocated by
 `reserve()` and kept between calls; a crop larger than the reservation is
 rejected instead of growing the heap. The detectors share one 360-entry score
-workspace instead of keeping one each, and the sine table lives in flash.
+workspace instead of keeping one each, and the sine table lives in flash. A
+build that enables only `legacy` also leaves out the preprocessor, with its
+1 KB histogram, because nothing reads the filtered image.
 `enable_detectors({"auto"})` compiles in all four algorithms; an unknown name is
 a code-generation error.
 
