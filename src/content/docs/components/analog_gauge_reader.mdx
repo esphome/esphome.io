@@ -83,7 +83,9 @@ Each entry of `dials` describes one dial in the frame:
   Defaults to `1.0`.
 - **min_angle** (*Optional*, float): Angle of `min_value`, in degrees. Defaults to `0`.
 - **max_angle** (*Optional*, float): Angle of `max_value`, in degrees. Defaults to `360`.
-  A `min_angle` greater than `max_angle` selects the wrap-around part of the scale.
+  A `min_angle` greater than `max_angle` selects the wrap-around part of the scale. Angles outside the sweep
+  clamp to the nearer end, so a needle resting just before `min_angle`, for example against its stop pin, reads
+  `min_value` rather than wrapping round to `max_value`.
 - **angle_offset** (*Optional*, float): Rotation of the dial's coordinate system, in degrees, where `0` is north
   (12 o'clock), `90` east, `180` south and `270` west. The offset is removed before `clockwise` mirrors the
   angle, so it always names the dial's physical origin. Defaults to `0`.
@@ -106,7 +108,8 @@ Each entry of `dials` describes one dial in the frame:
 - **auto_contrast** (*Optional*, boolean): Stretch the crop's contrast before detecting. Defaults to `true`.
 - **contrast** (*Optional*, float): Multiplier applied to the crop. Defaults to `1.0`.
 - **process_channel** (*Optional*): `GRAYSCALE` (default), `RED`, `GREEN` or `BLUE`. Use a colour channel when the
-  needle stands out in one channel only.
+  needle stands out in one channel only. It cannot be combined with `target_color`, which compares all three
+  channels.
 - **target_color** (*Optional*, hex): Read the dial by distance from this colour instead of by brightness, for
   example a red needle on a dark face.
 - **color_tolerance** (*Optional*, float): Distance from `target_color` that still counts as the needle.
@@ -145,6 +148,9 @@ sensor:
   - **confidence** (*Optional*, [Sensor](/components/sensor/)): How confident the detection is, from 0 to 1.
   - **angle** (*Optional*, [Sensor](/components/sensor/)): The detected needle angle, in degrees, where 0 is north.
 
+All four sensors default to `state_class: measurement`, so Home Assistant keeps long-term statistics for them. The
+angle sensor is in degrees with one decimal place, and the confidence sensor has two.
+
 ## How a dial is read
 
 Every dial starts from the same decoded frame. The reader crops its rectangle, turns the crop into one byte per
@@ -154,9 +160,10 @@ stages:
 <Image src="/images/gauge_needle_detector_process.png" width={1250} height={225} layout="constrained" alt="The five stages of one dial: raw RGB crop, colour-distance map, contrast stretch, top-hat filter and the detected needle" />
 
 1. **Raw crop** - the dial rectangle taken from the decoded frame.
-2. **Colour-distance map** - with `target_color` set, each pixel becomes its distance from that colour, so the
-   needle becomes the darkest part of the picture and `color_tolerance` stretches the useful part of the range.
-   Without `target_color`, the reader takes `process_channel` and applies `auto_contrast` and `contrast`.
+2. **Colour map** - with `target_color` set, each pixel becomes its distance from that colour, so the needle
+   becomes the darkest part of the picture and `color_tolerance` stretches the useful part of the range. Without
+   `target_color`, the reader takes `process_channel` instead. `auto_contrast` and `contrast` then run on either
+   result, before the detection.
 3. **Contrast stretch** - evens out uneven lighting across the crop. The histogram is clipped so a large flat
    background cannot flatten the needle.
 4. **Top-hat** - removes the slowly changing background and keeps structures about the size of a needle.
@@ -179,9 +186,14 @@ it the cheapest option and the one that suffers most from shadows and glare.
 - The frame size is taken from the camera's `resolution`, after the decoder's `rotation`. A `camera_window` that
   makes the frames smaller is supported as long as the crops still fit.
 - Every dial needs a non-zero angle sweep, unless it uses a calibration map or the full `0` to `360` range.
+- Dial ids must be unique; they name the dial in the logs and in the sensor platform.
+- `target_color` cannot be combined with a colour `process_channel`. It can be combined with `auto_contrast` and
+  `contrast`, which run on its result.
 - `stacked_digits` requires dial scales that are consecutive powers of ten (`1`, `10`, `100`, ...).
 - A frame is dropped when a crop does not fit the decoded frame or when a dial has no needle. The sensors keep
   their previous state instead of publishing a made-up value.
+- A frame is requested each update as an idle camera request, so the same image is also offered to API clients
+  and the camera's `capture_delay` does not apply to it.
 
 ## See Also
 
