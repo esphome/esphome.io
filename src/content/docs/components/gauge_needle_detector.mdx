@@ -46,6 +46,10 @@ A `deadzone_diameter` that reaches past `max_scan_radius` leaves no pixels to
 sample: `detect()` then returns a zero-confidence result and logs one warning
 per dial, not one per frame.
 
+Every crop has to fit the reservation: a larger crop, or a call before
+`reserve()` succeeds, returns a zero-confidence result for every algorithm,
+`legacy` included, so nothing is read past the reserved buffers.
+
 The crop is one byte per pixel. The detector does not crop, rotate or scale, and
 it does not publish anything; the consumer owns the entities and the value
 mapping.
@@ -63,9 +67,11 @@ mapping.
 The first three work on a preprocessed image (a clipped contrast stretch and a
 top-hat filter sized from the dial radius); `legacy` works on the raw crop. The
 detector preprocesses once per `detect()` call and shares the result between the
-filtered algorithms. Each algorithm reports `confidence` between 0 and 1 on a
-comparable scale, so `auto` can rank them: it combines how much of the ray the
-needle covers with how clearly it stands out from the rest of the crop.
+filtered algorithms. The top-hat kernel is at least seven pixels across and
+grows with the dial radius, so needles up to six pixels wide survive it. Each
+algorithm reports `confidence` between 0 and 1 on a comparable scale, so `auto`
+can rank them: it combines how much of the ray the needle covers with how
+clearly it stands out from the rest of the crop.
 
 ## Compile-time selection
 
@@ -97,10 +103,10 @@ zero-confidence result and logs one error per dial, not one per frame.
 
 The preprocessing buffers are three bytes per crop pixel, allocated by
 `reserve()` and kept between calls; a crop larger than the reservation is
-rejected instead of growing the heap. The detectors share one 360-entry score
-workspace instead of keeping one each, and the sine table lives in flash. A
-build that enables only `legacy` also leaves out the preprocessor, with its
-1 KB histogram, because nothing reads the filtered image.
+rejected, whichever algorithm runs, instead of growing the heap. The detectors
+share one 360-entry score workspace instead of keeping one each, and the sine
+table lives in flash. A build that enables only `legacy` also leaves out the
+preprocessor, with its 1 KB histogram, because nothing reads the filtered image.
 `enable_detectors({"auto"})` compiles in all four algorithms; an unknown name is
 a code-generation error.
 
