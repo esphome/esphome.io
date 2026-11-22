@@ -24,6 +24,8 @@ update:
 ## Configuration variables
 
 - **source** (**Required**, string): The URL of the YAML manifest file containing the firmware metadata.
+- **allow_forced_update** (*Optional*, boolean): Allow the manifest to install an update without waiting for a
+  user. See [Forced Updates](#forced-updates) for the manifest side. Defaults to `false`.
 - **update_interval** (_Optional_, [Time](/guides/configuration-types/#time)): The interval at which to check for (**not install**) updates.
   Defaults to 6 hours.
 
@@ -47,6 +49,7 @@ the `ota` block that is structured as follows:
 {
   "name": "My ESPHome Project",
   "version": "2024.6.1",
+  "force_update": true,
   "builds": [
     {
       "chipFamily": "ESP32-C3",
@@ -61,7 +64,7 @@ the `ota` block that is structured as follows:
 }
 ```
 
-While `release_url` and `summary` are optional, all other fields shown here are required.
+While `force_update`, `release_url` and `summary` are optional, all other fields shown here are required.
 
 If `path` begins with:
 
@@ -70,6 +73,23 @@ If `path` begins with:
 - Any other character: `path` will be appended to `source` (as specified above) after trimming the manifest file name.
 
 Note that there may be multiple `builds` specified within a single JSON file.
+
+### Forced Updates
+
+A manifest may also set a top-level `"force_update": true` field to ask the device to install the update right
+after a check finds it, instead of waiting for a user. The install only happens when the update platform has
+**allow_forced_update** set to `true`. This field is separate from the `force_update` option of the
+[`update.perform` action](/components/update/#update-perform-action).
+
+The check treats the manifest's `version` and the version the device reports as different whenever the two
+strings differ; it does not compare them as semantic versions. The reported version is the `project.version` of
+the device's configuration, or the ESPHome version when `project.version` is not set. Keep the manifest `version`
+identical to `project.version` so a device that is already current does not keep reporting an available update.
+
+The version is stored in the device's preferences once an install succeeds, so a device whose newly installed
+firmware still reports an older version does not reflash on every boot. A failed install is retried on the next
+check. A version that was installed this way is not forced again; install it manually if it needs to be flashed
+again.
 
 ## See Also
 
