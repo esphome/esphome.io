@@ -49,7 +49,6 @@ sensor:
 - **crop_h** (**Required**, int): Height of the rectangle around the digits. It must be greater than zero.
 - **threshold_level** (*Optional*, int): Pixels above this level, from 0 to 255, count as lit. Defaults to `128`.
 - **digit_count** (*Optional*, int): How many digits to read, from 1 to 9. Defaults to `6`.
-- **debug** (*Optional*, boolean): Log the update cycle and each reading. Defaults to `false`.
 - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often to request a frame.
   Defaults to `60s`.
 
@@ -92,7 +91,7 @@ A digit run narrower than a third of the image height is a single bar and is rea
   read it.
 - The digits must sit in one row and have the same size.
 - When a digit is missing or unknown, or the crop contains more digits than `digit_count`, nothing is published and a
-  warning reports how many digits were found. `debug: true` adds each reading to the log.
+  warning reports how many digits were found.
 - The frame size is taken from the camera's `resolution`. A `camera_window` that makes the frames smaller is
   supported as long as the crop still fits.
 
