@@ -23,9 +23,6 @@ sensor:
       name: "PM2.5"
     pm_10_0:
       name: "PM10.0"
-    aqi:
-      name: "AQI"
-      calculation_type: "CAQI"
 ```
 
 ## Configuration variables
@@ -42,62 +39,25 @@ sensor:
 
   - All options from [Sensor](/components/sensor).
 
-  - **calculation_type** (**Required**): One of: `AQI` or `CAQI`.
-  - All other options from [Sensor](/components/sensor).
-
 ## Air Quality Index
 
-The AQI (Air Quality Index) sensor calculates an air quality index value based on the
-PM2.5 and PM10 particulate matter concentrations. This provides a single number that
-indicates overall air quality and associated health concerns.
-
-Two calculation standards are supported:
-
-- **AQI** (US EPA Air Quality Index): The standard used in the United States, Canada,
-  and parts of Asia. Scale of 0-500+.
-- **CAQI** (Common Air Quality Index): The European standard. Scale of 0-400.
-
-Both calculation types take the PM2.5 and PM10 values and return the higher
-(more conservative) of the two calculated index values.
-
-### AQI Scale (US EPA)
-
-| Index | Level | Health Implications |
-|-------|-------|---------------------|
-| 0-50 | Good | Air quality is satisfactory |
-| 51-100 | Moderate | Some pollutants may be a concern for sensitive individuals |
-| 101-150 | Unhealthy for Sensitive Groups | Sensitive groups may experience health effects |
-| 151-200 | Unhealthy | Everyone may begin to experience health effects |
-| 201-300 | Very Unhealthy | Everyone may experience more serious health effects |
-| 301-500 | Hazardous | Health warnings of emergency conditions |
-
-### CAQI Scale (European)
-
-| Index | Level | Health Implications |
-|-------|-------|---------------------|
-| 0-25 | Very Low | Air quality is excellent |
-| 26-50 | Low | Air quality is good |
-| 51-75 | Medium | Air quality is fair |
-| 76-100 | High | Air quality is poor |
-| 101-400 | Very High | Air quality is very poor |
-
-### Configuration Example
+To get an air quality index (US EPA AQI or European CAQI) from the HM3301's PM2.5 and PM10 readings, use the
+[AQI sensor](/components/sensor/aqi/). The built-in `aqi:` option was removed in ESPHome 2026.12.0.
 
 ```yaml
 sensor:
   - platform: hm3301
     pm_2_5:
+      id: pm_2_5
       name: "PM2.5"
     pm_10_0:
+      id: pm_10_0
       name: "PM10.0"
-    aqi:
-      name: "Air Quality Index"
-      calculation_type: "CAQI"  # or "AQI" for US EPA standard
-      # Optional: Apply filters for smoother values
-      filters:
-        - sliding_window_moving_average:
-            window_size: 10
-            send_every: 1
+  - platform: aqi
+    name: "Air Quality Index"
+    pm_2_5: pm_2_5
+    pm_10_0: pm_10_0
+    calculation_type: "CAQI"  # or "AQI" for US EPA standard
 ```
 
 ## See Also
