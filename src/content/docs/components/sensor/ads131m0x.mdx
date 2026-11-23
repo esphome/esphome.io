@@ -69,7 +69,9 @@ ads131m0x:
 These options come from the [SPI Bus](/components/spi/) device configuration:
 
 - **spi_id** (*Optional*, [ID](/guides/configuration-types/#id)): The SPI bus to use, if you have more than one.
-- **data_rate** (*Optional*, Frequency): The SPI clock. Defaults to `8MHz`.
+- **data_rate** (*Optional*, Frequency): The SPI clock. Defaults to `8MHz`. A frame must fit in half a sample
+  period, so at `8MHz` the ADS131M08 supports up to `8000Hz`, the ADS131M04 up to `16000Hz` and the ADS131M02 up to
+  `32000Hz`. Raise `data_rate` for higher sample rates.
 - **spi_mode** (*Optional*, string): The SPI mode. Defaults to `MODE1`. See [SPI Modes](/components/spi/#spi-modes).
 
 `release_device` is not supported, because the device is read continuously.
