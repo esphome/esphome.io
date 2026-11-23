@@ -1,0 +1,144 @@
+---
+description: "Instructions for setting up Vevor 7-in-1 weather station sensors using the internal DTX signal"
+title: "Vevor DTX Weather Station"
+---
+
+import Figure from '@components/Figure.astro';
+import APIRef from '@components/APIRef.astro';
+import vevorDtxSignalTapImg from './images/vevor_dtx_signal_tap.jpg';
+
+The `vevor_dtx` component decodes the internal DTX data signal used by some Vevor 7-in-1 weather station
+receiver displays. It is intended for installations where an ESP is connected to the receiver board data signal,
+rather than receiving the outdoor sensor's RF transmission directly.
+
+The signal is captured by a [Remote Receiver](/components/remote_receiver/), so the pin can be shared with other
+remote protocols and the ESP32 uses its RMT hardware for the capture. The hub decodes each frame and publishes
+the readings through its `sensor`, `text_sensor` and `binary_sensor` platforms.
+
+<Figure
+  src={vevorDtxSignalTapImg}
+  alt="Vevor receiver board with the DTX signal tap point marked"
+  caption="DTX signal tap point on a Vevor receiver board."
+  layout="constrained"
+/>
+
+## Component/Hub
+
+```yaml
+# Example configuration entry
+remote_receiver:
+  id: rcvr
+  pin: GPIOXX
+  filter: 20us
+  idle: 3ms
+
+vevor_dtx:
+  receiver_id: rcvr
+```
+
+### Configuration Variables
+
+- **receiver_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the
+  [Remote Receiver](/components/remote_receiver/) connected to the DTX signal. Required when more than one receiver
+  is configured.
+- **station_id** (*Optional*, int): Only decode frames from the outdoor station with this ID, so a neighbour's
+  station cannot overwrite the readings. Read the ID of your station from the `sensor_id` text sensor first, then
+  set it here, for example `station_id: 0x1234`. Defaults to accepting every station.
+- **bit_time** (*Optional*, [Time](/guides/configuration-types/#time)): Expected DTX bit timing. Defaults to `88us`.
+
+The receiver's `filter` must stay below the bit time, and its `idle` sets the gap that ends a frame; the values
+above work with the default bit time.
+
+## Sensor
+
+```yaml
+sensor:
+  - platform: vevor_dtx
+    temperature:
+      name: Outdoor Temperature
+    humidity:
+      name: Outdoor Humidity
+    wind_speed:
+      name: Wind Speed
+    wind_gust:
+      name: Wind Gust
+    wind_direction_degrees:
+      name: Wind Direction
+    rain:
+      name: Rain
+    uv_index:
+      name: UV Index
+    illuminance:
+      name: Illuminance
+    tx_counter:
+      name: TX Counter
+```
+
+### Configuration Variables
+
+- **vevor_dtx_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `vevor_dtx` hub. Required
+  when more than one hub is configured.
+- **temperature** (*Optional*): Outdoor temperature in degrees Celsius. All options from
+  [Sensor](/components/sensor/).
+- **humidity** (*Optional*): Outdoor relative humidity. All options from [Sensor](/components/sensor/).
+- **wind_speed** (*Optional*): Wind speed in meters per second. All options from [Sensor](/components/sensor/).
+- **wind_gust** (*Optional*): Wind gust speed in meters per second. All options from [Sensor](/components/sensor/).
+- **wind_direction_degrees** (*Optional*): Wind direction in degrees. All options from [Sensor](/components/sensor/).
+- **rain** (*Optional*): Rain in millimeters as a running total since the station was powered up; it is published
+  with the `total_increasing` state class. All options from [Sensor](/components/sensor/).
+- **uv_index** (*Optional*): UV index. All options from [Sensor](/components/sensor/).
+- **illuminance** (*Optional*): Illuminance in lux. All options from [Sensor](/components/sensor/).
+- **tx_counter** (*Optional*): The station's transmission counter, a diagnostic value that counts from 0 to 255 and
+  wraps. All options from [Sensor](/components/sensor/).
+
+## Text Sensor
+
+```yaml
+text_sensor:
+  - platform: vevor_dtx
+    sensor_id:
+      name: Vevor Sensor ID
+```
+
+### Configuration Variables
+
+- **vevor_dtx_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `vevor_dtx` hub. Required
+  when more than one hub is configured.
+- **sensor_id** (*Optional*): Outdoor station identifier as a hexadecimal string. All options from
+  [Text Sensor](/components/text_sensor/).
+
+## Binary Sensor
+
+```yaml
+binary_sensor:
+  - platform: vevor_dtx
+    low_battery:
+      name: Vevor Low Battery
+```
+
+### Configuration Variables
+
+- **vevor_dtx_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `vevor_dtx` hub. Required
+  when more than one hub is configured.
+- **low_battery** (*Optional*): Outdoor station low battery flag. All options from
+  [Binary Sensor](/components/binary_sensor/).
+
+## Hardware Notes
+
+The DTX signal is a logic-level signal on the Vevor receiver board. Connect the ESP ground to the receiver board
+ground and connect the DTX signal to the remote receiver's GPIO. A series resistor, for example `47 kOhm` to
+`100 kOhm`, is recommended between the receiver board and the ESP input.
+
+> [!CAUTION]
+> Confirm that the signal presented to the ESP GPIO is 3.3V logic level. Do not connect a 5V signal directly to an
+> ESP input.
+
+On ESP8266 boards, use a GPIO that supports interrupts. `GPIO14` is a common choice on ESP8266 modules such as the
+ESP-WROOM-02. Avoid `GPIO16`, boot strap pins, and UART pins unless your board design specifically accounts for them.
+
+## See Also
+
+- [Remote Receiver](/components/remote_receiver/)
+- [Sensor Filters](/components/sensor/#sensor-filters)
+- [GPIO Pin Numbering](/guides/configuration-types/#pin)
+- <APIRef text="vevor_dtx.h" path="vevor_dtx/vevor_dtx.h" />

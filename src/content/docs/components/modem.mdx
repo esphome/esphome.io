@@ -1,0 +1,250 @@
+---
+description: "Instructions for connecting an ESP32 node to the internet through a cellular modem in ESPHome."
+title: "Modem Component"
+params:
+  seo:
+    description: Instructions for connecting an ESP32 node to the internet through a cellular modem in ESPHome.
+    image: modem.svg
+    keywords: Network, Modem, Cellular, LTE, PPP
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `modem` component connects an ESP32 to the internet through a cellular modem attached to a UART. The modem
+carries the traffic over PPP, so the [API](/components/api/), [MQTT](/components/mqtt/) and OTA updates work as they
+do over Wi-Fi or Ethernet.
+
+Only the ESP32 family with the ESP-IDF framework is supported. The component cannot be used together with the
+[Ethernet](/components/ethernet/) or [Captive Portal](/components/captive_portal/) components.
+
+The cellular connection can be shared with other devices through a Wi-Fi access point, see
+[WISP Mode](/components/wifi/#wisp-mode).
+
+> [!NOTE]
+> On most cellular networks the device gets a private address behind the operator's NAT, so Home Assistant cannot
+> open a connection to it. Use [MQTT](/components/mqtt/), or the API over [WireGuard](/components/wireguard/).
+
+```yaml
+# Example configuration entry
+modem:
+  model: SIM7600
+  apn: internet
+  rx_pin: GPIOXX
+  tx_pin: GPIOXX
+```
+
+## Configuration Variables
+
+- **model** (**Required**, string): The modem model, one of `BG96`, `SIM800`, `SIM7000`, `SIM7070`, `SIM7080`,
+  `SIM7600`, `SIM7670` or `GENERIC`. `GENERIC` drives a modem that is not listed with the standard AT commands.
+  Every modem, `GENERIC` included, must support CMUX (3GPP TS 27.010), which the component uses to keep AT
+  commands working while the data link is up.
+- **apn** (**Required**, string): The Access Point Name (APN) of your cellular operator.
+- **rx_pin** (**Required**, [Pin Schema](/guides/configuration-types/#pin-schema)): The pin that receives data from
+  the modem, connected to the modem's `TX` pin.
+- **tx_pin** (**Required**, [Pin Schema](/guides/configuration-types/#pin-schema)): The pin that sends data to the
+  modem, connected to the modem's `RX` pin.
+- **rts_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The `RTS` pin for hardware flow
+  control. Must be set together with `cts_pin`.
+- **cts_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The `CTS` pin for hardware flow
+  control. Must be set together with `rts_pin`.
+- **pin_code** (*Optional*, string): The PIN of the SIM card, 4 to 8 digits. It is sent at most twice, counted
+  across reboots, without the SIM reporting that it is unlocked, so a wrong PIN stops the modem instead of locking
+  the SIM. A PIN the SIM refuses uses up both sends at once. Once the SIM reports that it is unlocked, the count
+  starts again from zero. A changed `pin_code` also starts from zero. To clear the count for the same PIN, remove
+  `pin_code`, flash once, and add it back.
+- **baud_rate** (*Optional*, int): The baud rate to run the link at. The component first finds the rate the modem
+  answers at (the last rate that worked, this one, then `115200`), then asks the modem to switch to `baud_rate`.
+  Defaults to the rate the modem answers at.
+- **init_at** (*Optional*, list of strings): AT commands to send once the modem answers, before it attaches to
+  the network, each up to 127 characters. Each result is logged, and a failed command is shown in the component's
+  status, also while connected, until a later attempt runs it without failure.
+- **enable_on_boot** (*Optional*, boolean): Whether to connect the modem when the device starts. Set this to
+  `false` when the modem has to be powered on first, then use the `modem.enable` action. Defaults to `true`.
+- **reboot_timeout** (*Optional*, [Time](/guides/configuration-types/#time)): How long the device may stay
+  without a connection before it reboots. Set to `0s` to never reboot. Defaults to `10min`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often the
+  [Modem Sensor](/components/sensor/modem/) and the `network_type` [Modem Text Sensor](/components/text_sensor/modem/)
+  query the modem while it is connected, at least `10s`. Defaults to `60s`.
+- **use_address** (*Optional*, string): The address the ESPHome tools use to reach the device, for example for
+  OTA updates and logs. Defaults to `<name>.local`.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation.
+
+### Advanced Options
+
+- **tx_buffer_size** (*Optional*, int): The size of the UART transmit buffer in bytes, from `129` to `65535`.
+  Defaults to `1024`.
+- **rx_buffer_size** (*Optional*, int): The size of the UART receive buffer in bytes, from `129` to `65535`.
+  Defaults to `1024`.
+- **dte_buffer_size** (*Optional*, int): The size of the modem library's command buffer in bytes. Increase it if
+  the log shows `CMUX: Failed to defragment longer payload`. Defaults to `1024`.
+
+## Status
+
+The component's status shows the step that failed most recently, until the modem connects. A failed `baud_rate`
+switch or `init_at` command stays shown, also while connected, until a later connection attempt runs that step
+without failure. A lost connection shows `PPP link failed` while the modem reconnects.
+
+- Warnings: `Modem not responding`, `Configured baud rate failed`, `init_at command failed`, `SIM not ready`,
+  `APN or radio setup failed`, `No network attachment`, `PPP link failed` and `Modem teardown failed`.
+- Errors, which stop the modem until the SIM or `pin_code` is fixed: `SIM locked`,
+  `SIM PIN not sent; check pin_code` (the send count above is used up) and `PIN record not saved` (the PIN send
+  count could not be written to flash, so the PIN was not sent; the device keeps its `reboot_timeout`).
+
+## Sensors
+
+The [Modem Sensor](/components/sensor/modem/) platform reports the signal strength and the bit error rate, and the
+[Modem Text Sensor](/components/text_sensor/modem/) platform reports the network type and the unsolicited result
+codes (URC) the modem sends on its own.
+
+## Automations
+
+- **on_sync** (*Optional*, [Automation](/automations/)): An automation to run when the modem answers AT commands,
+  before it attaches to the network.
+- **on_connect** (*Optional*, [Automation](/automations/)): An automation to run when the modem gets an IP
+  address.
+- **on_disconnect** (*Optional*, [Automation](/automations/)): An automation to run when a connection is lost.
+
+## Actions
+
+### `modem.enable` Action
+
+Connects the modem. This is what `enable_on_boot` does when the device starts.
+
+```yaml
+on_...:
+  then:
+    - modem.enable:
+```
+
+### `modem.disable` Action
+
+Disconnects the modem and turns its radio off.
+
+```yaml
+on_...:
+  then:
+    - modem.disable:
+```
+
+> [!NOTE]
+> While the modem is disabled the device has no network. Set the `reboot_timeout` of components such as
+> [MQTT](/components/mqtt/) and the [API](/components/api/) to `0s` if the device should stay up meanwhile.
+
+### `modem.send_at` Action
+
+Sends an AT command to the modem and logs the answer. The command is sent from the modem's own task between its
+connection steps, so the action does not wait for the answer. The modem keeps answering commands while the data
+connection is up.
+
+```yaml
+on_...:
+  then:
+    - modem.send_at: "AT+CGSN"
+```
+
+- **command** (**Required**, string, [templatable](/automations/templates/#config-templatable)): The command to
+  send.
+
+## Conditions
+
+### `modem.connected` Condition
+
+This [Condition](/automations/actions/#all-conditions) checks whether the modem has an IP address.
+
+```yaml
+on_...:
+  if:
+    condition:
+      modem.connected:
+    then:
+      - logger.log: Modem is connected
+```
+
+### `modem.enabled` Condition
+
+This [Condition](/automations/actions/#all-conditions) checks whether the modem is enabled, that is connected or
+trying to connect.
+
+```yaml
+on_...:
+  if:
+    condition:
+      modem.enabled:
+    then:
+      - modem.disable:
+    else:
+      - modem.enable:
+```
+
+## Lambda Calls
+
+From [lambdas](/automations/templates/#config-lambda), you can call these methods on the modem, assuming
+`id: my_modem`:
+
+- `is_connected()`: Returns `true` while the modem has an IP address.
+- `is_enabled()`: Returns `true` while the modem is enabled.
+- `enable()` and `disable()`: The same as the actions above.
+- `send_at(cmd)`: Queues an AT command for the modem, which sends it and logs the answer. Returns `false` when the
+  previous command is not sent yet or the command is longer than 127 characters. A second argument sets the
+  timeout in milliseconds. It is only available when the configuration also uses the `modem.send_at` action.
+
+```cpp
+if (!id(my_modem).send_at("AT+CFUN=1")) {
+  ESP_LOGW("main", "The command was not queued");
+}
+```
+
+## Powering the Modem
+
+The component does not drive the modem's power key. When a board needs a pulse on `PWRKEY` before the modem
+answers, drive that pin yourself and enable the modem afterwards. The pulse length and the polarity depend on the
+modem, so check its hardware design guide.
+
+```yaml
+modem:
+  id: my_modem
+  model: SIM7600
+  apn: internet
+  rx_pin: GPIOXX
+  tx_pin: GPIOXX
+  enable_on_boot: false
+
+output:
+  - platform: gpio
+    id: modem_power_key
+    pin: GPIOXX
+
+esphome:
+  on_boot:
+    then:
+      - output.turn_on: modem_power_key
+      - delay: 1s
+      - output.turn_off: modem_power_key
+      - modem.enable:
+```
+
+## Performance
+
+The serial link limits throughput, so a higher `baud_rate` helps most, in particular when the connection is shared
+through [WISP Mode](/components/wifi/#wisp-mode).
+
+Large transfers can be made faster, at the cost of some internal RAM, by running the UART interrupt handler from
+RAM:
+
+```yaml
+esp32:
+  framework:
+    type: esp-idf
+    sdkconfig_options:
+      CONFIG_UART_ISR_IN_IRAM: y
+```
+
+## See Also
+
+- [Network](/components/network/)
+- [WiFi](/components/wifi/)
+- [MQTT](/components/mqtt/)
+- [WireGuard](/components/wireguard/)
+- [esp_modem](https://docs.espressif.com/projects/esp-protocols/esp_modem/docs/latest/)
+- <APIRef text="modem_component.h" path="modem/modem_component.h" />

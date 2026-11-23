@@ -17,6 +17,8 @@
  * lines, and commented-out example items are all handled correctly.
  *
  * Resolution rules (matching resolveImagePath):
+ *   - "badge:<Name>" prefix: a badge generated at build time (src/lib/badges.mjs),
+ *     so only the name is checked (letters, digits, hyphens and underscores).
  *   - "http://", "https://" or "//" (protocol-relative) prefix: external, skipped.
  *   - "/" prefix: maps to `public<string>` (e.g. /images/foo.svg -> public/images/foo.svg).
  *   - anything else: maps to `public/images/<string>`.
@@ -28,6 +30,7 @@
 import { readFileSync, statSync, readdirSync } from "fs";
 import { join, dirname, relative } from "path";
 import { fileURLToPath } from "url";
+import { badgeName, isValidBadgeName } from "../src/lib/badges.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -153,9 +156,9 @@ function isRegularFile(path) {
  * Extract missing image references from a single file's content.
  *
  * @param {string} content File contents
- * @returns {Array<{line: number, image: string, resolved: string}>} Missing refs
+ * @returns {Array<{line: number, image: string, problem: string}>} Missing refs
  */
-function findMissingRefs(content) {
+export function findMissingRefs(content) {
   const missing = [];
   let match;
   TABLE_RE.lastIndex = 0;
@@ -170,11 +173,23 @@ function findMissingRefs(content) {
       if (strings.length < 3) continue;
 
       const { value: image, line } = strings[2];
+      const badge = badgeName(image);
+      if (badge !== null) {
+        if (!isValidBadgeName(badge)) {
+          missing.push({
+            line,
+            image,
+            problem: "invalid badge name, use letters, digits, hyphens and underscores only",
+          });
+        }
+        continue;
+      }
+
       const resolved = resolveImageFile(image);
       if (resolved === null) continue;
 
       if (!isRegularFile(join(REPO_ROOT, resolved))) {
-        missing.push({ line, image, resolved });
+        missing.push({ line, image, problem: `${resolved} (missing)` });
       }
     }
   }
@@ -183,25 +198,27 @@ function findMissingRefs(content) {
 
 // ── entry point ──────────────────────────────────────────────────────────────
 
-const files = collectMdxFiles(CONTENT_DIR).sort();
-const failures = [];
+if (process.argv[1] === __filename) {
+  const files = collectMdxFiles(CONTENT_DIR).sort();
+  const failures = [];
 
-for (const file of files) {
-  const content = readFileSync(file, "utf-8");
-  const missing = findMissingRefs(content);
-  for (const m of missing) {
-    failures.push({ file: relative(REPO_ROOT, file), ...m });
+  for (const file of files) {
+    const content = readFileSync(file, "utf-8");
+    const missing = findMissingRefs(content);
+    for (const m of missing) {
+      failures.push({ file: relative(REPO_ROOT, file), ...m });
+    }
   }
-}
 
-if (failures.length === 0) {
-  console.log("All ImgTable image references resolve to existing files.");
-  process.exit(0);
-}
+  if (failures.length === 0) {
+    console.log("All ImgTable image references resolve to existing files.");
+    process.exit(0);
+  }
 
-console.error("ImgTable references point to image files that do not exist:\n");
-for (const f of failures) {
-  console.error(`  ${f.file}:${f.line}: "${f.image}" -> ${f.resolved} (missing)`);
+  console.error("ImgTable references point to image files that do not exist or are invalid:\n");
+  for (const f of failures) {
+    console.error(`  ${f.file}:${f.line}: "${f.image}" -> ${f.problem}`);
+  }
+  console.error(`\nFound ${failures.length} broken image reference(s).`);
+  process.exit(1);
 }
-console.error(`\nFound ${failures.length} missing image reference(s).`);
-process.exit(1);

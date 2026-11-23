@@ -1,0 +1,113 @@
+---
+description: "Instructions for setting up the LIS3DH accelerometer."
+title: "LIS3DH Accelerometer"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `lis3dh` motion platform allows you to use your LIS3DH 3-axis accelerometer
+([datasheet](https://www.st.com/resource/en/datasheet/lis3dh.pdf))
+with ESPHome. The [I²C Bus](/components/i2c/) is required to be set up in your
+configuration for this sensor to work.
+
+The LIS3DH is a low-power 3-axis accelerometer with selectable ±2/4/8/16 g
+full-scale ranges and an on-chip temperature sensor. It also has a programmable
+motion interrupt that can be wired to a GPIO and used as a `wakeup_pin` for the
+[Deep Sleep](/components/deep_sleep/) component to wake an ESP32 from deep sleep
+when the device is moved.
+
+```yaml
+# Example configuration entry
+motion:
+  - platform: lis3dh
+    accelerometer_range: 2G
+
+sensor:
+  - platform: lis3dh
+    type: temperature
+    name: "LIS3DH Temperature"
+  - platform: motion
+    type: acceleration_x
+    name: "LIS3DH Accel X"
+  - platform: motion
+    type: roll
+    name: "LIS3DH Roll"
+```
+
+## Configuration Variables
+
+- **address** (*Optional*, int): Manually specify the I²C address of the sensor. Defaults to `0x18`;
+  on boards where the SDO/SA0 pin is tied high it is `0x19`.
+- **accelerometer_range** (*Optional*, string): The full-scale range of the accelerometer. One of
+  `2G`, `4G`, `8G`, `16G`. Defaults to `2G`. A smaller range gives finer resolution; a larger range
+  measures stronger accelerations.
+- **accelerometer_odr** (*Optional*, string): The output data rate of the accelerometer. One of
+  `1HZ`, `10HZ`, `25HZ`, `50HZ`, `100HZ`, `200HZ`, `400HZ`, `1620HZ`, `1344HZ`. Defaults to `100HZ`.
+  `1620HZ` needs `operating_mode: LOW_POWER`, and `1344HZ` is rejected in that mode because the chip would
+  then run at 5376 Hz.
+- **operating_mode** (*Optional*, string): Selects the resolution, which also affects power usage. One of
+  `LOW_POWER` (8-bit), `NORMAL` (10-bit), `HIGH_RESOLUTION` (12-bit). Defaults to `HIGH_RESOLUTION`.
+- **interrupt** (*Optional*): Configure the on-chip motion (activity) interrupt. When present, the LIS3DH
+  drives one of its physical INT pads whenever the acceleration crosses the threshold. See
+  [Motion Wake-Up](#motion-wake-up) below.
+  - **pin** (*Optional*, string): Which physical interrupt pad to drive, `INT1` or `INT2`. Defaults to `INT1`.
+  - **threshold** (*Optional*, acceleration): The acceleration above which the interrupt fires. Defaults to
+    `1.1g`. Each enabled axis is compared separately against this value. At rest the axis aligned with
+    gravity reads about 1 g, so with all axes enabled the threshold should stay above `1g`; a value of `1g`
+    or less without `high_pass_filter` is accepted but logs a warning, since gravity alone may then keep the
+    interrupt asserted. Enable `high_pass_filter` to compare against the *change* in acceleration instead,
+    which allows much smaller values.
+    The value cannot exceed what the selected `accelerometer_range` can represent (about `2g` at `2G`,
+    `4g` at `4G`, `7.9g` at `8G` and `23.6g` at `16G`).
+  - **duration** (*Optional*, [Time](/guides/configuration-types/#time)): How long the threshold must be
+    exceeded before the interrupt fires. It is rounded to whole samples at the selected `accelerometer_odr`
+    and can be at most 127 samples (for example `1270ms` at `100HZ`). Defaults to `0ms`.
+  - **axes** (*Optional*, list): Which axes may trigger the interrupt, any of `x`, `y`, `z`.
+    Defaults to all three.
+  - **latched** (*Optional*, boolean): If `true`, the interrupt stays asserted until the interrupt source
+    register is read (which happens automatically on the next boot). If `false`, the pad follows the motion.
+    Defaults to `true`. For deep-sleep wake-up, `false` is often preferable so the device can return to
+    sleep once movement stops.
+  - **active_high** (*Optional*, boolean): The polarity of the interrupt pad. `true` = the pad goes high
+    when the interrupt is active, `false` = it goes low. Defaults to `true`.
+  - **high_pass_filter** (*Optional*, boolean): Apply the high-pass filter to the interrupt so the standing
+    gravity component is removed from the threshold comparison, letting you use a small threshold (the change
+    in acceleration). The reported acceleration values are not affected. Defaults to `false`.
+
+- All other options from [Motion](/components/motion/).
+
+As an accelerometer without a gyroscope, the LIS3DH supports the `acceleration_x`, `acceleration_y`,
+`acceleration_z`, `pitch`, `roll` and `orientation` [Motion](/components/motion/) sensor types, the
+`face_up`, `face_down`, `free_fall` and `moving` [binary sensors](/components/motion/#binary-sensor) and
+the shake [event](/components/motion/#event). The `angular_rate_*` and `gyroscope_*` types are not
+available.
+
+## Motion Wake-Up
+
+The motion interrupt can wake an ESP32 from deep sleep. Wire the selected INT pad to a GPIO and point the
+[Deep Sleep](/components/deep_sleep/) component's `wakeup_pin` at it. The accelerometer keeps sampling on its
+own while the ESP is asleep, so any movement above the threshold pulls the pin and wakes the device.
+
+```yaml
+# Wire the LIS3DH INT1 pad to GPIOXX
+motion:
+  - platform: lis3dh
+    operating_mode: LOW_POWER
+    accelerometer_odr: 50HZ
+    interrupt:
+      pin: INT1
+      threshold: 0.2g
+      high_pass_filter: true   # remove gravity so a small threshold works
+      latched: false           # follow the motion so the device can sleep again
+
+deep_sleep:
+  run_duration: 30s
+  wakeup_pin: GPIOXX           # active-high by default; matches active_high: true
+```
+
+## See Also
+
+- [LIS3DH Temperature Sensor](/components/sensor/lis3dh/)
+- [Deep Sleep Component](/components/deep_sleep/)
+- [Motion Component (IMU)](/components/motion/)
+- <APIRef text="lis3dh.h" path="lis3dh/lis3dh.h" />

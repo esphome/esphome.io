@@ -6,13 +6,19 @@ title: "LSM6DS Accelerometer/Gyroscope Sensor"
 import APIRef from '@components/APIRef.astro';
 
 The `lsm6ds` motion platform allows you to use your LSM6DS Accelerometer/Gyroscope
-([datasheet](https://www.st.com/resource/en/datasheet/lsm6ds3tr-c.pdf))
 sensors with ESPHome. The [I²C Bus](/components/i2c/) is required to be set up in
 your configuration for this sensor to work.
 
 The LSM6DS is an IMU including a 16-bit 3-axis accelerometer and a 16-bit 3-axis gyroscope, plus an on-chip temperature sensor.
 
-The LSM6DS3 and LSM6DSO are the currently supported variants. Detection of the chip variant is automatic.
+The supported variants are detected automatically from their `WHO_AM_I` value:
+
+- LSM6DS3 ([datasheet](https://content.arduino.cc/assets/st_imu_lsm6ds3_datasheet.pdf))
+- LSM6DS3TR-C ([datasheet](https://www.st.com/resource/en/datasheet/lsm6ds3tr-c.pdf))
+- LSM6DSO ([datasheet](https://www.st.com/resource/en/datasheet/lsm6dso.pdf))
+
+The LSM6DSO32 is not supported. It reports the same `WHO_AM_I` value as the LSM6DSO, so it is detected as one,
+but its accelerometer ranges differ and the acceleration readings would be wrong.
 
 ```yaml
 # Example configuration entry

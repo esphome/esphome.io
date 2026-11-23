@@ -53,17 +53,17 @@ bk72xx_ble_tracker:
   > beacons — they broadcast all their data in the advertisement (no scan response) — and
   > keeps the radio cost of each window minimal on the single-core SoC.
 
-  - **interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval between
+  - **interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval between
     each consecutive scan window. The scanner cycles through the three BLE advertising channels
     at this rate. Defaults to `100ms` — the BK reference scan rate, which together with the
     default `window` gives a 30% duty cycle. A larger interval lowers the duty cycle and frees
     more CPU time for WiFi on the single-core SoC, at the cost of catching fewer advertisements.
 
-  - **window** (*Optional*, [Time](/guides/configuration-types#time)): The time the receiver is
+  - **window** (*Optional*, [Time](/guides/configuration-types/#time)): The time the receiver is
     actively listening for packets on a channel during each scan interval. Must be ≤ `interval`.
     Defaults to `30ms` (a 30% duty cycle with the default `interval`).
 
-  - **duration** (*Optional*, [Time](/guides/configuration-types#time)): The length of each
+  - **duration** (*Optional*, [Time](/guides/configuration-types/#time)): The length of each
     complete scan session. When `continuous` is `true` the scanner restarts immediately after each
     session ends. Defaults to `5min`.
 
@@ -106,7 +106,7 @@ bk72xx_ble_tracker:
 - **on_scan_end** (*Optional*, [Automation](/automations)): An automation to perform
   when a scan session ends (its `duration` elapsed, or `stop_scan` was called).
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used to
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used to
   reference this component in lambdas.
 
 The `x` variable differs between the triggers — `on_ble_advertise` receives the parsed device,
@@ -131,7 +131,7 @@ bk72xx_ble_tracker:
 
 ### `bk72xx_ble_tracker.start_scan` Action
 
-Start a scan. The optional [templatable](/automations/templates#config-templatable) `continuous`
+Start a scan. The optional [templatable](/automations/templates/#config-templatable) `continuous`
 overrides the scan mode until the next `start_scan` or `stop_scan` (the YAML-configured value
 itself is untouched); without it the mode configured under `scan_parameters` is restored (a
 previous `stop_scan` does not stick as "one-shot"). This differs from
