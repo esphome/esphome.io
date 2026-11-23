@@ -39,7 +39,12 @@ button:
 
 Each hub holds one request at a time. If you press the second button while the first request is waiting or in flight,
 ESPHome rejects the second request with a warning and keeps the first. Press the second button again after the exchange
-finishes. Use the [`on_datagram` trigger](/components/vbus/receive/#p2-datagram-automation) to handle controller replies.
+finishes. The echo of its release can arrive while the next request is waiting. Use the [`on_datagram` trigger](/components/vbus/receive/#p2-datagram-automation) to handle controller replies.
+
+Use a serial UART for both directions. TCP and USB serial bridges can buffer traffic long enough for a grant to
+expire. On ESP32, VBus defaults the receiving UART’s `rx_full_threshold` to `1` so the first byte of another
+transmission becomes visible promptly. If you set it explicitly, use `1`. The default ESPHome loop interval works
+with VBus. If you customize `esphome.loop_interval`, keep it at or below `50ms` when transmitting.
 
 ### Transmit Configuration
 
@@ -72,7 +77,8 @@ valid P2 reply from the controller to its own address. A local echo does not qua
 readback if you want to verify that the controller applied the value.
 
 Use one transmitting client on the bus and keep its TX UART exclusive to VBus. If the lease expires or the controller
-resumes transmission, the hub abandons the exchange without sending a late frame or retrying the request.
+resumes transmission, the hub abandons the exchange. If an accepted action loses bus access before it sends,
+ESPHome logs a warning. After the receive UART reports a disconnection, transmission requires a fresh grant.
 
 ## P2 Value Transactions
 
