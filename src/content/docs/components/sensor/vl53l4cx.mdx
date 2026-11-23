@@ -1,0 +1,136 @@
+---
+title: "VL53L4CX Time Of Flight Distance Sensor"
+description: "Instructions for setting up VL53L4CX multi-target time of flight distance sensors in ESPHome."
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `vl53l4cx` sensor platform allows you to use VL53L4CX optical time of flight
+([datasheet](https://www.st.com/resource/en/datasheet/vl53l4cx.pdf),
+[ST](https://www.st.com/en/imaging-and-photonics-solutions/vl53l4cx.html)) sensors with ESPHome
+to measure distances up to about 6m. The sensor works optically by emitting short infrared pulses
+and measuring the time it takes the light to be reflected back.
+
+Unlike the [VL53L1X](/components/sensor/vl53l1x/), the VL53L4CX sees up to four targets in one measurement,
+for example a box under part of its field of view and the floor behind it. The `target` option picks the
+one the sensor reports. The measurements are processed by ST's own driver on the ESP, so each sensor uses
+about 9.5 KB of RAM.
+
+The [I²C Bus](/components/i2c/) is required to be set up in your configuration for this sensor to work.
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: vl53l4cx
+    name: "VL53L4CX Distance"
+```
+
+The sensor reports the distance in meters, or `NaN` when no target passes the checks. When a measurement
+fails or times out, the sensor keeps its last state and the component shows a warning.
+
+## Wiring
+
+- `VIN` connects to 3.3V
+- `GND` connects to ground
+- `SCL` connects to I²C SCL (clock)
+- `SDA` connects to I²C SDA (data)
+- `GPIO1` (labelled `GPIO` on some boards) is the interrupt output, low while a measurement is ready.
+  Connect it to a free input pin and set it as `interrupt_pin` to save an I²C read on every loop.
+- `XSHUT` connects to a free GPIO pin and is used as `enable_pin`. It is optional for a single sensor
+  at the default `0x29` address, and required for every sensor when more than one VL53L4CX shares
+  an I²C bus.
+
+## Configuration Variables
+
+- **distance_mode** (*Optional*, string): The distance mode, one of `short`, `medium` or `long`.
+  Defaults to `long`.
+
+- **timing_budget** (*Optional*, [Time](/guides/configuration-types/#time)): The time allowed for a single
+  distance measurement, from `10ms` to `1000ms`. A longer budget gives more accurate readings at a lower
+  measurement rate. Defaults to `33ms`.
+
+- **target** (*Optional*, string): Which of the valid targets in a measurement the sensor reports:
+  `nearest`, `farthest` or `strongest` (the highest return signal). Defaults to `nearest`.
+
+- **min_distance** (*Optional*, distance): Targets closer than this are ignored, for example dust or insects
+  on the cover glass. Defaults to `0mm`.
+
+- **offset** (*Optional*, int): Calibration offset in millimeters added to every target, from -1000 to 1000.
+  It applies before `min_distance` is checked. Defaults to `0`.
+
+- **address** (*Optional*, int): The I²C address of the sensor. Defaults to `0x29`. If another address
+  is set, the sensor is re-addressed at startup, which requires `enable_pin`. When more than one VL53L4CX
+  shares an I²C bus, every sensor must be set to an address other than `0x29`.
+
+- **enable_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The pin connected
+  to XSHUT on the VL53L4CX. Required when `address` is not `0x29`, and for every sensor when more than
+  one VL53L4CX shares an I²C bus.
+
+- **interrupt_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The pin connected
+  to GPIO1 on the VL53L4CX. Without it, ESPHome asks the sensor over I²C whether a measurement is ready.
+
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often to start a
+  measurement. Defaults to `1s`. Set it to `never` to measure continuously: each measurement starts as
+  soon as the last one is read, so the sensor reports one every `timing_budget`.
+
+- All other options from [Sensor](/components/sensor/).
+
+## Choosing a target
+
+With several objects in view, the sensor reports up to four targets with their distance and signal strength.
+
+- `nearest` reports the closest valid target, the way a single-target sensor behaves.
+- `farthest` looks past partial obstructions. A garage sensor pointed at the floor keeps reporting the floor
+  while the open door or a car roof is at the edge of its view; combine it with `min_distance` so anything
+  on the cover glass is ignored.
+- `strongest` reports the target that reflects the most light.
+
+```yaml
+# Garage floor sensor that ignores partial obstructions
+sensor:
+  - platform: vl53l4cx
+    name: "Garage Distance"
+    target: farthest
+    min_distance: 100mm
+    interrupt_pin: GPIOXX
+    update_interval: never
+    filters:
+      - median:
+          window_size: 15
+          send_every: 15
+```
+
+## Multiple Sensors
+
+Multiple VL53L4CX sensors can share one I²C bus. All sensors start at the same default address (`0x29`),
+so each one is held in reset with its XSHUT pin while the others are given new addresses:
+
+1. Connect the XSHUT pin of each sensor to a different GPIO and set it as `enable_pin`
+1. Give each sensor its own `address` other than `0x29`
+
+ESPHome rejects a configuration where a sensor on a shared bus has no `enable_pin`, stays at `0x29`,
+or uses the same address as another VL53L4CX on that bus. A VL53L4CX also cannot share an I²C bus with a
+[VL53L0X](/components/sensor/vl53l0x/) or [VL53L1X](/components/sensor/vl53l1x/), since those boot at
+`0x29` too and are re-addressed separately; put them on another bus.
+
+```yaml
+# Two VL53L4CX sensors on the same I²C bus
+sensor:
+  - platform: vl53l4cx
+    name: "Distance Front"
+    address: 0x30
+    enable_pin: GPIOXX
+
+  - platform: vl53l4cx
+    name: "Distance Rear"
+    address: 0x31
+    enable_pin: GPIOXX
+```
+
+## See Also
+
+- [VL53L1X Time Of Flight Distance Sensor](/components/sensor/vl53l1x/)
+- [VL53L0X Time Of Flight Distance Sensor](/components/sensor/vl53l0x/)
+- [Sensor Filters](/components/sensor/#sensor-filters)
+- [VL53L4CX driver](https://github.com/esphome-libs/VL53L4CX), the ESPHome fork of ST's driver
+- <APIRef text="vl53l4cx.h" path="vl53l4cx/vl53l4cx.h" />
