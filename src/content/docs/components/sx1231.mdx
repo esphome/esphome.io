@@ -5,9 +5,9 @@ title: "SX1231 Component"
 
 import APIRef from '@components/APIRef.astro';
 
-The SX1231 component allows you to configure the SX1231 and SX1231H transceivers
-([datasheet](https://www.semtech.com/products/wireless-rf/fsk-transceivers/sx1231h#documentation)) in ESPHome.
-These chips are found on the popular RFM69W, RFM69CW, RFM69HW and RFM69HCW modules. Transceivers are connected via
+The SX1231 component allows you to configure the SX1231H transceiver
+([datasheet](https://www.semtech.com/products/wireless-rf/fsk-transceivers/sx1231h#documentation)) and the popular
+RFM69W, RFM69CW, RFM69HW and RFM69HCW modules, which work the same way, in ESPHome. Transceivers are connected via
 the [SPI Bus](/components/spi/). Supported frequencies range from 290 MHz to 1020 MHz, including the popular 315 MHz,
 433 MHz, 868 MHz and 915 MHz ISM bands; each module is built for one of these bands. Supported modulations are OOK,
 FSK and GFSK (FSK with a Gaussian `shaping` filter). The SX1231 component may be used as a platform for the
@@ -16,6 +16,11 @@ node to another.
 
 These chips do not support LoRa. For LoRa, see the [SX126x](/components/sx126x/) and [SX127x](/components/sx127x/)
 components.
+
+> [!NOTE]
+> The component reads the chip's version at boot and only accepts `0x24`, which the SX1231H and the RFM69 modules
+> report. The older SX1231 reports a lower version and is not supported: the component fails with an
+> "Unsupported chip version" message, and the log shows the version that was read.
 
 ```yaml
 # Example configuration entry
@@ -74,7 +79,8 @@ sx1231:
 - **sync_value** (*Optional*, list): Synchronization bytes, list of 1 to 8 bytes, found after the preamble and before
   the payload. A byte of `0x00` is not supported. If not configured, no synchronization bytes are sent or expected.
 - **preamble_size** (*Optional*, int): Length of the preamble, in bytes, to be sent by the transmitter. The receiver
-  needs a few bytes of preamble to lock onto the signal, so set this on a device that sends packets. Defaults to `0`.
+  needs a few bytes of preamble to lock onto the signal, so do not set this to `0` on a device that sends packets
+  unless the receiver is known to work without one. Defaults to `3`.
 - **crc_enable** (*Optional*, boolean): Enables a 16 bit CRC calculation/check. Received packets that fail the check
   are dropped. Defaults to `false`.
 
