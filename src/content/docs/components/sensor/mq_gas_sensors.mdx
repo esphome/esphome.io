@@ -146,9 +146,9 @@ button:
   so `mq8`, `mq-8` and `MQ_8` are all equivalent.
 - **gas** (*Optional*, string): The gas whose curve is evaluated. Must be one of the gases listed for the type when it
   has published curves; for a type without them it is a free label. Defaults to the primary gas of `sensor_type`.
-- **voltage** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a voltage sampler (`adc`, `ads1115`, ...)
+- **voltage** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of a voltage sampler (`adc`, `ads1115`, ...)
   that reads the AO pin. Exactly one of `voltage:` and `pin:` is required.
-- **pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The pin the AO output is wired to. The component
+- **pin** (*Optional*, [Pin](/guides/configuration-types/#pin)): The pin the AO output is wired to. The component
   creates a hidden `adc` sensor for it, named `<id>_internal_adc`. Exactly one of `voltage:` and `pin:` is required.
 - **adc_attenuation** (*Optional*, ESP32 only): Attenuation of the hidden ADC created by `pin:`, one of `0db`,
   `2.5db`, `6db`, `12db` or `11db`. Defaults to `12db`, or to `0db` on the ESP32-S31, whose ADC has a single
@@ -166,15 +166,19 @@ button:
 - **adc_input_max** (*Optional*, float): The largest voltage the sampler measures, which is what the divider is
   checked against. It defaults to the measuring range of the attenuation for the hidden ADC of `pin:` and for an
   `adc` sensor, and has to be declared for any other sampler - `4.096` for an ADS1115 at that gain, for example;
-  without it the wiring of such a sampler is only checked against `adc_pin_max:`. A value above the range the
-  attenuation actually measures (for `pin:` or an `adc` sampler) is capped at that range, with a build-time warning,
-  because the conversion flattens above it.
+  without it the wiring of such a sampler is only checked against `adc_pin_max:`. A declared value is authoritative:
+  a divider inside it is accepted, and one that reaches above the range the attenuation actually measures is
+  accepted as well, with a build-time warning that the conversion flattens above that range.
 - **adc_pin_max** (*Optional*, float): The largest voltage the sampler input survives. Defaults to `3.6`. The divider
   is checked against it as well, so a wiring that would damage the pin is refused at build time.
 - **vcc** (*Optional*, float): The supply voltage of the module in V, used in the RS calculation. Defaults to `5.0`.
-  A sensor whose resistance collapses drives AO to this supply; a reading up to 5 % above it is reported as the top of
-  the measuring range, and one further above it is a wiring or configuration fault (see below).
-- **rl** (*Optional*, float): The load resistor of the module in kOhm. Defaults to `10.0`.
+  A sensor whose resistance collapses drives AO to this supply; a reading up to 5 % above it is reported as the rail,
+  where the curve's own limit is published (compensated, and unknown when the curve has no value there), and one
+  further above it is a wiring or configuration fault (see below).
+- **rl** (*Optional*, float): The load resistor of the module in kOhm. Defaults to `10.0`. When `voltage_divider:` is
+  set, the divider's parallel load is applied to it before the RS calculation, because a passive divider draws
+  current through the module's own load resistor (a 10 kOhm resistor with a 10 kOhm / 20 kOhm divider becomes
+  7.5 kOhm). With `voltage_multiplier:` the divider is not known, so the declared value is used as given.
 
 **Curve**
 
@@ -198,9 +202,9 @@ button:
 - **r0** (*Optional*, float): A fixed R0 in kOhm, which skips the calibration at boot. Mutually exclusive with
   `calibration:`.
 - **calibration** (*Optional*): Determine R0 in clean air instead of hard-coding it.
-  - **delay** (*Optional*, [Time](/guides/configuration-types#time)): The time to wait after boot before the first
+  - **delay** (*Optional*, [Time](/guides/configuration-types/#time)): The time to wait after boot before the first
     sample, so the heater has settled. Defaults to `60s`.
-  - **duration** (*Optional*, [Time](/guides/configuration-types#time)): An upper bound for the whole run, after which
+  - **duration** (*Optional*, [Time](/guides/configuration-types/#time)): An upper bound for the whole run, after which
     it is evaluated with the samples it has. Defaults to `0s`, which lets `sample_count:` end the run.
   - **sample_count** (*Optional*, int): The number of readings averaged into R0. Defaults to `50`. Range: 1-1000.
   - **ratio_in_clean_air** (*Optional*, float): The RS/R0 ratio in clean air for this run, when it differs from the
@@ -217,11 +221,11 @@ Without `r0:` or `calibration:` the sensor stays `unknown` and reports a warning
   reading: with `pin:` that is `sample_count:` multiplied by `adc_samples:`, and with `voltage:` pointing at an
   `adc` sensor it is `sample_count:` multiplied by that sensor's `samples:`. Any other sampler takes its own
   conversion time per sample, which `sample_count:` multiplies.
-- **sample_interval** (*Optional*, [Time](/guides/configuration-types#time)): The spacing between two of the readings
+- **sample_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The spacing between two of the readings
   of a calibration. Defaults to `20ms`; the minimum is 16 ms, one pass of the main loop.
-- **warmup_time** (*Optional*, [Time](/guides/configuration-types#time)): A window after boot in which no reading is
+- **warmup_time** (*Optional*, [Time](/guides/configuration-types/#time)): A window after boot in which no reading is
   published and no calibration is started, for a sensor that is still burning in. Defaults to `0s`.
-- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval between two readings.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval between two readings.
   Defaults to `60s`.
 
 **Temperature and humidity compensation**
@@ -229,7 +233,7 @@ Without `r0:` or `calibration:` the sensor stays `unknown` and reports a warning
 Linking both `temperature:` and `humidity:` enables the compensation automatically; `correction_mode: none` turns it
 off, and linking only one of the two is rejected at build time.
 
-- **temperature** / **humidity** (*Optional*, [ID](/guides/configuration-types#id)): Ambient sensors whose states are
+- **temperature** / **humidity** (*Optional*, [ID](/guides/configuration-types/#id)): Ambient sensors whose states are
   used to compensate the RS/R0 ratio for temperature and humidity.
 - **correction_mode** (*Optional*, string): `mqdatascience` (the default when both sources are linked) or `none`.
   Types without a correction model ignore the linked sources with a warning.
@@ -257,7 +261,7 @@ a text sensor:
 ### Actions
 
 - **mq_gas_sensors.calibrate_r0**: Start a clean-air calibration on the sensor. Takes the sensor
-  [ID](/guides/configuration-types#id), either as `mq_gas_sensors.calibrate_r0: mq8` or as an `id: mq8` mapping.
+  [ID](/guides/configuration-types/#id), either as `mq_gas_sensors.calibrate_r0: mq8` or as an `id: mq8` mapping.
 
 ## Clean-Air Calibration
 
@@ -281,15 +285,15 @@ corresponding option is not set. The published value is clamped to the range of 
 
 | `sensor_type` | Curve | RS/R0 in clean air | Default `gas` | Gases | Range |
 | ------------- | ----- | ------------------ | ------------- | ----- | ----- |
-| `MQ-2` | `exponential` | 9.83 | `LPG` | `ALCOHOL`, `CH4`, `CO`, `H2`, `LPG`, `PROPANE`, `SMOKE` | 0 - 10000 ppm |
-| `MQ-3` | `exponential` | 60 | `ALCOHOL` | `ALCOHOL`, `BENZENE`, `CH4`, `CO`, `HEXANE`, `LPG` | 0 - 10000 ppm |
+| `MQ-2` | `exponential` | 9.83 | `LPG` | `ALCOHOL`, `CO`, `H2`, `LPG`, `PROPANE`, `SMOKE` | 0 - 10000 ppm |
+| `MQ-3` | `exponential` | 60 | `ALCOHOL` | `ALCOHOL`, `BENZENE`, `CO`, `HEXANE`, `LPG` | 0 - 10000 ppm |
 | `MQ-4` | `exponential` | 4.4 | `CH4` | `ALCOHOL`, `CH4`, `CO`, `LPG`, `SMOKE` | 0 - 10000 ppm |
 | `MQ-5` | `exponential` | 6.5 | `LPG` | `ALCOHOL`, `CH4`, `CO`, `H2`, `LPG` | 0 - 10000 ppm |
 | `MQ-6` | `exponential` | 10 | `LPG` | `ALCOHOL`, `CH4`, `CO`, `H2`, `LPG` | 0 - 10000 ppm |
 | `MQ-7` | `exponential` | 27.5 | `CO` | `ALCOHOL`, `CH4`, `CO`, `H2`, `LPG` | 0 - 2000 ppm |
 | `MQ-8` | `exponential` | 70 | `H2` | `ALCOHOL`, `CH4`, `CO`, `H2`, `LPG` | 0 - 10000 ppm |
 | `MQ-9` | `exponential` | 9.6 | `LPG` | `CH4`, `CO`, `LPG` | 0 - 10000 ppm |
-| `MQ-131` | `linear` | 1 | `O3` | `O3` | 0 - 10 ppm |
+| `MQ-131` | `exponential` | 15 | `O3` | `O3` | 0 - 1 ppm |
 | `MQ-135` | `linear` | 1 | `NH3` | `H2`, `NH3`, `TOLUENE` | 0 - 10000 ppm |
 | `MQ-136` | `exponential` | 1 | `CUSTOM` | - | 0 - 200 ppm |
 | `MQ-137` | `linear` | 1 | `NH3` | `NH3` | 0 - 500 ppm |
@@ -299,8 +303,13 @@ corresponding option is not set. The published value is clamped to the range of 
 | `MQ-309A` | `exponential` | 1 | `CUSTOM` | - | 0 - 1000 ppm |
 | `CUSTOM` | `exponential` | 1 | `CUSTOM` | - | 0 - 10000 ppm |
 
-The MQ-131 measures ozone, whose datasheet gives its range in ppb (10 - 1000 ppb). Its built-in curve reports ppm
-and is clamped at the 10 ppm its fit covers.
+The MQ-131 measures ozone, whose datasheet gives its range in ppb (10 - 1000 ppb). Its coefficient pair is used with
+the exponential fit it was published for: at the clean-air ratio of 15 it reports 0.12 ppm, and the range top of 1 ppm
+is the 1000 ppb of the datasheet. Reading the same pair linearly would put clean air near 10000 ppm, which is why that
+interpretation is not used.
+
+The MQ-3 alcohol curve is published in mg/L rather than ppm. The value is converted: 1 mg/L of ethanol is about
+531 ppm at 25 °C, so a clean-air reading stays in the low ppm and the top of the range is 10000 ppm.
 
 The MQ-136, MQ-214, MQ-303A, MQ-309A and `CUSTOM` have no published curve in the reference library, so
 `coefficient_a:` and `coefficient_b:` are required for them; `gas:` is then a free label and `ratio_in_clean_air:`
@@ -313,8 +322,9 @@ still defaults to `1`. Nothing checks that those coefficients match the sensor, 
   `voltage_multiplier:`; the component refuses a wiring that would put more than `adc_pin_max:` on the input.
 - **Divider and ADC range**: The component also refuses a divider that leaves the AO pin above what the sampler
   measures. The 10 kOhm / 20 kOhm divider (3.33 V) is above the recommended 12 dB range of an ESP32 ADC - 2.45 V on a
-  classic ESP32, 3.1 V on an S3 - so it is refused, and declaring a larger `adc_input_max:` does not widen an ADC
-  whose attenuation is known. The 10 kOhm / 2 kOhm divider (0.83 V) stays inside the 12 dB range of every variant.
+  classic ESP32, 3.1 V on an S3 - so declare `adc_input_max: 3.33` for that wiring: the declared range is
+  authoritative, and the component warns at build time that the top of the reading flattens where the attenuation
+  ends. The 10 kOhm / 2 kOhm divider (0.83 V) stays inside the 12 dB range of every variant.
 - **Two-phase heaters**: The MQ-7 needs a cycled heater supply - 5 V for 60 s followed by 1.4 V for 90 s - which this
   component does not drive. It only measures the analog output, so the heater has to be driven by an external circuit
   or an ESPHome `output`.
