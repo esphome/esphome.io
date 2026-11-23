@@ -1,0 +1,51 @@
+---
+description: "Instructions for setting up streaming audio classification with TensorFlow Lite Micro in ESPHome"
+title: "TFLite Audio"
+---
+
+The `tflite_audio` component classifies streaming audio with a wake-word style model on ESP32 with the ESP-
+IDF framework. It loads `tflite_micro_runtime` in the background, so the kind is the only YAML entry and
+`model_type` is not used.
+
+```yaml
+tflite_audio:
+  - id: wake_word
+    model: "https://github.com/esphome/micro-wake-word-models/raw/main/models/v2/okay_nabu.json"
+    probability_cutoff: 0.5
+    sliding_window_size: 10
+    features_step_size: 20
+    feature_count: 40
+```
+
+## Configuration variables
+
+- **probability_cutoff** (*Optional*, percentage): Detection threshold. Defaults to `0.5`.
+- **sliding_window_size** (*Optional*, integer): Frames the consumer averages over. Defaults to `10`.
+- **features_step_size** (*Optional*, integer): Milliseconds between feature slices, `0`–`30`. Defaults to `20`.
+- **feature_count** (*Optional*, integer): MFCC features per frame, `10`–`80`. Defaults to `40`.
+- **output_processing** (*Optional*, string): How the output tensor becomes a class and a confidence. One of
+  `"argmax"`, `"softmax"`, `"qat_quantized"` or `"auto_detect"`. Defaults to `"argmax"`.
+- **scale_factor** (*Optional*, float): Divides the reported class index for multi-class models. Range
+  `0.1`–`100.0`. Defaults to `1.0`.
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The runtime helper for this model. Set it
+  when a lambda or another component references the instance.
+- **decoder_id** (*Optional*, [ID](/guides/configuration-types/#id)): The output decoder. Set it to read
+  the decoded result from a lambda.
+- **model** (**Required**, string or dictionary): The `.tflite` model, resolved by
+  `tflite_model_source`: a local path, a `github://` shorthand, an HTTP(S) URL, or a JSON manifest that names
+  the model.
+- **tensor_arena_size** (*Optional*, bytes): Arena size, as bytes or a suffixed value such as `200KB`. When
+  omitted, the size is estimated from the model and probed on the device.
+- **debug** (*Optional*, boolean): Enable the diagnostics of `tflite_model_debug` for this instance.
+  Defaults to `false`.
+
+## Output
+
+The decoder classifies the windowed probabilities. The model is not loaded at boot: a
+streaming consumer owns the interpreter, the feature extractor and the sliding window.
+
+## See Also
+
+- [TFLite Micro Runtime](/components/tflite_micro_runtime/) - the model loader, tensor arena and C++ API
+- [Automation](/automations/)

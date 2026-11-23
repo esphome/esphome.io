@@ -6,11 +6,12 @@ title: "TFLite Micro Runtime"
 import APIRef from '@components/APIRef.astro';
 
 The `tflite_micro_runtime` component runs TensorFlow Lite Micro models on ESP32 microcontrollers with the
-ESP-IDF framework. A model is configured once here; consumer components reference the instance by ID and run
-inference through the `TFLiteMicroHelper` class.
+ESP-IDF framework. A model is normally configured through a model kind, such as `tflite_image`; each kind is
+its own YAML entry and loads this component in the background. The component can also be configured directly
+when a consumer fills the input tensor itself and runs inference through the `TFLiteMicroHelper` class.
 
-The work is split across six library components that are loaded automatically and normally need no configuration
-of their own:
+The work is split across seven library components that are loaded automatically and normally need no
+configuration of their own:
 
 | Component | Responsibility |
 |---|---|
@@ -153,13 +154,13 @@ component and its own YAML key, and it auto-loads this component:
 
 | Component | Options | Output |
 |---|---|---|
-| `tflite_image` | `input_width`, `input_height`, `input_channels`, `input_type`, `input_order`, `normalize`, `invert` | a class and a confidence |
-| `tflite_detection` | the image options, plus `score_threshold`, `max_detections`, `iou_threshold` | boxes, classes and scores |
-| `tflite_segmentation` | the image options | one class id per pixel |
-| `tflite_pose` | the image options | keypoints and their scores |
-| `tflite_tabular` | none | a regression value, or a class and a confidence |
-| `tflite_text` | `max_sequence_length` | logits, or start and end positions |
-| `tflite_audio` | `probability_cutoff`, `sliding_window_size`, `features_step_size`, `feature_count` | windowed probabilities |
+| [`tflite_image`](/components/tflite_image/) | `input_width`, `input_height`, `input_channels`, `input_type`, `input_order`, `normalize`, `invert` | a class and a confidence |
+| [`tflite_detection`](/components/tflite_detection/) | the image options, plus `score_threshold`, `max_detections`, `iou_threshold` | boxes, classes and scores |
+| [`tflite_segmentation`](/components/tflite_segmentation/) | the image options | one class id per pixel |
+| [`tflite_pose`](/components/tflite_pose/) | the image options | keypoints and their scores |
+| [`tflite_tabular`](/components/tflite_tabular/) | none | a regression value, or a class and a confidence |
+| [`tflite_text`](/components/tflite_text/) | `max_sequence_length` | logits, or start and end positions |
+| [`tflite_audio`](/components/tflite_audio/) | `probability_cutoff`, `sliding_window_size`, `features_step_size`, `feature_count` | windowed probabilities |
 
 A configuration names the kind, and `model_type` is not part of it:
 
