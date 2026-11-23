@@ -5,8 +5,6 @@ title: "ADS131M0x 2, 4 and 8-Channel 24-Bit A/D Converter"
 
 import APIRef from '@components/APIRef.astro';
 
-<span id="ads131m0x-component"></span>
-
 ## Hub Configuration
 
 The `ads131m0x` domain creates a global hub for the TI ADS131M02, ADS131M04 and ADS131M08
@@ -23,8 +21,10 @@ The SPI bus must be a hardware bus with both `mosi_pin` and `miso_pin` (the defa
 bus on ESP32). The background task shares the bus with the main loop, and only the hardware SPI driver locks the bus
 for each transaction, so other devices on the same bus keep working. A bus with `interface: software` is rejected.
 
-A typical use is measuring AC current with a current transformer (CT). The RMS value removes the DC offset of the
-burden voltage, so the reading stays correct when the CT is biased to half the supply voltage.
+A typical use is measuring AC current with a current transformer (CT). Connect the burden resistor directly between
+the `AINxP` and `AINxN` inputs of a channel, without a DC bias. The inputs accept voltages below ground, so the AC
+signal needs no offset. Do not bias the CT to half the supply voltage with `AINxN` at ground: 1.35 V to 1.8 V is
+already above the ±1.2 V full scale, so the signal clips. The RMS value removes any small DC offset.
 
 ```yaml
 ads131m0x:
@@ -48,12 +48,15 @@ ads131m0x:
   - `VERY_LOW_POWER`: 0.3 MHz to 2.08 MHz
   - `LOW_POWER`: 0.3 MHz to 4.15 MHz
   - `HIGH_RESOLUTION`: 0.3 MHz to 8.4 MHz, or 8.2 MHz when any channel uses a `gain` above 2
+
+  The default is too high for `VERY_LOW_POWER` and `LOW_POWER`, so set `clock_frequency` to match your clock source
+  when you use one of these modes.
 - **power_mode** (*Optional*, string): The power mode of the ADC: `VERY_LOW_POWER`, `LOW_POWER` or
   `HIGH_RESOLUTION`. Defaults to `HIGH_RESOLUTION`.
 - **sample_rate** (*Optional*, Frequency): The output data rate of each channel. Defaults to `4000Hz`. The data rate is
   `f_CLKIN / 2 / OSR`. The hub selects the OSR that matches `sample_rate` within 1 %. If no OSR matches, the
   configuration fails and lists the achievable rates. With the default `clock_frequency` of 8.192 MHz, these are:
-  `32000`, `16000`, `8000`, `4000`, `2000`, `1000`, `500` and `250` Hz.
+  `32000`, `16000`, `8000`, `4000`, `2000`, `1000`, `500` and about `252` Hz (`250Hz` is accepted for the last one).
 - **window** (*Optional*, [Time](/guides/configuration-types/#time)): The length of the window over which the mean and
   RMS are computed. Defaults to `100ms`. A window must hold at least one sample and at most 131072 samples.
   100 ms is 5 periods of a 50 Hz signal and 6 periods of a 60 Hz signal, so the RMS of a mains signal is accurate
@@ -81,8 +84,8 @@ These options come from the [SPI Bus](/components/spi/) device configuration:
 ### Gain
 
 The ADC input range of each channel is ±1.2 V divided by the gain. Gain `1` gives ±1.2 V full scale, and gain `128`
-gives ±9.375 mV. Choose the smallest gain whose full scale covers the signal, because a higher gain gives a finer
-resolution. Signals above the full-scale range clip.
+gives ±9.375 mV. Choose the largest gain whose full scale still covers the signal peak, because a higher gain gives a
+finer resolution. Signals above the full-scale range clip.
 
 ```yaml
 ads131m0x:
@@ -117,7 +120,9 @@ sensor:
   Defaults to `60s`.
 - All other options from [Sensor](/components/sensor/).
 
-The sensor publishes `NaN` when the ADC is not healthy or when no new data has arrived.
+The sensor publishes `NaN` right away when the ADC is not healthy or has not finished a window yet. Otherwise it
+publishes the last complete window, until that window is older than two window lengths plus 1 second. After that it
+publishes `NaN`.
 
 ### Converting a Current Transformer Reading to Amps
 
@@ -128,7 +133,6 @@ RMS voltage multiplied by 2000 / 100 = 20. Use the `multiply` filter to convert 
 sensor:
   - platform: ads131m0x
     channel: 0
-    id: ct_current
     name: "Line Current"
     filters:
       - multiply: 20
@@ -136,7 +140,7 @@ sensor:
 ```
 
 If the burden voltage passes through a voltage divider before the ADC input, multiply the factor by the inverse of the
-divider ratio. Use `type: rms` for a CT, because the RMS value is independent of the DC bias of the burden voltage.
+divider ratio. Use `type: rms` for a CT, because the RMS value is independent of any DC offset of the burden voltage.
 
 ## Robustness
 
