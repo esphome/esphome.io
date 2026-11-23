@@ -23,9 +23,8 @@ Additional properties must be configured manually in Home Assistant.
 
 Zigbee is only supported on `nRF52` platforms and on `ESP32` with IEEE 802.15.4 connectivity (`ESP32-C5`, `ESP32-C6`, or `ESP32-H2` 
 and in the future `ESP32-H4` and `ESP32-H21`). Both platforms support different features and have different limitations:
-- On `nRF52` a maximum of 8 registered endpoints is supported. Each exposed entity consumes one endpoint;
-  internal entities do not consume endpoints. Endpoint IDs can be in the range 1 to 239, not just 1 to 8.
-  The [Zigbee time source](/components/time/zigbee/) also consumes one endpoint.
+- On `nRF52` a maximum of 8 registered endpoints is supported. Each exposed entity consumes one endpoint.
+  See [nRF52 Endpoint Assignment](#nrf52-endpoint-assignment) for numbering and limitations.
 - On `ESP32` a maximum of 239 endpoints is supported and ESPHome entities are combined on Zigbee endpoints.
 - `ESP32-H2` seems to work more reliably than `ESP32-C6`. There are reports of `ESP32-C6` boards that work only if placed next 
 to the coordinator.
@@ -156,7 +155,7 @@ Zigbee can have some overrides for specific options.
   `name`, not inside a `zigbee:` block. If omitted, the endpoint is assigned automatically.
   On `nRF52`, each exposed entity must use a different endpoint;
   see [nRF52 Endpoint Assignment](#nrf52-endpoint-assignment).
-  On `ESP32`, entities that map to different Zigbee clusters can share an endpoint as described below.
+  On `ESP32`, entities can share an endpoint; see [ESP32 Endpoint Assignment](#esp32-endpoint-assignment).
 
 Only on `ESP32`:
 
@@ -176,13 +175,6 @@ Only on `ESP32`:
   `on_off` for switches. Benefits are better support by Z2M/ZHA and compatibility with 3rd party Zigbee devices. Component names
   are not exposed when using `device_class` or cluster names. On `nRF52` only the basic clusters are supported.
   Defaults to `generic`.
-- When assigning `endpoint` on `ESP32`, you can manually combine entities that logically belong together.
-  Usually, only entities that map to different Zigbee clusters can be combined (for example
-  a `binary_sensor` and a `sensor`); two entities of the same type, such as two sensors, cannot share an
-  endpoint unless `cluster: device_class` maps them to different clusters (for example a temperature and
-  a humidity sensor) or they map to different attributes on the same cluster (for example voltage and battery sensors
-  with `cluster: power_config`). If more than one entity on an endpoint has a Zigbee device type, set
-  `use_device_type: true` on one of them.
 - **use_device_type** (*Optional*, boolean): Use the Zigbee Home Automation device type of this entity for the endpoint.
   Some entities have a
   [device type](https://community.nxp.com/pwmxy87654/attachments/pwmxy87654/wireless-connectivity/698/1/075367r03ZB_AFG-Home_Automation_Profile_for_Public_Download.pdf#G12.1028193)
@@ -190,6 +182,16 @@ Only on `ESP32`:
   entity of an endpoint. Set this to `false` to remove the device type of the entity. In this case, or if the
   entity has no device type of its own, the endpoint uses the generic `CUSTOM_ATTR` type. For exposing entities to Home
   Assistant, device types are not needed. It can be set to `true` on only one entity per endpoint.
+
+### ESP32 Endpoint Assignment
+
+When assigning `endpoint` on `ESP32`, you can manually combine entities that logically belong together.
+Usually, only entities that map to different Zigbee clusters can be combined (for example
+a `binary_sensor` and a `sensor`); two entities of the same type, such as two sensors, cannot share an
+endpoint unless `cluster: device_class` maps them to different clusters (for example a temperature and
+a humidity sensor) or they map to different attributes on the same cluster (for example voltage and battery sensors
+with `cluster: power_config`). If more than one entity on an endpoint has a Zigbee device type, set
+`use_device_type: true` on one of them.
 
 ### nRF52 Endpoint Assignment
 
