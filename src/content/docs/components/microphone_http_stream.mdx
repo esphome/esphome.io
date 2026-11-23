@@ -4,7 +4,9 @@ description: "Stream microphone samples from an ESP32 device over the ESPHome we
 ---
 
 The `microphone_http_stream` component serves one configured [microphone source](/components/microphone/) over HTTP.
-It requires the [web server](/components/web_server/) and an ESP32 device. The stream requests microphone capture
+It runs on ESP32 devices and uses the device's HTTP server, which it starts itself. Add the
+[web server](/components/web_server/) component only for its options, such as authentication or `allowed_origins`.
+The stream requests microphone capture
 when a client connects and releases that request after the last client disconnects. Microphone implementations that
 track listeners can share capture with other components: stopping one of them leaves HTTP streaming, and disconnecting
 HTTP leaves the other listeners running. Samples are forwarded without resampling.
@@ -33,9 +35,8 @@ microphone_http_stream:
 ## Configuration Variables
 
 - **stream_id** (*Optional*, string): Stable ID used in the stream URL. Use 1–32 lowercase ASCII letters, digits,
-  underscores or hyphens; the first character must be a letter. Defaults to the microphone's ID, lowercased, with
-  other characters replaced by `_`, an `m` added in front when it does not start with a letter, and cut to 32
-  characters.
+  underscores or hyphens; the first character must be a letter or an underscore. Defaults to the microphone's ID,
+  lowercased and cut to 32 characters.
 - **source** (**Required**, [Microphone Source](/components/microphone/#microphone-source-configuration)): The source
   must output mono, 16-bit PCM. Select a microphone that exposes the desired capture stage.
 - **max_clients** (*Optional*, integer): Maximum simultaneous listeners, from `1` to `3`. Defaults to `1`. Each
@@ -52,8 +53,8 @@ microphone_http_stream:
 - `GET /audio/microphones/{stream_id}` streams the selected microphone. If every configured client slot is in use,
   another request receives HTTP `409`.
 
-Audio streaming requires a web server configured for HTTP. With HTTPS enabled, the stream endpoint returns HTTP `501`
-because streaming responses are not supported over HTTPS. The metadata endpoint remains available over HTTPS.
+The web server must use plain HTTP. A configuration that enables HTTPS together with this component fails
+validation, because streaming responses are not supported over HTTPS yet.
 
 Both endpoints apply the web server's `allowed_origins` policy to requests with an `Origin` header. Requests without
 an `Origin` header, such as those from native HTTP clients, remain allowed. Origin checks do not replace authentication.
@@ -78,24 +79,10 @@ processing stage must expose its own microphone source and be selected in `sourc
 ## Logging
 
 The component uses the ESPHome [logger](/components/logger/) with the `microphone_http_stream` tag. Client connections
-and normal disconnections are logged at `INFO`. Failed stream requests, full buffers, incomplete audio frames,
-overlapping audio callbacks and stream timeouts are logged at `WARN`. ESPHome reports permanent setup failures at
-`ERROR` through its core component logging.
-Buffer peak and longest HTTP send time are logged at `DEBUG` when a client disconnects. The component collects these
-diagnostics for every active stream when the firmware is compiled with `logger.level: DEBUG` or more detailed.
-Setting this component's runtime log level to `INFO` suppresses the diagnostic message but does not stop collection.
-With `logger.level: INFO`, the diagnostic fields and calculations are omitted from the firmware.
-
-For routine operation without diagnostic overhead, compile the firmware with:
-
-```yaml
-logger:
-  level: INFO
-```
-
-To investigate stream performance, compile with `logger.level: DEBUG`. You can then set
-`logger.logs.microphone_http_stream: INFO` to hide diagnostic messages while collection continues, and change the
-tag to `DEBUG` to show them. Changing the runtime level cannot enable diagnostics in a firmware compiled at `INFO`.
+and disconnections by the client are logged at `INFO`. A stream that ends because its buffer is full, a send fails or
+the microphone stops delivering samples is logged at `WARN` with the reason `buffer_full`, `send_failed` or
+`audio_timeout`. A `WARN` message also reports when a single client falls back to the 16 KiB buffer. ESPHome reports
+a failed buffer reservation at setup through its core component logging.
 
 ## Using a DLNA Server
 
