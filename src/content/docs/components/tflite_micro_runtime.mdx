@@ -163,6 +163,7 @@ component and its own YAML key, and it auto-loads this component:
 | [`tflite_tabular`](/components/tflite_tabular/) | none | a regression value, or a class and a confidence |
 | [`tflite_text`](/components/tflite_text/) | `max_sequence_length` | logits, or start and end positions |
 | [`tflite_audio`](/components/tflite_audio/) | `probability_cutoff`, `sliding_window_size`, `features_step_size`, `feature_count` | windowed probabilities |
+| [`tflite_camera`](/components/tflite_camera/) | `camera_id`, `min_interval`, `rotation` and the image options | a class and a confidence per frame |
 
 A configuration names the kind, and `model_type` is not part of it:
 
@@ -171,6 +172,9 @@ tflite_image:
   - id: digit_reader
     model: "models/digit_recognizer.tflite"
 ```
+
+`tflite_camera` is the camera-fed variant of `tflite_image`: it classifies one frame with one model and
+does not crop or run several models, so a multi-dial meter still needs a multi-crop consumer.
 
 The options the kinds share (`id`, `model`, `tensor_arena_size`, `debug`) are described under
 [Configuration Variables](#configuration-variables); the image options apply to every kind that consumes a

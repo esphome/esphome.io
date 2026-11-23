@@ -10,6 +10,11 @@ has elapsed is dropped.
 
 The camera must publish JPEG frames; set `pixel_format: JPEG` on the `esp32_camera`.
 
+> [!NOTE]
+> This component runs one model on the whole frame. It does not crop the frame or run several
+> models, so a meter with several dials still needs a multi-crop consumer such as
+> `meter_reader_tflite`.
+
 ```yaml
 esp32_camera:
   id: my_camera
