@@ -79,7 +79,8 @@ Only one `adafruit_ble` OTA instance is supported. `on_begin` and `on_state_chan
 wait for `delay` or other deferred actions, so finish any shutdown steps **before** calling the action.
 
 With `ble_trigger: false`, an uploader cannot request the restart itself: run the action first, then upload to the
-bootloader as described in [Recovery](#recovery). User automations do not run in
+bootloader with `--device` set to its BLE address or, on macOS, its UUID. `--device BLE` cannot find the bootloader;
+see [Recovery](#recovery) for details. User automations do not run in
 [safe mode](/components/safe_mode/), so keep a USB or hardware recovery path.
 
 > [!WARNING]
@@ -133,8 +134,9 @@ with the device before the first upload. On Linux, an upload from a computer tha
 
 Without pairing, any nearby BLE device can restart the device into its bootloader, and the build logs a warning.
 
-The update service also works when the device is in [safe mode](/components/safe_mode/), so a device stuck in a boot
-loop can still be updated. With pairing turned on, the `on_numeric_comparison_request` automation does not run in
+With `ble_trigger: true` (the default), the update service also works in [safe mode](/components/safe_mode/), so a
+device stuck in a boot loop can still be updated. With pairing turned on, the `on_numeric_comparison_request`
+automation does not run in
 safe mode, so the device rejects new pairing requests and only a computer that was paired before can start an update.
 Pair your computer while the device works normally. Without pairing, any computer can start an update in safe mode too.
 
