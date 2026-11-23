@@ -1,0 +1,34 @@
+name: Request Copilot review
+
+# Requests a Copilot code review on ready pull requests when they are opened,
+# reopened or marked ready for review (not on every push). The rulesets run
+# their review as the pull request author, so a contributor without Copilot
+# access gets none; this runs it as esphome-review-bot instead.
+# Token, seat and Triage details: esphome/workflows request-copilot-review.yml.
+
+on:
+  workflow_run:
+    workflows: [PR event]
+    types: [completed]
+  schedule:
+    - cron: "17 * * * *"  # catches doorbell runs that were held for approval
+  workflow_dispatch:
+    inputs:
+      pr-number:
+        description: Pull request number
+        required: true
+
+permissions: {}
+
+jobs:
+  request:
+    name: Request Copilot review
+    # yamllint disable-line rule:line-length
+    uses: esphome/workflows/.github/workflows/request-copilot-review.yml@6e7c96fd2dbf04dda9061c35bfdd9754adc57bbb # 2026.11.2
+    permissions:
+      contents: read  # the shared workflow checks out its own script
+      pull-requests: read  # the shared workflow lists open pull requests
+    with:
+      pr-number: ${{ inputs.pr-number }}
+    secrets:
+      COPILOT_REVIEW_TOKEN: ${{ secrets.COPILOT_REVIEW_TOKEN }}
