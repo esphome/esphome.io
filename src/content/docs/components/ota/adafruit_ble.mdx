@@ -52,19 +52,13 @@ device has already restarted, so ESPHome never sees the transfer.
 
 ## Manual Bootloader Entry
 
-> [!NOTE]
-> `ble_trigger` and `ota.adafruit_ble.enter_bootloader` are unreleased features.
-
-Set `ble_trigger: false` to omit the application's BLE restart service and its `zephyr_ble_server` dependency.
-This avoids loading an application Bluetooth stack just to request an update, leaving more flash and RAM for
-other components. It does not disable a BLE server you configure separately or the bootloader's BLE transfer.
-It does not add MCUboot, MCUmgr or a second application slot, and it does not change the application partition layout.
-The board still needs a compatible Adafruit bootloader installed; selecting `bootloader:` does not install it.
+Set `ble_trigger: false` to leave out the application's BLE restart service and its `zephyr_ble_server` dependency,
+which saves flash and RAM. The bootloader still receives the firmware over BLE, and a BLE server you configure
+separately is not affected.
 
 ### `ota.adafruit_ble.enter_bootloader` Action
 
-This action requests a restart into the Adafruit bootloader's BLE DFU mode. It works with either value of
-`ble_trigger`. Use the OTA component's ID to select it:
+This action restarts the device into the Adafruit bootloader's BLE DFU mode, with either value of `ble_trigger`:
 
 ```yaml
 ota:
@@ -79,33 +73,18 @@ button:
       - ota.adafruit_ble.enter_bootloader: firmware_update
 ```
 
-The expanded form is also supported:
-
-```yaml
-on_press:
-  - ota.adafruit_ble.enter_bootloader:
-      id: firmware_update
-```
-
 - **id** (*Optional*, [ID](/guides/configuration-types/#id)): The `adafruit_ble` OTA component to use.
 
-Only one `adafruit_ble` OTA instance is supported. Repeated requests before restart are ignored. Both the action
-and the BLE service defer the restart to the main loop and fire `on_begin` and `on_state_change` before rebooting.
-These callbacks do not wait for asynchronous actions such as `delay`. Complete any device-specific safe shutdown,
-state reporting and delays **before** calling `ota.adafruit_ble.enter_bootloader`.
+Only one `adafruit_ble` OTA instance is supported. `on_begin` and `on_state_change` fire before the restart but do not
+wait for `delay` or other deferred actions, so finish any shutdown steps **before** calling the action.
 
-With `ble_trigger: false`, the application does not advertise this component's restart service, so an uploader
-cannot use it to request entry. Trigger the action through your chosen automation first, then upload directly to
-the bootloader's BLE address or UUID as described in [Recovery](#recovery). The firmware transfer still uses BLE,
-not the transport that invoked the automation.
-
-Manual user automations do not run in [safe mode](/components/safe_mode/). Keep a USB or hardware recovery path;
-use the default BLE trigger if you need its application-side safe-mode update service.
+With `ble_trigger: false`, an uploader cannot request the restart itself: run the action first, then upload to the
+bootloader as described in [Recovery](#recovery). User automations do not run in
+[safe mode](/components/safe_mode/), so keep a USB or hardware recovery path.
 
 > [!WARNING]
-> Deliberately entering DFU mode does not authenticate the bootloader's BLE transfer or restrict it to one phone.
-> Pairing on the application's restart service does not establish authentication for the bootloader transfer.
-> Protect any automation that can request entry and retain a recovery method.
+> The bootloader's BLE transfer is not authenticated, so anyone nearby can upload while the device is in DFU mode.
+> Protect the automations that can call this action.
 
 ## Usage
 
