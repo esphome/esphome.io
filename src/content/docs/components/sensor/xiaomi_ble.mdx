@@ -623,11 +623,11 @@ To find the MAC Address so that ESPHome can identify the device, you can create 
 
 ```yaml
 esp32_ble_tracker:
-
-xiaomi_ble:
+  scan_parameters:
+    continuous: false
 ```
 
-After uploading, the ESP32 will immediately try to scan for BLE devices. When it detects a new sensor, it will automatically parse the BLE message print a message like this one:
+The tracker only logs the devices it finds when it is not scanning continuously. After uploading, the ESP32 scans for BLE devices for one scan period (5 minutes by default) and prints a message like this one for each device it finds:
 
 ```log
 Found device XX:XX:XX:XX:XX:XX RSSI=-78
@@ -635,7 +635,7 @@ Found device XX:XX:XX:XX:XX:XX RSSI=-78
   Name: 'LYWSD03MMC'
 ```
 
-It can sometimes take some time for the first BLE broadcast to be received. Once the device has been found, copy the address `XX:XX:XX:XX:XX:XX` into a new platform entry like shown in the example configurations.
+It can sometimes take some time for the first BLE broadcast to be received. Once the device has been found, copy the address `XX:XX:XX:XX:XX:XX` into a new platform entry like shown in the example configurations, and remove `continuous: false` again so the sensor keeps receiving data.
 
 ## Obtaining the Bindkey
 
