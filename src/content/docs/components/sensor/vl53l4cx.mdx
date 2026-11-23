@@ -36,7 +36,8 @@ sensor:
 The sensor reports the distance in meters, or `NaN` when no target passes the checks. When a measurement
 fails or times out, the sensor keeps its last state and the component shows a warning; after five failed
 measurements in a row the state becomes `NaN`, so a sensor that stopped answering does not keep reporting
-its last distance.
+its last distance, and the sensor is reset (through `enable_pin`, when set) and set up again every 5 seconds
+until it answers.
 
 ## Wiring
 
@@ -52,11 +53,11 @@ its last distance.
 
 ## Configuration Variables
 
-- **distance_mode** (*Optional*, string): The distance mode, one of `short`, `medium` or `long`.
-  Defaults to `long`.
+- **distance_mode** (*Optional*, string): The distance mode, `medium` or `long`. Defaults to `long`. ST's
+  driver has no short mode for the VL53L4CX.
 
 - **timing_budget** (*Optional*, [Time](/guides/configuration-types/#time)): The time allowed for a single
-  distance measurement, from `10ms` to `1000ms`. A longer budget gives more accurate readings at a lower
+  distance measurement, from `10ms` to `200ms`. A longer budget gives more accurate readings at a lower
   measurement rate. Defaults to `33ms`.
 
 - **target** (*Optional*, string): Which of the valid targets in a measurement the sensor reports:
