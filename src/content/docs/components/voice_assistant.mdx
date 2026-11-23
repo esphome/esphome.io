@@ -263,6 +263,8 @@ voice_assistant:
         // 0.40 while Home Assistant verifies detections, 0.85 otherwise
         id(okay_nabu).set_probability_cutoff(id(va).is_wake_word_audio_active() ? 102 : 217);
     - micro_wake_word.start:
+  on_client_disconnected:
+    - lambda: id(okay_nabu).set_probability_cutoff(217);
 ```
 
 > [!NOTE]
