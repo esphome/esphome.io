@@ -625,9 +625,15 @@ To find the MAC Address so that ESPHome can identify the device, you can create 
 esp32_ble_tracker:
   scan_parameters:
     continuous: false
+
+esphome:
+  on_boot:
+    then:
+      - delay: 5s
+      - esp32_ble_tracker.start_scan:
 ```
 
-The tracker only logs the devices it finds when it is not scanning continuously. After uploading, the ESP32 scans for BLE devices for one scan period (5 minutes by default) and prints a message like this one for each device it finds:
+The tracker only logs the devices it finds when it is not scanning continuously, and it then does not start a scan by itself, so the configuration starts one a few seconds after boot, once Bluetooth is up. After uploading, the ESP32 scans for BLE devices for one scan period (5 minutes by default) and prints a message like this one for each device it finds:
 
 ```log
 Found device XX:XX:XX:XX:XX:XX RSSI=-78
@@ -635,7 +641,7 @@ Found device XX:XX:XX:XX:XX:XX RSSI=-78
   Name: 'LYWSD03MMC'
 ```
 
-It can sometimes take some time for the first BLE broadcast to be received. Once the device has been found, copy the address `XX:XX:XX:XX:XX:XX` into a new platform entry like shown in the example configurations, and remove `continuous: false` again so the sensor keeps receiving data.
+It can sometimes take some time for the first BLE broadcast to be received. Once the device has been found, copy the address `XX:XX:XX:XX:XX:XX` into a new platform entry like shown in the example configurations, and remove the `continuous: false` and `on_boot` lines again so the sensor keeps receiving data.
 
 ## Obtaining the Bindkey
 
