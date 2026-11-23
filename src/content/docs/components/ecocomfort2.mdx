@@ -10,9 +10,9 @@ The `ecocomfort2` component lets you control a
 heat recovery ventilation unit over BLE from an ESP32.
 
 The component has a hub that keeps the BLE connection to one unit, a [Fan](/components/fan/) platform that
-controls the unit's air flow mode and speed, and sensor platforms that report what the unit measures. One
-ESP32 can control several units, with one hub per unit. The unit's configuration entities come in a later
-release.
+controls the unit's air flow mode and speed, sensor platforms that report what the unit measures, and number,
+switch and select platforms for the unit's settings. One ESP32 can control several units, with one hub per
+unit.
 
 ```yaml
 # Example configuration entry
@@ -165,6 +165,84 @@ text_sensor:
 - **version** (**Required**): The firmware version of the unit, read once per connection.
   All options from [Text Sensor](/components/text_sensor/).
 
+## Settings
+
+The number, switch and select platforms change settings stored in the unit, the same ones as in the vendor
+app. The unit holds the settings: they are read from it on every update, so a change made in the app shows up
+too, and a change is read back from the unit right after it is sent. Each change only touches its own setting.
+
+### Number
+
+```yaml
+number:
+  - platform: ecocomfort2
+    humidity_threshold:
+      name: "Ventilation Humidity Threshold"
+    temperature_offset:
+      name: "Ventilation Temperature Offset"
+```
+
+#### Configuration Variables
+
+- **ecocomfort2_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `ecocomfort2` hub.
+  Only needed when more than one hub is configured.
+- **humidity_threshold** (*Optional*): How strongly the unit reacts to humidity, from `0` (off) to `3`.
+  All options from [Number](/components/number/).
+- **luminosity_threshold** (*Optional*): How strongly the unit reacts to light, from `0` (off) to `3`.
+  All options from [Number](/components/number/).
+- **voc_threshold** (*Optional*): How strongly the unit reacts to volatile organic compounds, from `0` (off)
+  to `3`. All options from [Number](/components/number/).
+- **temperature_offset** (*Optional*): A correction added to the unit's temperature reading, from `-5` to
+  `5` °C in steps of `0.1`. It stays in °C even when Home Assistant shows temperatures in °F.
+  All options from [Number](/components/number/).
+- **humidity_offset** (*Optional*): A correction added to the unit's humidity reading, from `-5` to `5` % in
+  steps of `1`. All options from [Number](/components/number/).
+
+### Switch
+
+```yaml
+switch:
+  - platform: ecocomfort2
+    humidity_advanced:
+      name: "Ventilation Humidity Advanced Control"
+```
+
+#### Configuration Variables
+
+- **ecocomfort2_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `ecocomfort2` hub.
+  Only needed when more than one hub is configured.
+- **humidity_advanced** (*Optional*): Advanced control for humidity: as the reading approaches the threshold,
+  the unit raises its speed by one level. It needs `humidity_threshold` above `0`; turning it on while the
+  threshold is `0` is refused with a warning in the log, and the switch stays off.
+  All options from [Switch](/components/switch/).
+- **voc_advanced** (*Optional*): The same for volatile organic compounds, with `voc_threshold`.
+  All options from [Switch](/components/switch/).
+
+Setting a threshold to `0` also turns its advanced control off.
+
+### Select
+
+```yaml
+select:
+  - platform: ecocomfort2
+    season:
+      name: "Ventilation Season"
+    free_cooling:
+      name: "Ventilation Free Cooling"
+```
+
+#### Configuration Variables
+
+- **ecocomfort2_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `ecocomfort2` hub.
+  Only needed when more than one hub is configured.
+- **season** (*Optional*): The season the unit runs in, `Winter` or `Summer`.
+  All options from [Select](/components/select/).
+- **free_cooling** (*Optional*): Free cooling, which cools the home with outside air at night: `Off`, `Low`,
+  `Medium` or `High`. The unit only runs free cooling in summer, so it shows `Off` in winter, and changing it
+  in winter is refused with a warning in the log. The unit keeps the level and uses it again when the season
+  returns to summer.
+  All options from [Select](/components/select/).
+
 ## Multiple Units
 
 Add one BLE client, one hub and one fan for each unit. With more than one hub, every `ecocomfort2` platform entry,
@@ -207,5 +285,8 @@ sensor:
 - [Sensor Component](/components/sensor/)
 - [Binary Sensor Component](/components/binary_sensor/)
 - [Text Sensor Component](/components/text_sensor/)
+- [Number Component](/components/number/)
+- [Switch Component](/components/switch/)
+- [Select Component](/components/select/)
 - <APIRef text="ecocomfort2_hub.h" path="ecocomfort2/ecocomfort2_hub.h" />
 - <APIRef text="ecocomfort2_fan.h" path="ecocomfort2/ecocomfort2_fan.h" />

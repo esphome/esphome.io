@@ -35,6 +35,10 @@ output:
 - **id** (*Optional*, [ID](/guides/configuration-types/#id)): The id to use for
    this lp5562 component. Use this if you have multiple LP5562s connected at the same time.
 
+- **logarithmic_dimming** (*Optional*, boolean): Use the chip's logarithmic brightness curve instead of a linear one,
+  so brightness steps look even to the eye. A light on these outputs then needs `gamma_correct: 1.0`, or both curves
+  apply. Defaults to `false`.
+
 ## LP5562 Output
 
 The LP5562 output component exposes an LP5562 PWM channel of a global
@@ -80,6 +84,9 @@ light:
 - **id** (**Required**, [ID](/guides/configuration-types/#id)): The id to use for this output component.
 - **channel** (**Required**, string): Choose the channel of the LP5562 for this output component. One of
   `red`, `green`, `blue`, `white`.
+
+- **current** (*Optional*, current): The maximum LED current of this channel at full brightness, from `0mA` to
+  `25.5mA` in steps of `0.1mA`. Check the LED's rating before raising it. Defaults to `17.5mA`.
 
 - **lp5562_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the
   [LP5562 chip](#componenthub).

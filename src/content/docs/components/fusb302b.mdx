@@ -30,12 +30,6 @@ fusb302b:
   FUSB302BMPX. The FUSB302B01MPX, FUSB302B10MPX and FUSB302B11MPX use `0x23`, `0x24` and `0x25`.
 - **i2c_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the [I²C bus](/components/i2c/) the
   FUSB302B is connected to. Required when more than one I²C bus is configured.
-- **voltage** (*Optional*): A sensor that reports the voltage of the current power contract in volts. All options from
-  [Sensor](/components/sensor/#config-sensor).
-- **current** (*Optional*): A sensor that reports the maximum current of the current power contract in amperes. All
-  options from [Sensor](/components/sensor/#config-sensor).
-- **contract** (*Optional*): A text sensor that reports the current power contract, for example `3.00A @ 20V`,
-  or `Detached` when no source is attached. All options from [Text Sensor](/components/text_sensor/#config-text_sensor).
 - **on_connect** (*Optional*, [Automation](/automations/)): An automation to perform when a source is attached. See
   [`on_connect` Trigger](#on_connect-trigger).
 - **on_disconnect** (*Optional*, [Automation](/automations/)): An automation to perform when the source is removed.
@@ -69,7 +63,8 @@ time to settle.
 
 ## Sensors
 
-The `voltage`, `current` and `contract` sensors are updated each time the power contract changes:
+The power contract is exposed through a `sensor` platform and a `text_sensor` platform. They are updated each time
+the power contract changes:
 
 - At 5 V Type-C default power, before negotiation or when it fails, they report 5 V and 0.5 A (`0.50A @ 5V`).
 - After a successful negotiation, they report the voltage and maximum current of the new contract.
@@ -77,16 +72,34 @@ The `voltage`, `current` and `contract` sensors are updated each time the power 
   `contract` reports `Detached`.
 
 ```yaml
-fusb302b:
-  interrupt_pin: GPIOXX
-  request_voltage: 20
-  voltage:
-    name: "PD Voltage"
-  current:
-    name: "PD Current"
-  contract:
-    name: "PD Contract"
+sensor:
+  - platform: fusb302b
+    voltage:
+      name: "PD Voltage"
+    current:
+      name: "PD Current"
+
+text_sensor:
+  - platform: fusb302b
+    contract:
+      name: "PD Contract"
 ```
+
+### Sensor Configuration Variables
+
+- **voltage** (*Optional*): A sensor that reports the voltage of the current power contract in volts. All options from
+  [Sensor](/components/sensor/#config-sensor).
+- **current** (*Optional*): A sensor that reports the maximum current of the current power contract in amperes. All
+  options from [Sensor](/components/sensor/#config-sensor).
+- **fusb302b_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the FUSB302B component. Required
+  when more than one `fusb302b` is configured.
+
+### Text Sensor Configuration Variables
+
+- **contract** (*Optional*): A text sensor that reports the current power contract, for example `3.00A @ 20V`,
+  or `Detached` when no source is attached. All options from [Text Sensor](/components/text_sensor/#config-text_sensor).
+- **fusb302b_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the FUSB302B component. Required
+  when more than one `fusb302b` is configured.
 
 ## Triggers
 
@@ -122,10 +135,13 @@ The `voltage` sensor is updated before the automation runs, so use it to check w
 that contract stays valid and only [`on_request_failed`](#on_request_failed-trigger) is triggered.
 
 ```yaml
+sensor:
+  - platform: fusb302b
+    voltage:
+      id: pd_voltage
+
 fusb302b:
   # ...
-  voltage:
-    id: pd_voltage
   on_power_ready:
     - if:
         condition:
@@ -218,7 +234,7 @@ on_...:
 - **id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the FUSB302B component. Required when more
   than one `fusb302b` is configured.
 
-The lambda equivalent is `id(fusb302b_id).is_connected()`.
+The lambda equivalent is `id(pd).is_connected()`, where `pd` is the `id` of the `fusb302b` component.
 
 ## See Also
 

@@ -1,6 +1,6 @@
 ---
 title: "DS3231 Real-Time Clock"
-description: "Instructions for setting up the DS3231 real-time clock hub in ESPHome."
+description: "Instructions for setting up the DS3231 real-time clock hub, its alarms and outputs in ESPHome."
 ---
 
 import { Image } from 'astro:assets';
@@ -12,9 +12,13 @@ boards such as the ZS-042.
 
 <Image src="/images/ds3231.jpg" width={300} height={300} layout="constrained" alt="DS3231 RTC breakout board" />
 
-This component is an I²C hub. It talks to the chip, and the on-die temperature is read with the
-[`sensor`](/components/sensor/ds3231/) platform. It does not yet provide a `time` platform, alarms or the
-square-wave and 32 kHz outputs.
+This component is an I²C hub. It owns the chip and provides:
+
+- the [`time`](/components/time/ds3231/) platform, to keep the system clock across reboots and power loss,
+- the [`sensor`](/components/sensor/ds3231/) platform for the on-die temperature,
+- the [`binary_sensor`](/components/binary_sensor/ds3231/) platform for the alarm and oscillator-stop flags,
+- both hardware alarms with [triggers](#on_alarm_1-and-on_alarm_2-triggers) and [actions](#ds3231-set_alarm_1-action),
+- control of the INT/SQW square-wave output, the 32 kHz output and the aging offset.
 
 The [I²C](/components/i2c/) bus must be set up first.
 
@@ -27,13 +31,210 @@ ds3231:
 ## Configuration Variables
 
 - **id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID to use for referencing this hub from
-  the sensor platform and actions.
+  the platforms and actions.
 - **address** (*Optional*, int): The I²C address of the chip. Defaults to `0x68`.
 - **i2c_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the [I²C](/components/i2c/) bus
   when using multiple buses.
+- **interrupt_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The GPIO connected to
+  the INT/SQW pin of the chip. The pin is open drain and active low, so it needs a pull-up (most breakout boards
+  have one). With an interrupt pin the alarms are handled as soon as they fire instead of being polled. Can't be
+  combined with `square_wave_frequency`.
+- **square_wave_frequency** (*Optional*, frequency): Use the INT/SQW pin as a square-wave output instead of the
+  alarm interrupt. One of `1Hz`, `1024Hz`, `4096Hz` or `8192Hz` (`1.024kHz` and the other kHz spellings work
+  too). If not set, INT/SQW is the alarm interrupt output.
+- **battery_backed_square_wave** (*Optional*, boolean): Keep the square wave running while the chip runs from
+  its backup battery. If not set, the chip setting is left unchanged.
+- **output_32khz** (*Optional*, boolean): Enable or disable the 32 kHz output pin. The chip enables it on
+  power-up; if not set, the chip setting is left unchanged.
+- **aging_offset** (*Optional*, int): Fine-tune the oscillator, from `-128` to `127`. Each step is about 0.1 ppm
+  at 25 °C; positive values slow the clock down. If not set, the chip setting is left unchanged.
+- **auto_clear_alarms** (*Optional*, boolean): Clear an alarm flag on the chip as soon as the alarm has been
+  handled, which also releases the INT/SQW line. When `false`, the flag stays set until it is cleared with the
+  [`ds3231.clear_alarm`](#ds3231-clear_alarm-action) action. Defaults to `true`.
+- **alarm_check_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often to poll the alarm
+  flags. Without an `interrupt_pin` this is how alarms are detected; with one it is a fallback that picks up a
+  missed interrupt. Only used when an `interrupt_pin`, an `on_alarm_*` trigger or an alarm binary sensor is
+  configured. Defaults to `1s`.
+- **on_alarm_1** (*Optional*, [Automation](/automations/)): Actions to run when alarm 1 fires.
+- **on_alarm_2** (*Optional*, [Automation](/automations/)): Actions to run when alarm 2 fires.
 
 The chip has a fixed address, so more than one DS3231 needs separate I²C buses (or separate channels of an
 I²C multiplexer); give each chip its own entry with a distinct `id` and `i2c_id`.
+
+## Alarms
+
+The DS3231 has two alarms that are stored on the chip and survive a reboot of the ESP as long as the chip has
+power or a backup battery. Alarm 1 has a resolution of one second, alarm 2 of one minute (it fires at second
+`00`). Each alarm has a mode that sets which parts of the time have to match:
+
+| Mode           | Alarm 1 fires …                                  | Alarm 2 fires …                     |
+| -------------- | ------------------------------------------------ | ----------------------------------- |
+| `every_second` | every second                                     | *not available*                     |
+| `every_minute` | every minute, when the seconds match             | every minute, at second `00`        |
+| `hourly`       | every hour, when minutes and seconds match       | every hour, when the minutes match  |
+| `daily`        | every day, at `hour`:`minute`:`second`           | every day, at `hour`:`minute`       |
+| `monthly`      | on `day_of_month` of every month, at that time   | on `day_of_month`, at that time     |
+| `weekly`       | on `day_of_week` of every week, at that time     | on `day_of_week`, at that time      |
+
+The chip compares the alarms against its own clock, which holds UTC time when it is set with the
+[`ds3231.write_time`](/components/time/ds3231/#ds3231-write_time-action) action. Alarm times are therefore in
+UTC. Days of the week are numbered `1` (Sunday) to `7` (Saturday), as in the [time](/components/time/)
+component.
+
+An alarm only triggers `on_alarm_1`/`on_alarm_2` and pulls the INT/SQW line low while it is *enabled*. An alarm
+that already fired while the ESP was off is reported once when the ESP starts.
+
+## `on_alarm_1` and `on_alarm_2` Triggers
+
+These automations run each time the alarm fires. With an `interrupt_pin` they run right away; the flags are
+also polled every `alarm_check_interval`, which is the only way alarms are seen without an interrupt pin.
+
+```yaml
+ds3231:
+  interrupt_pin:
+    number: GPIOXX
+    mode:
+      input: true
+      pullup: true
+  on_alarm_1:
+    - switch.turn_on: relay
+  on_alarm_2:
+    - switch.turn_off: relay
+```
+
+## `ds3231.set_alarm_1` Action
+
+Program alarm 1 and enable or disable it. The time fields and `enabled` can be [templates](/automations/templates/).
+
+```yaml
+on_...:
+  - ds3231.set_alarm_1:
+      mode: daily
+      hour: 6
+      minute: 30
+      second: 0
+```
+
+Configuration variables:
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `ds3231` hub.
+- **mode** (**Required**, string): One of the [alarm modes](#alarms).
+- **second** (*Optional*, int, [templatable](/automations/templates/)): `0` to `59`. Defaults to `0`.
+- **minute** (*Optional*, int, [templatable](/automations/templates/)): `0` to `59`. Defaults to `0`.
+- **hour** (*Optional*, int, [templatable](/automations/templates/)): `0` to `23`. Defaults to `0`.
+- **day_of_month** (*Optional*, int, [templatable](/automations/templates/)): `1` to `31`. Required in
+  `monthly` mode.
+- **day_of_week** (*Optional*, int, [templatable](/automations/templates/)): `1` (Sunday) to `7` (Saturday).
+  Required in `weekly` mode.
+- **enabled** (*Optional*, boolean, [templatable](/automations/templates/)): Enable the alarm. Defaults to
+  `true`.
+
+## `ds3231.set_alarm_2` Action
+
+Program alarm 2. Same as [`ds3231.set_alarm_1`](#ds3231-set_alarm_1-action), without `second` and without the
+`every_second` mode.
+
+```yaml
+on_...:
+  - ds3231.set_alarm_2:
+      mode: weekly
+      day_of_week: 2  # Monday
+      hour: 22
+      minute: 15
+```
+
+## `ds3231.enable_alarm` and `ds3231.disable_alarm` Actions
+
+Enable or disable an alarm without changing its time. Enabling an alarm first clears a match from while it was
+disabled, so the trigger only fires for the next one.
+
+```yaml
+on_...:
+  - ds3231.enable_alarm:
+      alarm: 1
+  - ds3231.disable_alarm:
+      alarm: 2
+```
+
+Configuration variables:
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `ds3231` hub.
+- **alarm** (**Required**, int, [templatable](/automations/templates/)): `1` or `2`.
+
+## `ds3231.clear_alarm` Action
+
+Clear the flag of an alarm, which releases the INT/SQW line. Only needed with `auto_clear_alarms: false`.
+
+```yaml
+on_...:
+  - ds3231.clear_alarm:
+      alarm: 1
+```
+
+Configuration variables: the same as for [`ds3231.enable_alarm`](#ds3231-enable_alarm-and-ds3231-disable_alarm-actions).
+
+## `ds3231.is_alarm_triggered` Condition
+
+True while the flag of the given alarm is set on the chip.
+
+```yaml
+on_...:
+  - if:
+      condition:
+        ds3231.is_alarm_triggered:
+          alarm: 1
+      then:
+        - ds3231.clear_alarm:
+            alarm: 1
+```
+
+## `ds3231.enable_square_wave` and `ds3231.disable_square_wave` Actions
+
+Switch the INT/SQW pin to a square-wave output, or back to the alarm interrupt. Enabling the square wave isn't
+possible when an `interrupt_pin` is configured.
+
+```yaml
+on_...:
+  - ds3231.enable_square_wave:
+      frequency: 1Hz
+  - ds3231.disable_square_wave: ds3231_hub
+```
+
+Configuration variables:
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `ds3231` hub.
+- **frequency** (**Required**, frequency): One of `1Hz`, `1024Hz`, `4096Hz` or `8192Hz`.
+  (`ds3231.enable_square_wave` only)
+
+## `ds3231.set_32khz_output` Action
+
+Turn the 32 kHz output on or off.
+
+```yaml
+on_...:
+  - ds3231.set_32khz_output:
+      state: false
+```
+
+Configuration variables:
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `ds3231` hub.
+- **state** (**Required**, boolean, [templatable](/automations/templates/)): `true` to enable the output.
+
+## `ds3231.set_aging_offset` Action
+
+Change the aging offset at runtime. A temperature conversion is started so that it takes effect right away.
+
+```yaml
+on_...:
+  - ds3231.set_aging_offset:
+      offset: !lambda return id(aging_number).state;
+```
+
+Configuration variables:
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `ds3231` hub.
+- **offset** (**Required**, int, [templatable](/automations/templates/)): `-128` to `127`.
 
 ## `ds3231.force_temperature_conversion` Action
 
@@ -53,9 +254,14 @@ Configuration variables:
 
 - On common breakout boards (ZS-042 and similar) a separate AT24C32 EEPROM is fitted at address `0x57`. It is
   not used by this component but will show up in an [I²C scan](/components/i2c/).
+- Many ZS-042 boards contain a charging circuit for a rechargeable LIR2032 cell. With a non-rechargeable CR2032,
+  remove the charging resistor or diode.
+- To save power, disable `output_32khz` if the 32K pin is not used.
 
 ## See Also
 
 - [I²C Bus](/components/i2c/)
+- [DS3231 Time Source](/components/time/ds3231/)
 - [DS3231 Temperature Sensor](/components/sensor/ds3231/)
+- [DS3231 Binary Sensor](/components/binary_sensor/ds3231/)
 - <APIRef text="ds3231/ds3231.h" path="ds3231/ds3231.h" />

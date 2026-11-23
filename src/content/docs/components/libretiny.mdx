@@ -7,7 +7,7 @@ This component contains platform-specific options for the [LibreTiny](https://do
 It provides support for the following microcontrollers, commonly used in Tuya devices, amongst others:
 
 - **BK72xx**: BK7231T, BK7231N, BK7238
-- **RTL87xx**: RTL8710BN, RTL8710BX
+- **RTL87xx**: RTL8710BN, RTL8710BX, RTL8720CF, RTL8720CM
 - **LN882x**: LN882H
 
 Since different microcontrollers are supported, you need to include the appropriate ESPHome component,
@@ -213,6 +213,51 @@ bk72xx:
 - **options** (*Optional*, mapping): Custom options passed to LibreTiny platform.
   Refer to [LibreTiny/Configuration](https://docs.libretiny.eu/link/config) to see all options.
   *This takes precedence (overrides) all options described above*.
+
+## Crash Handler
+
+On BK7238, BK7231N, RTL8710B, RTL8720C and LN882H, ESPHome captures crash data from the previous boot and logs
+it on startup, the same way it does on ESP32, ESP8266 and RP2040. On BK7238 and BK7231N it covers the chip's
+three fault traps: undefined instruction, prefetch abort and data abort. On RTL8720C and LN882H it covers the
+hard fault, bus fault, usage fault and memory management fault (and the secure fault on RTL8720C). RTL8710B
+reports every fault as a hard fault. On all three the report also shows the fault status register (`CFSR`),
+which gives the cause, and, when the chip recorded one, the address that faulted.
+
+When a crash occurs, the fault PC, the return address and up to 8 stack-scanned return addresses are
+preserved across the reboot and logged at the `ERROR` level. The report is also replayed to the next log
+client that connects over the API or MQTT, and the ESPHome CLI decodes the addresses to function names
+(see [Getting a Stack Trace from Crashes](/guides/troubleshooting/#getting-a-stack-trace-from-crashes)).
+
+```log
+[E][libretiny.crash]: *** CRASH DETECTED ON PREVIOUS BOOT ***
+[E][libretiny.crash]:   Reason: Undefined instruction
+[E][libretiny.crash]:   PC:  0x0001D6DC  (fault location)
+[E][libretiny.crash]:   LR:  0x0001D6DD  (return address)
+[E][libretiny.crash]:   SP:  0x0040DDB8
+[E][libretiny.crash]:   BT0: 0x0001D735  (stack backtrace)
+[E][libretiny.crash]:   BT1: 0x0001D305  (stack backtrace)
+```
+
+On RTL8710B, RTL8720C and LN882H the report adds the fault status register and the faulting address. `Address`
+is only recorded for bus and memory management faults and reads `0x00000000` otherwise, as in this usage fault:
+
+```log
+[E][libretiny.crash]: *** CRASH DETECTED ON PREVIOUS BOOT ***
+[E][libretiny.crash]:   Reason: Usage fault
+[E][libretiny.crash]:   CFSR: 0x00010000  Address: 0x00000000
+[E][libretiny.crash]:   PC:  0x9B0073A4  (fault location)
+[E][libretiny.crash]:   LR:  0x9B0073A5  (return address)
+[E][libretiny.crash]:   BT0: 0x9B007301  (stack backtrace)
+```
+
+The crash handler also makes the device restart after a crash and report it: within a second on BK72xx and
+RTL8720C, within about 1.5 seconds on RTL8710B, and within a few seconds on LN882H. Without it, a BK72xx
+device with Wi-Fi connected hangs until its power is cycled, an RTL8710B or RTL8720C device waits for the
+10 second watchdog, and an LN882H device locks up until the watchdog resets it.
+
+No configuration is needed — the crash handler is always enabled on BK7238, BK7231N, RTL8710B, RTL8720C and
+LN882H. Other BK72xx chips do not have it yet, and a crash with Wi-Fi connected can still leave them hung
+until they are power-cycled.
 
 ## See Also
 
