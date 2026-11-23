@@ -158,8 +158,9 @@ The hub is designed to keep working through electrical disturbances:
   bias the mean or RMS of a window. On dual-core ESP32 chips the background task runs on core 1, away from the network
   stack.
 - After a reset or a reconfiguration, the sensors publish `NaN` until a complete new window has been sampled.
-- If no data arrives, the component shows a warning status with the message "No data from ADC" and the log shows the
-  sample rate. The sensors publish `NaN` until data arrives again.
+- If no data arrives, or the sample rate drops below a quarter of the nominal rate, the component shows a warning
+  status with the message "No data from ADC" and the log shows the sample rate. The sensors publish `NaN` until the
+  rate recovers.
 
 ## See Also
 
