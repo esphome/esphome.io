@@ -27,7 +27,6 @@ HTTP leaves the other listeners running. Samples are forwarded without resamplin
 ```yaml
 # Example configuration entry
 microphone_http_stream:
-  stream_id: room_mic
   source:
     microphone: mic_id
 ```
@@ -68,7 +67,7 @@ the format. `audio/L16` describes big-endian samples and does not apply here. Ev
 For a microphone configured at 16 kHz, this command plays the stream with FFmpeg's `ffplay`:
 
 ```bash
-curl --no-buffer http://DEVICE_IP/audio/microphones/room_mic | ffplay -f s16le -ar 16000 -ac 1 -
+curl --no-buffer http://DEVICE_IP/audio/microphones/mic_id | ffplay -f s16le -ar 16000 -ac 1 -
 ```
 
 Replace `16000` with the `sample_rate_hz` returned by `GET /audio/microphones` if the source uses another rate. The
