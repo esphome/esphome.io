@@ -17,6 +17,14 @@ one the sensor reports. The measurements are processed by ST's own driver on the
 about 9.5 KB of RAM.
 
 The [I²C Bus](/components/i2c/) is required to be set up in your configuration for this sensor to work.
+Set its `frequency` to `400kHz` if the other devices on the bus allow it: each measurement moves about
+150 bytes, which blocks the main loop for about 4ms at 400kHz but about 38ms at the 50kHz default.
+ESPHome logs a warning at compile time when the bus is slower.
+
+```yaml
+i2c:
+  frequency: 400kHz
+```
 
 ```yaml
 # Example configuration entry
@@ -26,7 +34,9 @@ sensor:
 ```
 
 The sensor reports the distance in meters, or `NaN` when no target passes the checks. When a measurement
-fails or times out, the sensor keeps its last state and the component shows a warning.
+fails or times out, the sensor keeps its last state and the component shows a warning; after five failed
+measurements in a row the state becomes `NaN`, so a sensor that stopped answering does not keep reporting
+its last distance.
 
 ## Wiring
 
@@ -71,7 +81,8 @@ fails or times out, the sensor keeps its last state and the component shows a wa
 
 - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often to start a
   measurement. Defaults to `1s`. Set it to `never` to measure continuously: each measurement starts as
-  soon as the last one is read, so the sensor reports one every `timing_budget`.
+  soon as the last one is read, so the sensor reports one every `timing_budget`. An interval no longer
+  than `timing_budget` skips updates, and ESPHome warns about it.
 
 - All other options from [Sensor](/components/sensor/).
 
@@ -110,7 +121,7 @@ so each one is held in reset with its XSHUT pin while the others are given new a
 
 ESPHome rejects a configuration where a sensor on a shared bus has no `enable_pin`, stays at `0x29`,
 or uses the same address as another VL53L4CX on that bus. A VL53L4CX also cannot share an I²C bus with a
-[VL53L0X](/components/sensor/vl53l0x/) or [VL53L1X](/components/sensor/vl53l1x/), since those boot at
+[VL53L0X](/components/sensor/vl53l0x/), [VL53L1X](/components/sensor/vl53l1x/) or [VL6180X](/components/sensor/vl6180x/), since those boot at
 `0x29` too and are re-addressed separately; put them on another bus.
 
 ```yaml
