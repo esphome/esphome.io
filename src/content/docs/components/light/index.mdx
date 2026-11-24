@@ -223,15 +223,11 @@ light:
   display backlight that should come on before a slow display setup. Defaults to `false`.
 
 - **setup_priority** (*Optional*, float): Change the order in which the light is set up; a higher value is set up
-  earlier. With **write_on_setup**, give the output a higher value than the light, so it is set up first:
+  earlier. With **write_on_setup**, give the output a higher value than the light, so it is set up first. The
+  example below needs an output with the id `backlight_pwm`, such as an [ESP32 LEDC Output](/components/output/ledc/),
+  with `setup_priority: 1300`:
 
   ```yaml
-  output:
-    - platform: ledc
-      id: backlight_pwm
-      pin: GPIOXX
-      setup_priority: 1300
-
   light:
     - platform: monochromatic
       output: backlight_pwm
