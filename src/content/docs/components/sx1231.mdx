@@ -8,11 +8,11 @@ import APIRef from '@components/APIRef.astro';
 The SX1231 component allows you to configure the SX1231H transceiver
 ([datasheet](https://www.semtech.com/products/wireless-rf/fsk-transceivers/sx1231h#documentation)) and the popular
 RFM69W, RFM69CW, RFM69HW and RFM69HCW modules, which work the same way, in ESPHome. Transceivers are connected via
-the [SPI Bus](/components/spi/). Supported frequencies range from 290 MHz to 1020 MHz, including the popular 315 MHz,
-433 MHz, 868 MHz and 915 MHz ISM bands; each module is built for one of these bands. Supported modulations are OOK,
-FSK and GFSK (FSK with a Gaussian `shaping` filter). The SX1231 component may be used as a platform for the
-[Packet Transport Component](/components/packet_transport/), enabling sensor data to be sent directly from one ESPHome
-node to another.
+the [SPI Bus](/components/spi/). Supported frequencies are 290 MHz to 340 MHz, 424 MHz to 510 MHz and 862 MHz to
+1020 MHz, including the popular 315 MHz, 433 MHz, 868 MHz and 915 MHz ISM bands; each module is built for one of
+these bands. Supported modulations are OOK, FSK and GFSK (FSK with a Gaussian `shaping` filter). The SX1231 component
+may be used as a platform for the [Packet Transport Component](/components/packet_transport/), enabling sensor data
+to be sent directly from one ESPHome node to another.
 
 These chips do not support LoRa. For LoRa, see the [SX126x](/components/sx126x/) and [SX127x](/components/sx127x/)
 components.
@@ -34,17 +34,19 @@ sx1231:
 ## Configuration Variables
 
 - **cs_pin** (**Required**, [Pin Schema](/guides/configuration-types/#pin-schema)): SPI chip select pin.
-- **frequency** (**Required**, frequency): Frequency of the transceiver, from 290 MHz to 1020 MHz. It must be in the
-  band your module is built for.
+- **frequency** (**Required**, frequency): Frequency of the transceiver, from 290 MHz to 340 MHz, 424 MHz to 510 MHz
+  or 862 MHz to 1020 MHz. It must be in the band your module is built for.
 - **modulation** (**Required**, enum): Modulation can be `OOK` or `FSK`.
 - **dio0_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): Digital IO pin 0, marked `G0` on
   some boards. Required in packet mode.
 - **rst_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): Reset pin. The reset input of these
   chips is active high. The component takes care of this, so do not invert the pin.
 - **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation.
-- **bitrate** (*Optional*, int): Bit rate of the signal in bits per second, from 500 to 300000. Normally the inverse
-  of the bit duration; a bit duration of 208 us is 4800 bps. Defaults to `4800`.
-- **deviation** (*Optional*, frequency): Transmitter FSK frequency deviation, from 0 to 300 kHz. Defaults to `5kHz`.
+- **bitrate** (*Optional*, int): Bit rate of the signal in bits per second, from 500 to 300000, or to 32768 with
+  OOK. It must be less than twice the `bandwidth`. Normally the inverse of the bit duration; a bit duration of 208 us
+  is 4800 bps. Defaults to `4800`.
+- **deviation** (*Optional*, frequency): Transmitter FSK frequency deviation, from 600 Hz to 300 kHz. Not used with
+  OOK. Defaults to `5kHz`.
 - **bandwidth** (*Optional*, enum): Receiver bandwidth. It must be wide enough for the signal and for any frequency
   difference between the two radios. Can be `2_6kHz`, `3_1kHz`, `3_9kHz`, `5_2kHz`, `6_3kHz`, `7_8kHz`, `10_4kHz`,
   `12_5kHz`, `15_6kHz`, `20_8kHz`, `25_0kHz`, `31_3kHz`, `41_7kHz`, `50_0kHz`, `62_5kHz`, `83_3kHz`, `100_0kHz`,
