@@ -81,6 +81,7 @@ set up again every 5 seconds until it answers.
 
 - **interrupt_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The pin connected
   to GPIO1 on the VL53L4CX. Without it, ESPHome asks the sensor over I²C whether a measurement is ready.
+  Each sensor needs its own pin, and GPIO16 on the ESP8266 cannot be used because it has no interrupts.
 
 - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often to start a
   measurement. Defaults to `1s`. Set it to `never` to measure continuously: each measurement starts as
@@ -89,7 +90,7 @@ set up again every 5 seconds until it answers.
 
 - All other options from [Sensor](/components/sensor/).
 
-## Choosing a target
+## Choosing a Target
 
 With several objects in view, the sensor reports up to four targets with their distance and signal strength.
 
@@ -113,6 +114,10 @@ sensor:
           window_size: 15
           send_every: 15
 ```
+
+Measuring continuously reports a distance every `timing_budget`, about 30 times a second at the default.
+The `median` filter above sends one value for every 15 measurements; use a filter like it, or `throttle`,
+so Home Assistant is not flooded with updates.
 
 ## Multiple Sensors
 
