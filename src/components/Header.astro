@@ -17,17 +17,15 @@ const { hasSidebar } = Astro.locals.starlightRoute;
     <SiteTitle />
   </div>
 
-  {
-    headerNavItems.length > 0 && (
-      <nav class="header__nav" aria-label="Site navigation">
-        {headerNavItems.map((item) => (
-          <a href={item.href} class="header__nav-link">
-            {item.label}
-          </a>
-        ))}
-      </nav>
-    )
-  }
+  {headerNavItems.length > 0 && (
+    <nav class="header__nav" aria-label="Site navigation">
+      {headerNavItems.map((item) => (
+        <a href={item.href} class="header__nav-link">
+          {item.label}
+        </a>
+      ))}
+    </nav>
+  )}
 
   <div class="header__search">{shouldRenderSearch && <Search />}</div>
 
@@ -35,41 +33,41 @@ const { hasSidebar } = Astro.locals.starlightRoute;
     <ThemeSelect />
   </div>
 
-  <LinkButton href="/install/getting-started/" class="header__cta">Get started</LinkButton>
+  <LinkButton href="/install/getting-started/" class="header__cta">
+    Get started
+  </LinkButton>
 
-  {
-    !hasSidebar && (
-      <>
-        <button
-          type="button"
-          class="header__toggle"
-          aria-expanded="false"
-          aria-controls="header__dropdown"
-          aria-label="Toggle navigation menu"
-        >
-          <span class="header__toggle-bar" />
-        </button>
+  {!hasSidebar && (
+    <>
+      <button
+        type="button"
+        class="header__toggle"
+        aria-expanded="false"
+        aria-controls="header__dropdown"
+        aria-label="Toggle navigation menu"
+      >
+        <span class="header__toggle-bar" />
+      </button>
 
-        <div class="header__overlay" data-header-overlay />
+      <div class="header__overlay" data-header-overlay />
 
-        <div id="header__dropdown" class="header__dropdown">
-          {headerNavItems.length > 0 && (
-            <nav class="header__dropdown-nav" aria-label="Site navigation">
-              {headerNavItems.map((item) => (
-                <a href={item.href} class="header__dropdown-link">
-                  {item.label}
-                </a>
-              ))}
-            </nav>
-          )}
+      <div id="header__dropdown" class="header__dropdown">
+        {headerNavItems.length > 0 && (
+          <nav class="header__dropdown-nav" aria-label="Site navigation">
+            {headerNavItems.map((item) => (
+              <a href={item.href} class="header__dropdown-link">
+                {item.label}
+              </a>
+            ))}
+          </nav>
+        )}
 
-          <a href="/install/getting-started/" class="header__dropdown-cta">
-            Get started
-          </a>
-        </div>
-      </>
-    )
-  }
+        <a href="/install/getting-started/" class="header__dropdown-cta">
+          Get started
+        </a>
+      </div>
+    </>
+  )}
 </div>
 
 <style>

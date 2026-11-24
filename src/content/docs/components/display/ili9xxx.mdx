@@ -46,7 +46,7 @@ displays from the same chip family with ESPHome. As this is a somewhat higher re
 beyond the basic SPI connections, and a reasonable amount of RAM, it is not well suited for the ESP8266.
 
 > [!WARNING]
-> This component has been made redundant since this class of displays is now supported by the [MIPI SPI Display Driver](/components/display/mipi_spi#mipi_spi).
+> This component has been made redundant since this class of displays is now supported by the [MIPI SPI Display Driver](/components/display/mipi_spi/#mipi_spi).
 > This component may be removed in a future release.
 
 > [!NOTE]
@@ -78,7 +78,7 @@ display:
 
 ### Configuration variables
 
-All [graphical display configuration](/components/display#display-configuration) options are available, plus the following.
+All [graphical display configuration](/components/display/#display-configuration) options are available, plus the following.
 
 - **model** (**Required**): The model of the display. Options are:
 
@@ -101,9 +101,9 @@ All [graphical display configuration](/components/display#display-configuration)
   - `GC9D01N`
   - `CUSTOM`
 
-- **dc_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The DC pin.
-- **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The RESET pin.
-- **cs_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The CS pin.
+- **dc_pin** (**Required**, [Pin Schema](/guides/configuration-types/#pin-schema)): The DC pin.
+- **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The RESET pin.
+- **cs_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The CS pin.
 
 > [!NOTE]
 > A DC pin is always required, the CS pin and RESET pin will only be needed if the specific board has those
@@ -117,7 +117,7 @@ All [graphical display configuration](/components/display#display-configuration)
   - `IMAGE_ADAPTIVE`: Colors will be 8 bit and the color palette will be generated from the images in the `color_palette_images` list below.
 
 - **color_order** (*Optional*): Should be one of `bgr` (default) or `rgb`.
-- **color_palette_images** (*Optional*): A list of image files that will be used to generate the color palette for the display. This should only be used in conjunction with `color_palette: IMAGE_ADAPTIVE`. The images will be analysed at compile time and a custom color palette will be created based on the most commonly occuring colors. A typical setting would be a sample image that represented the fully populated display. This can significantly improve the quality of displayed images. Note that these images are not stored on the ESP device, just the 256byte color palette created from them.
+- **color_palette_images** (*Optional*): A list of image files that will be used to generate the color palette for the display. This should only be used in conjunction with `color_palette: IMAGE_ADAPTIVE`. The images will be analysed at compile time and a custom color palette will be created based on the most commonly occurring colors. A typical setting would be a sample image that represented the fully populated display. This can significantly improve the quality of displayed images. Note that these images are not stored on the ESP device, just the 256byte color palette created from them.
 - **dimensions** (*Optional*): Dimensions of the screen, specified either as *width* **x** *height* (e.g `320x240`  ) or with separate config keys. If not provided the dimensions will be determined by the model selected.
 
   - **height** (**Required**, int): Specifies height of display in pixels.
@@ -150,7 +150,7 @@ To modify the SPI setting see [SPI bus](/components/spi). The default **data_rat
 
 **Note:** The maximum achievable data rate will depend on the chip type (e.g. ESP32 vs ESP32-S3) the pins used (on ESP32 using the default SPI pins allows higher rates) and the connection type (on-board connections will support higher rates than long cables or DuPont wires.) If in doubt, start with a low speed and test higher rates to find what works. A MISO pin should preferably not be specified, as this will limit the maximum rate in some circumstances, and is not required if the SPI bus is used only for the display.
 
-### Additional inititialisation sequences
+### Additional initialisation sequences
 
 The `init_sequence` option allows additional configuration of the driver chip. Provided commands will be sent to the
 driver chip in addition to, and after the chosen model's pre-defined commands. It requires a list of byte sequences:
@@ -182,7 +182,7 @@ dimensions:
 ```
 
 To utilize the color capabilities of this display module, you'll likely want to add a `color:` section to your
-YAML configuration; please see [color](/components/display#color) for more detail on this configuration section.
+YAML configuration; please see [color](/components/display/#color) for more detail on this configuration section.
 
 To use colors in your lambda:
 

@@ -37,7 +37,7 @@ tca8418:
 
 ### Configuration Variables
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Set the ID of this device for use in lambdas.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Set the ID of this device for use in lambdas.
 - **address** (*Optional*, int): The I²C address of the device. Defaults to `0x34`.
 - **rows** (*Optional*, int): The number of rows in the key matrix, `1` to `8`. The matrix occupies
   the `ROW` lines starting at `ROW0`. Set together with `columns`; leave both out for no key matrix.
@@ -48,7 +48,7 @@ tca8418:
   and for selecting a `binary_sensor` by its character.
 - **gpi_events** (*Optional*, boolean): Report the pins that are not part of the key matrix as
   individual inputs. Defaults to `true`.
-- **interrupt_pin** (*Optional*, [Pin](/guides/configuration-types#pin-schema)): The pin the
+- **interrupt_pin** (*Optional*, [Pin](/guides/configuration-types/#pin-schema)): The pin the
   device's interrupt output is connected to. When set, the component leaves the device alone until
   the interrupt says there is something to read, instead of asking it regularly. That saves I²C
   traffic and processing time while the keypad is idle; it does not make a key press arrive
@@ -68,7 +68,7 @@ Pins that are not part of the matrix report as individual inputs numbered from 9
 
 > [!NOTE]
 > Those numbers are also the character codes for the letters `a` to `r`. On the `on_key` and
-> [Key Collector](/components/key_collector#key_collector) paths a key is reported as a single
+> [Key Collector](/components/key_collector/#key_collector) paths a key is reported as a single
 > number, so a `keys` map using any of those letters cannot be told apart from an individual
 > input. Binary sensors are not affected, because the key each one watches is worked out when the
 > firmware is built. ESPHome warns when it sees this combination; use other characters, or set
@@ -99,13 +99,13 @@ binary_sensor:
 
 ### Configuration Variables
 
-- **keypad_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the keypad to process key presses from.
+- **keypad_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the keypad to process key presses from.
 - **row** (*Optional*, int): The row of the key in the matrix.
 - **col** (*Optional*, int): The column of the key in the matrix.
 - **key** (*Optional*, string): A single character from the `keys` configuration above.
 - **key_code** (*Optional*, int): The number the device reports for the key, as described in
   [Key numbers](#key-numbers). Use this for pins that are not part of the matrix.
-- All other options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
+- All other options from [Binary Sensor](/components/binary_sensor/#config-binary_sensor).
 
 Identify the key with either the `row` and `col` parameters, the `key` parameter, or the
 `key_code` parameter.
@@ -119,7 +119,7 @@ Identify the key with either the `row` and `col` parameters, the `key` parameter
 
   > [!NOTE]
   > Automatic handling of multiple keys (e.g. PIN code entry) is possible with the
-  > [Key Collector](/components/key_collector#key_collector) component.
+  > [Key Collector](/components/key_collector/#key_collector) component.
 
 ## Mixing a Matrix with Individual Inputs
 
@@ -153,5 +153,5 @@ binary_sensor:
 
 - [Key collector component](/components/key_collector/)
 - [Matrix keypad component](/components/matrix_keypad/)
-- [Binary Sensor Component](/components/binary_sensor#config-binary_sensor)
+- [Binary Sensor Component](/components/binary_sensor/#config-binary_sensor)
 - <APIRef text="tca8418.h" path="tca8418/tca8418.h" />
