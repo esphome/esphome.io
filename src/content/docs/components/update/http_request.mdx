@@ -83,13 +83,13 @@ after a check finds it, instead of waiting for a user. The install only happens 
 
 The check treats the manifest's `version` and the version the device reports as different whenever the two
 strings differ; it does not compare them as semantic versions. The reported version is the `project.version` of
-the device's configuration, or the ESPHome version when `project.version` is not set. Keep the manifest `version`
-identical to `project.version` so a device that is already current does not keep reporting an available update.
+the device's configuration, or the ESPHome version when `project.version` is not set.
 
-The version is stored in the device's preferences once an install succeeds, so a device whose newly installed
-firmware still reports an older version does not reflash on every boot. A failed install is retried on the next
-check. A version that was installed this way is not installed again automatically; install it manually if it
-needs to be flashed again.
+The device does not remember automatic installs. Every check that finds a different version and a manifest that
+asks for an install starts one again, including the first check after the reboot that ends it. A device whose
+newly installed firmware still reports an older version than the manifest therefore installs the update on every
+boot. Keep the manifest `version` identical to the version the new firmware reports to avoid this. A failed
+install is retried on the next check.
 
 ## See Also
 
