@@ -22,11 +22,6 @@ Set its `frequency` to `400kHz` if the other devices on the bus allow it: each m
 ESPHome logs a warning at compile time when the bus is slower.
 
 ```yaml
-i2c:
-  frequency: 400kHz
-```
-
-```yaml
 # Example configuration entry
 sensor:
   - platform: vl53l4cx
@@ -129,8 +124,9 @@ so each one is held in reset with its XSHUT pin while the others are given new a
 
 ESPHome rejects a configuration where a sensor on a shared bus has no `enable_pin`, stays at `0x29`,
 or uses the same address as another VL53L4CX on that bus. A VL53L4CX also cannot share an I²C bus with a
-[VL53L0X](/components/sensor/vl53l0x/), [VL53L1X](/components/sensor/vl53l1x/) or [VL6180X](/components/sensor/vl6180x/), since those boot at
-`0x29` too and are re-addressed separately; put them on another bus.
+[VL53L0X](/components/sensor/vl53l0x/), [VL53L1X](/components/sensor/vl53l1x/) or
+[VL6180X](/components/sensor/vl6180x/), since those boot at `0x29` too and are re-addressed separately; put
+them on another bus.
 
 ```yaml
 # Two VL53L4CX sensors on the same I²C bus
