@@ -60,8 +60,9 @@ canopen:
 
 ### `on_emcy` Trigger
 
-Runs for every emergency (EMCY) frame on the bus (CAN IDs `0x081` to `0x0FF`), from any node. Each one is also logged
-as a warning. Variables:
+Runs for every emergency (EMCY) frame on the bus (CAN IDs `0x081` to `0x0FF`), from any node, also for an error reset
+(error code `0x0000`, sent when an error clears). Each one is also logged: an error as a warning, an error reset at
+info level. Variables:
 
 - `node_id` (`uint8_t`): the node that sent it.
 - `emergency` (`const canopen::Emergency &`): `error_code` (`uint16_t`), `error_register` (`uint8_t`) and
