@@ -106,7 +106,8 @@ Another SDO client talking to the same node at the same time (a CANopen master, 
 channel, so either side's requests can end with an abort: handle `on_error`.
 
 SDO frames carry no request id, so a late answer to a request that timed out can be taken as the answer to the next
-request for the same object of the same node, such as a retry. That request then gets the earlier request's result.
+request for the same object of the same node, such as a retry (a late abort by any request, a late write
+confirmation only by a write, a late read answer only by a read). That request then gets the earlier request's result.
 
 ## Lambdas
 
@@ -142,8 +143,9 @@ id(my_canopen).read_sdo_data(0x01, 0x1008, 0, name, sizeof(name), [](void *conte
   callback, context)` for values of 1, 2 or 4 bytes. `SDOReply::as<T>()` sign-extends for signed types.
 - `read_sdo_data(node_id, index, subindex, data, capacity, callback, context)` and `write_sdo_data(node_id, index,
   subindex, data, len, callback, context)` for buffers. The buffer belongs to the caller and must stay valid until the
-  callback, so it can't be a local variable. A read of an object longer than `capacity` is aborted. Requests run one
-  at a time, so queued reads can share a buffer if each callback uses the data before it returns.
+  callback, so it can't be a local variable. A read of an object longer than `capacity` is aborted. Transfers are
+  limited to 64 KiB (65535 bytes): a longer write is rejected, and a read of a longer object is aborted. Requests run
+  one at a time, so queued reads can share a buffer if each callback uses the data before it returns.
 
 ## See Also
 
