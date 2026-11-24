@@ -41,6 +41,8 @@ esp32_ble:
   - `display_yes_no` - A display to show PIN codes and buttons to confirm or deny the connection
 
 - **enable_on_boot** (*Optional*, boolean): If enabled, the BLE interface will be enabled on boot. Defaults to `true`.
+  When a [Bluetooth Switch](/components/switch/ble/) is configured, its `restore_mode` decides this instead, and
+  `enable_on_boot` is only used when that `restore_mode` is `DISABLED`.
 
 - **name** (*Optional*, string): The name of the BLE device.
   - Defaults to the hostname of the device.
@@ -106,6 +108,12 @@ esp32_ble:
 
 - **use_psram** (*Optional*, boolean): Requests that the Bluetooth stack allocate its memory buffers from PSRAM instead of internal RAM, freeing approximately 40 kB for other uses. Defaults to `false`. Requires PSRAM to be configured.
 
+## Bluetooth Switch
+
+The [Bluetooth Switch](/components/switch/ble/) exposes the BLE interface as a switch, so it can be turned on and off
+from Home Assistant without writing a template switch around the actions below. It follows the `ble.enable` and
+`ble.disable` actions and restores its state on boot.
+
 ## `ble.disable` Action
 
 This action turns off the BLE interface on demand.
@@ -150,6 +158,7 @@ The lambda equivalent for this is `id(ble_id).is_active()`.
 
 ## See Also
 
+- [Bluetooth Switch](/components/switch/ble/)
 - [BLE Server](/components/esp32_ble_server/)
 - [Improv via BLE](/components/improv_ble/)
 - <APIRef text="ble.h" path="esp32_ble/ble.h" />
