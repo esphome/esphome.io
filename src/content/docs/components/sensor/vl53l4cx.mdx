@@ -33,7 +33,9 @@ sensor:
     name: "VL53L4CX Distance"
 ```
 
-The sensor reports the distance in meters, or `NaN` when no target passes the checks. When a measurement
+The sensor reports the distance in meters, or `NaN` when no target passes the checks. The first three
+measurements after the sensor starts (at boot or after a reset) are not reported, since ST's driver needs
+them to settle. When a measurement
 fails or times out, the sensor keeps its last state and the component shows a warning; after five failed
 measurements in a row the state becomes `NaN`, so a sensor that stopped answering does not keep reporting
 its last distance, and the sensor is reset (through `enable_pin`, when set) and set up again every 5 seconds
