@@ -1,12 +1,12 @@
 ---
 title: "Packet interface: a layered way for devices to talk to each other"
-description: "ESPHome 2026.12 adds packet_interface, a stack of links and layers for sending data directly between devices, and entity_transport, which uses it to share sensor states."
+description: "ESPHome 2026.12 adds packet_interface, for sending data directly between devices, and entity_transport."
 date: 2026-12-16
 authors:
   - clyde
 tags:
   - Announcements
-excerpt: "ESPHome 2026.12 adds packet_interface, a stack of links and layers for sending data directly between devices, and entity_transport, which uses it to share sensor states."
+excerpt: "ESPHome 2026.12 adds packet_interface, for sending data directly between devices, and entity_transport."
 cover:
   alt: "Packet interface: a layered way for devices to talk to each other"
   image: "https://assets.openhomefoundation.org/opengraph?url=https://esphome.io/blog/2026/12/16/packet-interface"
@@ -95,8 +95,8 @@ New types of layers can also be added if a need becomes apparent.
 ## Entity Transport
 
 Entity transport does the job of packet transport on top of a packet interface. It sends a *dictionary* of entity
-IDs once, and after that each state is sent with a number in place of the ID, so its packets are small. Encryption,
-resends and the connection status come from the layers, not from entity transport.
+IDs at boot and when the other device needs it. Each state is then sent with a number in place of the ID, so its
+packets are small. Encryption, resends and the connection status come from the layers, not from entity transport.
 
 One device sends the state of a sensor over a serial port:
 
@@ -129,8 +129,9 @@ sensor:
     name: Outdoor temperature
 ```
 
-With a reliability layer and a session layer, entity transport sends a state only when it changes. Without them, it
-also sends every state at an interval, so that a lost packet is soon made good.
+With a reliability layer and a session layer, entity transport sends a state when it changes, and sends all states
+again at boot and each time the other device can be reached again. Without them, it also sends all states at an
+interval, so that a lost packet is soon made good.
 
 ## Extensively Tested
 
