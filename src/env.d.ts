@@ -23,3 +23,10 @@ declare module "virtual:starlight/components/ThemeSelect" {
   const ThemeSelect: import("astro/runtime/server/index.js").AstroComponentFactory;
   export default ThemeSelect;
 }
+
+declare namespace App {
+  interface Locals {
+    /** Set by src/pages/blog/[...listing].astro; rendered above the page title by PageTitle.astro. */
+    blogBreadcrumbs?: { name: string; href: string }[];
+  }
+}

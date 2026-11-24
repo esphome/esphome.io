@@ -21,11 +21,32 @@ export function getStaticPaths() {
 type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 
 const { listing } = Astro.props;
-const { heading, intro, page, totalPages, posts, featured, prevHref, nextHref, noindex } = listing;
+const { heading, intro, page, totalPages, posts, featured, prevHref, nextHref, breadcrumbs, noindex } = listing;
+
+// StarlightPage has no slot above the <h1>, so the PageTitle override reads the breadcrumbs from
+// here. This frontmatter runs before StarlightPage renders the title.
+Astro.locals.blogBreadcrumbs = breadcrumbs.length > 0 ? [{ name: "Home", href: "/" }, ...breadcrumbs] : undefined;
+
+const site = (Astro.site?.href ?? "https://esphome.io/").replace(/\/$/, "");
 
 // Each page keeps a self-referencing canonical (Starlight adds it from the URL) and gets its own
 // <title> and description, so later pages are not reported as duplicates of page 1.
 const description = page > 1 ? `${listing.description} Page ${page} of ${totalPages}.` : listing.description;
+const breadcrumbList = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { name: "Home", href: "/" },
+    ...breadcrumbs,
+    { name: page > 1 ? `${heading}, page ${page}` : heading, href: Astro.url.pathname },
+  ].map((crumb, index) => ({
+    "@type": "ListItem",
+    position: index + 1,
+    name: crumb.name,
+    item: `${site}${crumb.href}`,
+  })),
+};
+
 const head = [
   ...(page > 1
     ? [
@@ -40,6 +61,15 @@ const head = [
   ...(noindex ? [{ tag: "meta" as const, attrs: { name: "robots", content: "noindex, follow" } }] : []),
   ...(prevHref ? [{ tag: "link" as const, attrs: { rel: "prev", href: prevHref } }] : []),
   ...(nextHref ? [{ tag: "link" as const, attrs: { rel: "next", href: nextHref } }] : []),
+  ...(breadcrumbs.length > 0
+    ? [
+        {
+          tag: "script" as const,
+          attrs: { type: "application/ld+json" },
+          content: JSON.stringify(breadcrumbList),
+        },
+      ]
+    : []),
 ];
 ---
 

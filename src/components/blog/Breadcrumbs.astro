@@ -1,0 +1,55 @@
+---
+/**
+ * Breadcrumbs above the heading of the blog listing pages, "Home ▸ Blog ▸ <Category>". Rendered by
+ * the PageTitle override from `Astro.locals.blogBreadcrumbs`, which the listing page sets; the
+ * matching BreadcrumbList JSON-LD is in the listing page's head.
+ */
+interface Props {
+  crumbs: { name: string; href: string }[];
+}
+
+const { crumbs } = Astro.props;
+---
+
+<nav class="breadcrumbs" aria-label="Breadcrumbs">
+  <ol>
+    {crumbs.map((crumb) => (
+      <li>
+        <a href={crumb.href}>{crumb.name}</a>
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<style>
+  .breadcrumbs {
+    margin-bottom: 0.5rem;
+    font-size: var(--sl-text-sm);
+  }
+
+  ol {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li + li::before {
+    content: "▸";
+    margin-inline: 0.5rem;
+    color: var(--sl-color-gray-4);
+  }
+
+  a {
+    color: var(--sl-color-gray-3);
+    text-decoration: none;
+  }
+
+  @media (hover: hover) {
+    a:hover {
+      color: var(--sl-color-text-accent);
+      text-decoration: underline;
+    }
+  }
+</style>
