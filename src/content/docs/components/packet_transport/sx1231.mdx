@@ -1,0 +1,58 @@
+---
+description: "Instructions for setting up a sx1231 packet transport platform on ESPHome"
+title: "SX1231 Packet Transport Platform"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The [Packet Transport](/components/packet_transport/) platform allows ESPHome nodes to directly communicate with each
+over a communication channel. The [SX1231](/components/sx1231/) implementation of the platform uses FSK or OOK as a
+communication medium. See the [Packet Transport](/components/packet_transport/) and [SX1231](/components/sx1231/) for
+more information.
+
+The radio must be in packet mode with a `payload_length` of 0 (the default) and a `sync_value`, and both nodes need
+the same radio settings. A packet holds at most 64 bytes. A node that receives values from providers also needs the
+radio's `rx_start` to be `true` (the default); with it turned off the radio sleeps and the node can only send.
+
+## Example Configuration
+
+```yaml
+# Example configuration entry
+sx1231:
+  cs_pin: GPIOXX
+  dio0_pin: GPIOXX
+  frequency: 915MHz
+  modulation: FSK
+  bitrate: 50000
+  deviation: 25kHz
+  preamble_size: 4
+  sync_value: [0x2D, 0xD4]
+  crc_enable: true
+
+packet_transport:
+  platform: sx1231
+  sensors:
+    - dht_temp
+
+sensor:
+  - platform: dht
+    pin: GPIOXX
+    temperature:
+      name: "Temperature"
+      id: dht_temp
+```
+
+## Configuration Variables
+
+- **sx1231_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the [SX1231](/components/sx1231/)
+  radio to use. Only needed when more than one is configured.
+- All other options from the [Packet Transport Component](/components/packet_transport/).
+
+## See Also
+
+- [Packet Transport Component](/components/packet_transport/)
+- [SX1231 Component](/components/sx1231/)
+- [Packet Transport Binary Sensor](/components/binary_sensor/packet_transport/)
+- [Packet Transport Sensor](/components/sensor/packet_transport/)
+- [Automation](/automations/)
+- <APIRef text="packet_transport.h" path="packet_transport/packet_transport.h" />

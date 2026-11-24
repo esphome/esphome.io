@@ -1,0 +1,327 @@
+---
+description: "Instructions for setting up SX1231 transceivers, including the RFM69 modules."
+title: "SX1231 Component"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The SX1231 component allows you to configure the SX1231H transceiver
+([datasheet](https://www.semtech.com/products/wireless-rf/fsk-transceivers/sx1231h#documentation)) and the popular
+RFM69W, RFM69CW, RFM69HW and RFM69HCW modules, which work the same way, in ESPHome. Transceivers are connected via
+the [SPI Bus](/components/spi/). Supported frequencies are 290 MHz to 340 MHz, 424 MHz to 510 MHz and 862 MHz to
+1020 MHz, including the popular 315 MHz, 433 MHz, 868 MHz and 915 MHz ISM bands; each module is built for one of
+these bands. Supported modulations are OOK, FSK and GFSK (FSK with a Gaussian `shaping` filter). The SX1231 component
+may be used as a platform for the [Packet Transport Component](/components/packet_transport/), enabling sensor data
+to be sent directly from one ESPHome node to another.
+
+These chips do not support LoRa. For LoRa, see the [SX126x](/components/sx126x/) and [SX127x](/components/sx127x/)
+components.
+
+> [!NOTE]
+> The component reads the chip's version at boot and only accepts `0x24`, which the SX1231H and the RFM69 modules
+> report. The older SX1231 reports a lower version and is not supported: the component fails with an
+> "Unsupported chip version" message, and the log shows the version that was read.
+
+```yaml
+# Example configuration entry
+sx1231:
+  cs_pin: GPIOXX
+  dio0_pin: GPIOXX
+  frequency: 915MHz
+  modulation: FSK
+```
+
+## Configuration Variables
+
+- **cs_pin** (**Required**, [Pin Schema](/guides/configuration-types/#pin-schema)): SPI chip select pin.
+- **frequency** (**Required**, frequency): Frequency of the transceiver, from 290 MHz to 340 MHz, 424 MHz to 510 MHz
+  or 862 MHz to 1020 MHz. It must be in the band your module is built for.
+- **modulation** (**Required**, enum): Modulation can be `OOK` or `FSK`.
+- **dio0_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): Digital IO pin 0, marked `G0` on
+  some boards. Required in packet mode.
+- **rst_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): Reset pin. The reset input of these
+  chips is active high. The component takes care of this, so do not invert the pin.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation.
+- **bitrate** (*Optional*, int): Bit rate of the signal in bits per second, from 500 to 300000, or to 32768 with
+  OOK. It must be less than twice the `bandwidth`. Normally the inverse of the bit duration; a bit duration of 208 us
+  is 4800 bps. Defaults to `4800`.
+- **deviation** (*Optional*, frequency): Transmitter FSK frequency deviation, from 600 Hz to 300 kHz. Not used with
+  OOK. Defaults to `5kHz`.
+- **bandwidth** (*Optional*, enum): Receiver bandwidth. It must be wide enough for the signal and for any frequency
+  difference between the two radios. Can be `2_6kHz`, `3_1kHz`, `3_9kHz`, `5_2kHz`, `6_3kHz`, `7_8kHz`, `10_4kHz`,
+  `12_5kHz`, `15_6kHz`, `20_8kHz`, `25_0kHz`, `31_3kHz`, `41_7kHz`, `50_0kHz`, `62_5kHz`, `83_3kHz`, `100_0kHz`,
+  `125_0kHz`, `166_7kHz`, `200_0kHz`, `250_0kHz` or `500_0kHz`. `500_0kHz` is only available with FSK. Defaults to
+  `125_0kHz`.
+- **shaping** (*Optional*, enum): Transmitter data shaping. In OOK can be `CUTOFF_BR_X_2`, `CUTOFF_BR_X_1` or `NONE`.
+  In FSK can be `GAUSSIAN_BT_0_3`, `GAUSSIAN_BT_0_5`, `GAUSSIAN_BT_1_0` or `NONE`. Not recommended in continuous mode
+  as the data on DIO2 must be synchronized with the bit clock on DIO1. Defaults to `NONE`.
+- **bitsync** (*Optional*, boolean): Enables the receive bit synchronizer. It cannot be turned off in packet mode.
+  Recommended in continuous mode, however if there is no preamble plus high noise it may be better to turn it off.
+  Defaults to `true`.
+- **rx_start** (*Optional*, boolean): Start the receiver automatically on boot. If turned off the radio sleeps
+  instead. After sending a packet the radio returns to this mode, or to the mode last set with a mode action.
+  Defaults to `true`.
+- **rx_floor** (*Optional*, float): Signal strength in dBm that a signal must reach before the receiver starts on a
+  packet, from -127 to -1. If set too high (closer to 0) weak packets are missed. If set too low (closer to -127)
+  noise starts the receiver more often. Defaults to `-94`.
+- **pa_pin** (*Optional*, enum): Transmitter output pin, can be `BOOST` or `RFO`. Use `BOOST` for the high power
+  RFM69HW and RFM69HCW modules and `RFO` for the RFM69W and RFM69CW modules. With the wrong setting almost no signal
+  reaches the antenna. Defaults to `BOOST`.
+- **pa_power** (*Optional*, int): Transmitter power in dBm. Range is from -2 to 20 when `pa_pin` is `BOOST` and
+  -18 to 13 when using `RFO`. Defaults to `13`.
+- **pa_ramp** (*Optional*, enum): Transmitter PA ramp, can be `10us`, `12us`, `15us`, `20us`, `25us`, `31us`, `40us`,
+  `50us`, `62us`, `100us`, `125us`, `250us`, `500us`, `1000us`, `2000us` or `3400us`. Defaults to `40us`.
+
+### Packet Mode Configuration Variables
+
+- **packet_mode** (*Optional*, boolean): In packet mode bytes are sent via the `sx1231.send_packet` action and
+  received with the `on_packet` trigger. If turned off continuous mode is used and raw data is sent and received on
+  DIO2. Defaults to `true`.
+- **payload_length** (*Optional*, int): Length of the payload in bytes, up to 64. With `0` the variable length packet
+  format is used, where the length is sent in front of the payload. Defaults to `0`.
+- **sync_value** (*Optional*, list): Synchronization bytes, list of 1 to 8 bytes, found after the preamble and before
+  the payload. A byte of `0x00` is not supported. If not configured, no synchronization bytes are sent or expected.
+- **preamble_size** (*Optional*, int): Length of the preamble, in bytes, to be sent by the transmitter. The receiver
+  needs a few bytes of preamble to lock onto the signal, so do not set this to `0` on a device that sends packets
+  unless the receiver is known to work without one. Defaults to `3`.
+- **crc_enable** (*Optional*, boolean): Enables a 16 bit CRC calculation/check. Received packets that fail the check
+  are dropped. Defaults to `false`.
+
+> [!NOTE]
+> With a short `sync_value`, noise matches it now and then, and `on_packet` runs with random data. When you control
+> both ends of the link, use a longer `sync_value` and turn on `crc_enable`. When receiving from a device that you
+> cannot change, check the checksum of the packet in the `on_packet` automation.
+
+> [!NOTE]
+> Configuration variables can be changed at runtime using lambdas. Settings will only be applied
+> after calling `configure`, which leaves the radio in the mode last set with a mode action, or with `set_rx_start`
+> if that was called later. See <APIRef text="sx1231.h" path="sx1231/sx1231.h" />.
+
+### Triggers
+
+- **on_packet** (*Optional*, [Automation](/automations/)): An automation to perform in packet mode when a packet has
+  been received. A variable `x` of type `std::vector<uint8_t>` is passed to the automation for use in lambdas. The
+  variable `rssi` holds the signal strength of the packet in dBm. The variable `snr` is also passed, but these chips
+  do not measure it, so it is always `NAN`.
+
+```yaml
+sx1231:
+  ...
+  on_packet:
+    then:
+      - lambda: |-
+          char hex[256];  // Size appropriately for your data
+          ESP_LOGD("lambda", "packet %s", format_hex_to(hex, x));
+          ESP_LOGD("lambda", "rssi %.2f", rssi);
+```
+
+## Actions
+
+> [!NOTE]
+> After a packet is sent the radio returns to the mode last set with a mode action (`sx1231.set_mode_*`), or to the
+> mode `rx_start` gives if none was used. If the radio does not enter a requested mode, its configuration is applied
+> again every second until it succeeds, and mode actions are ignored, with a warning in the log, until then.
+> `sx1231.send_packet` logs the reason when a packet cannot be sent. A packet is not sent while a received packet is
+> waiting to be read, so the received packet is not lost.
+
+### `sx1231.set_mode_tx` Action
+
+This [action](/automations/actions/#all-actions) sets the `sx1231` mode to tx.
+
+```yaml
+on_...:
+  - sx1231.set_mode_tx
+```
+
+### `sx1231.set_mode_rx` Action
+
+This [action](/automations/actions/#all-actions) sets the `sx1231` mode to rx.
+
+```yaml
+on_...:
+  - sx1231.set_mode_rx
+```
+
+### `sx1231.set_mode_sleep` Action
+
+This [action](/automations/actions/#all-actions) sets the `sx1231` mode to sleep.
+
+```yaml
+on_...:
+  - sx1231.set_mode_sleep
+```
+
+### `sx1231.set_mode_standby` Action
+
+This [action](/automations/actions/#all-actions) sets the `sx1231` mode to standby.
+
+```yaml
+on_...:
+  - sx1231.set_mode_standby
+```
+
+### `sx1231.send_packet` Action
+
+This [action](/automations/actions/#all-actions) sends a packet, the `sx1231` needs to be in packet mode.
+
+```yaml
+on_...:
+  - sx1231.send_packet:
+      data: [0x1F, 0x3E, 0x06, 0x5F, 0x4F, 0x5F, 0xAC, 0xB1]
+```
+
+#### Configuration Variables
+
+- **data** (**Required**, list or string, [templatable](/automations/templates/)): The packet to send, from 1 to 64
+  bytes, given as a list of bytes or as a string in quotes. With a `payload_length` configured, the length must match
+  it.
+
+## Packet Mode
+
+FSK packet mode example using a bit rate of 50000. Use the same radio settings on both devices.
+
+```yaml
+# Example configuration entry
+sx1231:
+  cs_pin: GPIOXX
+  dio0_pin: GPIOXX
+  frequency: 915MHz
+  modulation: FSK
+  bitrate: 50000
+  deviation: 25kHz
+  preamble_size: 4
+  sync_value: [0x2D, 0xD4]
+  crc_enable: true
+  on_packet:
+    then:
+      - lambda: |-
+          char hex[256];  // Size appropriately for your data
+          ESP_LOGD("lambda", "packet %s", format_hex_to(hex, x));
+
+button:
+  - platform: template
+    name: "Transmit Packet"
+    on_press:
+      then:
+        - sx1231.send_packet:
+            data: [0xC5, 0x51, 0x78, 0x82, 0xB7, 0xF9, 0x9C, 0x5C]
+```
+
+## Receiving Packets From Other Devices
+
+Many wireless sensors send FSK packets that these chips can receive. Set `frequency`, `bitrate`, `deviation`,
+`sync_value` and `payload_length` to match the sensor, then decode the bytes in the `on_packet` automation.
+
+This example receives the temperature and humidity from an Ecowitt WS90 weather station on 915 MHz. The lambda checks
+the checksums of the packet before it uses the data.
+
+```yaml
+# Example configuration entry
+sx1231:
+  cs_pin: GPIOXX
+  dio0_pin: GPIOXX
+  frequency: 915MHz
+  modulation: FSK
+  bitrate: 17241
+  deviation: 40kHz
+  sync_value: [0x2D, 0xD4]
+  payload_length: 32
+  on_packet:
+    then:
+      - lambda: |-
+          if (x[0] != 0x90) {
+            return;
+          }
+          uint8_t sum = 0;
+          for (size_t i = 0; i < 31; i++) {
+            sum += x[i];
+          }
+          if (crc8(x.data(), 31, 0x00, 0x31, true) != 0 || sum != x[31]) {
+            return;
+          }
+          const uint16_t temperature = ((x[7] & 0x03) << 8) | x[8];
+          id(outdoor_temperature).publish_state((temperature - 400) * 0.1f);
+          id(outdoor_humidity).publish_state(x[9]);
+
+sensor:
+  - platform: template
+    id: outdoor_temperature
+    name: "Outdoor Temperature"
+    device_class: temperature
+    unit_of_measurement: "°C"
+    accuracy_decimals: 1
+    update_interval: never
+  - platform: template
+    id: outdoor_humidity
+    name: "Outdoor Humidity"
+    device_class: humidity
+    unit_of_measurement: "%"
+    update_interval: never
+```
+
+## Continuous Mode
+
+### As a Receiver
+
+The `sx1231` will output demodulated data onto DIO2 and [remote_receiver](/components/remote_receiver/) should be used
+to receive this data on `pin` (must be wired to DIO2).
+
+```yaml
+# Example configuration entry
+sx1231:
+  cs_pin: GPIOXX
+  frequency: 433.92MHz
+  modulation: OOK
+  packet_mode: false
+
+remote_receiver:
+  pin: GPIOXX
+  dump: raw
+```
+
+> [!NOTE]
+> It is not recommended to receive FSK in continuous mode as there will be too
+> much noise. Use packet mode instead.
+
+### As a Transmitter
+
+The `sx1231` expects raw data to be transmitted on DIO2, [remote_transmitter](/components/remote_transmitter/) should
+be used to transmit this data on `pin` (must be wired to DIO2). The `sx1231` mode must be set appropriately before and
+after transmit using the `on_transmit` and `on_complete` automations.
+
+```yaml
+# Example configuration entry
+sx1231:
+  cs_pin: GPIOXX
+  frequency: 433.92MHz
+  modulation: OOK
+  packet_mode: false
+  rx_start: false
+
+remote_transmitter:
+  pin: GPIOXX
+  carrier_duty_percent: 100%
+  on_transmit:
+    then:
+      - sx1231.set_mode_tx
+  on_complete:
+    then:
+      - sx1231.set_mode_standby
+
+button:
+  - platform: template
+    name: "Transmit Raw"
+    on_press:
+      then:
+        - remote_transmitter.transmit_raw:
+            code: [614, -614, 600, -614, 614, -614, 601, -614]
+```
+
+## See Also
+
+- [SX1231 Packet Transport Platform](/components/packet_transport/sx1231/)
+- [SX126x Component](/components/sx126x/)
+- [SX127x Component](/components/sx127x/)
+- [Remote Transmitter](/components/remote_transmitter/)
+- [Remote Receiver](/components/remote_receiver/)
+- <APIRef text="sx1231.h" path="sx1231/sx1231.h" />
