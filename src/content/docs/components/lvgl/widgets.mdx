@@ -979,6 +979,8 @@ Y values at evenly spaced X positions. Scatter series use explicit X/Y points.
 - **x_axis**, **y_axis**, **secondary_x_axis**, **secondary_y_axis** (*Optional*, dict): Axis range settings:
   - **min_value** (*Optional*, int): Minimum axis value. Defaults to `0`.
   - **max_value** (*Optional*, int): Maximum axis value. Defaults to `100`.
+
+  **min_value** and **max_value** must not be equal. If lambdas return equal values, **max_value** is raised by one.
 - **series** (*Optional*, list): Series definitions:
   - **id** (*Optional*, [ID](/guides/configuration-types/#id)): Series ID. Needed to update the series with
     `lvgl.chart.series.update`.
@@ -994,11 +996,14 @@ Y values at evenly spaced X positions. Scatter series use explicit X/Y points.
 - **items** (*Optional*, dict): Settings for the *items* part, which draws the series lines and bars. Supports
   [styles](/components/lvgl/#lvgl-styling) such as `line_width`, `line_dash_width`, `line_dash_gap` and `radius`. The
   series color takes the place of the line and background colors.
+- **indicator** (*Optional*, dict): Settings for the *indicator* part, which draws a marker at each point of a `LINE` or
+  `SCATTER` series. Markers are only drawn when both `width` and `height` are greater than `0`. Supports
+  [styles](/components/lvgl/#lvgl-styling) such as `width`, `height` and `radius`. The series color fills the marker.
 - Style options from [Style properties](/components/lvgl/#lvgl-styling) for the background of the chart. The `line_*`
   styles set the division lines.
 
 Axis values, **values** and **points**, here and in the actions below, can be set with
-[lambdas](/automations/templates/#config-lambda).
+[lambdas](/automations/templates/#config-lambda). **type** and **update_mode** cannot.
 
 The number of entries in **values** or **points** must not exceed **point_count**. A scatter series must use
 **points**; other chart types must use **values**.
