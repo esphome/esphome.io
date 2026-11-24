@@ -82,7 +82,9 @@ sensor:
     name: "Ammonia (MQ-135)"
     sensor_type: MQ-135
     voltage: mq135_ao
-    voltage_multiplier: 1.5     # the same 10 kOhm / 20 kOhm divider
+    voltage_divider:            # 10 kOhm / 20 kOhm: (10k + 20k) / 20k = 1.5
+      r1: 10000
+      r2: 20000
     adc_input_max: 4.096
     calibration:
       delay: 5min
@@ -122,8 +124,6 @@ sensor:
     warmup_time: 48h            # a new sensor: no readings and no calibration before that
     calibration:
       delay: 5min
-      sample_count: 50
-      persist: true
 
 button:
   - platform: template
@@ -247,11 +247,11 @@ off, and linking only one of the two is rejected at build time.
 The component can publish each step of the measurement chain as its own diagnostic entity, and mirror its messages to
 a text sensor:
 
-- **voltage_sensor** (*Optional*): An [Sensor](/components/sensor/) that publishes the sampled AO voltage in V.
-- **rs_sensor** (*Optional*): An [Sensor](/components/sensor/) that publishes RS in kOhm.
-- **ratio_sensor** (*Optional*): An [Sensor](/components/sensor/) that publishes the RS/R0 ratio.
-- **correction_sensor** (*Optional*): An [Sensor](/components/sensor/) that publishes the compensation factor.
-- **r0_sensor** (*Optional*): An [Sensor](/components/sensor/) that publishes R0 in kOhm.
+- **voltage_sensor** (*Optional*): A [Sensor](/components/sensor/) that publishes the sampled AO voltage in V.
+- **rs_sensor** (*Optional*): A [Sensor](/components/sensor/) that publishes RS in kOhm.
+- **ratio_sensor** (*Optional*): A [Sensor](/components/sensor/) that publishes the RS/R0 ratio.
+- **correction_sensor** (*Optional*): A [Sensor](/components/sensor/) that publishes the compensation factor.
+- **r0_sensor** (*Optional*): A [Sensor](/components/sensor/) that publishes R0 in kOhm.
 - **log_sensor** (*Optional*): A [Text Sensor](/components/text_sensor/) that mirrors the log messages of the
   component, including calibration progress and warnings.
 - **log_ppm** (*Optional*, boolean): Log the value that is about to be published on every update. Defaults to
