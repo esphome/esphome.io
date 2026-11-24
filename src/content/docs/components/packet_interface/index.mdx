@@ -309,7 +309,9 @@ compressed on its own, so a lost packet does not affect the others.
 
 Short packets repeat little within themselves, so most of the saving comes from a dictionary: text that both devices
 hold, from which a packet can copy pieces. The best dictionary is a typical packet of the application. Both devices
-must have the same dictionary; a packet from a device with a different one is dropped.
+must have the same dictionary. Each packet carries a short check of the dictionary, so a packet from a device with a
+different one is usually dropped; about 1 in 128 pairs of dictionaries share a check, and then packets expand to the
+wrong data.
 
 ```yaml
 packet_interface:
