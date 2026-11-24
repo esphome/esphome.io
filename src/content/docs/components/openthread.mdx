@@ -181,12 +181,12 @@ on_...:
 
 ## OpenThread Border Router
 
-Border Router mode bridges a Thread network to a Wi-Fi network. It requires an ESP32, IPv6 enabled in the
-[Network Component](/components/network/), and the default `device_type: FTD`. The Thread
+Border Router mode bridges a Thread network to the LAN over a backbone link, Wi-Fi or Ethernet. It requires an ESP32,
+IPv6 enabled in the [Network Component](/components/network/), and the default `device_type: FTD`. The Thread
 dataset is configured as in the [Full Configuration](#full-configuration) above; Thread starts on boot and border
-routing begins once Wi-Fi is connected.
+routing begins once the backbone is connected.
 
-The native radio is supported on ESP32-C5 and ESP32-C6:
+The native radio is supported on ESP32-C5, ESP32-C6 and ESP32-S31:
 
 ```yaml
 network:
@@ -201,9 +201,10 @@ openthread:
   network_key: !secret thread_network_key
 ```
 
-Any Wi-Fi-capable ESP32 can instead use an external OpenThread Radio Co-Processor (RCP) over UART. The
-co-processor runs OpenThread RCP firmware, for instance ESP-IDF's `examples/openthread/ot_rcp` on an ESP32-H2,
-built for the same UART speed as `baud_rate`; a mismatch gives a co-processor that never answers.
+Any Wi-Fi-capable ESP32, or an ESP32-P4 with `backbone: ethernet`, can instead use an external OpenThread Radio
+Co-Processor (RCP) over UART. The co-processor runs OpenThread RCP firmware, for instance ESP-IDF's
+`examples/openthread/ot_rcp` on an ESP32-H2, built for the same UART speed as `baud_rate`; a mismatch gives a
+co-processor that never answers.
 
 ```yaml
 openthread:
@@ -215,9 +216,23 @@ openthread:
   network_key: !secret thread_network_key
 ```
 
+With `backbone: ethernet`, border routing runs over the [Ethernet Component](/components/ethernet/) instead, with the
+native radio on ESP32-C5, ESP32-C6 or ESP32-S31, or with an RCP on any Wi-Fi-capable ESP32 or an ESP32-P4. It follows
+the Ethernet link: border routing pauses while the link is down and restarts when it returns, and it does not move to
+Wi-Fi. Wi-Fi is optional; it can be left out, or kept as a fallback uplink for the device itself with a `priority` list,
+see [Multi-Interface Support](/components/network/#multi-interface-support).
+
+```yaml
+openthread:
+  border_router:
+    backbone: ethernet
+  network_key: !secret thread_network_key
+```
+
 ### Configuration Variables
 
 - **border_router** (*Optional*, map): Enables Border Router mode.
+  - **backbone** (*Optional*, string): The link border routing runs over, `wifi` or `ethernet`. Defaults to `wifi`.
   - **rcp** (*Optional*, map): Configures an external OpenThread RCP.
     - **rx_pin** (**Required**, Pin): ESP32 receive pin connected to the RCP transmit pin.
     - **tx_pin** (**Required**, Pin): ESP32 transmit pin connected to the RCP receive pin.
@@ -225,7 +240,9 @@ openthread:
     - **reset_pin** (*Optional*, Pin): RCP reset pin, inverted (active low) unless configured otherwise. With this
       pin the RCP is reset in hardware when it stops responding, up to five times.
 
-Wi-Fi must have at least one STA network, must not use AP or fallback AP mode, and must keep `enable_on_boot: true`.
+With the Wi-Fi backbone, Wi-Fi must have at least one STA network and must keep `enable_on_boot: true`. With the
+Ethernet backbone, Ethernet must keep `enable_on_boot: true`. Wi-Fi, when configured, must not use AP or fallback AP
+mode.
 
 > [!WARNING]
 > An external RCP uses UART1 directly and cannot be combined with the ESPHome [UART Component](/components/uart/).
