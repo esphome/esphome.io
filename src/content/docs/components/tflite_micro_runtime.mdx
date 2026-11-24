@@ -523,8 +523,8 @@ struct ProcessedOutput {
 
 | Method                              | Description                                         |
 |-------------------------------------|-----------------------------------------------------|
-| `set_model(data, size, crc)`        | Set the model data, its size and its expected CRC32 in one step (0 = skip verification). |
-| `set_tensor_arena_size(size)`       | Request a specific tensor arena size in bytes.      |
+| `set_model(data, size, crc)`        | Set the model data, its size and its expected CRC32 in one step (0 = skip verification). The build-wide resolver capacity is fixed by the configured models, so a replacement must not need more operator slots; widen it with `tflite_op_processor`'s `operators:` list. |
+| `set_tensor_arena_size(size)`       | Request a specific tensor arena size in bytes. Takes the lifecycle lock and makes the next load probe again. |
 | `set_output_processing(strategy)`   | Set the output post-processing strategy.            |
 | `set_scale_factor(factor)`          | Set the output scale factor.                        |
 | `set_resource_variables(mrv)`       | Pass the resource variables a stateful model needs, for loading and arena probing. |
@@ -537,7 +537,7 @@ struct ProcessedOutput {
 | `run_inference_on_buffer(src_data, src_size)` | Run inference without processing the output. |
 | `input_tensor()`                    | Get the input `TfLiteTensor` (for writing data).    |
 | `output_tensor()`                   | Get the output `TfLiteTensor` (for reading results). |
-| `get_last_result()`                 | Get the `ProcessedOutput` of the current notification. |
+| `get_last_result()`                 | Get the `ProcessedOutput` of the current notification; `valid` is false when the output has no classification mapping. |
 | `get_model_spec()`                  | Get the `ModelSpec` describing input dimensions and type. |
 | `get_arena_stats()`                 | Get tensor arena utilization statistics.            |
 | `report_memory_status()`            | Print memory allocation details to the log.         |
@@ -550,7 +550,8 @@ processing and returns `true` on success.
 
 `input_tensor()`, `invoke()` and `output_tensor()` take the lifecycle lock one call at a time, so another task
 can unload the model between them. A consumer that fills the input itself holds the lock across the whole block
-with `InferenceSession`:
+with `InferenceSession`. `valid()` is false when a result is waiting for its `on_result` callback, so the
+tensors that result describes are not overwritten:
 
 ```cpp
 InferenceSession session(&tflite);
