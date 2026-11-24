@@ -63,7 +63,9 @@ Configuration variables:
 - **on_value** (*Optional*, [Automation](/automations/)): Runs with the value read. Variable: `x` (`uint32_t`, little
   endian bytes as an unsigned number; cast it for signed objects, e.g. `(int16_t) x`).
 - **on_error** (*Optional*, [Automation](/automations/)): Runs when the read failed. Variables: `result`
-  (`canopen::SDOResult`) and `abort_code` (`uint32_t`), as in [`canopen.sdo_write`](#canopen-sdo_write-action).
+  (`canopen::SDOResult`: `SDO_RESULT_ABORT`, `SDO_RESULT_TIMEOUT`, `SDO_RESULT_SIZE_MISMATCH`,
+  `SDO_RESULT_TRANSPORT_ERROR` or `SDO_RESULT_REJECTED`) and `abort_code` (`uint32_t`, the SDO abort code for
+  `SDO_RESULT_ABORT` and `SDO_RESULT_TIMEOUT`).
 - **id** (*Optional*, [ID](/guides/configuration-types/#id)): The `canopen` component to use. Required if there is
   more than one.
 
@@ -101,6 +103,10 @@ Configuration variables:
   carried out: the answer may have been lost, or the CAN controller may have sent the frame later.
 - **id** (*Optional*, [ID](/guides/configuration-types/#id)): The `canopen` component to use. Required if there is
   more than one.
+
+### Shared SDO Channel
+
+These apply to both actions and to the [lambda calls](#sdo-client).
 
 Another SDO client talking to the same node at the same time (a CANopen master, a PC tool) shares the node's SDO
 channel, so either side's requests can end with an abort: handle `on_error`.
