@@ -25,7 +25,8 @@ update:
 
 - **source** (**Required**, string): The URL of the YAML manifest file containing the firmware metadata.
 - **allow_auto_install** (*Optional*, boolean): Allow the manifest to install an update without waiting for a
-  user. See [Automatic Installs](#automatic-installs) for the manifest side. Defaults to `false`.
+  user. Requires `project.version` to be set in the `esphome:` section. See
+  [Automatic Installs](#automatic-installs) for the manifest side. Defaults to `false`.
 - **update_interval** (_Optional_, [Time](/guides/configuration-types/#time)): The interval at which to check for (**not install**) updates.
   Defaults to 6 hours.
 
@@ -82,8 +83,8 @@ after a check finds it, instead of waiting for a user. The install only happens 
 [`update.perform` action](/components/update/#update-perform-action).
 
 The check treats the manifest's `version` and the version the device reports as different whenever the two
-strings differ; it does not compare them as semantic versions. The reported version is the `project.version` of
-the device's configuration, or the ESPHome version when `project.version` is not set.
+strings differ; it does not compare them as semantic versions. The device reports its `project.version`, so
+**allow_auto_install** requires a `project:` section with a `version` in the `esphome:` section.
 
 The device does not remember automatic installs. Every check that finds a different version and a manifest that
 asks for an install starts one again, including the first check after the reboot that ends it. A device whose
