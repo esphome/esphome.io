@@ -276,7 +276,8 @@ A `github://` source always reads a model file directly from the repository, so 
 JSON manifests are resolved only for `http://` and `https://` sources, by joining the manifest's `model` key with
 the manifest URL. Unlike `micro_wake_word`, the `github://` shorthand does not read a JSON manifest. Only the
 manifest's `model` key is used here; the `micro` tuning values in the official manifests are not applied, so set
-`probability_cutoff`, `sliding_window_size`, `features_step_size`, and `feature_count` explicitly.
+`probability_cutoff`, `sliding_window_size` and `features_step_size` explicitly. `feature_count` defaults to
+the model's feature dimension.
 
 > [!IMPORTANT]
 > Models using hybrid quantization (float32 I/O + int8 weights) are **not** supported by TFLite Micro on ESP32.
