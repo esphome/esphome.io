@@ -113,8 +113,8 @@ tflite_audio:
     probability_cutoff: 0.5    # optional: 0.0-1.0, defaults to 0.5
     sliding_window_size: 5     # optional: frames in the sliding window, defaults to 10
     features_step_size: 10     # optional: milliseconds between feature slices, defaults to 20
-    feature_count: 40          # optional: feature dimension of the model's input
-    tensor_arena_size: 26KB    # optional: not estimated for audio, see below
+    feature_count: 40          # optional: defaults to the model's feature dimension
+    tensor_arena_size: 26KB    # optional: defaults to 100KB for audio
 ```
 
 | Option | Default | Meaning |
@@ -122,15 +122,15 @@ tflite_audio:
 | `probability_cutoff` | `0.5` | Detection threshold, `0.0`–`1.0`. Only detections above it are reported. |
 | `sliding_window_size` | `10` | Number of frames the consumer averages over. |
 | `features_step_size` | `20` | Milliseconds between two feature slices, `0`–`30`. |
-| `feature_count` | `40` | MFCC features per frame, `10`–`80`. |
+| `feature_count` | the model's feature dimension | MFCC features per frame, `10`–`80`. |
 | `output_processing` | `argmax` | How the output tensor becomes a class and a confidence. |
 | `scale_factor` | `1.0` | Divides the reported class index, `0.1`–`100.0`. |
-| `tensor_arena_size` | an estimate from the model | Arena size in bytes, or a suffixed size such as `26KB`. |
+| `tensor_arena_size` | `100KB` | Arena size in bytes, or a suffixed size such as `26KB`. |
 
-A streaming model's input tensor is `[1, frames, features]`; set `feature_count` to that feature dimension.
-The other three settings describe what the consumer does with the model. The arena is estimated from the
-model's tensors like any other, but the streaming state the consumer keeps in its own variables is not part
-of them, so an explicit `tensor_arena_size` is the safer choice.
+A streaming model's input tensor is `[1, frames, features]`; `feature_count` defaults to that feature
+dimension. The other three settings describe what the consumer does with the model. The arena is not
+estimated for audio: the streaming state and resource tensors are not part of the model, so the kind uses
+`100KB` unless `tensor_arena_size` is set.
 
 ### Multiple Models
 
@@ -249,8 +249,8 @@ set here explicitly:
 - **sliding_window_size** (*Optional*, integer): Size of the sliding window in frames. Defaults to `10`.
 - **features_step_size** (*Optional*, integer): Step size for feature extraction in milliseconds. Range `0`–`30`.
   Defaults to `20`.
-- **feature_count** (*Optional*, integer): Number of MFCC features. Set it to the feature dimension of the
-  model's input tensor. Range `10`–`80`. Defaults to `40`.
+- **feature_count** (*Optional*, integer): Number of MFCC features. Defaults to the feature dimension of the
+  model's input tensor. Range `10`–`80`.
 - **output_processing** (*Optional*, string): How the output tensor is turned into a class and a confidence.
   One of `"argmax"`, `"softmax"`, `"qat_quantized"` or `"auto_detect"`. Defaults to `"argmax"`.
 - **scale_factor** (*Optional*, float): Divides the reported class index for multi-class models. Range

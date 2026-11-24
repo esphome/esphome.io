@@ -22,7 +22,8 @@ tflite_audio:
 - **probability_cutoff** (*Optional*, percentage): Detection threshold. Defaults to `0.5`.
 - **sliding_window_size** (*Optional*, integer): Frames the consumer averages over. Defaults to `10`.
 - **features_step_size** (*Optional*, integer): Milliseconds between feature slices, `0`–`30`. Defaults to `20`.
-- **feature_count** (*Optional*, integer): MFCC features per frame, `10`–`80`. Defaults to `40`.
+- **feature_count** (*Optional*, integer): MFCC features per frame, `10`–`80`. Defaults to the feature
+  dimension of the model's input tensor.
 - **output_processing** (*Optional*, string): How the output tensor becomes a class and a confidence. One of
   `"argmax"`, `"softmax"`, `"qat_quantized"` or `"auto_detect"`. Defaults to `"argmax"`.
 - **scale_factor** (*Optional*, float): Divides the reported class index for multi-class models. Range
@@ -37,8 +38,9 @@ tflite_audio:
 - **model** (**Required**, string or dictionary): The `.tflite` model, resolved by
   `tflite_model_source`: a local path, a `github://` shorthand, an HTTP(S) URL, or a JSON manifest that names
   the model.
-- **tensor_arena_size** (*Optional*, bytes): Arena size, as bytes or a suffixed value such as `200KB`. When
-  omitted, the size is estimated from the model and probed on the device.
+- **tensor_arena_size** (*Optional*, bytes): Arena size, as bytes or a suffixed value such as `200KB`.
+  Defaults to `100KB`: the streaming state and resource tensors are not part of the model, so it is not
+  estimated.
 - **debug** (*Optional*, boolean): Enable the diagnostics of `tflite_model_debug` for this instance.
   Defaults to `false`.
 
