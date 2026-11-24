@@ -209,8 +209,8 @@ id(my_canopen).read_sdo_data(0x01, 0x1008, 0, name, sizeof(name), [](void *conte
   limited to 65,535 bytes: a longer write is rejected, and a read of a longer object is aborted. Requests run
   one at a time, so queued reads can share a buffer if each callback uses the data before it returns.
 - `cancel_sdo(context)` drops all queued requests with that `context` and aborts its transfer in progress (an SDO abort
-  is sent to the node), without callbacks. Use it before a buffer or `context` goes away. The next request to the same
-  node waits 50 ms after the abort, so a late answer to the cancelled transfer isn't taken for it.
+  is sent to the node), without callbacks. Use it before a buffer or `context` goes away. The next request (to any
+  node) waits 50 ms after the abort, so a late answer to the cancelled transfer isn't taken for it.
 
 ### Raw Frames
 
@@ -224,12 +224,15 @@ id(my_canopen).add_frame_listener(0x180, 0x780, [](void *context, uint32_t can_i
   ESP_LOGD("main", "TPDO1 from node 0x%02x", (unsigned) (can_id & 0x7F));
 }, nullptr);
 
-// returns false if the CAN controller can't take the frame now (it isn't queued)
+// returns false for a CAN ID above 0x7FF, more than 8 bytes, or if the CAN controller can't take the frame now (it
+// isn't queued)
 const uint8_t data[2] = {0x0F, 0x00};
 id(my_canopen).send_frame(0x201, data, sizeof(data));
 ```
 
-A frame matches a listener when `(frame_id ^ can_id) & mask` is 0.
+A frame matches a listener when `(frame_id ^ can_id) & mask` is 0. A listener that can't match any 11-bit CAN ID
+(`can_id & mask` above `0x7FF`) isn't added, and a warning is logged. A listener may add other listeners; they get
+frames from the next one on.
 
 ## See Also
 
