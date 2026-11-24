@@ -57,9 +57,7 @@ opentherm:
 - **out_pin** (**Required**, number): The pin of the OpenTherm hardware bridge which is usually labeled `in` on the
   board.
 
-- **sync_mode** (*Optional*, boolean, default **false**): Synchronous communication mode prevents other components
-  from disabling interrupts while we are talking to the boiler. Enable if you experience a lot of random intermittent
-  invalid response errors (very likely to happen while using Dallas temperature sensors).
+- **sync_mode** (*Optional*, boolean, default **false**): Synchronous communication mode, for ESP8266 and ESP32 devices that don't support RMT. See [Note about sync mode](#note-about-sync-mode) for details.
 
 - **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation. Required if you have
   multiple busses.
@@ -90,22 +88,46 @@ correctly. You can use the following settings in hub configuration to make your 
 
 See [On-the-fly Message Editing](#on-the-fly-message-editing) for details.
 
+### ESP32 RMT usage
+
+On supported ESP32 variants, the sending and receiving of OpenTherm frames is offloaded to the RMT peripheral.
+This moves the encoding and decoding of OpenTherm dataframes off the CPU, ensuring that slowdowns don't cause lost
+or corrupted frames.
+
+| ESP32 Variant | Available Memory | Block Size |
+| ------------- | ---------------- | ---------- |
+| ESP32         | 512 symbols      | 64 symbols |
+| ESP32-C3      | 96 symbols       | 48 symbols |
+| ESP32-C5      | 96 symbols       | 48 symbols |
+| ESP32-C6      | 96 symbols       | 48 symbols |
+| ESP32-H2      | 96 symbols       | 48 symbols |
+| ESP32-H21     | 96 symbols       | 48 symbols |
+| ESP32-H4      | 96 symbols       | 48 symbols |
+| ESP32-P4      | 192 symbols      | 48 symbols |
+| ESP32-S2      | 256 symbols      | 64 symbols |
+| ESP32-S3      | 192 symbols      | 48 symbols |
+| ESP32-S31     | 192 symbols      | 48 symbols |
+
+Each component uses its own RMT channel: `remote_receiver` uses an RX channel, `remote_transmitter` uses a TX 
+channel, and `opentherm` uses one block on the TX and one block on RX channel. A channel uses at least one block of 
+memory, so the number of channels is the available memory divided by the block size, for example 8 on the `ESP32` 
+and 2 on the `ESP32-C3`. On the `ESP32` and `ESP32-S2`, RX and TX components share these channels. On other variants, 
+RX and TX each have this many channels.
+
+ESPHome checks all `opentherm`, `remote_transmitter` and `remote_receiver` components together. Validation fails if 
+they need more channels than are available.
+
 ### Note about sync mode
 
-The use of some components (like Dallas temperature sensors) may result in lost frames and protocol warnings from
-OpenTherm. Since OpenTherm is resilient by design and transmits its messages in a constant loop, these dropped frames
-don't usually cause any problems. Still, if you want to decrease the number of protocol warnings in your logs, you can
-enable `sync_mode` which will block ESPHome's main application loop until a single conversation with the boiler is
-complete. This can greatly reduce the number of dropped frames, but usually won't eliminate them entirely. With
-`sync_mode` enabled, in some cases, ESPHome's main application loop may be blocked for longer than is recommended,
-resulting in warnings in the logs. If this bothers you, you can adjust ESPHome's log level by adding the following to
-your configuration:
+For ESP32 devices that support RMT, sync mode has no effect, and it can be removed from your configuration.
 
-```yaml
-logger:
-  logs:
-    component: ERROR
-```
+For ESP8266 and devices that don't support RMT, software polling is used instead. The use of some components (like 
+Dallas temperature sensors) may result in lost frames and warnings from OpenTherm. Since OpenTherm transmits its 
+messages in a constant loop, these  dropped frames don't usually cause any problems. Still, if you want to decrease 
+the number of protocol warnings in your logs, you can enable `sync_mode` which will block ESPHome's main application 
+loop until a single conversation with the boiler is complete. This can greatly reduce the number of dropped frames, 
+but won't eliminate them entirely. With `sync_mode` enabled, ESPHome's main application loop may be blocked for 
+longer than is recommended, resulting in warnings in the logs.
 
 ## Usage as a thermostat
 
