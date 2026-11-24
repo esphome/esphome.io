@@ -68,8 +68,8 @@ written in: addressing is next to the channel, then encryption, reliability, fra
 Each layer works with the same layer on the other device, so both devices must configure the same layers. If a layer
 cannot make sense of 10 packets in a row, it logs a warning that the layers may not match.
 
-Each layer adds its own bytes to every packet, so a small `max_packet_size` can leave a layer no room. That layer is
-then marked failed at boot, with the reason in the log.
+Each layer adds its own bytes to every packet, so a small `max_packet_size` can leave a layer no room. Such a
+configuration is rejected when it is validated.
 
 Some platforms do the job of a layer themselves, and then that layer cannot be configured on them. For example, a TCP
 connection already joins two devices and resends lost data. The page for each platform says which layers it provides.
@@ -104,16 +104,16 @@ packet_interface:
 - **address** (**Required**, int): The address of this device, from `0x0001` to `0xFFFE`. Each device on the channel
   must have a different address.
 - **destination** (*Optional*, int): The address of the device to send to, or `broadcast` to send to every device on
-  the channel. Defaults to `broadcast`. Cannot be used with `peers`.
+  the channel. It must not be this device's own `address`. Defaults to `broadcast`. Cannot be used with `peers`.
 - **peers** (*Optional*, list): Talk to several devices on the channel, each with its own layers. See
   [Several Devices on One Channel](#several-devices-on-one-channel). Each entry has:
 
   - **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID that components such as
     [entity transport](/components/entity_transport/) use to send to and receive from this device.
   - **destination** (**Required**, int): The address of the device, or `broadcast`. Each entry must have a
-    different destination.
-  - **encryption**, **reliability**, **session** (*Optional*): The layers for this device, with the same options as
-    when they are configured on the interface.
+    different destination, and none can be this device's own `address`.
+  - **encryption**, **reliability**, **fragmentation**, **compression**, **session** (*Optional*): The layers for this
+    device, with the same options as when they are configured on the interface.
 
 With a `destination` other than `broadcast`, the interface becomes a link between this device and that one: it sends
 only to that device, and accepts packets only from it. The [reliability](#reliability) and [session](#session)
@@ -161,14 +161,14 @@ entity_transport:
       - valve_open
 ```
 
-- With `peers`, the `encryption`, `reliability` and `session` options go in each entry, not on the interface, and
-  other components must use an entry's `id`, not the interface's.
+- With `peers`, the `encryption`, `reliability`, `fragmentation`, `compression` and `session` options go in each
+  entry, not on the interface, and other components must use an entry's `id`, not the interface's.
 - Entries that use the rolling code each need their own encryption key. With a shared key, a packet recorded from
   one device and sent again with another device's address would be accepted as coming from that device.
 - When two devices on a half-duplex bus such as RS485 send at the same moment, their packets collide and are lost.
   The reliability layer sends them again, after a timeout with a small random variation so that the two devices do
   not collide again.
-- Each device with a reliability layer needs its own memory for packets waiting to be acknowledged: about 3 KB with
+- Each device with a reliability layer needs its own memory for packets waiting to be acknowledged: about 2 KB with
   the default packet size. Reduce `max_packet_size` on devices with little memory.
 - Every reliable device adds acknowledgements, and with a session layer keep-alive packets, to the channel. On a slow
   channel, send states that every device needs once, through a `broadcast` entry, rather than to each device.
@@ -204,7 +204,7 @@ The key can also be given on its own:
   Defaults to `false`.
 
 The encryption layer adds 4 to 8 bytes to each packet, or 16 to 19 with the rolling code. The largest packet that can
-be sent through it is smaller than `max_packet_size` by that amount.
+be sent through it is smaller than `max_packet_size` by 4 to 7 bytes, or 16 to 19 with the rolling code.
 
 The check that drops changed packets uses 3 fixed bytes, so a device that sends millions of random packets could
 get one accepted. Without the rolling code, the same packet is always encrypted to the same bytes, so another device
@@ -258,7 +258,8 @@ packet_interface:
   does. Range is 1 to 7. Defaults to `4`.
 - **max_retries** (*Optional*, int): How many times to resend without an acknowledgement before the packets waiting
   are discarded and the connection is started again. A warning is logged when this happens. With a
-  [session layer](#session) above, the other device is reported lost, then connected again. Defaults to `5`.
+  [session layer](#session) above, the other device is reported lost, then connected again. Range is 1 to 255.
+  Defaults to `5`.
 
 The reliability layer adds 3 bytes to each packet, so the largest packet that can be sent through it is 3 bytes
 smaller than `max_packet_size`. Each device holds `max_queue_length` packets of `max_packet_size` bytes in memory;
@@ -275,7 +276,6 @@ packet_interface:
   - platform: sx126x
     id: lora_link
     reliability:
-      timeout: 500ms
       # A 1024-byte packet needs 5 fragments of 250 bytes
       max_queue_length: 5
     fragmentation:
@@ -293,7 +293,8 @@ If any fragment of a packet is lost, the whole packet is dropped. With a [reliab
 fragments are sent again, so packets arrive whole. The reliability layer must have room in its queue for every
 fragment of the largest packet: a packet is not sent until there is room for all of its fragments. A configuration
 whose largest packet needs more fragments than the queue holds is rejected; increase the reliability layer's
-`max_queue_length`, up to 7, or reduce `max_packet_size`.
+`max_queue_length`, up to 7, or reduce `max_packet_size`. Without a reliability layer, a packet can have at most 128
+fragments.
 
 On a channel shared by several devices, use an [addressing layer](#addressing), so that fragments from different
 devices are not mixed. When two devices send packets of several fragments to a `broadcast` entry at the same moment,
@@ -330,7 +331,8 @@ packet_interface:
   pieces common in JSON, such as `{"name":"`, `"state":"ON"` and `null`. Set it to `""` for no dictionary.
 - **max_packet_size** (*Optional*, int): The largest packet, in bytes, before compression. Range is 16 to 16384.
   Defaults to the largest packet the layers below take, less 1 byte. A packet larger than the layers below take is
-  sent only if it compresses enough to fit; otherwise it is refused, with a warning in the log.
+  sent only if it compresses enough to fit; otherwise it is refused, with a warning in the log. When it is set, the
+  layers below must take packets of at least 17 bytes, so that a packet that does not compress can still be sent.
 
 The compression layer adds 1 byte to each packet. A packet that does not get smaller, such as one that is already
 compressed or encrypted, is sent as it is, apart from that byte. The layer sits above encryption, as encrypted data

@@ -9,7 +9,9 @@ The `packet_interface` platform of the [Packet Transport](/components/packet_tra
 sensor data through any [Packet Interface](/components/packet_interface/). This lets packet transport run over every
 channel that has a packet interface platform, without a separate packet transport platform for each one.
 
-The largest packet that packet transport will send is taken from the `max_packet_size` of the packet interface.
+The largest packet that packet transport will send is the largest packet the packet interface's layers take: the
+`max_packet_size` of the link, less the bytes each layer adds, or the `max_packet_size` of a fragmentation or
+compression layer.
 
 ## Example Configuration
 
@@ -41,8 +43,8 @@ sensor:
 ## Configuration Variables
 
 - **packet_interface** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the
-  [Packet Interface](/components/packet_interface/) to use. Required only if more than one packet interface is
-  configured.
+  [Packet Interface](/components/packet_interface/) to use. With addressing `peers`, the ID of one of the peers.
+  Required unless the only packet interface is a single link with no layers, as each layer has an ID of its own.
 
 All other options are the same as for the [Packet Transport](/components/packet_transport/) component.
 

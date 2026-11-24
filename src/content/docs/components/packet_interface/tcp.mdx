@@ -14,8 +14,9 @@ interface does the job of the [reliability](/components/packet_interface/#reliab
 [addressing](/components/packet_interface/#addressing) and [session](/components/packet_interface/#session) layers
 itself, and those layers cannot be added to it. Components such as [entity transport](/components/entity_transport/)
 are told when the connection comes up or goes down, as they would be by a session layer. The
-[encryption](/components/packet_interface/#encryption) and [fragmentation](/components/packet_interface/#fragmentation)
-layers can be added, but not the encryption layer's rolling code, which needs the keep-alives of a session layer.
+[encryption](/components/packet_interface/#encryption), [fragmentation](/components/packet_interface/#fragmentation)
+and [compression](/components/packet_interface/#compression) layers can be added, but not the encryption layer's
+rolling code, which needs the keep-alives of a session layer.
 
 Each packet is sent with its length in front. When nothing else has been sent for `keep_alive`, an empty packet is
 sent, and if nothing at all has been received for `timeout`, the connection is closed and made again.
@@ -29,16 +30,20 @@ second later.
 
 ## Example Configuration
 
+On the device that connects:
+
 ```yaml
-# The device that connects
 packet_interface:
   - platform: tcp
     id: tcp_link
     host: 192.168.1.50
     port: 6070
     encryption: !secret tcp_link_key
+```
 
-# The device it connects to
+On the device it connects to:
+
+```yaml
 packet_interface:
   - platform: tcp
     id: tcp_link
@@ -60,14 +65,15 @@ packet_interface:
 - **keep_alive** (*Optional*, [Time](/guides/configuration-types/#time)): How often to send an empty packet when
   nothing else is sent. From `1s` to `1h`. Defaults to `10s`.
 - **timeout** (*Optional*, [Time](/guides/configuration-types/#time)): How long the link waits without receiving
-  anything before it closes the connection. It must be longer than the other device's `keep_alive`, as that sets how
-  often packets arrive on an idle link; set it when the two devices have different `keep_alive` values. At most `3h`.
-  Defaults to three times `keep_alive`.
+  anything before it closes the connection. It must be longer than this device's `keep_alive`, which is checked, and
+  longer than the other device's `keep_alive`, which sets how often packets arrive on an idle link; set it when the
+  two devices have different `keep_alive` values. At most `3h`. Defaults to three times `keep_alive`.
 - **connected** (*Optional*): A [binary sensor](/components/binary_sensor/) that is ON while the connection is up,
   and OFF from boot until it first comes up.
   All options from [Binary Sensor](/components/binary_sensor/#config-binary_sensor).
-- **max_packet_size** (*Optional*, int): The largest packet, in bytes, that can be sent or received. Range is 16 to
-  1022. Defaults to `1022`. Use a [fragmentation layer](/components/packet_interface/#fragmentation) for larger packets.
+- **max_packet_size** (*Optional*, int): The largest packet, in bytes, that can be sent or received. A larger packet
+  received closes the connection, so set the same value on both devices. Range is 16 to 1022. Defaults to `1022`. Use
+  a [fragmentation layer](/components/packet_interface/#fragmentation) for larger packets.
 - **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation.
 
 A server accepts only one client at a time. If the client restarts, the server closes the old connection when it

@@ -38,7 +38,8 @@ espnow:
 packet_interface:
   - platform: espnow
     id: espnow_link
-    peer_address: 11:22:33:44:55:66
+    # The MAC address of the other device
+    peer_address: 10:22:33:44:55:66
     encryption: !secret espnow_link_key
     reliability:
     session:
@@ -47,10 +48,11 @@ packet_interface:
 ## Configuration Variables
 
 - **peer_address** (*Optional*, MAC address): The MAC address of the device to exchange packets with. Defaults to
-  `FF:FF:FF:FF:FF:FF`, which broadcasts to every device.
+  `FF:FF:FF:FF:FF:FF`, which broadcasts to every device. A group address, or `00:00:00:00:00:00`, is rejected.
 - **espnow_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the [ESP-NOW](/components/espnow/)
   component to use.
-- **max_packet_size** (*Optional*, int): The largest packet, in bytes, that can be sent or received. It cannot be
+- **max_packet_size** (*Optional*, int): The largest packet, in bytes, that can be sent or received. A larger packet
+  received is dropped, with a warning, so set the same value on both devices. Range is 16 to 1470, and it cannot be
   larger than the `max_payload_size` of the `espnow` component. Defaults to `250`. Use a
   [fragmentation layer](/components/packet_interface/#fragmentation) for larger packets.
 - **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation.

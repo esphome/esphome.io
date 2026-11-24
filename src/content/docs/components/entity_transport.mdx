@@ -41,17 +41,21 @@ sensor:
 ## Configuration Variables
 
 - **packet_interface** (**Required**, [ID](/guides/configuration-types/#id)): The
-  [packet interface](/components/packet_interface/) to send and receive states on.
+  [packet interface](/components/packet_interface/) to send and receive states on. With addressing `peers`, the ID
+  of one of the peers.
 - **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation. Needed
   when there is more than one entity transport.
 - **sensors** (*Optional*, list): The sensors whose states are sent. Each entry is either the ID of a sensor, or:
 
   - **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the sensor.
-  - **broadcast_id** (*Optional*, string): The ID that other devices use for this sensor. Defaults to `id`.
+  - **broadcast_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID that other devices use for this
+    sensor, of up to 255 characters. Defaults to `id`.
 
 - **binary_sensors** (*Optional*, list): The binary sensors whose states are sent, in the same form as `sensors`.
 
-  There can be up to 255 sensors and 255 binary sensors.
+  There can be up to 255 sensors and 255 binary sensors. The IDs sent, `broadcast_id` or else `id`, must be
+  different for each sensor, and for each binary sensor. The device name and the longest ID sent must fit in one
+  packet; otherwise the component is marked failed at boot.
 - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): Send the dictionary and the states of
   all sensors and binary sensors at this interval, as well as when they change. At least `1s`, or `never`. Defaults
   to `never` if the packet interface has both a [reliability layer](/components/packet_interface/#reliability) and a
@@ -92,7 +96,7 @@ upsetting older ones.
   seconds. The other device then sends its dictionary and all states. This also happens when the other device's
   dictionary changes, for example after it is updated with other sensors, or when one packet of a dictionary sent in
   several packets is lost. A dictionary received in full is not asked for again, even if it names none of the
-  device's sensors.
+  device's sensors. The last 8 dictionaries received in full are remembered.
 - When a provider's dictionary has been received in full and does not name a remote sensor that gives that provider,
   a warning is logged, and the sensor has no state. Check its `provider` and `remote_id`. The name of each device
   whose dictionary is received in full is logged at debug level, which shows a misspelled `provider`.
@@ -120,7 +124,7 @@ binary_sensor:
 - **provider** (**Required**, string): The name of the device that sends the state, as set by `name` in its
   `esphome:` section.
 - **remote_id** (*Optional*, string): The ID of the sensor on the other device, or its `broadcast_id` if it has
-  one. Required unless `id` is given, in which case it defaults to `id`.
+  one, of up to 255 characters. Required unless `id` is given, in which case it defaults to `id`.
 - **entity_transport_id** (*Optional*, [ID](/guides/configuration-types/#id)): The entity transport to receive the
   state from. Needed when there is more than one.
 - All other options from [Sensor](/components/sensor/#config-sensor) or
