@@ -383,6 +383,44 @@ switch:
       name: "AC X-Fan"
 ```
 
+#### Vertical vane position
+
+The `gree` climate platform also provides a [Select](/components/select/) for the raw vertical vane position.
+This is useful for remotes such as the YAW1F9, which can select ten positions even though the climate entity only
+exposes `off`, `vertical`, `horizontal`, and `both` swing modes.
+
+```yaml
+# Example configuration entry for the vertical vane select
+select:
+  - platform: gree
+    gree_id: my_gree_ac
+    name: "AC Vertical Swing"
+```
+
+- **gree_id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the `gree` climate to which the select
+  belongs.
+
+The select has the following options:
+
+- `Default` (`0x00`)
+- `Full Swing` (`0x01`)
+- `Fixed Upper` (`0x02`)
+- `Fixed Upper Middle` (`0x03`)
+- `Fixed Middle` (`0x04`)
+- `Fixed Lower Middle` (`0x05`)
+- `Fixed Lower` (`0x06`)
+- `Swing Lower` (`0x07`)
+- `Swing Middle` (`0x09`)
+- `Swing Upper` (`0x0B`)
+
+The selected position is kept when the temperature, mode, or fan speed changes, and it is updated when the physical
+remote sends a new position. Selecting `Full Swing`, `Swing Lower`, `Swing Middle`, or `Swing Upper` sets the climate
+swing mode to vertical; selecting a fixed position turns vertical swing off.
+
+> [!NOTE]
+> The ten positions were captured from a YAW1F9 remote on a unit using the `yac1fb9` frame format. Other remotes and
+> models may not support every position.
+
 <span id="haier_tundra"></span>
 
 ### `haier_tundra`
