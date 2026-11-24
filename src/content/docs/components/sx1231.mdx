@@ -58,8 +58,9 @@ sx1231:
 - **bitsync** (*Optional*, boolean): Enables the receive bit synchronizer. It cannot be turned off in packet mode.
   Recommended in continuous mode, however if there is no preamble plus high noise it may be better to turn it off.
   Defaults to `true`.
-- **rx_start** (*Optional*, boolean): Start the receiver automatically on boot and after transmitting. If turned off
-  the radio sleeps instead. Defaults to `true`.
+- **rx_start** (*Optional*, boolean): Start the receiver automatically on boot. If turned off the radio sleeps
+  instead. After sending a packet the radio returns to this mode, or to the mode last set with a mode action.
+  Defaults to `true`.
 - **rx_floor** (*Optional*, float): Signal strength in dBm that a signal must reach before the receiver starts on a
   packet, from -127 to -1. If set too high (closer to 0) weak packets are missed. If set too low (closer to -127)
   noise starts the receiver more often. Defaults to `-94`.
@@ -116,10 +117,11 @@ sx1231:
 ## Actions
 
 > [!NOTE]
-> Mode actions (`sx1231.set_mode_*`) are ignored, with a warning in the log, while a packet is being sent. If the radio
-> does not enter a requested mode, its configuration is applied again every second until it succeeds, and mode actions
-> are ignored until then. `sx1231.send_packet` logs the reason when a packet cannot be sent. A packet is not sent while
-> a received packet is waiting to be read, so the received packet is not lost.
+> After a packet is sent the radio returns to the mode last set with a mode action (`sx1231.set_mode_*`), or to the
+> mode `rx_start` gives if none was used. If the radio does not enter a requested mode, its configuration is applied
+> again every second until it succeeds, and mode actions are ignored, with a warning in the log, until then.
+> `sx1231.send_packet` logs the reason when a packet cannot be sent. A packet is not sent while a received packet is
+> waiting to be read, so the received packet is not lost.
 
 ### `sx1231.set_mode_tx` Action
 
