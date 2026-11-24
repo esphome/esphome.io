@@ -178,9 +178,10 @@ openthread:
   network_key: !secret thread_network_key
 ```
 
-Any Wi-Fi-capable ESP32 can instead use an external OpenThread Radio Co-Processor (RCP) over UART. The
-co-processor runs OpenThread RCP firmware, for instance ESP-IDF's `examples/openthread/ot_rcp` on an ESP32-H2,
-built for the same UART speed as `baud_rate`; a mismatch gives a co-processor that never answers.
+Any Wi-Fi-capable ESP32, or an ESP32-P4 with `backbone: ethernet`, can instead use an external OpenThread Radio
+Co-Processor (RCP) over UART. The co-processor runs OpenThread RCP firmware, for instance ESP-IDF's
+`examples/openthread/ot_rcp` on an ESP32-H2, built for the same UART speed as `baud_rate`; a mismatch gives a
+co-processor that never answers.
 
 ```yaml
 openthread:
@@ -193,10 +194,10 @@ openthread:
 ```
 
 With `backbone: ethernet`, border routing runs over the [Ethernet Component](/components/ethernet/) instead, with the
-native radio or an RCP on the chips above, or with an RCP on an ESP32-P4. It follows the Ethernet link: border routing
-pauses while the link is down and restarts when it returns, and it does not move to Wi-Fi. Wi-Fi is optional; it can
-be left out, or kept as a fallback uplink for the device itself with a `priority` list, see
-[Multi-Interface Support](/components/network/#multi-interface-support).
+native radio on ESP32-C5, ESP32-C6 or ESP32-S31, or with an RCP on any Wi-Fi-capable ESP32 or an ESP32-P4. It follows
+the Ethernet link: border routing pauses while the link is down and restarts when it returns, and it does not move to
+Wi-Fi. Wi-Fi is optional; it can be left out, or kept as a fallback uplink for the device itself with a `priority` list,
+see [Multi-Interface Support](/components/network/#multi-interface-support).
 
 ```yaml
 openthread:
