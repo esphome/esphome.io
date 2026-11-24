@@ -186,7 +186,7 @@ jobs:
                 repo,
                 pull_number: pr_number,
                 event: 'REQUEST_CHANGES',
-                body: 'As this is a feature matched with a PR in https://github.com/esphome/esphome, please target your PR to the `next` branch and rebase.'
+                body: 'As this is a feature matched with a PR in https://github.com/esphome/esphome, please target your PR to the `next` branch and rebase. If the linked PR is only a reference, not the parent of this change, a maintainer can add the `base-branch-ok` label instead.'
               });
             } else {
               // Check if we should dismiss any existing review from this bot
@@ -212,7 +212,9 @@ jobs:
                   repo,
                   pull_number: pr_number,
                   review_id: botReview.id,
-                  message: 'Base branch has been corrected - dismissing previous review.'
+                  message: baseBranchOk
+                    ? 'base-branch-ok label set - dismissing previous review.'
+                    : 'Base branch has been corrected - dismissing previous review.'
                 });
               }
             }
