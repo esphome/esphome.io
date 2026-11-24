@@ -293,8 +293,10 @@ const reading = post.source ? `Shared from the ${post.source}` : `${post.reading
     margin-left: -8px;
   }
 
-  /* Featured: the cover keeps its own shape, uncropped. From 1200px wide it sits on the left with
-     the text centred beside it; below that the text goes under it. */
+  /* Featured: the cover keeps its own shape, uncropped, with the text under it. From 1200px wide it
+     sits on the left with the text centred beside it. There the cover's own shape sets the row's
+     minimum height and the cover stretches to fill the row, so when the text column is a little
+     taller the image is cropped by a few pixels instead of leaving bands of card background. */
   .featured .cover {
     grid-template: auto / 100%;
     aspect-ratio: auto;
@@ -318,14 +320,19 @@ const reading = post.source ? `Shared from the ${post.source}` : `${post.reading
     .featured {
       display: grid;
       grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
-      align-items: center;
     }
 
     .featured .cover {
+      grid-template: 100% / 100%;
       border-bottom: 0;
     }
 
+    .featured .cover :global(.cover-image) {
+      height: 100%;
+    }
+
     .featured .body {
+      justify-content: center;
       padding: 2rem 2.5rem;
     }
 
