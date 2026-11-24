@@ -103,8 +103,8 @@ uart:
 
 ## Hardware UARTs
 
-Whenever possible, ESPHome will use the hardware UART unit on the ESP8266 for fast and accurate communication.
-When the hardware UARTs are all occupied, ESPHome will fall back to a software implementation that may not
+Whenever possible, ESPHome will use a hardware UART for fast and accurate communication. On the ESP8266 and on
+RTL8710B chips, when no hardware UART is available, ESPHome will fall back to a software implementation that may not
 be accurate at higher baud rates.
 
 `UART0` is (by default) used by the [logger component](/components/logger/), using `tx_pin: GPIO1` and
@@ -119,8 +119,31 @@ The ESP8266 has two UARTs; the second of which is TX-only. Only a limited set of
 use either `tx_pin: GPIO1` and `rx_pin: GPIO3`, or `tx_pin: GPIO15` and `rx_pin: GPIO13`. `UART1` must
 use `tx_pin: GPIO2`. Any other combination of pins will result in use of a software UART.
 
+On [LibreTiny](/components/libretiny/) boards (BK72xx, RTL87xx, LN882x), each hardware UART can only use the pins
+that the board assigns to it. The `Pin functions` table of the board in the
+[LibreTiny documentation](https://docs.libretiny.eu/link/boards) shows them as `TX0`, `RX0`, `TX1` and so on.
+
+- Some RTL8720C boards, such as the WBR3 and the BW15, offer more than one pin for a UART. For example, `UART0` of
+  the WBR3 can use `PA11` or `PA14` for TX and `PA12` or `PA13` for RX. Any of the listed pins can be used. This
+  requires LibreTiny 1.12.0 or later. A direction (TX or RX) that has more than one pin has no default, so its pin
+  must be set; a direction with a single pin can still be left out.
+- If the configured pins do not belong to a hardware UART, the configuration is rejected, and the error message lists
+  the pin numbers that each UART can use. RTL8710B chips are the exception: they use a software UART for other pins.
+- Each hardware UART can only be used by one `uart` entry.
+
 > [!NOTE]
-> The Software UART is only available on the ESP8266. It is not available on ESP32 and variants.
+> The Software UART is only available on the ESP8266 and on RTL8710B chips. It is not available on ESP32 and variants.
+
+> [!WARNING]
+> Above 38400 baud, the Software UART turns interrupts off for most of each byte it sends. Bytes whose bits change
+> on nearly every bit, such as `0x55`, keep them off the longest. If most of the data sent is made of such
+> bytes, Wi-Fi load can still reset the ESP8266 with a hardware watchdog. Use `UART1` (`tx_pin: GPIO2`) for
+> transmit-heavy links like this.
+>
+> Such a reset looks like a reboot with nothing in the log before it: the device drops off the network for a few
+> seconds and its uptime starts again from zero. To confirm the cause, add the [debug component](/components/debug/)
+> with a `reset_reason` text sensor. After this reset it reads `Hardware Watchdog`, and the debug info in the
+> device log shows `Reset Reason: Hardware Watchdog`.
 
 ## `uart.write` Action
 

@@ -170,10 +170,11 @@ Only on `ESP32`:
   Defaults to `generic`.
 - **endpoint** (*Optional*, int): Endpoint number in the range from 1 to 239. This defines which entity goes
   on which endpoint, giving a more stable configuration and letting you manually combine entities that logically
-  belong together. Only entities that map to different Zigbee clusters can be combined (for example
+  belong together. Usually, only entities that map to different Zigbee clusters can be combined (for example
   a `binary_sensor` and a `sensor`); two entities of the same type, such as two sensors, cannot share an
   endpoint unless `cluster: device_class` maps them to different clusters (for example a temperature and
-  a humidity sensor). If more than one entity on an endpoint has a Zigbee device type, set
+  a humidity sensor) or they map to different attributes on the same cluster (for example voltage and battery sensors
+  with `cluster: power_config`). If more than one entity on an endpoint has a Zigbee device type, set
   `use_device_type: true` on one of them.
 - **use_device_type** (*Optional*, boolean): Use the Zigbee Home Automation device type of this entity for the endpoint.
   Some entities have a
@@ -190,8 +191,9 @@ The following components are exposed over Zigbee if they have a name and if they
 - [Binary Sensor](/components/binary_sensor/#config-binary_sensor): only **state** and **name** (not with `cluster: device_class`)
   are exposed over Zigbee.
 
-- [Sensor](/components/sensor/#config-sensor): **state**, **name** (not with `cluster: device_class`) and **unit_of_measurement**
-  are exposed over Zigbee. If no unit is given or if it is not supported it will fall back to unitless.
+- [Sensor](/components/sensor/#config-sensor): **state**, **name** (not with `cluster: device_class` or
+  `cluster: power_config`) and **unit_of_measurement** are exposed over Zigbee. If no unit is given or
+  if it is not supported it will fall back to unitless.
 
 - [Switch](/components/switch/#config-switch): only **state** and **name** (not with `cluster: on_off`) are exposed over Zigbee.
 
@@ -212,8 +214,7 @@ device class.
 
 [Sensors](/components/sensor/#config-sensor) are implemented by default as analog input clusters with description,
 engineering_units, and present_value attributes. On `ESP32` additionally the application type and resolution
-attributes are set if applicable. `cluster: device_class` is supported for `temperature`, `humidity`,
-`atmospheric_pressure`, `pressure`, `volume_flow_rate`, `illuminance`, `pm25`, and `carbon_dioxide` device classes.
+attributes are set if applicable.
 
 #### Additional configuration variables
 
@@ -221,6 +222,19 @@ attributes are set if applicable. `cluster: device_class` is supported for `temp
   the unit of the component is used and if the component does not set a unit, values are unitless.
   Only a limited set of units is supported. Unsupported units will revert to unitless.
   This is exposed as the Zigbee engineering units attribute.
+
+Only on `ESP32`:
+
+- **cluster** (*Optional*, enum): One of `generic`, `device_class`, and `power_config`. `device_class`
+  is supported for `temperature`, `humidity`, `atmospheric_pressure`, `pressure`, `volume_flow_rate`,
+  `illuminance`, `pm25`, and `carbon_dioxide` device classes and uses the corresponding measurement
+  clusters. `power_config` is supported for `battery` and `voltage` device classes and should only be
+  used for the device's own battery. This cluster should be used only on the first endpoint which is
+  automatically applied if `endpoint` is not set explicitly.
+  Defaults to `generic`.
+
+> [!NOTE]
+> Battery voltage is currently not detected by Z2M and ZHA adds it as an extra attribute to the battery entity.
 
 ### Switch
 

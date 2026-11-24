@@ -18,13 +18,14 @@ nrf52:
 
 - **board** (*Required*, string): The board type. Valid options are `adafruit_feather_nrf52840`,
   `adafruit_feather_nrf52832`, `adafruit_itsybitsy`, `xiao_ble`, `nrf52840dongle`, `nrf54lm20dk` (experimental),
-  `nrf54l15dk` (experimental). Other boards should work with
+  `nrf54l15dk` (experimental), `xiao_nrf54lm20a` (experimental). Other boards should work with
   those configuration as well. `adafruit_itsybitsy` was called `adafruit_itsybitsy_nrf52840` before sdk-nrf 2.7
   (Zephyr 3.7); both names are accepted, and older versions, including the `toolchain: platformio` default,
   need the old one.
   ESPHome takes the chip (nRF52840, nRF52832, nRF54LM20 or nRF54L15) from the board name; the chip decides which
   [pins](#gpio-pin-numbering) are valid. `nrf54lm20dk` and `nrf54l15dk` are short names for the
   Zephyr boards `nrf54lm20dk/nrf54lm20a/cpuapp` and `nrf54l15dk/nrf54l15/cpuapp`; both forms are accepted.
+  `xiao_nrf54lm20a` builds on the nRF54LM20 DK's Zephyr board with the XIAO's pins.
   `adafruit_feather_nrf52832` is built on the Zephyr board `nrf52dk/nrf52832`, see
   [Adafruit Feather nRF52832](#adafruit-feather-nrf52832).
 - **bootloader** (*Optional*, string): Bootloader type. Valid options are `mcuboot`, `adafruit`,
@@ -81,9 +82,21 @@ with the J-Link tools. This needs the `sdk-nrf` toolchain (the default); it does
 
 ESPHome resets the chip after flashing, so the new firmware starts straight away.
 
+When `bootloader` is `mcuboot` (the default on the nRF54 boards), you can also choose the J-Link's serial port
+instead of `JLINK`; ESPHome then flashes through the J-Link that port belongs to.
+
 If the J-Link output says that the chip is protected, the chip must be erased (recovered) once, for example with
 Nordic's [nRF Connect for Desktop](https://www.nordicsemi.com/Products/Development-tools/nRF-Connect-for-Desktop)
 Programmer or `nrfutil device recover`. Then flash again.
+
+## Flashing with a CMSIS-DAP Probe
+
+Boards with a built-in CMSIS-DAP debugger, such as the Seeed XIAO nRF54LM20A, are flashed through it when you
+run `esphome upload yourfile.yaml` and choose the board's serial port. This needs `bootloader`
+to be `mcuboot`, the default on the nRF54 boards.
+
+If flashing fails because the chip is locked, the upload error prints a `pyocd erase ... --mass` command that
+uses ESPHome's own pyOCD and the selected probe. Run it once, then upload again.
 
 ## Flashing with Adafruit nRF52 Bootloader
 
@@ -216,6 +229,8 @@ nrf52:
   [Flashing with a SEGGER J-Link](#flashing-with-a-segger-j-link).
 - Logs go to UART0 by default, which is the J-Link virtual COM port on the **IMCU** USB port.
 - The hardware watchdog is turned on automatically.
+- [I²C](/components/i2c/) uses the TWIM21 peripheral, which can only use pins in its own power domain, all on one
+  port: put `sda` and `scl` both on port 1 or both on port 3. ESPHome rejects other pins.
 
 The buttons on the DK pull their pin to ground when pressed, so set `inverted: true` and turn on the pull-up.
 The LEDs light up when their pin is high. For example:
@@ -237,6 +252,29 @@ output:
     id: led0
 ```
 
+## Seeed XIAO nRF54LM20A
+
+> [!WARNING]
+> Support for the nRF54LM20A is experimental.
+
+The Seeed XIAO nRF54LM20A is supported with `board: xiao_nrf54lm20a`.
+
+```yaml
+nrf52:
+  board: xiao_nrf54lm20a
+```
+
+> [!IMPORTANT]
+> The board has no built-in antenna. Connect an external 2.4 GHz antenna, or Bluetooth, Thread and Zigbee will
+> not work.
+
+- As on the DK, it needs sdk-nrf **3.4.1** or newer and the `sdk-nrf` toolchain; `toolchain: platformio` is
+  rejected.
+- Logs go to UART0 by default, which is the board's USB serial port.
+- Flash it over USB, see [Flashing with a CMSIS-DAP Probe](#flashing-with-a-cmsis-dap-probe).
+- [I²C](/components/i2c/) uses the TWIM21 peripheral, as on the DK. Put `sda` and `scl` both on port 1 or both on
+  port 3.
+
 ## Nordic nRF54L15 DK
 
 > [!WARNING]
@@ -255,6 +293,8 @@ nrf52:
 - Flash the board through the on-board J-Link debugger, see
   [Flashing with a SEGGER J-Link](#flashing-with-a-segger-j-link).
 - The hardware watchdog is turned on automatically.
+- [I²C](/components/i2c/) uses the TWIM21 peripheral, which can only use pins in its own power domain: put `sda`
+  and `scl` on port 1. ESPHome rejects pins on other ports.
 
 ## GPIO Pin Numbering
 
