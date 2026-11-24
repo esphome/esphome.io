@@ -126,7 +126,8 @@ one call of its callback, if one was given (it may be `nullptr`), with a `canope
 write, and `data` / `len` for a successful `read_sdo_data()` (valid only during the callback; otherwise `nullptr` and
 0). A rejected request (queue full, invalid arguments, failed component) calls back before the call returns `false`.
 Requests made at boot, before the component is set up, wait in the queue; if the setup fails (for example on a failed
-CAN bus), they are rejected then.
+CAN bus), they are rejected then. A node's SDO channel is shared with any other client, and late answers can reach a
+later request; see [Shared SDO Channel](#shared-sdo-channel).
 
 ```cpp
 // value read with a width check: a different width gives SIZE_MISMATCH
