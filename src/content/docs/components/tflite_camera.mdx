@@ -8,7 +8,8 @@ camera's JPEG frames with `camera_decoder`, scales them to the model's input wit
 pipeline, and runs the model through `tflite_micro_runtime`. A frame that arrives before `min_interval`
 has elapsed is dropped.
 
-The camera must publish JPEG frames; set `pixel_format: JPEG` on the `esp32_camera`.
+The camera must publish JPEG frames: set `pixel_format: JPEG` on the `esp32_camera`, or enable conversion
+with a nonzero `jpeg_quality` on a camera that outputs another format.
 
 > [!NOTE]
 > This component runs one model on the whole frame. It does not crop the frame or run several
@@ -29,8 +30,6 @@ tflite_camera:
     input_width: 32
     input_height: 20
     input_channels: 1
-    frame_width: 640
-    frame_height: 480
     min_interval: 1s
     decoder_id: digit_decoder
     on_result:
@@ -47,13 +46,16 @@ tflite_camera:
   inferences. Frames that arrive sooner are dropped. Defaults to `1ms`.
 - **rotation** (*Optional*, integer): Rotate the decoded frame by `0`, `90`, `180` or `270` degrees.
   Defaults to `0`. The camera decoder requires both frame dimensions to be multiples of 8 when rotating.
+  The decoded frame size after rotation is what the pipeline scales from, so `frame_width` and
+  `frame_height` are not set here.
 - **id** (*Optional*, [ID](/guides/configuration-types/#id)): The runtime helper for this model.
 - **decoder_id** (*Optional*, [ID](/guides/configuration-types/#id)): The classification decoder; set it to
   read the result from a lambda.
 - **model** (**Required**, string or dictionary): The `.tflite` model, resolved by `tflite_model_source`.
 - **input_type**, **input_width**, **input_height**, **input_channels**, **input_order**, **normalize**,
   **invert**: The model's input format, as for [`tflite_image`](/components/tflite_image/).
-- **frame_width**, **frame_height**: The camera frame size; the pipeline scales it to the model's input.
+- **frame_width**, **frame_height**: Not accepted; the pipeline takes the frame size from the decoded
+  camera frame.
 - **output_processing**, **scale_factor**: How the output tensor becomes a class and a confidence.
 - **tensor_arena_size**, **debug**: The arena size and the runtime diagnostics.
 - **on_result** (*Optional*, [Automation](/automations/)): Actions to run after a successful inference.

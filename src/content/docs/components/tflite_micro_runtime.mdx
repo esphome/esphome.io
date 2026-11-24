@@ -201,17 +201,19 @@ configuration of their own; `tflite_op_processor` also accepts an `operators:` l
   after probing, and the bytes the tensors actually occupy. A probe result above or below this size is logged
   as a warning. For a streaming model the estimate covers the model's tensors only, so set this option when
   the consumer keeps state outside them.
-- **on_result** (*Optional*, [Automation](/automations/)): Actions to run after a successful inference,
-  once the decoder holds the result. Read it through `decoder_id`.
+- **on_result** (*Optional*, [Automation](/automations/)): Actions to run after a successful inference. They
+  are dispatched from the main loop once the result is decoded, so an action can start another inference. A
+  kind's decoder holds the result; a raw model without a decoder exposes it through `get_last_result()`.
 - **debug** (*Optional*, boolean): Enable debug logging and diagnostic features for this instance. Defaults to
   `false`. The diagnostics are always compiled in; this flag turns them on for this instance, so it reports
   the model architecture, its input and output tensors, and the memory status.
 
-### Image Model Configuration Variables
+### Options added by the image kinds
 
-The `tflite_image` component adds the following variables to describe the model's expected input format.
-The input shape and data type are read from the model itself, and any of them can be set explicitly; a
-value set in YAML wins over the model.
+These options are set on the kind entry (`tflite_image`, `tflite_camera`, ...), not on a
+`tflite_micro_runtime:` entry. They describe the model's expected input format and its output. The input
+shape and data type are read from the model itself, and any of them can be set explicitly; a value set in
+YAML wins over the model. Each kind page lists the same options with its own examples.
 
 - **input_type** (*Optional*, string): Input tensor data type. One of `"uint8"` or `"float32"`. Read from the
   model's input tensor.
@@ -520,11 +522,10 @@ struct ProcessedOutput {
 
 | Method                              | Description                                         |
 |-------------------------------------|-----------------------------------------------------|
-| `set_model(data, size)`             | Set the TFLite model data pointer and size.         |
+| `set_model(data, size, crc)`        | Set the model data, its size and its expected CRC32 in one step (0 = skip verification). |
 | `set_tensor_arena_size(size)`       | Request a specific tensor arena size in bytes.      |
 | `set_output_processing(strategy)`   | Set the output post-processing strategy.            |
 | `set_scale_factor(factor)`          | Set the output scale factor.                        |
-| `set_expected_crc32(crc)`           | Set the expected CRC32 checksum for model integrity verification (0 = skip). |
 | `set_debug(bool)`                   | Enable or disable debug diagnostics.                |
 | `load_model()`                      | Load the model, verify CRC32, allocate arena, and initialize the interpreter. |
 | `unload_model()`                    | Unload the model and free resources.                |
@@ -534,12 +535,31 @@ struct ProcessedOutput {
 | `run_inference_on_buffer(src_data, src_size)` | Run inference without processing the output. |
 | `input_tensor()`                    | Get the input `TfLiteTensor` (for writing data).    |
 | `output_tensor()`                   | Get the output `TfLiteTensor` (for reading results). |
+| `get_last_result()`                 | Get the `ProcessedOutput` of the current notification. |
 | `get_model_spec()`                  | Get the `ModelSpec` describing input dimensions and type. |
 | `get_arena_stats()`                 | Get tensor arena utilization statistics.            |
 | `report_memory_status()`            | Print memory allocation details to the log.         |
 
-`run_inference()` fills a `ProcessedOutput` (`value` and `confidence`); `run_inference_on_buffer()` skips
-output processing and returns `true` on success.
+`run_inference()` fills a `ProcessedOutput` (`value` and `confidence`), decodes the same output into the
+attached decoder, and exposes it through `get_last_result()`; `run_inference_on_buffer()` skips output
+processing and returns `true` on success.
+
+#### Raw inference session
+
+`input_tensor()`, `invoke()` and `output_tensor()` take the lifecycle lock one call at a time, so another task
+can unload the model between them. A consumer that fills the input itself holds the lock across the whole block
+with `InferenceSession`:
+
+```cpp
+InferenceSession session(&tflite);
+if (!session.valid())
+  return;
+TfLiteTensor *input = session.input_tensor();
+memcpy(input->data.raw, buffer, buffer_size);
+if (session.invoke() != kTfLiteOk)
+  return;
+const TfLiteTensor *output = session.output_tensor();
+```
 
 #### Image Input Pipeline
 
@@ -580,7 +600,7 @@ TFLiteMicroHelper tflite;
 
 // Configure model specifics. In YAML the tflite_image kind sets the input pipeline;
 // a raw consumer fills input_tensor() itself.
-tflite.set_model(my_model_data, my_model_size);
+tflite.set_model(my_model_data, my_model_size, my_model_crc32);  // 0 skips the check
 tflite.set_tensor_arena_size(200 * 1024);  // 200KB arena
 tflite.set_debug(true);
 
@@ -615,7 +635,7 @@ using tflite_model_loader::ModelHandler;
 // In your component setup:
 TFLiteMicroHelper tflite;
 
-tflite.set_model(my_model_data, my_model_size);
+tflite.set_model(my_model_data, my_model_size, my_model_crc32);  // 0 skips the check
 tflite.set_defer_load(true);
 tflite.set_probability_cutoff(0.5f);
 tflite.set_sliding_window_size(10);
