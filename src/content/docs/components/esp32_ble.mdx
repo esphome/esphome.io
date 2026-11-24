@@ -107,13 +107,16 @@ esp32_ble:
 - **use_psram** (*Optional*, boolean): Requests that the Bluetooth stack allocate its memory buffers from PSRAM instead of internal RAM, freeing approximately 40 kB for other uses. Defaults to `false`. Requires PSRAM to be configured.
 
 - **classic_bt** (*Optional*, boolean): Enable the Bluetooth Classic controller alongside BLE on the original ESP32
-  with the ESP-IDF framework. Defaults to `false`. Other ESP32 variants and the Arduino framework are not supported.
+  with a local controller, using either the ESP-IDF or Arduino framework. Defaults to `false`.
 
 - **classic_max_acl_connections** (*Optional*, integer): Maximum number of simultaneous Bluetooth Classic BR/EDR ACL
   connections, from `1` to `7`. Defaults to `1`. Requires `classic_bt: true`.
 
-These options make the controller available to components that use Bluetooth Classic. They do not create a Classic
-connection on their own.
+Components use this controller to initiate Bluetooth Classic connections.
+
+In dual mode, Bluedroid shares up to nine slots between BLE and Classic. ESPHome reserves one slot for
+BLE advertising and scanning. Choose limits so that `max_connections + classic_max_acl_connections + 1`
+is at most `9`. For example, three BLE connections and two Classic connections use six slots.
 
 ```yaml
 esp32:
@@ -128,7 +131,7 @@ esp32_ble:
 
 ## `ble.disable` Action
 
-This action turns off the BLE interface on demand.
+This action turns off the BLE interface on demand. In dual mode, it also stops Bluetooth Classic and closes active Classic connections.
 
 ```yaml
 on_...:
