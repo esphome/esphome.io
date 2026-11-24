@@ -287,17 +287,17 @@ const sizes = featured
   }
 
   /* Featured: image on the left, text on the right; stacks like a normal card below 75rem.
-     Covers carry lettering up to their edges, so the cover keeps its own aspect ratio rather than
-     stretching to the text column's height, which cropped it. Below 75rem the text column is taller
-     than the image, so the card stacks there instead. When the text is a little taller above that,
-     the cover sits centred and the divider on the text column still spans the full height. */
+     Covers carry lettering up to their edges. Below 75rem the text column is much taller than the
+     image, and stretching the cover to match cropped that lettering, so the card stacks there.
+     Above it the cover's aspect ratio sets the row's minimum height, and align-self: stretch fills
+     the row when the text is a little taller, cropping only a few pixels rather than leaving a gap. */
   .featured {
     display: grid;
     grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
   }
 
   .featured .cover {
-    align-self: center;
+    align-self: stretch;
     border-bottom: 0;
   }
 
