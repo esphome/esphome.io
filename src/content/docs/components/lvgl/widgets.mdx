@@ -981,7 +981,8 @@ Y values at evenly spaced X positions. Scatter series use explicit X/Y points.
   - **max_value** (*Optional*, int): Maximum axis value. Defaults to `100`.
 
   **min_value** and **max_value** must not be equal. If either value is a lambda and they are equal at run time,
-  **max_value** is raised by one.
+  **max_value** is raised by one. **x_axis** and **secondary_x_axis** only affect `SCATTER` charts; line and bar
+  charts space their points evenly.
 - **series** (*Optional*, list): Series definitions:
   - **id** (*Optional*, [ID](/guides/configuration-types/#id)): Series ID. Needed to update the series with
     `lvgl.chart.series.update`.
@@ -1000,7 +1001,8 @@ Y values at evenly spaced X positions. Scatter series use explicit X/Y points.
 - **indicator** (*Optional*, dict): Settings for the *indicator* part, which draws a marker at each point of a `LINE` or
   `SCATTER` series. Supports [styles](/components/lvgl/#lvgl-styling) such as `width`, `height` and `radius`. The
   series color fills the marker. The default theme draws a small circle at each point; set `width` and `height` to `0`
-  to hide the markers. Line charts also omit them when **point_count** is at least the chart's width in pixels.
+  to hide the markers. Line charts also omit them when **point_count** is at least the chart's content width in
+  pixels.
 - Style options from [Style properties](/components/lvgl/#lvgl-styling) for the background of the chart. The `line_*`
   styles set the division lines.
 
