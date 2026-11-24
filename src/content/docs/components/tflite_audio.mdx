@@ -28,8 +28,8 @@ tflite_audio:
 - **scale_factor** (*Optional*, float): Divides the reported class index for multi-class models. Range
   `0.1`–`100.0`. Defaults to `1.0`.
 
-- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The runtime helper for this model. Set it
-  when a lambda or another component references the instance.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The `TFLiteAudio` instance. Set it when a lambda
+  or another component references the instance; a streaming consumer reads the tuning values from it.
 - **decoder_id** (*Optional*, [ID](/guides/configuration-types/#id)): The output decoder. Set it to read
   the decoded result from a lambda.
 - **on_result** (*Optional*, [Automation](/automations/)): Actions to run after a successful inference,
@@ -46,6 +46,22 @@ tflite_audio:
 
 The decoder classifies the windowed probabilities. The model is not loaded at boot: a
 streaming consumer owns the interpreter, the feature extractor and the sliding window.
+
+## C++ API
+
+The entry's id is a `tflite_audio::TFLiteAudio`, which extends the runtime helper. A streaming consumer
+reads the tuning values from it:
+
+| Method                           | Description                                  |
+|----------------------------------|----------------------------------------------|
+| `get_audio_config()`             | The `AudioModelConfig` the YAML set.         |
+| `set_probability_cutoff(f)`      | Set probability threshold (`0.0`–`1.0`, quantized). |
+| `set_sliding_window_size(n)`     | Set sliding window size in frames.           |
+| `set_features_step_size(ms)`     | Set feature extraction step size in ms.      |
+| `set_feature_count(n)`           | Set number of MFCC features.                 |
+
+The audio fields live on this class, not on the shared runtime, so an image, text or raw model does not
+carry them.
 
 ## See Also
 

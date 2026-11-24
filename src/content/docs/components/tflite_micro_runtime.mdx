@@ -570,14 +570,11 @@ The image geometry, channel order, normalization and inversion live in the `tfli
 options; a consumer that fills the input tensor itself sets only the model, the arena and the output
 processing.
 
-#### Audio Model Setters
+#### Audio Configuration
 
-| Method                           | Description                                  |
-|----------------------------------|----------------------------------------------|
-| `set_probability_cutoff(f)`      | Set probability threshold (`0.0`–`1.0`, quantized internally). |
-| `set_sliding_window_size(n)`     | Set sliding window size in frames.           |
-| `set_features_step_size(ms)`     | Set feature extraction step size in ms.      |
-| `set_feature_count(n)`           | Set number of MFCC features.                 |
+The streaming audio tuning values live on `tflite_audio`'s `TFLiteAudio` class, which extends this helper.
+They are described on the [`tflite_audio`](/components/tflite_audio/) page, so the shared runtime carries no
+audio-only state.
 
 #### Arena Accessors
 
@@ -628,28 +625,19 @@ ESP_LOGI("my_component", "Arena: %zu used / %zu total (%.1f%%)",
 ### Example Usage in a Consumer Component (Audio Model)
 
 ```cpp
-#include "esphome/components/tflite_micro_runtime/tflite_micro_runtime.h"
-#include "esphome/components/tflite_model_loader/model_handler.h"
+#include "esphome/components/tflite_audio/tflite_audio.h"
 
-using namespace esphome::tflite_micro_runtime;
-using tflite_model_loader::ModelHandler;
+using esphome::tflite_audio::TFLiteAudio;
 
-// In your component setup:
-TFLiteMicroHelper tflite;
-
-tflite.set_model(my_model_data, my_model_size, my_model_crc32);  // 0 skips the check
-tflite.set_defer_load(true);
-tflite.set_probability_cutoff(0.5f);
-tflite.set_sliding_window_size(10);
-tflite.set_features_step_size(20);
-tflite.set_feature_count(40);
-tflite.set_tensor_arena_size(26 * 1024);
+// The tflite_audio entry creates the instance and applies the YAML tuning values.
+// A consumer holds that pointer and reads the values when it loads the model:
+const tflite_audio::AudioModelConfig &config = model_->get_audio_config();
+// config.probability_cutoff is 0-255, encoded from the YAML percentage.
 ```
 
-A streaming model is not loaded by `load_model()`: `set_defer_load(true)` leaves the load to the consumer, which
+A streaming model is not loaded by `load_model()`: the kind sets `set_defer_load(true)`, so the consumer
 owns the interpreter, the feature extractor and the sliding window, and loads the model into the arena it
-holds. The `tflite_micro_runtime` instance supplies the configuration those components use, which is what the
-YAML above sets.
+holds. The tuning values live on `tflite_audio`'s `TFLiteAudio` class, not on this shared runtime.
 
 ## Debug Features
 
