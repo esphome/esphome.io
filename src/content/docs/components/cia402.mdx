@@ -1,0 +1,139 @@
+---
+title: "CiA 402 Drives"
+description: "Control CANopen drive states, profile-position moves, and stopping."
+---
+
+The `cia402` component controls a drive through an existing [CANopen client](/components/canopen/).
+It uses expedited SDOs to check drive states and acknowledge each step of a command sequence.
+Configure a heartbeat producer on the drive and use `canopen.nmt` to place it in the operational state.
+The component does not start, enable, reset, or move a drive automatically at boot.
+
+```yaml
+cia402:
+  node_id: 32
+  profile_velocity: 1000
+  acceleration: 2000
+  deceleration: 2000
+```
+
+## Configuration Variables
+
+- **id** (*Optional*, ID): ID used by actions and derived device components.
+- **canopen_id** (*Optional*, ID): CANopen client to use.
+- **node_id** (**Required**, integer): Remote node address, from 1 to 127. Only one drive component may own each node.
+- **profile_velocity** (**Required**, integer): Profile speed in the drive's velocity units, from 1 to 2147483647.
+- **acceleration** (**Required**, integer): Acceleration in the drive's acceleration units, from 1 to 2147483647.
+- **deceleration** (**Required**, integer): Profile deceleration, from 1 to 2147483647.
+- **quick_stop_deceleration** (*Optional*, integer): Quick-stop deceleration (`0x6085`), from 1 to 2147483647.
+  Defaults to `deceleration`.
+- **min_position**, **max_position** (*Optional*, integer): Signed 32-bit software position limits (`0x607D:1` and
+  `0x607D:2`). Set both together, with minimum no greater than maximum. The component rejects targets outside this
+  range and writes both limits before profile-position moves. When omitted, existing drive limits are left unchanged.
+- **heartbeat_timeout** (*Optional*, Time): Maximum heartbeat age for accepting and continuing commands.
+  Defaults to `1500ms`. Range: `1ms` to `10min`.
+- **operation_timeout** (*Optional*, Time): Maximum duration of a command sequence. Defaults to `30s`.
+  Range: `1ms` to `10min`. Increase this for longer moves.
+- **update_interval** (*Optional*, Time): Idle polling interval for statusword, operating mode, position, and velocity.
+  Defaults to `500ms`.
+- **on_result** (*Optional*, Automation): Runs when a command completes, fails, is rejected, or is cancelled.
+  The `result` argument is a `cia402::DriveResult`.
+
+Positions use signed 32-bit drive units. Configure the drive's scaling before use; this component does not assume
+millimetres, revolutions, or a particular encoder resolution. Acceleration and velocity must match that scaling.
+
+## Actions
+
+Set an `id`, such as `drive`, to use these actions:
+
+```yaml
+button:
+  - platform: template
+    name: "Enable Drive"
+    on_press:
+      - cia402.enable: drive
+  - platform: template
+    name: "Move Drive"
+    on_press:
+      - cia402.move_to:
+          id: drive
+          position: 1000
+  - platform: template
+    name: "Quick Stop"
+    on_press:
+      - cia402.quick_stop: drive
+```
+
+- **cia402.enable**: Performs shutdown, switch-on, and enable-operation transitions, checking statusword after each.
+  A fault must be reset explicitly first.
+- **cia402.disable**: Cancels the current sequence and writes disable voltage. Torque may be removed immediately.
+- **cia402.halt**: Cancels the current sequence and sets the controlword halt bit.
+- **cia402.controlled_stop**: Alias for `cia402.halt`.
+- **cia402.quick_stop**: Cancels the current sequence and clears the quick-stop controlword bit.
+  The drive's quick-stop option code determines its response.
+- **cia402.fault_reset**: Generates the fault-reset rising edge, waits for the fault bit to clear, and disables voltage.
+  It never enables operation or resumes motion.
+- **cia402.move_to**: Takes **position** (**Required**, templatable integer), an absolute target.
+- **cia402.move_by**: Takes **distance** (**Required**, templatable integer). Reads actual position and adds the distance;
+  overflow is rejected. A previous interrupted target is never used as the starting position.
+- **cia402.apply_configuration**: Checks for a stationary, fault-free drive, then writes profile velocity,
+  acceleration, deceleration, quick-stop deceleration, and any configured position limits. It does not enable motion.
+
+Move actions require an enabled, stationary drive. They check the mode display before starting, use profile-position
+mode and the set-point acknowledgement handshake, and wait for completion.
+
+Actions submit work and return immediately. Wait for `on_result` before issuing the next motion action; commands
+submitted while busy are rejected. Stop actions may interrupt a command. A cancelled command reports
+`DRIVE_RESULT_CANCELLED`, followed by the stop command's result. Stop success confirms its SDO acknowledgement;
+observe velocity to confirm standstill.
+
+Other results are `DRIVE_RESULT_SUCCESS`, `DRIVE_RESULT_REJECTED`, `DRIVE_RESULT_COMMUNICATION_ERROR`,
+`DRIVE_RESULT_TIMEOUT`, `DRIVE_RESULT_FAULT`, and `DRIVE_RESULT_INVALID_RESPONSE`.
+On failure the component attempts a quick stop and does not resume the sequence. Automatic stop acknowledgement
+does not turn a failed command into a successful result.
+
+The CANopen bus shares a serialized SDO queue. Cancellation drains an outstanding request before sending the stop,
+so stop latency includes queued traffic and response timeouts. These network commands do not replace a drive's
+hardware emergency-stop or safe-torque-off circuit.
+
+## Telemetry
+
+Use [CANopen numeric sensors](/components/canopen/#sensor-configuration-variables) to expose additional object dictionary entries.
+For example, `0x6064:0` is signed 32-bit actual position, `0x606C:0` is signed 32-bit actual velocity,
+and `0x6041:0` is an unsigned 16-bit statusword. The C++ getters `get_position()`, `get_velocity()`,
+`get_statusword()`, `get_mode()`, and `busy()` expose the component's most recent values to lambdas.
+`get_state()` returns a `cia402::DriveState`; `state_from_statusword(value)` decodes an arbitrary statusword.
+`is_target_reached()` reads statusword bit 10. These are cached values, so check heartbeat freshness before using them.
+
+The state enum values are `DRIVE_STATE_NOT_READY`, `DRIVE_STATE_SWITCH_ON_DISABLED`,
+`DRIVE_STATE_READY_TO_SWITCH_ON`, `DRIVE_STATE_SWITCHED_ON`, `DRIVE_STATE_OPERATION_ENABLED`,
+`DRIVE_STATE_QUICK_STOP_ACTIVE`, `DRIVE_STATE_FAULT_REACTION_ACTIVE`, `DRIVE_STATE_FAULT`, and
+`DRIVE_STATE_UNKNOWN`.
+
+Other general drive functions use the underlying CANopen API:
+
+| Function | Interface |
+| --- | --- |
+| Start, stop, or pre-operational NMT state | `canopen.nmt` action |
+| Heartbeat age, online status, NMT state | Inherited `heartbeat_age(now)`, `is_online(now, timeout)`, `get_nmt_state()` |
+| Emergency codes | CANopen `on_emcy` callback |
+| Device type, error register, identity | CANopen sensors at `0x1000`, `0x1001`, and `0x1018:1` through `0x1018:4` |
+| Digital inputs | Unsigned 32-bit CANopen sensor at `0x60FD:0`; decode bits according to the drive's input assignment |
+| Profile settings from lambdas | `set_profile_velocity()`, `set_acceleration()`, `set_deceleration()` |
+| Quick-stop deceleration | `set_quick_stop_deceleration()` |
+| Software limits from lambdas | `set_position_limits(minimum, maximum)` |
+
+Configuration setters update values used by subsequent commands. Call `apply_configuration()` to write profile settings
+explicitly. Use positive values for velocities and accelerations, and ordered signed 32-bit limits.
+
+Low-level controlword, mode, and target-velocity writes remain available through `canopen.sdo_write` at `0x6040`,
+`0x6060`, and `0x60FF`. They acknowledge the write, not completion of a state transition or motion. Use the drive
+actions above for the implemented state, positioning, and stopping sequences.
+
+The component expects exclusive control of the drive. Avoid writing its controlword, mode, target, or profile
+registers from other clients while a sequence runs.
+
+## Hardware Validation
+
+The source integration was physically tested with a Trinamic TMCM-1240 stepper motor driver. The reusable asynchronous
+component is validated separately with protocol tests and firmware builds. Manufacturer-specific configuration and
+application workflows are outside this component.
