@@ -16,7 +16,7 @@ segmented transfers; no block transfer).
 
 This component requires a [CAN bus](/components/canbus/) platform, for example
 [ESP32 CAN](/components/canbus/esp32_can/) or [MCP2515](/components/canbus/mcp2515/). Set the bus's `bit_rate` to the
-one of the CANopen network.
+one used by the CANopen network.
 
 ```yaml
 # Example configuration entry
@@ -113,13 +113,14 @@ confirmation only by a write, a late read answer only by a read). That request t
 
 ### SDO Client
 
-The SDO client has one channel; requests are queued (up to 16) and sent one after another. Every request ends in
-exactly one callback, with a `canopen::SDOReply`: `result` (`SDO_RESULT_SUCCESS`, `SDO_RESULT_ABORT`,
-`SDO_RESULT_TIMEOUT`, `SDO_RESULT_SIZE_MISMATCH`, `SDO_RESULT_TRANSPORT_ERROR` or `SDO_RESULT_REJECTED`),
-`abort_code`, `value` / `size` for values and `data` / `len` for buffers (valid only during the callback). A rejected
-request (queue full, invalid arguments, failed component) calls back before the call returns `false`. Requests made
-at boot, before the component is set up, wait in the queue; if the setup fails (for example on a failed CAN bus), they
-are rejected then.
+The SDO client has one channel; requests are queued (up to 16) and sent one after another. Every request ends in exactly
+one call of its callback, if one was given (it may be `nullptr`), with a `canopen::SDOReply`: `result`
+(`SDO_RESULT_SUCCESS`, `SDO_RESULT_ABORT`, `SDO_RESULT_TIMEOUT`, `SDO_RESULT_SIZE_MISMATCH`,
+`SDO_RESULT_TRANSPORT_ERROR` or `SDO_RESULT_REJECTED`), `abort_code`, `value` / `size` for a successful value read or
+write, and `data` / `len` for a successful `read_sdo_data()` (valid only during the callback; otherwise `nullptr` and
+0). A rejected request (queue full, invalid arguments, failed component) calls back before the call returns `false`.
+Requests made at boot, before the component is set up, wait in the queue; if the setup fails (for example on a failed
+CAN bus), they are rejected then.
 
 ```cpp
 // value read with a width check: a different width gives SIZE_MISMATCH
@@ -144,7 +145,7 @@ id(my_canopen).read_sdo_data(0x01, 0x1008, 0, name, sizeof(name), [](void *conte
 - `read_sdo_data(node_id, index, subindex, data, capacity, callback, context)` and `write_sdo_data(node_id, index,
   subindex, data, len, callback, context)` for buffers. The buffer belongs to the caller and must stay valid until the
   callback, so it can't be a local variable. A read of an object longer than `capacity` is aborted. Transfers are
-  limited to 64 KiB (65535 bytes): a longer write is rejected, and a read of a longer object is aborted. Requests run
+  limited to 65,535 bytes: a longer write is rejected, and a read of a longer object is aborted. Requests run
   one at a time, so queued reads can share a buffer if each callback uses the data before it returns.
 
 ## See Also
