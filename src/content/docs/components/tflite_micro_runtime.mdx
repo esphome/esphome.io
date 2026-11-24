@@ -202,8 +202,9 @@ configuration of their own; `tflite_op_processor` also accepts an `operators:` l
   as a warning. For a streaming model the estimate covers the model's tensors only, so set this option when
   the consumer keeps state outside them.
 - **on_result** (*Optional*, [Automation](/automations/)): Actions to run after a successful inference. They
-  are dispatched from the main loop once the result is decoded, so an action can start another inference. A
-  kind's decoder holds the result; a raw model without a decoder exposes it through `get_last_result()`.
+  are dispatched from the main loop once the result is decoded. A new inference can start after the callbacks
+  return. A kind's decoder holds the result; a raw model without a decoder exposes it through
+  `get_last_result()`.
 - **debug** (*Optional*, boolean): Enable debug logging and diagnostic features for this instance. Defaults to
   `false`. The diagnostics are always compiled in; this flag turns them on for this instance, so it reports
   the model architecture, its input and output tensors, and the memory status.
@@ -526,6 +527,7 @@ struct ProcessedOutput {
 | `set_tensor_arena_size(size)`       | Request a specific tensor arena size in bytes.      |
 | `set_output_processing(strategy)`   | Set the output post-processing strategy.            |
 | `set_scale_factor(factor)`          | Set the output scale factor.                        |
+| `set_resource_variables(mrv)`       | Pass the resource variables a stateful model needs, for loading and arena probing. |
 | `set_debug(bool)`                   | Enable or disable debug diagnostics.                |
 | `load_model()`                      | Load the model, verify CRC32, allocate arena, and initialize the interpreter. |
 | `unload_model()`                    | Unload the model and free resources.                |
