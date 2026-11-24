@@ -1,61 +1,54 @@
 ---
 /**
- * Filter bar for the blog listing pages: quick topic chips plus a "Filters" button that opens a
- * drawer with every facet (topic, author, year). The drawer slides in from the right on wide
- * screens and up from the bottom as a sheet on narrow ones.
+ * Filter bar for the blog listing pages: the active filters as removable chips with the number of
+ * matching posts, and a "Filters" button that opens a drawer with every category, year and author.
+ * The drawer's lists show what each choice gives from the current page, so a category's years, or
+ * a year's categories, combine the two. It slides in from the right on wide screens and up from
+ * the bottom as a sheet on narrow ones.
  *
- * Every filter is a plain link to its own paginated listing (/blog/tags/<tag>/, /blog/authors/<a>/,
- * /blog/<year>/), so filtered views are crawlable, shareable and work without JavaScript. One facet
- * is active at a time.
+ * Every filter is a plain link to its own static listing (see src/lib/blog.ts), so filtered views
+ * are shareable and work without JavaScript.
  */
-import type { BlogFacets, Facet, ListingKind } from "../../lib/blog";
+import type { DrawerItem, ListingPage } from "../../lib/blog";
 
 interface Props {
-  facets: BlogFacets;
-  current: { kind: ListingKind; slug: string };
+  listing: ListingPage;
 }
 
-const { facets, current } = Astro.props;
-
-const isCurrent = (facet: Facet) => facet.kind === current.kind && facet.slug === current.slug;
-const ariaCurrent = (facet: Facet) => (isCurrent(facet) ? "page" : undefined);
-
-// Author and year filters are not in the chip row, so name them as an applied filter there.
-const applied =
-  current.kind === "author"
-    ? facets.authors.find(isCurrent)
-    : current.kind === "year"
-      ? facets.years.find(isCurrent)
-      : undefined;
-const appliedLabel = applied ? `${current.kind === "author" ? "Author" : "Year"}: ${applied.label}` : undefined;
-const activeCount = current.kind === "all" ? 0 : 1;
-
-const sections = [
-  { title: "Topic", items: [facets.all, ...facets.tags] },
-  { title: "Author", items: facets.authors },
-  { title: "Year", items: facets.years },
-].filter((section) => section.items.length > 0);
+const { listing } = Astro.props;
+const { activeFilters, count, drawer } = listing;
+const ariaCurrent = (item: DrawerItem) => (item.current ? "page" : undefined);
 ---
 
 <div class="blog-toolbar">
-  <nav class="chips" aria-label="Blog topics">
-    {/* The applied filter comes first: on phones the row scrolls sideways, and a chip at its end
-        starts off-screen. */}
-    {applied && (
-      <a class="chip applied" href="/blog/" aria-label={`Remove filter ${appliedLabel}`}>
-        {appliedLabel}
-        <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
-          <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-        </svg>
-      </a>
+  <div class="active-filters">
+    {activeFilters.length === 0 ? (
+      <span class="chip">
+        All posts <span class="count">{count}</span>
+      </span>
+    ) : (
+      <>
+        {activeFilters.map((filter) => (
+          <a class="chip" href={filter.removeHref} aria-label={`Remove filter ${filter.name}: ${filter.label}`}>
+            <span>
+              <span class="prefix">{filter.name}:</span> {filter.label}
+            </span>
+            <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+              <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            </svg>
+          </a>
+        ))}
+        <span class="result-count">
+          {count} {count === 1 ? "post" : "posts"}
+        </span>
+        {activeFilters.length > 1 && (
+          <a class="clear" href="/blog/">
+            Clear filters
+          </a>
+        )}
+      </>
     )}
-    {[facets.all, ...facets.tags].map((facet) => (
-      <a class="chip" href={facet.href} aria-current={ariaCurrent(facet)}>
-        {facet.label}
-        <span class="count">{facet.count}</span>
-      </a>
-    ))}
-  </nav>
+  </div>
   <div class="actions">
     <button type="button" class="filters-button" commandfor="blog-filters" command="show-modal">
       <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
@@ -68,11 +61,6 @@ const sections = [
         ></path>
       </svg>
       Filters
-      {activeCount > 0 && (
-        <span class="badge" aria-label={`${activeCount} active`}>
-          {activeCount}
-        </span>
-      )}
     </button>
     <a class="rss" href="/blog/rss.xml">
       <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
@@ -100,25 +88,68 @@ const sections = [
     </button>
   </header>
   <div class="drawer-body">
-    {sections.map((section) => (
-      <section>
-        <h3>{section.title}</h3>
-        <ul>
-          {section.items.map((facet) => (
-            <li>
-              <a href={facet.href} aria-current={ariaCurrent(facet)}>
-                {facet.picture && <img src={facet.picture} alt="" width="24" height="24" loading="lazy" />}
-                <span class="label">{facet.label}</span>
-                <span class="count">{facet.count}</span>
-              </a>
-            </li>
-          ))}
-        </ul>
-      </section>
-    ))}
+    <section>
+      <h3>Category</h3>
+      <ul class="rows">
+        {[drawer.allTags, ...drawer.topTags].map((item) => (
+          <li>
+            <a href={item.href} aria-current={ariaCurrent(item)}>
+              <span class="label">{item.label}</span>
+              <span class="count">{item.count}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+      {drawer.moreTags.length > 0 && (
+        <details class="more" open={drawer.moreOpen}>
+          <summary>More categories</summary>
+          <ul class="rows">
+            {drawer.moreTags.map((item) => (
+              <li>
+                <a href={item.href} aria-current={ariaCurrent(item)}>
+                  <span class="label">{item.label}</span>
+                  <span class="count">{item.count}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </details>
+      )}
+    </section>
+    <section>
+      <h3>Year</h3>
+      <ul class="pills">
+        {[drawer.allYears, ...drawer.years].map((item) => (
+          <li>
+            <a href={item.href} aria-current={ariaCurrent(item)}>
+              {item.label}
+              <span class="count">{item.count}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+    <section>
+      <h3>Author</h3>
+      <ul class="rows">
+        {drawer.authors.map((item) => (
+          <li>
+            <a href={item.href} aria-current={ariaCurrent(item)}>
+              {item.picture ? (
+                <img class="avatar" src={item.picture} alt="" width="24" height="24" loading="lazy" />
+              ) : (
+                <span class="avatar" aria-hidden="true" />
+              )}
+              <span class="label">{item.label}</span>
+              <span class="count">{item.count}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
   </div>
   <footer class="drawer-footer">
-    {activeCount > 0 ? <a href="/blog/">Clear filter</a> : <span />}
+    {activeFilters.length > 0 ? <a href="/blog/">Clear filters</a> : <span />}
     <button type="button" class="done" commandfor="blog-filters" command="close">
       Done
     </button>
@@ -167,36 +198,66 @@ const sections = [
     margin-bottom: 1.5rem;
   }
 
-  .chips {
+  .active-filters {
     display: flex;
-    gap: 0.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1rem;
     min-width: 0;
-    /* On narrow screens the chips scroll sideways instead of wrapping onto several rows. */
-    overflow-x: auto;
-    scrollbar-width: none;
   }
 
+  /* Active filters are high-contrast "ink" chips: --sl-color-white is the strongest text colour in
+     both themes, so the chip is dark on the light theme and light on the dark one. */
   .chip {
     display: inline-flex;
-    flex-shrink: 0;
     align-items: center;
     gap: 0.5rem;
+    max-width: 100%;
     padding: 0.375rem 0.875rem;
-    border: 1px solid var(--sl-color-hairline-light);
     border-radius: 999px;
-    color: var(--sl-color-gray-2);
+    background: var(--sl-color-white);
+    color: var(--sl-color-black);
     font-size: var(--sl-text-sm);
     font-weight: 500;
     text-decoration: none;
-    white-space: nowrap;
+  }
+
+  .chip .prefix,
+  .chip .count {
+    opacity: 0.7;
+  }
+
+  .chip .count {
+    font-size: var(--sl-text-xs);
+  }
+
+  .chip svg {
+    flex-shrink: 0;
+  }
+
+  a.chip:focus-visible {
+    outline: 2px solid var(--sl-color-text-accent);
+    outline-offset: 2px;
+  }
+
+  .result-count {
+    color: var(--sl-color-gray-3);
+    font-size: var(--sl-text-sm);
+  }
+
+  .clear,
+  .drawer-footer a {
+    color: var(--sl-color-text-accent);
+    font-size: var(--sl-text-sm);
+    font-weight: 500;
   }
 
   /* Hover styles only where a pointer can hover; touch browsers keep :hover on the last tapped
      element, which left a drawer row highlighted after the sheet opened. */
   @media (hover: hover) {
-    .chip:hover {
-      border-color: var(--sl-color-text-accent);
-      color: var(--sl-color-white);
+    a.chip:hover {
+      background: var(--sl-color-text-accent);
+      color: var(--sl-color-text-invert);
     }
 
     .filters-button:hover,
@@ -208,23 +269,11 @@ const sections = [
       color: var(--sl-color-white);
     }
 
-    .drawer-body a:hover {
+    .drawer-body a:not([aria-current="page"]):hover,
+    .more summary:hover {
       background: var(--sl-color-gray-6);
       color: var(--sl-color-white);
     }
-  }
-
-  .chip[aria-current="page"],
-  .chip.applied {
-    border-color: var(--sl-color-text-accent);
-    background: var(--sl-color-text-accent);
-    color: var(--sl-color-text-invert);
-  }
-
-  .chip .count {
-    color: inherit;
-    font-size: var(--sl-text-xs);
-    opacity: 0.7;
   }
 
   .actions {
@@ -251,20 +300,7 @@ const sections = [
     cursor: pointer;
   }
 
-  .badge {
-    display: inline-grid;
-    place-items: center;
-    min-width: 1.25rem;
-    height: 1.25rem;
-    border-radius: 999px;
-    background: var(--sl-color-text-accent);
-    color: var(--sl-color-text-invert);
-    font-size: var(--sl-text-xs);
-  }
-
   @media (max-width: 40rem) {
-    /* nowrap: in a wrapping column the items stretch to the widest one (the full chip row), not to
-       the container, which would push the page wider than the screen. */
     .blog-toolbar {
       flex-direction: column-reverse;
       flex-wrap: nowrap;
@@ -450,10 +486,13 @@ const sections = [
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.625rem 0.75rem;
     border-radius: 0.5rem;
     color: var(--sl-color-gray-1);
     text-decoration: none;
+  }
+
+  .rows a {
+    padding: 0.625rem 0.75rem;
   }
 
   .drawer-body a[aria-current="page"] {
@@ -461,12 +500,9 @@ const sections = [
     color: var(--sl-color-text-invert);
   }
 
-  .drawer-body img {
-    border-radius: 50%;
-  }
-
   .drawer-body .label {
     flex-grow: 1;
+    min-width: 0;
   }
 
   .drawer-body .count {
@@ -474,13 +510,46 @@ const sections = [
     opacity: 0.7;
   }
 
-  .drawer-footer {
-    border-top: 1px solid var(--sl-color-hairline-light);
+  /* Categories past the first few: a disclosure, closed unless the current one is inside. */
+  .more summary {
+    padding: 0.625rem 0.75rem;
+    border-radius: 0.5rem;
+    color: var(--sl-color-gray-2);
+    cursor: pointer;
   }
 
-  .drawer-footer a {
-    color: var(--sl-color-text-accent);
-    font-size: var(--sl-text-sm);
+  .pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .pills a {
+    gap: 0.5rem;
+    padding: 0.375rem 0.875rem;
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: 999px;
+  }
+
+  .pills a[aria-current="page"] {
+    border-color: var(--sl-color-text-accent);
+  }
+
+  .pills .count {
+    font-size: var(--sl-text-xs);
+  }
+
+  /* Avatar, or a plain grey circle for an author without one. */
+  .avatar {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--sl-color-gray-5);
+  }
+
+  .drawer-footer {
+    border-top: 1px solid var(--sl-color-hairline-light);
   }
 
   .done {
