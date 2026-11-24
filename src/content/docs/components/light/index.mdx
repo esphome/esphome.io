@@ -220,12 +220,14 @@ light:
 
 - **write_on_setup** (*Optional*, boolean): Write the start-up state to the output during the light's own setup,
   instead of once every component is set up. This is for an output that is set up before the light, such as a
-  display backlight that should come on before a slow display setup. Defaults to `false`.
+  display backlight that should come on before a slow display setup. An effect still starts only once every
+  component is set up. Defaults to `false`.
 
 - **setup_priority** (*Optional*, float): Change the order in which the light is set up; a higher value is set up
   earlier. With **write_on_setup**, give the output a higher value than the light, so it is set up first. The
   example below needs an output with the id `backlight_pwm`, such as an [ESP32 LEDC Output](/components/output/ledc/),
-  with `setup_priority: 1300`:
+  with `setup_priority: 1300`. That value is above every built-in priority (the highest is 1200, for power supplies),
+  so the backlight comes on before anything else is set up:
 
   ```yaml
   light:
