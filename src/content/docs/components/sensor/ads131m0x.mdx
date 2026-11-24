@@ -17,9 +17,10 @@ This component is supported on ESP32 only. The ADC buffers only two conversions,
 within about two sample periods (1 ms at 2000 SPS). The `drdy_pin` is required because the DRDY signal tells the
 firmware when a conversion is ready.
 
-The SPI bus must be a hardware bus with both `mosi_pin` and `miso_pin` (the default `interface: any` selects a hardware
-bus on ESP32). The background task shares the bus with the main loop, and only the hardware SPI driver locks the bus
-for each transaction, so other devices on the same bus keep working. A bus with `interface: software` is rejected.
+The SPI bus must be a hardware bus with both `mosi_pin` and `miso_pin`. The default `interface: any` selects a hardware
+bus while an SPI controller is free; with more buses than controllers, set `interface: hardware` on this one. The
+background task shares the bus with the main loop, and only the hardware SPI driver locks the bus for each
+transaction, so other devices on the same bus keep working. A software bus is rejected.
 
 A typical use is measuring AC current with a current transformer (CT). Connect the burden resistor directly between
 the `AINxP` and `AINxN` inputs of a channel, without a DC bias. The inputs accept voltages below ground, so the AC
@@ -154,9 +155,9 @@ The hub is designed to keep working through electrical disturbances:
 - If the device does not respond during configuration, the first failure is logged as a warning and the hub retries
   every second; later failures are logged at debug level.
 - The sample rate is averaged over 10 seconds. If it stays below 95% of the nominal rate, for example when several
-  fast ADCs share one bus, a warning is logged because conversions are being lost. A single missed conversion does not
-  bias the mean or RMS of a window. On dual-core ESP32 chips the background task runs on core 1, away from the network
-  stack.
+  fast ADCs share one bus, a warning is logged because conversions are being lost. A window is completed from the
+  conversions actually read, so an occasional missed conversion shifts it by one sample and can change the mean or RMS
+  slightly. On dual-core ESP32 chips the background task runs on core 1, away from the network stack.
 - After a reset or a reconfiguration, the sensors publish `NaN` until a complete new window has been sampled.
 - If no data arrives, or the sample rate drops below a quarter of the nominal rate, the component shows a warning
   status with the message "No data from ADC" and the log shows the sample rate. The sensors publish `NaN` until the
