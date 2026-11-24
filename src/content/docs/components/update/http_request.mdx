@@ -26,7 +26,8 @@ update:
 - **source** (**Required**, string): The URL of the YAML manifest file containing the firmware metadata.
 - **allow_auto_install** (*Optional*, boolean): Allow the manifest to install an update without waiting for a
   user. Requires `project.version` to be set in the `esphome:` section. See
-  [Automatic Installs](#automatic-installs) for the manifest side. Defaults to `false`.
+  [Automatic Installs](#automatic-installs) for the manifest side and the transport it requires. Defaults to
+  `false`.
 - **update_interval** (_Optional_, [Time](/guides/configuration-types/#time)): The interval at which to check for (**not install**) updates.
   Defaults to 6 hours.
 
@@ -81,6 +82,13 @@ A manifest may also set a top-level `"auto_install": true` field to ask the devi
 after a check finds it, instead of waiting for a user. The install only happens when the update platform has
 **allow_auto_install** set to `true`. This field is separate from the `force_update` option of the
 [`update.perform` action](/components/update/#update-perform-action).
+
+> [!WARNING]
+> An automatic install trusts the manifest: the firmware URL and MD5 come from it, and a manifest served over
+> plain HTTP, or with certificate verification turned off (`verify_ssl: false`), can be replaced by anyone on the
+> network path, who can then have the device install their firmware. Serve the manifest over HTTPS with
+> certificate verification enabled. ESP8266 and RP2040 do not support certificate verification, so only enable
+> automatic installs there on a trusted network.
 
 The check treats the manifest's `version` and the version the device reports as different whenever the two
 strings differ; it does not compare them as semantic versions. The device reports its `project.version`, so
