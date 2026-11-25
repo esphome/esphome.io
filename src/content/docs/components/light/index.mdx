@@ -218,6 +218,31 @@ light:
   counts as the remembered effect. The remembered effect is kept in memory only, so it is lost on reboot. Defaults
   to `false`.
 
+- **write_on_setup** (*Optional*, boolean): Write the start-up state to the output during the light's own setup,
+  instead of once every component is set up. This is for an output that is set up before the light, such as a
+  display backlight that should come on before a slow display setup. An effect still starts only once every
+  component is set up. Defaults to `false`.
+
+- **setup_priority** (*Optional*, float): Change the order in which the light is set up; a higher value is set up
+  earlier. With **write_on_setup**, give the output a higher value than the light, so it is set up first. The
+  example below needs an output with the id `backlight_pwm`, such as an [ESP32 LEDC Output](/components/output/ledc/),
+  with `setup_priority: 1300`. That value is above the power supply priority (1200), so the backlight comes on before
+  any bus or display is set up:
+
+  ```yaml
+  light:
+    - platform: monochromatic
+      output: backlight_pwm
+      name: Backlight
+      initial_state:
+        state: ON
+      write_on_setup: true
+      setup_priority: 1299
+  ```
+
+  On an addressable light the LED strip takes this value, and the light takes the value minus 1, so the strip is set up
+  first.
+
 - **on_turn_on** (*Optional*, [Action](/automations/actions/#all-actions)): An automation to perform when the light is turned on. See
   [`light.on_turn_on` / `light.on_turn_off` Trigger](#light-on_turn_on_off_trigger).
 
@@ -1509,7 +1534,7 @@ light:
 **Configuration variables:**
 
 - **port** (*Optional*, int): The port to run the UDP server on. Defaults to `21324`.
-- **blank_on_start** (*Optional*, boolean): Whether or not to blank all LEDs when effect starts. Deaults to `True`.
+- **blank_on_start** (*Optional*, boolean): Whether or not to blank all LEDs when effect starts. Defaults to `True`.
 - **sync_group_mask** (*Optional*, int): Used with WLED Notifier. The Sync Group mask value that specifies which WLED
   Sync Groups to listen to. Defaults to `0` (All Sync Groups). Sync Groups 1, 2, 3, 4, 5, 6, 7, 8 use masks 1, 2, 4,
   8, 16, 32, 64, 128. Combine mask values to listen to multiple Sync Groups.
