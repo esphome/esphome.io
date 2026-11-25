@@ -23,4 +23,10 @@ export const authors = {
     picture: "https://avatars.githubusercontent.com/missyquarry?size=64",
     url: "https://github.com/missyquarry",
   },
+  clyde: {
+    name: "Clyde Stubbs",
+    title: "ESPHome Developer",
+    picture: "https://avatars.githubusercontent.com/clydebarrow?size=64",
+    url: "https://github.com/clydebarrow",
+  },
 };
