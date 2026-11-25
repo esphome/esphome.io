@@ -328,8 +328,9 @@ The `esphome rotate-key <CONFIG>` command changes the [OTA encryption key](/comp
 running device. The device only accepts the key it runs, so the command writes a new key to the configuration, builds
 with it, uploads with the current key, and then confirms the device answers with the new key. The key is rewritten where
 it lives: the `key:` line in the yaml, or the line in `secrets.yaml` that its `!secret` points to. The key being
-replaced is kept as `old_key:`. For a key written in the yaml, that is a second line next to it. For a `!secret` key,
-the yaml gets `old_key: !secret device_name__encryption_key_old` (the secret's name with `_old` appended) and the
+replaced is kept as `old_key:` in the `encryption:` block of the `esphome` OTA platform, even when the key itself is
+written under `api:`, since the API encryption settings have no `old_key:`. For a `!secret` key, that block gets
+`old_key: !secret device_name__encryption_key_old` (the secret's name with `_old` appended) and the
 previous value goes into `secrets.yaml` under that name, so no key lands in the device yaml. A key in a local package
 or included file is rewritten in that file. A key that comes from a substitution, or from a remote package or any other
 file outside the configuration directory, is refused. A failure before the upload puts the previous key back; after
