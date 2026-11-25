@@ -116,8 +116,10 @@ climate:
 - **supported_swing_modes** (*Optional*, list): Can be used to disable some swing modes if your AC does not support it. Possible values: `'OFF'`, `VERTICAL`, `HORIZONTAL`, `BOTH`.
 - **supported_presets** (*Optional*, list): Can be used to disable some presets. Possible values for smartair2 are
   `AWAY`, `BOOST`, and `COMFORT`. Possible values for hOn are `AWAY`, `BOOST`, `ECO`, and `SLEEP`; hOn uses
-  `BOOST`, `ECO`, and `SLEEP` by default. The hOn `ECO` preset uses quiet mode. When `ECO` is configured, selecting
-  another preset disables quiet mode. The `AWAY` preset can be enabled only in `HEAT` mode and is disabled by default.
+  `BOOST`, `ECO`, and `SLEEP` by default. The hOn `ECO` preset is quiet mode: when `ECO` is in the list, quiet mode
+  on shows as the `ECO` preset, and selecting any other preset, `NONE` included, turns quiet mode off. To keep the
+  quiet mode switch independent of the presets, as before, leave `ECO` out of the list (for example `[BOOST, SLEEP]`).
+  The `AWAY` preset can be enabled only in `HEAT` mode and is disabled by default.
 - **on_alarm_start** (*Optional*, [Automation](/automations)): (supported only by hOn) Automation to perform when AC activates a new alarm. See [`on_alarm_start` Trigger](#haier-on_alarm_start).
 - **on_alarm_end** (*Optional*, [Automation](/automations)): (supported only by hOn) Automation to perform when AC deactivates a new alarm. See [`on_alarm_end` Trigger](#haier-on_alarm_end).
 - **on_status_message** (*Optional*, [Automation](/automations)): Automation to perform when status message received from AC. See [`on_status_message` Trigger](#haier-on_status_message).
