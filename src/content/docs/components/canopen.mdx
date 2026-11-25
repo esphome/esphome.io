@@ -288,10 +288,11 @@ a `canopen::SDOReply`: `result` (`SDO_RESULT_SUCCESS`, `SDO_RESULT_ABORT`, `SDO_
 successful value read or write, and `data` / `len` for a successful `read_sdo_data()` (valid only during the callback;
 otherwise `nullptr` and 0). A rejected request (queue full, invalid arguments, failed component) calls back before the
 call returns `false`. Requests made at boot, before the component is set up, wait in the queue; if the setup fails (for
-example on a failed CAN bus), they are rejected then. A node's SDO channel is shared with any other client, and late
-answers can reach a later request; see [Shared SDO Channel](#shared-sdo-channel). Requests to this node's own id
-are served from its own object dictionary, without CAN frames. Without the actions, a node compiles the SDO client
-only with `sdo_client: true`.
+example on a failed CAN bus), they are rejected then. A node in the NMT state `STOPPED` sends no SDO frames: requests
+running or queued when it stops end with `SDO_RESULT_REJECTED`, and new ones are rejected until it leaves `STOPPED`.
+A node's SDO channel is shared with any other client, and late answers can reach a later request; see
+[Shared SDO Channel](#shared-sdo-channel). Requests to this node's own id are served from its own object dictionary,
+without CAN frames. Without the actions, a node compiles the SDO client only with `sdo_client: true`.
 
 ```cpp
 // value read with a width check: a different width gives SIZE_MISMATCH
