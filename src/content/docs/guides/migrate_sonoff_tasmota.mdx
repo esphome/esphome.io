@@ -4,9 +4,6 @@ title: "Migrating from Tasmota"
 ---
 
 import { Image } from 'astro:assets';
-import dashboardInstallImg from './images/dashboard-install.png';
-import dashboardInstallManualImg from './images/dashboard-install-manual.png';
-import dashboardInstallManualModernImg from './images/dashboard-install-manual-modern.png';
 import tasmotaMainImg from './images/tasmota_main.png';
 import tasmotaOtaImg from './images/tasmota_ota.png';
 import tasmotaUploadImg from './images/tasmota_upload.png';
@@ -51,23 +48,18 @@ ota:
 
 ## Getting the Binary
 
-Generate and download the firmware image:
+Generate and download the firmware image. The file you need depends on the chip:
+
+- **ESP32**: the OTA image, `firmware.ota.bin`. Do not use the factory image (`firmware.factory.bin`). It also
+  contains the bootloader and the partition table and is only meant for flashing over a serial connection.
+- **ESP8266**: `firmware.bin`.
 
 ### Using the Home Assistant app/dashboard
 
-From the card of your device: open **the three dots menu** and select **Install** option.
+On the card of your device, select **Install** and then **Download firmware binary**.
 
-<Image src={dashboardInstallImg} layout="constrained" alt="" />
-
-A new dialog will open. Click on **Manual download** option.
-
-<Image src={dashboardInstallManualImg} layout="constrained" alt="" />
-
-Finally, choose **factory format** (formerly "modern format") in the last dialog.
-
-<Image src={dashboardInstallManualModernImg} layout="constrained" alt="" />
-
-The build process of the firmware will start and the image will be automatically downloaded after its completion.
+The firmware is compiled first. Once that has finished, choose **OTA update** for an ESP32 or **Firmware image**
+for an ESP8266 to download the file.
 
 ### Using the command line
 
@@ -77,10 +69,12 @@ From your configuration files folder, run
 esphome compile <MY_DEVICE>.yaml
 ```
 
-replacing `<MY_DEVICE>.yaml` with your configuration file and navigate to the
-`<MY_DEVICE>/.pioenvs/<MY_DEVICE>/` folder.
+replacing `<MY_DEVICE>.yaml` with your configuration file. The binary that you will upload is written to the build
+folder of the device, where `<NAME>` is the `name` set in the `esphome:` section of your configuration:
 
-There you will find a `firmware.bin` file. This is the binary that you will upload.
+- **ESP32**: `.esphome/build/<NAME>/build/firmware.ota.bin`, or `.esphome/build/<NAME>/.pioenvs/<NAME>/firmware.ota.bin`
+  when the firmware is built with PlatformIO.
+- **ESP8266**: `.esphome/build/<NAME>/.pioenvs/<NAME>/firmware.bin`.
 
 ## Uploading the Binary
 
@@ -123,20 +117,6 @@ make the upgrade process easier.
 
     If you are using Tasmota 7.2+ it may be necessary to run the command `SetOption78 1` in the
     Tasmota console and restart your device to be able to upgrade to esphome.
-
-## Automated migration from console
-
-You may also use Tasmota console to invoke the upgrade with just two commands:
-
-```text
-OtaUrl http://<MY-ESPHOME:6052>/download.bin?configuration=<MY_DEVICE>.yaml&file=firmware.bin&compressed=1
-Upgrade 1
-```
-
-replacing `http://<MY-ESPHOME:6052>/` with the host and port of your ESPHome installation and `<MY_DEVICE>.yaml`
-with your device configuration file name.
-
-If you need to use the uncompressed image for any reason, just remove `&compressed=1` from the above url.
 
 ## ESP32 Partition table migration
 
