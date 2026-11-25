@@ -1,0 +1,296 @@
+---
+title: DMX
+description: DMX512 input, output and RDM responder support for ESP32 devices.
+---
+
+# DMX
+
+The DMX component provides DMX512 input and output support for ESP32 devices. In RX mode, it can also act as an RDM responder.
+
+## Features
+
+- DMX512 input (RX)
+- DMX512 output (TX)
+- Fixed and dynamically selectable RX channels
+- Multiple independent RX sensors
+- DMX dimmer, RGB and RGBW light outputs
+- DMX output Number entities
+- RDM responder support in RX mode
+- Custom RDM parameters for registered RX sensors
+
+## Hardware requirements
+
+- ESP32 device
+- RS485 transceiver suitable for DMX512
+- DMX connector and suitable cabling
+
+Connect the ESP32 UART pins to the RS485 transceiver according to your hardware. Make sure the transceiver supports the direction control required by your configuration.
+
+## Configuration
+
+The component is configured using the `dmx:` platform.
+
+| Option | Description |
+| --- | --- |
+| `id` | ID used to reference the DMX bus |
+| `mode` | `rx` for receiving or `tx` for transmitting |
+| `uart_num` | ESP32 UART peripheral number |
+| `tx_pin` | UART transmit pin |
+| `rx_pin` | UART receive pin |
+| `tx_interval` | Interval between transmitted DMX frames |
+| `rdm` | Enable or disable the RDM responder in RX mode |
+
+The default mode is `rx`. The RDM responder is enabled by default in RX mode. Set `rdm: false` to disable it.
+
+## RX sensors
+
+In RX mode, DMX channels can be monitored using sensors.
+
+Two channel selection methods are supported:
+
+- `channel`: monitors a fixed DMX channel.
+- `channel_id`: monitors the DMX channel selected by an ESPHome Number entity.
+
+Multiple sensors can use different Number entities, allowing independent channel selection.
+
+### DMX receiver example
+
+This example uses four dynamically selectable channels and one fixed channel. The Template Number entities can be changed from Home Assistant.
+
+```yaml
+esphome:
+  name: dmx-receiver
+
+esp32:
+  board: esp32-s3-devkitc-1
+  framework:
+    type: esp-idf
+
+logger:
+
+external_components:
+  - source:
+      type: local
+      path: components
+    components: [ dmx ]
+
+dmx:
+  id: dmx_bus
+  mode: rx
+  uart_num: 2
+  tx_pin: GPIOXX
+  rx_pin: GPIOXX
+
+number:
+  - platform: template
+    name: "DMX Channel"
+    id: selected_channel
+    min_value: 1
+    max_value: 512
+    step: 1
+    mode: box
+    optimistic: true
+    initial_value: 1
+    restore_value: true
+
+  - platform: template
+    name: "DMX Channel Front"
+    id: ch_front
+    min_value: 1
+    max_value: 512
+    step: 1
+    mode: box
+    optimistic: true
+    initial_value: 10
+    restore_value: true
+
+  - platform: template
+    name: "DMX Channel Back"
+    id: ch_back
+    min_value: 1
+    max_value: 512
+    step: 1
+    mode: box
+    optimistic: true
+    initial_value: 20
+    restore_value: true
+
+  - platform: template
+    name: "DMX Channel Side"
+    id: ch_side
+    min_value: 1
+    max_value: 512
+    step: 1
+    mode: box
+    optimistic: true
+    initial_value: 30
+    restore_value: true
+
+sensor:
+  - platform: dmx
+    dmx_id: dmx_bus
+    channel_id: selected_channel
+    name: "DMX Value"
+    id: dmx_value
+
+  - platform: dmx
+    dmx_id: dmx_bus
+    channel: 1
+    name: "DMX Channel 1 (fixed)"
+    id: dmx_channel_1
+
+  - platform: dmx
+    dmx_id: dmx_bus
+    channel_id: ch_front
+    name: "Value Front"
+
+  - platform: dmx
+    dmx_id: dmx_bus
+    channel_id: ch_back
+    name: "Value Back"
+
+  - platform: dmx
+    dmx_id: dmx_bus
+    channel_id: ch_side
+    name: "Value Side"
+```
+
+Replace `GPIOXX` with the UART pins connected to your RS485 transceiver.
+
+## TX output
+
+In TX mode, the component transmits DMX frames. Output can be controlled using Number entities and Light entities.
+
+### DMX transmitter example
+
+This example provides:
+
+- A Number entity on DMX channel 7
+- A dimmer on channel 30
+- An RGB light starting at channel 50
+- An RGBW light starting at channel 60
+
+```yaml
+esphome:
+  name: dmx-transmitter
+
+esp32:
+  board: esp32-s3-devkitc-1
+  framework:
+    type: esp-idf
+
+logger:
+
+external_components:
+  - source:
+      type: local
+      path: components
+    components: [ dmx ]
+
+dmx:
+  id: dmx_bus
+  mode: tx
+  uart_num: 2
+  tx_pin: GPIOXX
+  rx_pin: GPIOXX
+  tx_interval: 25ms
+
+number:
+  - platform: dmx
+    dmx_id: dmx_bus
+    channels:
+      - channel: 7
+        name: "DMX Out 7"
+
+light:
+  - platform: dmx
+    name: "DMX Dimmer"
+    dmx_id: dmx_bus
+    first_channel: 30
+    type: dimmer
+
+  - platform: dmx
+    name: "DMX RGB"
+    dmx_id: dmx_bus
+    first_channel: 50
+    type: rgb
+
+  - platform: dmx
+    name: "DMX RGBW"
+    dmx_id: dmx_bus
+    first_channel: 60
+    type: rgbw
+```
+
+Replace `GPIOXX` with the UART pins connected to your RS485 transceiver.
+
+## DMX lights
+
+The following light types are supported:
+
+| Type | Channels used |
+| --- | ---: |
+| `dimmer` | 1 |
+| `rgb` | 3 |
+| `rgbw` | 4 |
+
+`first_channel` specifies the first DMX channel used by the light. RGB and RGBW lights use consecutive channels starting at that address.
+
+## RDM responder
+
+When the component is in RX mode, it can act as an RDM responder. The responder is enabled by default and can be disabled with:
+
+```yaml
+dmx:
+  id: dmx_bus
+  mode: rx
+  rdm: false
+```
+
+The RDM responder supports standard RDM discovery and standard parameters provided by the underlying `esp_dmx` library.
+
+In addition, the component exposes custom manufacturer-specific RDM parameters for registered RX sensors.
+
+### Custom sensor parameters
+
+Each registered RX sensor receives its own custom RDM parameter. The parameter index follows the sensor registration order.
+
+The parameter value represents the sensor's DMX channel address as a two-byte unsigned big-endian value.
+
+- Fixed-channel sensors support RDM GET requests.
+- Dynamically selectable sensors support RDM GET and SET requests.
+- A successful SET updates the associated ESPHome Number entity through the normal ESPHome control path.
+- The Number entity remains the source of truth for the selected channel.
+- Channel addresses must be in the range 1–512. Out-of-range SET requests are rejected.
+
+The standard RDM `DMX_START_ADDRESS` parameter is separate from these sensor parameters. Changing it does not change the channel selection of the first dynamic sensor.
+
+TX output entities, including DMX Numbers and Lights, are not exposed as custom RDM parameters.
+
+This component operates as an RDM responder, not as an RDM controller.
+
+## Wiring
+
+Connect the ESP32 UART pins to the RS485 transceiver:
+
+| ESP32 | RS485 transceiver |
+| --- | --- |
+| UART TX | DI |
+| UART RX | RO |
+| Direction control, if required by the hardware | DE / RE |
+| GND | GND |
+
+Connect the transceiver's DMX output to the DMX bus using the appropriate connector and cabling. Check the pinout of your specific RS485 board; signal names and direction-control wiring can differ between boards.
+
+Use proper DMX cabling and termination at the end of the DMX bus.
+
+## Troubleshooting
+
+- **No DMX data received:** Check the DMX wiring, signal polarity, UART pins and baud rate configuration.
+- **Incorrect channel values:** Verify that the configured channel address is between 1 and 512.
+- **Dynamic channel does not change:** Check that the sensor references the correct Number entity through `channel_id`.
+- **No DMX output:** Verify that the component is configured with `mode: tx` and that the RS485 transceiver is correctly connected.
+- **RDM discovery does not work:** Verify that the component is in RX mode, that RDM is enabled, and that the RS485 hardware supports bidirectional communication required for RDM.
+- **RDM SET does not change a fixed sensor:** Fixed-channel sensor parameters are read-only. Use a dynamic sensor with a `channel_id` Number entity if the channel must be changed through RDM.
+
+Physical RDM testing requires an RDM-capable controller and compatible bidirectional RS485 hardware.
