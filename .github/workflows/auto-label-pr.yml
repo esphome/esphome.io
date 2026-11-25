@@ -4,7 +4,7 @@ on:
   # Runs only on pull_request_target due to having access to a App token.
   # This means PRs from forks will not be able to alter this workflow to get the tokens
   pull_request_target:
-    types: [opened, reopened, synchronize, edited]
+    types: [opened, reopened, synchronize, edited, labeled, unlabeled]
   # Allow manual triggering for recheck functionality
   workflow_dispatch:
     inputs:
@@ -27,7 +27,10 @@ jobs:
     concurrency:
       group: auto-label-${{ github.event.inputs.pr_number || github.event.number }}
       cancel-in-progress: false
-    if: github.event.action != 'labeled' || github.event.sender.type != 'Bot'
+    # Label events rerun only for a person toggling base-branch-ok, not for this workflow's own labels
+    if: >-
+      (github.event.action != 'labeled' && github.event.action != 'unlabeled')
+      || (github.event.sender.type != 'Bot' && github.event.label.name == 'base-branch-ok')
     steps:
       - name: Checkout
         uses: actions/checkout@v7.0.1
@@ -153,8 +156,11 @@ jobs:
             // Strategy: Wrong base branch detection
             const hasParent = finalLabels.includes('has-parent');
             const isCurrent = finalLabels.includes('current');
+            // A maintainer adds base-branch-ok when the linked esphome PR is only a reference, not a parent
+            const baseBranchOk = currentLabels.includes('base-branch-ok');
+            const wrongBase = hasParent && isCurrent && !baseBranchOk;
 
-            if (hasParent && isCurrent) {
+            if (wrongBase) {
               finalLabels.push('wrong-base-branch');
               console.log('Added wrong-base-branch label: has-parent targeting current branch');
             }
@@ -173,14 +179,14 @@ jobs:
             }
 
             // Request changes if wrong base branch is detected
-            if (hasParent && isCurrent) {
+            if (wrongBase) {
               console.log('Requesting changes due to wrong base branch');
               await github.rest.pulls.createReview({
                 owner,
                 repo,
                 pull_number: pr_number,
                 event: 'REQUEST_CHANGES',
-                body: 'As this is a feature matched with a PR in https://github.com/esphome/esphome, please target your PR to the `next` branch and rebase.'
+                body: 'As this is a feature matched with a PR in https://github.com/esphome/esphome, please target your PR to the `next` branch and rebase. If the linked PR is only a reference, not the parent of this change, a maintainer can add the `base-branch-ok` label instead.'
               });
             } else {
               // Check if we should dismiss any existing review from this bot
@@ -206,7 +212,9 @@ jobs:
                   repo,
                   pull_number: pr_number,
                   review_id: botReview.id,
-                  message: 'Base branch has been corrected - dismissing previous review.'
+                  message: baseBranchOk
+                    ? 'base-branch-ok label set - dismissing previous review.'
+                    : 'Base branch has been corrected - dismissing previous review.'
                 });
               }
             }
