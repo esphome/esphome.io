@@ -202,9 +202,11 @@ configuration of their own; `tflite_op_processor` also accepts an `operators:` l
   as a warning. For a streaming model the estimate covers the model's tensors only, so set this option when
   the consumer keeps state outside them.
 - **on_result** (*Optional*, [Automation](/automations/)): Actions to run after a successful inference. They
-  are dispatched from the main loop once the result is decoded. A new inference can start after the callbacks
-  return. A kind's decoder holds the result; a raw model without a decoder exposes it through
-  `get_last_result()`.
+  are dispatched from the main loop once the result is decoded, while the result is held: a new inference
+  starts only after they return. A kind's decoder holds the result; a raw model without a decoder exposes it
+  through `get_last_result()`. An action that keeps running after that point (`delay`, `script.execute`,
+  `defer`) runs outside the hold, and the next inference reuses the tensors and the decoder: copy the values
+  it needs, or read the entities the callback published.
 - **debug** (*Optional*, boolean): Enable debug logging and diagnostic features for this instance. Defaults to
   `false`. The diagnostics are always compiled in; this flag turns them on for this instance, so it reports
   the model architecture, its input and output tensors, and the memory status.
