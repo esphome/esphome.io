@@ -74,6 +74,7 @@ Models listed under **Aliases** use identical driver settings, so either name ca
 | `Waveshare-7.5in-H`           |                                           | Waveshare           |                                                                                                                                                | [Product page](https://www.waveshare.com/7.5inch-e-paper-hat-h.htm)                                        |
 | `Waveshare-7.5in-HD-B`        |                                           | Waveshare           | 7.5" 3-color (880x528, SSD1677), HINK-E075A07-A0                                                                                               | [Product page](https://www.waveshare.com/7.5inch-hd-e-paper-b.htm), [Good Display](https://www.good-display.com/product/245.html) |
 | `Waveshare-7.5in-V2`          | `GooDisplay-GDEW075T7-7.5`, `075BN-T7-D2` | Waveshare           | 7.5" V2 mono (800x480, UC8179), supports fast and partial refresh via `full_update_every`                                                      | [Product page](https://www.waveshare.com/7.5inch-e-paper-hat.htm)                                          |
+| `Waveshare-7.5in-V2-gray4`    |                                           | Waveshare           | The 7.5" V2 in four gray levels, for antialiased text. See [Four-level grayscale](#four-level-grayscale-waveshare-7-5in-v2)                    | [Product page](https://www.waveshare.com/7.5inch-e-paper-hat.htm)                                          |
 | `WeAct-2.13in-3c`             |                                           | WeAct               | 2.13" 3-color e-paper (250x122, SSD1683)                                                                                                       |                                                                                                            |
 | `WeAct-2.9in-3c`              |                                           | WeAct               | 2.9" 3-color e-paper (128x296, SSD1683)                                                                                                        |                                                                                                            |
 | `WeAct-4.2in-3c`              |                                           | WeAct               | 4.2" 3-color e-paper (400x300, SSD1683)                                                                                                        |                                                                                                            |
@@ -115,8 +116,8 @@ but can be overridden if needed.
   > [!NOTE]
   > Some displays use inverted busy pin polarity (LOW = busy, HIGH = idle). For these models, set `inverted: true`
   > on the busy pin. This applies to: `UC8151`, `Waveshare-1.54in-G`, `Waveshare-2.13in-bv3`, `Waveshare-2.13in-G`,
-  > `Waveshare-2.13in-G-V1`, `Waveshare-7.5in-H`, `Waveshare-7.5in-V2`, `GooDisplay-GDEW075T7-7.5`, `075BN-T7-D2`,
-  > `GooDisplay-GDEY0583T81-5.83`, `0583BN-T81-D2`, `inkplate6color`.
+  > `Waveshare-2.13in-G-V1`, `Waveshare-7.5in-H`, `Waveshare-7.5in-V2`, `Waveshare-7.5in-V2-gray4`,
+  > `GooDisplay-GDEW075T7-7.5`, `075BN-T7-D2`, `GooDisplay-GDEY0583T81-5.83`, `0583BN-T81-D2`, `inkplate6color`.
 
 - **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The RESET pin, if used. Required for the SSD1681-based models (`SSD1681`, `Waveshare-1.54in-v2`, `GooDisplay-GDEY0154D67-1.54`), whose panels only wake from deep sleep on a hardware reset, and for `GooDisplay-GDEY029Z95-2.9`.
   Make sure you pull this pin high (by connecting it to 3.3V with a resistor) if not connected to a GPIO pin.
@@ -166,6 +167,9 @@ but can be overridden if needed.
   (`Seeed-reTerminal-Sticky-gray4`). Allows `full_update_every` greater than `1`, with the partial updates in between
   in black and white. Defaults to `false`: every update is a full four-level update. See
   [Four-level grayscale](#four-level-grayscale-reterminal-sticky) for the trade-off this accepts.
+- **driver_waveforms** (*Optional*, boolean): Only for `Waveshare-7.5in-V2-gray4`. Makes the driver send its own
+  four-level waveforms and not use the panel's. Needed for panels sold before late October 2024, which have none of
+  their own. Defaults to `false`. See [Four-level grayscale](#four-level-grayscale-waveshare-7-5in-v2).
 - **border_waveform** (*Optional*, int): Only for SSD1677 models. The border waveform byte (controller command `0x3C`),
   which sets how the border around the active area is driven. Defaults to `0x01`, or `0x00` for
   `Seeed-reTerminal-Sticky-gray4`. Rarely needs changing.
@@ -273,6 +277,81 @@ on_...:
 
 > [!NOTE]
 > With custom `dimensions`, the width must be a multiple of 8.
+
+### Four-Level Grayscale (Waveshare 7.5in V2)
+
+The `Waveshare-7.5in-V2-gray4` model shows black, dark gray, light gray and white on the 7.5" V2 panel. Text and icons
+drawn with soft edges look noticeably smoother than in black and white.
+
+A four-level update is a full refresh, which flashes the whole screen and takes about two seconds. By default every
+update is one.
+
+With `full_update_every` greater than `1`, the updates in between are black and white. They take about a second, do
+not flash, and change only the pixels whose level is different: each of those is driven to black or white, whichever
+its new level is nearer, and everything else keeps what it shows, grays included. So a value that changes shows with
+hard edges until the next four-level update, which can be requested at any time with
+[`epaper_spi.full_update_next`](#epaper_spi-full_update_next-action). For a clock, for example, make the update on
+each minute a four-level one and let whatever arrives in between use the quick updates:
+
+```yaml
+display:
+  - platform: epaper_spi
+    id: epaper
+    model: Waveshare-7.5in-V2-gray4
+    update_interval: never
+    full_update_every: 250
+
+time:
+  - platform: sntp
+    on_time:
+      - seconds: 0
+        then:
+          - epaper_spi.full_update_next: epaper
+          - component.update: epaper
+```
+
+To get soft edges, give fonts `bpp: 2` and tell `print` what the text is drawn on, so that the two edge shades can be
+worked out. Images of type `GRAYSCALE` are shown in the four levels.
+
+```yaml
+font:
+  - file: "gfonts://Roboto"
+    id: big
+    size: 40
+    bpp: 2
+
+display:
+  - platform: epaper_spi
+    model: Waveshare-7.5in-V2-gray4
+    cs_pin: GPIOXX
+    dc_pin: GPIOXX
+    reset_pin: GPIOXX
+    busy_pin:
+      number: GPIOXX
+      inverted: true
+    update_interval: 5min
+    lambda: |-
+      // Black text on the white background
+      it.print(0, 0, id(big), Color::BLACK, "Hello", Color::WHITE);
+      // The four levels
+      for (int i = 0; i < 4; i++)
+        it.filled_rectangle(i * 60, 60, 50, 50, Color(i * 85, i * 85, i * 85));
+```
+
+> [!NOTE]
+> Panels sold from late October 2024 hold a four-level waveform of their own, and by default that is what is used.
+> Earlier panels do not, and show only black and white, with no error: the driver cannot tell which kind it has. If
+> the four boxes of the example above come out as two black and two white, set `driver_waveforms: true`, which makes
+> the driver send its own waveforms. Those work on any panel.
+>
+> Like the fast and partial refresh of the black and white model, neither adjusts for temperature: the model is meant
+> for use at room temperature, and the gray levels may shift in a cold or hot place.
+>
+> The default has not been tested on a panel which has the waveform.
+>
+> The frame buffer is twice the size of the black and white one, at 96,000 bytes, and with `full_update_every` greater
+> than `1` the driver keeps a second one of the same size. On a board with [PSRAM](/components/psram/), enable it. With
+> custom `dimensions`, the width must be a multiple of 8.
 
 ### 4-color display example
 
@@ -397,9 +476,9 @@ $$
 Y = 0.299R + 0.587G + 0.114B
 $$
 
-A luma of `128` or more draws white, anything lower draws black. The four-level grayscale model
-(`Seeed-reTerminal-Sticky-gray4`) uses the same luma, split into four bands: below `32` draws black, `32` to `95` dark
-gray, `96` to `159` light gray, and `160` or more white.
+A luma of `128` or more draws white, anything lower draws black. The four-level grayscale models
+(`Seeed-reTerminal-Sticky-gray4` and `Waveshare-7.5in-V2-gray4`) use the same luma, split into four bands: below `32`
+draws black, `32` to `95` dark gray, `96` to `159` light gray, and `160` or more white.
 
 Saturated colors therefore do not map the way their RGB values might suggest:
 
