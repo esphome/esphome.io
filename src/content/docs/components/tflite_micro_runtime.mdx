@@ -16,11 +16,11 @@ configuration of their own:
 | Component | Responsibility |
 |---|---|
 | `tflite_model_source` | Resolves `model:` (local file, `github://`, HTTP(S) URL or JSON manifest). |
-| `tflite_op_processor` | Reads the operators from the model and registers exactly those, on a resolver sized for the build. |
+| `tflite_op_processor` | Registers exactly the model's operators, on a resolver sized for the build. |
 | `tflite_memory_handler` | Allocates the tensor arena in PSRAM or internal RAM and probes the size the model needs. |
 | `tflite_output_processor` | Turns the raw output tensor into a class and a confidence. |
 | `tflite_model_io` | Reads the model at configuration time: operators, input and output tensors, arena estimate. |
-| `tflite_model_loader` | Loads the model into a `MicroInterpreter`, verifies its CRC32 and exposes the `ModelHandler` facade. |
+| `tflite_model_loader` | Loads the model into a `MicroInterpreter` and verifies its CRC32. |
 | `tflite_model_debug` | The diagnostics behind `debug:`. |
 
 This component serves as a foundation for TFLite-based components such as the
@@ -84,7 +84,7 @@ tflite_image:
 
 | Option | Default | Meaning |
 |---|---|---|
-| `tensor_arena_size` | an estimate from the model | Arena size in bytes, or a suffixed size such as `200KB`. Range `8KB`–`2000KB`. |
+| `tensor_arena_size` | an estimate from the model | Arena size in bytes or a suffixed value (`8KB`–`2000KB`). |
 | `input_type` | the model's input tensor | `uint8`, `int8` or `float32`. |
 | `input_width` | the model's input tensor | Image width in pixels, `8`–`512`. |
 | `input_height` | the model's input tensor | Image height in pixels, `8`–`512`. |
@@ -156,14 +156,14 @@ component and its own YAML key, and it auto-loads this component:
 
 | Component | Options | Output |
 |---|---|---|
-| [`tflite_image`](/components/tflite_image/) | `input_width`, `input_height`, `input_channels`, `input_type`, `input_order`, `normalize`, `invert` | a class and a confidence |
-| [`tflite_detection`](/components/tflite_detection/) | the image options, plus `score_threshold`, `max_detections`, `iou_threshold` | boxes, classes and scores |
+| [`tflite_image`](/components/tflite_image/) | the image options above | a class and a confidence |
+| [`tflite_detection`](/components/tflite_detection/) | image options and thresholds | boxes and scores |
 | [`tflite_segmentation`](/components/tflite_segmentation/) | the image options | one class id per pixel |
 | [`tflite_pose`](/components/tflite_pose/) | the image options | keypoints and their scores |
 | [`tflite_tabular`](/components/tflite_tabular/) | none | a regression value, or a class and a confidence |
-| [`tflite_text`](/components/tflite_text/) | `max_sequence_length`, `position_output` | logits, or start and end positions |
-| [`tflite_audio`](/components/tflite_audio/) | `probability_cutoff`, `sliding_window_size`, `features_step_size`, `feature_count` | windowed probabilities |
-| [`tflite_camera`](/components/tflite_camera/) | `camera_id`, `min_interval`, `rotation` and the image options | a class and a confidence per frame |
+| [`tflite_text`](/components/tflite_text/) | `position_output` | logits, or start and end positions |
+| [`tflite_audio`](/components/tflite_audio/) | the audio tuning options | windowed probabilities |
+| [`tflite_camera`](/components/tflite_camera/) | image options and camera settings | a class per frame |
 
 A configuration names the kind, and `model_type` is not part of it:
 
@@ -357,8 +357,8 @@ the kind to attach its pipeline and decoder to. The kind points its `FINAL_VALID
 
 ### Referencing a Helper Instance from a Consumer
 
-The model is configured once, in the `tflite_micro_runtime` block. A consumer component does not load a model
-itself; it names the helper instance to use in its own configuration:
+The model is configured once, in the model-kind block (`tflite_image:` in this example). A consumer
+component does not load a model itself; it names the helper instance to use in its own configuration:
 
 ```yaml
 tflite_image:
@@ -485,8 +485,6 @@ struct ModelSpec {
   int input_width{0};
   int input_height{0};
   int input_channels{0};
-  bool normalize{false};
-  InputOrder input_order{InputOrder::INPUT_ORDER_RGB};
   InputType input_type{InputType::INPUT_TYPE_UNKNOWN};
 };
 ```
@@ -518,35 +516,41 @@ struct ArenaStats {
 struct ProcessedOutput {
   float value;       // winning class index divided by scale_factor, in every mode
   float confidence;  // winning probability, or the winning tensor entry for argmax
-  bool valid{true};  // false when the tensor could not be read
+  bool valid{true};  // false when the tensor could not be read; the figures above are placeholders
 };
 ```
 
 ### Key Methods
 
-| Method                              | Description                                         |
-|-------------------------------------|-----------------------------------------------------|
-| `set_model(data, size, crc)`        | Set the model data, its size and its expected CRC32 in one step (0 = skip verification). The build-wide resolver capacity is fixed by the configured models, so a replacement must not need more operator slots; widen it with `tflite_op_processor`'s `operators:` list. |
-| `set_tensor_arena_size(size)`       | Request a specific tensor arena size in bytes. Takes the lifecycle lock and makes the next load probe again. |
-| `set_output_processing(strategy)`   | Set the output post-processing strategy.            |
-| `set_scale_factor(factor)`          | Set the output scale factor.                        |
-| `set_resource_variables(mrv)`       | Pass the resource variables a stateful model needs, for loading and arena probing. |
-| `set_debug(bool)`                   | Enable or disable debug diagnostics.                |
-| `load_model()`                      | Load the model, verify CRC32, allocate arena, and initialize the interpreter. |
-| `unload_model()`                    | Unload the model and free resources.                |
-| `is_model_loaded()`                 | Returns `true` if a model is currently loaded.      |
-| `invoke()`                          | Run a single inference pass. Returns `TfLiteStatus`. |
-| `run_inference(src_data, src_size)` | Run inference and return the processed `ProcessedOutput`. |
-| `run_inference_on_buffer(src_data, src_size)` | Run inference without processing the output. |
-| `input_tensor()`                    | Get the input `TfLiteTensor` (for writing data).    |
-| `output_tensor()`                   | Get the output `TfLiteTensor` (for reading results). |
-| `get_last_result()`                 | Get the `ProcessedOutput` of the current notification; `valid` is false when the output has no classification mapping. |
-| `get_model_spec()`                  | Get the `ModelSpec` describing input dimensions and type. |
-| `get_arena_stats()`                 | Get tensor arena utilization statistics.            |
-| `report_memory_status()`            | Print memory allocation details to the log.         |
+| Method | Description |
+|---|---|
+| `set_model(data, size, crc)` | Set the model data, its size and its expected CRC32 (`0` skips the check). |
+| `set_tensor_arena_size(size)` | Request an arena size in bytes; the next load probes again. |
+| `set_output_processing(strategy)` | Set the output post-processing strategy. |
+| `set_scale_factor(factor)` | Set the output scale factor. |
+| `set_resource_variables(mrv)` | Pass the variables a stateful model needs. |
+| `set_debug(bool)` | Enable or disable debug diagnostics. |
+| `load_model()` | Verify the CRC32, allocate the arena and build the interpreter. |
+| `unload_model()` | Unload the model and free its resources. |
+| `is_model_loaded()` | `true` while a model is loaded. |
+| `invoke()` | Run one inference pass; returns `TfLiteStatus`. |
+| `run_inference(src, size)` | Return an `optional<ProcessedOutput>`; empty when the run fails. |
+| `run_inference_on_buffer(src, size)` | Run inference without processing the output. |
+| `input_tensor()` | The input `TfLiteTensor`, for writing data. |
+| `output_tensor()` | The output `TfLiteTensor`, for reading results. |
+| `get_last_result()` | The `ProcessedOutput` of the current notification. |
+| `get_model_spec()` | The `ModelSpec` of the loaded model. |
+| `get_arena_stats()` | Tensor arena utilization. |
+| `report_memory_status()` | Print memory allocation details to the log. |
 
-`run_inference()` fills a `ProcessedOutput` (`value` and `confidence`), decodes the same output into the
-attached decoder, and exposes it through `get_last_result()`; `run_inference_on_buffer()` skips output
+The build-wide resolver capacity is fixed by the configured models, so a model passed to `set_model()`
+must not need more operator slots than the build registered; widen it with `tflite_op_processor`'s
+`operators:` list.
+
+`run_inference()` returns `optional<ProcessedOutput>`: it is empty when loading, filling the input,
+invoking the interpreter or decoding the output fails. A successful run fills `value` and `confidence`,
+decodes the same output into the attached decoder, and exposes it through `get_last_result()`, whose
+`valid` is false when the output has no classification mapping. `run_inference_on_buffer()` skips output
 processing and returns `true` on success.
 
 #### Raw inference session
@@ -614,7 +618,7 @@ if (!tflite.load_model()) {
 }
 
 // Run inference on preprocessed image data
-optional<ProcessedOutput> result = tflite.run_inference(image_buffer, image_size);
+esphome::optional<ProcessedOutput> result = tflite.run_inference(image_buffer, image_size);
 if (result.has_value()) {
   ESP_LOGI("my_component", "Prediction: value=%.0f confidence=%.2f",
            result->value, result->confidence);

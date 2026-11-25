@@ -10,13 +10,9 @@ The `tflite_text` component runs a token model on ESP32 with the ESP-IDF framewo
 tflite_text:
   - id: classifier
     model: "models/text_classifier.tflite"
-    max_sequence_length: 16
 ```
 
 ## Configuration variables
-
-- **max_sequence_length** (*Optional*, integer): Length of the token, attention-mask and segment
-  inputs.
 
 - **position_output** (*Optional*, boolean): Decode the `[1, 2]` output as start and end positions. A
   two-entry output is ambiguous, so by default it is read as two class logits and classified, like any other
@@ -39,8 +35,8 @@ tflite_text:
 ## Output
 
 The decoder classifies the output logits, or reports start and end positions when `position_output` is
-set. The model takes token ids, an attention
-mask and a segment mask as int32 tensors; the tokenizer stays in the consumer.
+set. The model takes token ids, an attention mask and a segment mask as int32 tensors; their length comes
+from the model's input tensors, and the tokenizer stays in the consumer.
 
 ## See Also
 

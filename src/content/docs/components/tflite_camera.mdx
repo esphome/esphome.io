@@ -9,7 +9,8 @@ pipeline, and runs the model through `tflite_micro_runtime`. A frame that arrive
 has elapsed is dropped.
 
 The camera must publish JPEG frames: set `pixel_format: JPEG` on the `esp32_camera`, or enable conversion
-with a nonzero `jpeg_quality` on a camera that outputs another format.
+with a nonzero `jpeg_quality` on a camera that outputs another format. Configure the camera itself as
+described on the [ESP32 Camera](/components/esp32_camera/) page, and reference it by `camera_id`.
 
 > [!NOTE]
 > This component runs one model on the whole frame. It does not crop the frame or run several
@@ -17,12 +18,6 @@ with a nonzero `jpeg_quality` on a camera that outputs another format.
 > `meter_reader_tflite`.
 
 ```yaml
-esp32_camera:
-  id: my_camera
-  # ... see the esp32_camera documentation
-  resolution: 640x480
-  pixel_format: JPEG
-
 tflite_camera:
   - id: digit_reader
     camera_id: my_camera
