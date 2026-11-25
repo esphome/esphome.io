@@ -213,7 +213,9 @@ id(my_canopen).read_sdo_data(0x01, 0x1008, 0, name, sizeof(name), [](void *conte
   is sent to the node), without callbacks. The component doesn't use the request's buffer after the call, so use it
   before a buffer or `context` goes away. The next request (to any node) waits 50 ms after the abort, so a late answer
   to the cancelled transfer isn't taken for it. The 50 ms count from when the CAN controller took the abort, not from
-  when it was on the bus: on a congested bus a late answer can still get through.
+  when it was on the bus. A node busy in a slow object handler can answer the cancelled request even later, hundreds
+  of milliseconds after the abort; a request for the same object running then takes that answer as its own (see the
+  late answers note under [`canopen.sdo_write`](#canopen-sdo_write-action)).
 
 ### Raw Frames
 
