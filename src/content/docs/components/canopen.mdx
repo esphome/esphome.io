@@ -220,15 +220,17 @@ id(my_canopen).read_sdo_data(0x01, 0x1008, 0, name, sizeof(name), [](void *conte
 ### Raw Frames
 
 Frames the component doesn't handle itself, for example the PDOs of other devices, can be received and sent
-directly. Listeners can be added at any time, also before the component is set up, but not removed: add them at
-setup or boot, for example in `on_boot`. They get standard (11-bit) data frames, including the SDO answers and
-heartbeats the component handles. The data is valid only during the callback.
+directly. A listener is a `canopen::FrameListener` that you own: `{can_id, mask, callback, context}`. It must stay
+valid for as long as the device runs (make it `static`), and it can't be removed. Listeners can be added at any time,
+also before the component is set up or from a frame callback. They get standard (11-bit) data frames, including the
+SDO answers and heartbeats the component handles. The data is valid only during the callback.
 
 ```cpp
 // every TPDO1 frame (CAN IDs 0x181 to 0x1FF)
-id(my_canopen).add_frame_listener(0x180, 0x780, [](void *context, uint32_t can_id, const uint8_t *data, uint8_t len) {
+static canopen::FrameListener tpdo1{0x180, 0x780, [](void *context, uint32_t can_id, const uint8_t *data, uint8_t len) {
   ESP_LOGD("main", "TPDO1 from node 0x%02x", (unsigned) (can_id & 0x7F));
-}, nullptr);
+}, nullptr};
+id(my_canopen).add_frame_listener(tpdo1);
 
 // returns false for a CAN ID above 0x7FF, more than 8 bytes, or if the CAN controller can't take the frame now (it
 // isn't queued)
@@ -237,8 +239,9 @@ id(my_canopen).send_frame(0x201, data, sizeof(data));
 ```
 
 A frame matches a listener when `(frame_id ^ can_id) & mask` is 0. A listener that can't match any 11-bit CAN ID
-(`can_id & mask` above `0x7FF`) isn't added, and a warning is logged. A listener may add other listeners; they get
-frames from the next one on.
+(`can_id & mask` above `0x7FF`) isn't added, and a warning is logged. Adding a listener again does nothing, and each
+`canopen` component needs its own listener objects. A listener added from a frame callback gets frames from the next
+one on.
 
 ## See Also
 
