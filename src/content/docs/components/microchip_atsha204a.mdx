@@ -1,13 +1,13 @@
 ---
 title: "Microchip ATSHA204A"
-description: "Detect and run commands on an ATSHA204A CryptoAuthentication device."
+description: "Read chip identity and run commands on an ATSHA204A CryptoAuthentication device."
 ---
 
 import Figure from '@components/Figure.astro';
 
 The `microchip_atsha204a` component communicates with a Microchip [ATSHA204A][product] over I²C or the
-chip's single-wire interface (SWI). It can report chip presence and run the chip's commands from
-automations. See the [Microchip datasheet][datasheet] for pinouts and electrical specifications.
+chip's single-wire interface (SWI). It can report chip presence, serial number and revision, and run
+the chip's commands from automations. See the [Microchip datasheet][datasheet] for pinouts and electrical specifications.
 
 <Figure
   src="/images/atsha204a.webp"
@@ -33,8 +33,8 @@ Use a dedicated bus if another device responds to general calls.
 - **type** (**Required**, string): One of `i2c`, `swi_rmt`, or `swi_uart`.
 - **id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of this hub.
 - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often to check for the
-  chip. Defaults to `never`. Set an interval to update the presence sensor automatically, or use
-  [`component.update`](/automations/actions/#component-update-action) to poll on demand.
+  chip and read its identity. Defaults to `never`. Set an interval to update the entities automatically, or
+  use [`component.update`](/automations/actions/#component-update-action) to poll on demand.
 
 ### I²C Transport
 
@@ -95,6 +95,27 @@ binary_sensor:
 
 - **atsha204a_id** (*Optional*, [ID](/guides/configuration-types/#id)): The hub to use.
 - All other options from [Binary Sensor](/components/binary_sensor/).
+
+## Text Sensor
+
+The text sensors report uppercase hexadecimal values and publish an empty string when the chip is removed.
+
+```yaml
+text_sensor:
+  - platform: microchip_atsha204a
+    serial_number:
+      name: "Chip Serial Number"
+```
+
+### Configuration Variables
+
+Configure at least one of `serial_number` or `chip_revision`.
+
+- **atsha204a_id** (*Optional*, [ID](/guides/configuration-types/#id)): The hub to use.
+- **serial_number** (*Optional*): The chip's 9-byte serial number. All options from
+  [Text Sensor](/components/text_sensor/).
+- **chip_revision** (*Optional*): The chip's 4-byte silicon revision. All options from
+  [Text Sensor](/components/text_sensor/).
 
 ## `microchip_atsha204a.command` Action
 
@@ -178,7 +199,10 @@ attempt, and the driver logs transport failures.
 
 The hub exposes `command()` and `end_session()` for C++ integrations. `end_session()` returns `true`
 when it sends Sleep or starts waking an idle chip. It returns `false` for an invalid token or an
-immediate transport failure.
+immediate transport failure. A polling integration can register a callback with `set_poll_callback()`
+and chain reads with `read_block()` from that callback or its completion callback. The block pointer
+is valid for the duration of the completion callback and is null if the read fails. Use
+`set_disconnect_callback()` to clear data when the chip is removed.
 
 [datasheet]: https://ww1.microchip.com/downloads/en/devicedoc/atsha204a-data-sheet-40002025a.pdf
 [product]: https://www.microchip.com/en-us/product/ATSHA204A
