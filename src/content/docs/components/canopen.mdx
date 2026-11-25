@@ -20,6 +20,8 @@ stack. The node:
 
 The node sends emergency (EMCY) messages only for errors the stack detects itself, such as a full CAN transmit queue;
 there is no API to send your own. It has no PDOs of its own, and doesn't support SYNC, LSS or EDS files.
+Of the NMT commands, Reset Node restarts the whole device, so every `canopen` component on it boots up again. Reset
+Communication is only logged for now: the node doesn't reset its communication or send a new boot-up message.
 
 Without a `node_id` the component is no CANopen node, only an SDO client: it reads and writes objects of other
 devices, see [SDO Client Only](#sdo-client-only).
