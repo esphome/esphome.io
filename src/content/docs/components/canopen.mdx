@@ -9,6 +9,9 @@ The `canopen` component turns an ESPHome device into a [CANopen](https://www.can
 stack. The node:
 
 - runs the NMT state machine (it reacts to NMT commands from a master) and sends a heartbeat;
+- monitors the heartbeats of other nodes and reports when they go online or offline, restart or change their NMT
+  state, see [Heartbeat Monitoring](#heartbeat-monitoring);
+- sends NMT commands to other nodes as an NMT master ([`canopen.nmt`](#canopen-nmt-action));
 - answers SDO requests from other nodes and tools, with its identity, device name and versions, see
   [Object Dictionary](#object-dictionary);
 - reads and writes objects of other devices over SDO, from automations
@@ -18,8 +21,8 @@ stack. The node:
   [`on_emcy`](#on_emcy-trigger));
 - receives and sends other frames in lambdas, for example PDOs (see [Raw Frames](#raw-frames)).
 
-The node sends emergency (EMCY) messages only for errors the stack detects itself, such as a full CAN transmit queue;
-there is no API to send your own. It has no PDOs of its own, and doesn't support SYNC, LSS or EDS files.
+The node sends emergency (EMCY) messages only for errors the stack detects itself, such as a full CAN transmit queue
+or a monitored node's heartbeat timeout; there is no API to send your own. It has no PDOs of its own, and doesn't support SYNC, LSS or EDS files.
 Of the NMT commands, Reset Node restarts the whole device, so every `canopen` component on it boots up again. Reset
 Communication is only logged for now: the node doesn't reset its communication or send a new boot-up message.
 
@@ -45,6 +48,11 @@ canopen:
 - **heartbeat_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often this node sends its
   heartbeat. From `100ms` to `65535ms`. Defaults to `5s`. It's sent from the main loop, so the actual period is the
   interval plus up to one loop pass (for example about 1,008 ms for `1s`).
+- **heartbeat_clients** (*Optional*, list): Other nodes whose heartbeats are monitored, see
+  [Heartbeat Monitoring](#heartbeat-monitoring).
+  - **node_id** (**Required**, int): The node id, from `1` to `127`. It can't be this node's own id.
+  - **timeout** (**Required**, [Time](/guides/configuration-types/#time)): The node is reported offline when no
+    heartbeat arrives within this time. Up to `65535ms`. Choose it longer than the node's heartbeat interval.
 - **response_timeout** (*Optional*, [Time](/guides/configuration-types/#time)): How long an SDO request waits for an
   answer. Up to `65535ms`. Defaults to `500ms`.
 - **sdo_client** (*Optional*, boolean): Whether the SDO client is compiled in. Not set by default: it's compiled in
@@ -69,6 +77,7 @@ canopen:
 - **software_version** (*Optional*, string): The software version (`0x100A`). Defaults to the ESPHome version.
 - **on_nmt_state_change** (*Optional*, [Automation](/automations/)): See
   [`on_nmt_state_change`](#on_nmt_state_change-trigger).
+- **on_node_event** (*Optional*, [Automation](/automations/)): See [`on_node_event`](#on_node_event-trigger).
 - **on_heartbeat** (*Optional*, [Automation](/automations/)): See [`on_heartbeat`](#on_heartbeat-trigger).
 - **on_emcy** (*Optional*, [Automation](/automations/)): See [`on_emcy`](#on_emcy-trigger).
 - **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation and
@@ -103,22 +112,72 @@ interval:
 Available without `node_id`: `canbus_id`, `response_timeout`, `sdo_client` (not `false`), `on_heartbeat`, `on_emcy`,
 the [`canopen.sdo_read`](#canopen-sdo_read-action) and [`canopen.sdo_write`](#canopen-sdo_write-action) actions, the
 [SDO Client](#sdo-client) and [Raw Frames](#raw-frames) lambdas. The options of a node (`heartbeat_interval`,
-`nmt_startup`, `identity`, `device_name`, `hardware_version`, `software_version`, `on_nmt_state_change`) are rejected.
+`heartbeat_clients`, `nmt_startup`, `identity`, `device_name`, `hardware_version`, `software_version`,
+`on_nmt_state_change`, `on_node_event`) and the [`canopen.nmt`](#canopen-nmt-action) action are rejected.
 
 ## Several Nodes
 
 More than one `canopen` component can be configured, on different buses or on the same one. Nodes on the same bus must
 have different node ids, as on any CANopen bus. They receive each other's frames as if they were separate devices:
-their `on_heartbeat` and `on_emcy` triggers and frame listeners see the other's frames, and SDO requests between them
-work. The frames are also sent on the bus as usual. A bus can have only one `canopen` component without `node_id`
+a node can monitor another one's heartbeat with `heartbeat_clients`, their `on_heartbeat` and `on_emcy` triggers and
+frame listeners see the other's frames, and SDO requests and NMT commands between them work. The frames are also sent
+on the bus as usual. A node gets the frames of the other nodes on the device in its next loop pass, in the order they
+were sent. Up to 16 can wait; when more are sent in between (for example a long burst of `send_frame()` calls in one
+lambda), the rest is lost, as on a bus, and a warning is logged. A bus can have only one `canopen` component without `node_id`
 (SDO client only): two would share the SDO client's CAN IDs.
 
 ```yaml
 canopen:
   - id: node_a
     node_id: 0x10
+    heartbeat_clients:
+      - node_id: 0x11
+        timeout: 7s
   - id: node_b
     node_id: 0x11
+```
+
+## Heartbeat Monitoring
+
+Nodes listed in `heartbeat_clients` are monitored. Each monitored node reports these events (see
+[`on_node_event`](#on_node_event-trigger)):
+
+- `NODE_EVENT_ONLINE`: the first heartbeat, or the first one after a timeout or a boot-up message.
+- `NODE_EVENT_OFFLINE`: no heartbeat within `timeout`. A node that never sent a heartbeat isn't reported offline.
+- `NODE_EVENT_NMT_CHANGED`: the NMT state in the heartbeat changed. It also follows `NODE_EVENT_ONLINE` (unknown →
+  state) and `NODE_EVENT_OFFLINE` (state → unknown).
+- `NODE_EVENT_RESET`: the node sent a boot-up message, so it restarted and lost any configuration it got at runtime.
+  It counts as online again with its next heartbeat.
+
+Each event is also logged: offline as a warning, the others at info level.
+
+```yaml
+canopen:
+  id: my_canopen
+  node_id: 0x10
+  heartbeat_clients:
+    - node_id: 0x01
+      timeout: 7s
+  on_node_event:
+    - if:
+        condition:
+          lambda: "return node_id == 0x01 && event == canopen::NodeEvent::NODE_EVENT_RESET;"
+        then:
+          # the node restarted: configure it again
+          - canopen.sdo_write:
+              node_id: 0x01
+              index: 0x1017
+              value: 2000
+              size: 2
+```
+
+The state of a monitored node is also available in lambdas:
+
+```cpp
+// true while heartbeats arrive in time (false for a node that isn't monitored)
+id(my_canopen).is_node_online(0x01);
+// NMT state from the last heartbeat (UNKNOWN for a node that isn't monitored or is offline)
+id(my_canopen).get_node_state(0x01) == canopen::NMTState::NMT_STATE_OPERATIONAL;
 ```
 
 ## Object Dictionary
@@ -134,6 +193,7 @@ COB-IDs `0x600` + node id (requests) and `0x580` + node id (responses), with exp
 | `0x1009` | Hardware version | read | `hardware_version`, only if set |
 | `0x100A` | Software version | read | `software_version` |
 | `0x1014` | EMCY COB-ID | read | `0x80` + node id |
+| `0x1016` | Consumer heartbeat time | read/write | one entry per node in `heartbeat_clients`, only with them |
 | `0x1017` | Producer heartbeat time | read/write | `heartbeat_interval`; a write takes effect at once |
 | `0x1018` | Identity | read | `identity` |
 | `0x1200` | SDO server parameter | read | |
@@ -154,6 +214,28 @@ canopen:
     - logger.log:
         format: "NMT state: %s"
         args: ["LOG_STR_ARG(canopen::nmt_state_to_string(state))"]
+```
+
+### `on_node_event` Trigger
+
+Runs for every event of a node in `heartbeat_clients`, see [Heartbeat Monitoring](#heartbeat-monitoring). Variables:
+
+- `node_id` (`uint8_t`): the node.
+- `event` (`canopen::NodeEvent`): `NODE_EVENT_ONLINE`, `NODE_EVENT_OFFLINE`, `NODE_EVENT_NMT_CHANGED` or
+  `NODE_EVENT_RESET`.
+- `state` (`canopen::NMTState`): the node's NMT state (`NMT_STATE_UNKNOWN` after `NODE_EVENT_OFFLINE`,
+  `NMT_STATE_BOOTUP` for `NODE_EVENT_RESET`).
+
+```yaml
+canopen:
+  # ...
+  on_node_event:
+    - logger.log:
+        format: "node 0x%02x: %s, %s"
+        args:
+          - node_id
+          - LOG_STR_ARG(canopen::node_event_to_string(event))
+          - LOG_STR_ARG(canopen::nmt_state_to_string(state))
 ```
 
 ### `on_heartbeat` Trigger
@@ -269,6 +351,25 @@ Configuration variables:
 - **id** (*Optional*, [ID](/guides/configuration-types/#id)): The `canopen` component to use. Required if there is
   more than one.
 
+### `canopen.nmt` Action
+
+Sends an NMT command, as an NMT master. A command to this node's own id, or to all nodes, applies to this node too.
+
+```yaml
+on_...:
+  - canopen.nmt:
+      node_id: 0x01
+      command: start
+```
+
+Configuration variables:
+
+- **node_id** (**Required**, int, [templatable](/automations/templates/)): The node, from `1` to `127`, or `0` for all
+  nodes.
+- **command** (**Required**, enum): One of `start`, `stop`, `pre_operational`, `reset_node` or `reset_communication`.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The `canopen` component to use. Required if there is
+  more than one. It must have a `node_id`.
+
 ### Shared SDO Channel
 
 These apply to both actions and to the [lambda calls](#sdo-client).
@@ -349,6 +450,16 @@ id(my_canopen).read_sdo_data(0x01, 0x1008, 0, name, sizeof(name), [](void *conte
 id(my_canopen).get_nmt_state() == canopen::NMTState::NMT_STATE_OPERATIONAL;
 // OPERATIONAL, PRE_OPERATIONAL or STOPPED; no NMT master needed (false without node_id)
 id(my_canopen).set_nmt_state(canopen::NMTState::NMT_STATE_OPERATIONAL);
+```
+
+### NMT Master
+
+The NMT master is compiled in when the configuration uses a [`canopen.nmt`](#canopen-nmt-action) action.
+
+```cpp
+// false without node_id, for a node id above 127, or while the previous NMT command is still waiting to be sent (a
+// command the CAN controller can't take at once is resent from the main loop)
+id(my_canopen).send_nmt(0x01, canopen::NMTCommand::NMT_COMMAND_PRE_OPERATIONAL);
 ```
 
 ### Raw Frames
