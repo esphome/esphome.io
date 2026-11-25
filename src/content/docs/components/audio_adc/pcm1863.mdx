@@ -1,0 +1,112 @@
+---
+description: "Instructions for using ESPHome's PCM1863 platform to configure line and microphone inputs."
+title: "PCM1863"
+---
+import APIRef from '@components/APIRef.astro';
+
+
+The `pcm1863` platform allows your ESPHome devices to use the PCM1863 stereo audio ADC
+([datasheet](https://www.ti.com/lit/ds/symlink/pcm1863.pdf)). It captures a line-level or microphone signal and
+makes it available as a microphone input via [I2S Audio](/components/microphone/i2s_audio/).
+
+The PCM1863 has an analog input multiplexer, so one device can be wired to several sources and switched between
+them at runtime. See [Select](#select) below.
+
+The [I²C bus](/components/i2c/) is required in your configuration as this is used to communicate with the PCM1863.
+
+```yaml
+# Example configuration entry
+audio_adc:
+  - platform: pcm1863
+```
+
+## Configuration Variables
+
+- **bits_per_sample** (*Optional*, enum): The bit depth of the audio samples. One of `16bit`, `20bit`, `24bit` or
+  `32bit`. Defaults to `24bit`. The [I²S microphone](/components/microphone/i2s_audio/) has no `20bit` setting, so
+  use `20bit` only with another I²S receiver.
+
+- **input** (*Optional*, enum): The analog input the ADC captures from at startup. Defaults to `VIN1`. One of:
+
+  - `NONE`: no input selected. The converter keeps running but the multiplexer is disconnected.
+  - `VIN1`, `VIN2`, `VIN3`, `VIN4`: the matching single-ended pin pair, for example `VINL2` and `VINR2` for `VIN2`.
+  - `DIFF_1`: differential, `VIN1P`/`VIN1M` on the left channel and `VIN2P`/`VIN2M` on the right.
+  - `DIFF_2`: differential, `VIN4P`/`VIN4M` on the left channel and `VIN3P`/`VIN3M` on the right.
+
+- **mic_gain** (*Optional*, decibels): The gain applied by the programmable gain amplifier, from `-12dB` to `40dB`
+  in steps of 0.5 dB. Defaults to `0dB`.
+
+- **address** (*Optional*, int): The I²C address of the driver. Defaults to `0x4A`.
+- **i2c_id** (*Optional*): The ID of the [I²C bus](/components/i2c/) the PCM1863 is connected to.
+- All other options from [Audio ADC](/components/audio_adc/#config-audio_adc).
+
+> [!IMPORTANT]
+> `bits_per_sample` sets the width of the I2S slots the ADC transmits, so it must match the `bits_per_sample` of
+> the microphone receiving the audio. A mismatch leaves the samples misaligned, which usually shows up as a
+> difference in level between the two channels rather than as silence.
+
+## Select
+
+The `pcm1863` select switches the analog input multiplexer while the device is running, which is useful when more
+than one source is wired to the ADC.
+
+```yaml
+select:
+  - platform: pcm1863
+    name: "Line Input"
+```
+
+### Configuration Variables
+
+- **pcm1863_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the PCM1863 to
+  control.
+- All options from [Select](/components/select/#config-select).
+
+The options offered are the same as the `input` configuration variable above: `NONE`, `VIN1`, `VIN2`, `VIN3`,
+`VIN4`, `DIFF_1` and `DIFF_2`. Not every option is wired on every board; the ones that are not read as silence.
+
+The select publishes its new state only after the ADC accepts the change, so it stays where it was if the I²C
+write fails.
+
+## Automations
+
+All [Audio ADC Automations](/components/audio_adc/#automations-audio_adc) are supported by this platform.
+`audio_adc.set_mic_gain` sets the programmable gain amplifier on both channels.
+
+## Configuration Examples
+
+Capturing a line input and switching between two sources from the frontend:
+
+```yaml
+audio_adc:
+  - platform: pcm1863
+    id: line_in_adc
+    bits_per_sample: 32bit
+    input: VIN2
+
+select:
+  - platform: pcm1863
+    pcm1863_id: line_in_adc
+    name: "Line Input"
+
+i2s_audio:
+  - id: i2s_in
+    i2s_bclk_pin: GPIOXX
+    i2s_lrclk_pin: GPIOXX
+
+microphone:
+  - platform: i2s_audio
+    id: line_in_mic
+    i2s_audio_id: i2s_in
+    i2s_din_pin: GPIOXX
+    adc_type: external
+    channel: stereo
+    sample_rate: 48000
+    bits_per_sample: 32bit
+```
+
+## See Also
+
+- [Audio ADC Component](/components/audio_adc/)
+- [I²S Audio Microphone](/components/microphone/i2s_audio/)
+- <APIRef text="pcm1863.h" path="pcm1863/pcm1863.h" />

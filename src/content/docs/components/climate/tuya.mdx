@@ -94,20 +94,20 @@ climate:
   - **medium_value** (*Optional*, int): The datapoint value the device reports when the fan is on `medium` speed.
   - **middle_value** (*Optional*, int): The datapoint value the device reports when the fan is on `middle` speed. (May set to device's `high` value if you have a `Turbo` option).
   - **high_value** (*Optional*, int): The datapoint value the device reports when the fan is on `high` speed. (Sometimes called `Turbo`  ).
-- **heating_state_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The input pin indicating that the device is heating - [see below](#active-state-detection). Only used if **active_state_datapoint** is not configured.
-- **cooling_state_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The input pin indicating that the device is cooling - [see below](#active-state-detection). Only used if **active_state_datapoint** is not configured.
+- **heating_state_pin** (*Optional*, [Pin](/guides/configuration-types/#pin)): The input pin indicating that the device is heating - [see below](#active-state-detection). Only used if **active_state_datapoint** is not configured.
+- **cooling_state_pin** (*Optional*, [Pin](/guides/configuration-types/#pin)): The input pin indicating that the device is cooling - [see below](#active-state-detection). Only used if **active_state_datapoint** is not configured.
 - **target_temperature_datapoint** (**Required**, int): The datapoint id number of the target temperature.
 - **current_temperature_datapoint** (**Required**, int): The datapoint id number of the current temperature.
 - **temperature_multiplier** (*Optional*, float): A multiplier to modify the incoming and outgoing temperature values - [see below](#temperature-multiplier).
 
-- **reports_fahrenheit** (*Optional*, boolean): Set to `true` if the device reports temperatures in Fahrenheit. ESPHome expects all climate temperatures to be in Celcius, otherwise unexpected conversions will take place when it is published to Home Assistant. Defaults to `false`.
+- **reports_fahrenheit** (*Optional*, boolean): Set to `true` if the device reports temperatures in Fahrenheit. ESPHome expects all climate temperatures to be in Celsius, otherwise unexpected conversions will take place when it is published to Home Assistant. Defaults to `false`.
 
 If the device has different multipliers for current and target temperatures, **temperature_multiplier** can be replaced with both of:
 
 - **current_temperature_multiplier** (*Optional*, float): A multiplier to modify the current temperature value.
 - **target_temperature_multiplier** (*Optional*, float): A multiplier to modify the target temperature value.
 
-- All other options from [Climate](/components/climate#config-climate).
+- All other options from [Climate](/components/climate/#config-climate).
 
 ## Active state detection
 
@@ -122,7 +122,7 @@ If none of the above variables are set, the active state is inferred from the di
 
 ## Temperature multiplier
 
-Some Tuya climate devices report the temperature with a multiplied factor. This is because the MCU only utlizes
+Some Tuya climate devices report the temperature with a multiplied factor. This is because the MCU only utilizes
 integers for data reporting and to get a .5 temperature you need to divide by 2 on the ESPHome side.
 
 ## See Also

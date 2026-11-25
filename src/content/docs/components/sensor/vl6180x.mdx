@@ -1,0 +1,92 @@
+---
+title: "VL6180X Time Of Flight Sensor"
+description: "Configure VL6180X time of flight distance and ambient light sensors in ESPHome."
+---
+
+The `vl6180x` component uses the ST VL6180X time of flight sensor to measure distance and ambient light over I²C.
+Several sensors can share one I²C bus through their XSHUT/CE pins.
+
+The [I²C Bus](/components/i2c/) must be configured for this component.
+
+```yaml
+vl6180x:
+  - id: tof_sensor
+
+sensor:
+  - platform: vl6180x
+    vl6180x_id: tof_sensor
+    distance:
+      name: "Distance"
+    illuminance:
+      name: "Illuminance"
+```
+
+If your module contains a VL6180 variant without ambient light sensing, omit `illuminance`.
+
+## Wiring
+
+- `VCC` connects to the voltage supported by your sensor breakout board.
+- `GND` connects to ground.
+- `SCL` connects to I²C SCL.
+- `SDA` connects to I²C SDA.
+- `XSHUT` or `CE` is the optional sensor enable input. Connect it to `enable_pin` when several sensors share an I²C bus
+  or when using a non-default I²C address.
+
+## Configuration Variables
+
+- **id** (*Optional*, ID): The component instance ID. ESPHome generates an ID if one is not provided.
+- **address** (*Optional*, int): The sensor I²C address. Defaults to `0x29`. A non-default address requires
+  `enable_pin` so the component can assign the address at startup. See [Multiple Sensors](#multiple-sensors).
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval between measurements.
+  Defaults to `60s`.
+- **enable_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The GPIO connected to the
+  sensor's XSHUT/CE input. Required for every sensor that shares an I²C bus with another VL6180X, and required when
+  using a non-default I²C address. Each sensor needs its own pin.
+
+## Sensor Platform
+
+Configure distance and ambient light entities in one `sensor:` entry with `platform: vl6180x`. At least one of
+`distance` or `illuminance` is required. Light is measured right after distance on each update of the hub.
+
+- **vl6180x_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `vl6180x` hub. Required when more
+  than one hub is configured.
+- **distance** (*Optional*): Distance in millimeters. All options from [Sensor](/components/sensor/).
+  - **scaler** (*Optional*, int): `1` to `3`. Higher values extend the measurement range at lower resolution.
+    Defaults to `1`.
+- **illuminance** (*Optional*): Ambient light in lux. All options from [Sensor](/components/sensor/).
+  - **gain** (*Optional*, float): One of `1`, `1.25`, `1.67`, `2.5`, `5`, `10`, `20` or `40`. Defaults to `1`.
+  - **integration_time** (*Optional*, [Time](/guides/configuration-types/#time)): The light measurement time, from
+    `1ms` to `512ms`. Defaults to `100ms`.
+
+Bright light can overflow the light reading at high gain or with a long integration time; the sensor then reports no
+value until the light drops.
+
+## Multiple Sensors
+
+Each sensor on the same I²C bus needs its own `enable_pin` and a unique address other than `0x29`. The component uses
+the enable pins to initialize sensors one at a time, preventing their default `0x29` addresses from colliding during
+startup.
+
+```yaml
+vl6180x:
+  - id: near_sensor
+    address: 0x30
+    enable_pin: GPIOXX
+
+  - id: far_sensor
+    address: 0x31
+    enable_pin: GPIOXX
+
+sensor:
+  - platform: vl6180x
+    vl6180x_id: near_sensor
+    distance:
+      name: "Near Distance"
+  - platform: vl6180x
+    vl6180x_id: far_sensor
+    distance:
+      name: "Far Distance"
+```
+
+Choose GPIOs supported by your board and connect each one to the corresponding sensor's XSHUT/CE pin. Do not use the
+same `enable_pin` for multiple sensors.

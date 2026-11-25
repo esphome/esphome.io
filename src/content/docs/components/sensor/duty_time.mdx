@@ -30,10 +30,10 @@ sensor:
 
 ## Configuration variables
 
-- **sensor** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the `binary_sensor` to track the duty time. *May not be
+- **sensor** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `binary_sensor` to track the duty time. *May not be
   used with* `lambda`.
 
-- **lambda** (*Optional*, [lambda](/automations/templates#config-lambda)): Lambda that will be called in a loop to get the current
+- **lambda** (*Optional*, [lambda](/automations/templates/#config-lambda)): Lambda that will be called in a loop to get the current
   state of the tracked object. *May not be used with* `sensor`.
 
 - **last_time** (*Optional*): Information of the last switch-on time sensor.
@@ -43,13 +43,13 @@ sensor:
   restored upon power cycle or reboot.
   Warning: this option can wear out your flash. Defaults to `false`.
 
-- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The update interval. Defaults to `60s`.
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Set the ID of this sensor for use in lambdas.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The update interval. Defaults to `60s`.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Set the ID of this sensor for use in lambdas.
 - All other options from [Sensor](/components/sensor).
 
 ## Automations
 
-In addition to all basic [sensor automations](/components/sensor#sensor-automations), the component supports the automations below.
+In addition to all basic [sensor automations](/components/sensor/#sensor-automations), the component supports the automations below.
 
 ### `sensor.duty_time.start` Action
 
@@ -81,12 +81,45 @@ on_...:
     - sensor.duty_time.reset: my_climate_work_time
 ```
 
+### `sensor.duty_time.set_value` Action
+
+This action sets the accumulated duty time and publishes the new sensor state.
+It does not change whether the counter is running, or update the `last_time` sensor. Use it to restore a previously
+backed-up counter value after replacing a device or erasing its flash.
+
+```yaml
+on_...:
+  then:
+    - sensor.duty_time.set_value:
+        id: my_climate_work_time
+        value: 450000
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the `duty_time` sensor.
+- **value** (**Required**, [Time](/guides/configuration-types/#time), [templatable](/automations/templates/)): The
+  accumulated time, for example `125h`, up to `4294967295s`. A plain number is seconds; a lambda returns seconds.
+
+The value can also be supplied by a lambda:
+
+```yaml
+on_...:
+  then:
+    - sensor.duty_time.set_value:
+        id: my_climate_work_time
+        value: !lambda "return 450000U;"
+```
+
+When `restore: true` is configured on the sensor, the new value is saved using ESPHome's
+[preferences](/components/preferences/) mechanism. The action does not retrieve a backup automatically.
+
 <span id="sensor-duty_time-is_running_action"></span>
 <span id="sensor-duty_time-is_not_running_action"></span>
 
 ### `sensor.duty_time.is_running` / `sensor.duty_time.is_not_running` Condition
 
-This [Condition](/automations/actions#all-conditions) checks if the `duty_time` counter is currently running (or suspended). In lambdas, you may use the `is_running()` method.
+This [Condition](/automations/actions/#all-conditions) checks if the `duty_time` counter is currently running (or suspended). In lambdas, you may use the `is_running()` method.
 
 ```yaml
 # In some trigger:
@@ -97,10 +130,56 @@ on_...:
       sensor.duty_time.is_running: my_climate_work_time
 ```
 
+## Examples
+
+### Restore a Saved Value from Home Assistant
+
+A [user-defined API action](/components/api/#user-defined-actions) can accept a runtime value from Home Assistant,
+so the value does not need to be hard-coded in ESPHome. For example, add this to the ESPHome configuration:
+
+```yaml
+api:
+  actions:
+    - action: restore_duty_time
+      variables:
+        seconds: int
+      then:
+        - sensor.duty_time.set_value:
+            id: my_climate_work_time
+            value: !lambda "return seconds < 0 ? 0 : seconds;"
+```
+
+After flashing the configuration, a Home Assistant script can restore the saved value. For a device named
+`my_device` and a numeric helper called `input_number.duty_time_backup`, use the script below. A new
+`input_number` helper defaults to a maximum of 100, so set its maximum to the largest runtime you expect and its
+step to 1.
+
+```yaml
+# Home Assistant configuration
+script:
+  restore_duty_time:
+    sequence:
+      - variables:
+          backup_seconds: "{{ states('input_number.duty_time_backup') }}"
+      - condition: template
+        value_template: >-
+          {{ is_number(backup_seconds)
+             and 0 <= (backup_seconds | float(0)) <= 2147483647 }}
+      - action: esphome.my_device_restore_duty_time
+        data:
+          seconds: "{{ backup_seconds | int }}"
+```
+
+The condition stops the script without changing the device counter when the helper is `unknown`, `unavailable`,
+non-numeric, negative, or beyond the signed 32-bit range accepted by the API action. An explicit zero is allowed.
+This example assumes the helper already contains the desired runtime in seconds; it does not create or update
+the backup. Trigger restoration intentionally, such as after replacing a device or erasing its flash.
+Do not restore on every startup, since an older backup can overwrite newer accumulated runtime.
+
 ## See Also
 
 - [Base Sensor Configuration](/components/sensor)
-- [Templates](/automations/templates#config-lambda)
+- [Templates](/automations/templates/#config-lambda)
 - [Automation](/automations)
 - [Binary Sensor Component](/components/binary_sensor/)
 - <APIRef text="duty_time_sensor.h" path="duty_time/duty_time_sensor.h" />

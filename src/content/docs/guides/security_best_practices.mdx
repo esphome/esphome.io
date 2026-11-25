@@ -19,7 +19,7 @@ ESPHome devices should not be considered hardened for hostile network environmen
 
 ESPHome provides three primary security features that should **always** be enabled:
 
-### 1. API Encryption
+### API Encryption
 
 The [native API](/components/api) is the primary communication method between ESPHome devices and Home Assistant or other clients.
 
@@ -34,7 +34,7 @@ api:
 
 **Best practices:**
 
-- Generate a unique encryption key for each device - see the [API component documentation](/components/api#configuration-variables) for an on-demand key generator
+- Generate a unique encryption key for each device - see the [API component documentation](/components/api/#configuration-variables) for an on-demand key generator
 - Store keys in `secrets.yaml` (never commit this file to version control); the `device_name__encryption_key` name follows the `<hostname>__<base>` shape the Device Builder writes, see [Using secrets.yaml](#using-secrets-yaml)
 - Never reuse encryption keys across devices
 - If a device is compromised, regenerate its key immediately
@@ -46,7 +46,7 @@ api:
 - Execute services on your devices
 - Potentially extract sensitive information
 
-### 2. Web Server Authentication
+### Web Server Authentication
 
 If you enable the [web server](/components/web_server) for device monitoring and control, always set a password:
 
@@ -73,13 +73,14 @@ web_server:
 - Potentially interfere with device operation
 
 > [!NOTE]
-> The web server has no cross-site (CSRF) protection by design: it does not check the request `Origin` and uses a
-> permissive CORS policy. A web page you visit while on the same network can therefore send commands to the device
-> through your browser, even though the page's author is never on your network. Enabling `auth:` and keeping devices on
-> a trusted, segmented network are the defenses. This is intentional; see the project
-> [threat model](https://github.com/esphome/esphome/blob/dev/THREAT_MODEL.md).
+> The web server is an open HTTP API by design: without `auth:`, any client that can reach it can use every endpoint.
+> As defense in depth it rejects browser requests from other origins, including firmware uploads to the web OTA
+> `/update` endpoint, unless the origin is listed in
+> [`allowed_origins`](/components/web_server/#cross-origin-requests). This only constrains browsers; scripts and other
+> clients that send no `Origin` header are not affected. Enabling `auth:` and keeping devices on a trusted, segmented
+> network are the defenses. See the project [threat model](https://github.com/esphome/esphome/blob/dev/THREAT_MODEL.md).
 
-### 3. OTA Encryption
+### OTA Encryption
 
 [OTA (Over-The-Air)](/components/ota) updates allow you to update firmware wirelessly. Encrypt them so the firmware
 image stays confidential in transit; the image contains your Wi-Fi credentials and your API encryption key. Encryption
