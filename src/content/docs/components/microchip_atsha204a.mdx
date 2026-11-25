@@ -1,14 +1,13 @@
 ---
 title: "Microchip ATSHA204A"
-description: "Detect and run commands on an ATSHA204A CryptoAuthentication device over a single wire."
+description: "Detect and run commands on an ATSHA204A CryptoAuthentication device."
 ---
 
 import Figure from '@components/Figure.astro';
 
-The `microchip_atsha204a` component uses the ESP32 RMT peripheral to communicate with a Microchip
-[ATSHA204A][product] over the chip's single-wire interface (SWI). It can report chip presence and run
-the chip's commands from automations. See the [Microchip datasheet][datasheet] for pinouts and
-electrical specifications.
+The `microchip_atsha204a` component communicates with a Microchip [ATSHA204A][product] over I²C or the
+chip's single-wire interface (SWI). It can report chip presence and run the chip's commands from
+automations. See the [Microchip datasheet][datasheet] for pinouts and electrical specifications.
 
 <Figure
   src="/images/atsha204a.webp"
@@ -19,7 +18,33 @@ electrical specifications.
 
 ## Configuration
 
-Use an original ESP32 with ESP-IDF 5.5.4 or newer. RMT transmits on the
+For `type: i2c`, configure a top-level [I²C bus](/components/i2c/) at 100 kHz or slower.
+
+```yaml
+microchip_atsha204a:
+  type: i2c
+```
+
+To wake the chip, the I²C transport attempts a write to the general-call address (`0x00`) to hold SDA low.
+Use a dedicated bus if another device responds to general calls.
+
+### Configuration Variables
+
+- **type** (**Required**, string): One of `i2c`, `swi_rmt`, or `swi_uart`.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of this hub.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often to check for the
+  chip. Defaults to `never`. Set an interval to update the presence sensor automatically, or use
+  [`component.update`](/automations/actions/#component-update-action) to poll on demand.
+
+### I²C Transport
+
+- **i2c_id** (*Optional*, [ID](/guides/configuration-types/#id)): The I²C bus to use. Set this if you have
+  more than one bus.
+- **address** (*Optional*, int): The chip's 7-bit address. Defaults to `0x64`.
+
+### Single-Wire RMT Transport
+
+Use `type: swi_rmt` on an original ESP32 with ESP-IDF 5.5.4 or newer. RMT transmits on the
 `rx_pin` of a dedicated, receive-only [UART bus](/components/uart/) configured for 230400 baud,
 7 data bits, no parity and 1 stop bit. Connect that GPIO to the signal wire with a pull-up.
 Use a non-inverted, output-capable GPIO other than GPIO3, GPIO9 or GPIO16, which can bypass the
@@ -31,14 +56,30 @@ microchip_atsha204a:
   type: swi_rmt
 ```
 
-### Configuration Variables
-
-- **type** (**Required**, string): Set to `swi_rmt`.
-- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of this hub.
-- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often to check for the
-  chip. Defaults to `never`. Set an interval to update the presence sensor automatically, or use
-  [`component.update`](/automations/actions/#component-update-action) to poll on demand.
 - **uart_id** (*Optional*, [ID](/guides/configuration-types/#id)): The UART bus to use.
+
+### Single-Wire UART Transport
+
+Use `type: swi_uart` with a dedicated [hardware UART](/components/uart/) at 230400 baud, 7 data
+bits, no parity and 1 stop bit. Use non-inverted TX and RX, leave `flow_control_pin` unset, and set
+`rx_buffer_size` to at least 680 bytes. On ESP8266, use UART0 (TX/RX on GPIO1/GPIO3 or GPIO15/GPIO13) and
+disable serial logging on that port or move it to UART1. Connect RX to the pulled-up signal. Connect
+TX through a low-forward-voltage Schottky diode with the anode at the signal and the cathode at TX, or
+through an equivalent open-drain buffer.
+
+```yaml
+microchip_atsha204a:
+  type: swi_uart
+  wake_pin:
+    number: GPIOXX
+    mode:
+      output: true
+      open_drain: true
+```
+
+- **uart_id** (*Optional*, [ID](/guides/configuration-types/#id)): The UART bus to use.
+- **wake_pin** (**Required**, [Pin Schema](/guides/configuration-types/#pin-schema)): A non-inverted,
+  open-drain GPIO output connected to the signal wire.
 
 ## Binary Sensor
 
