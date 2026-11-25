@@ -120,17 +120,17 @@ A travel is measured only when all of these are true:
 - it ends at the other end because the motor current dropped, without being stopped, reversed or interrupted.
 
 The first travel after a reboot is never measured, because the cover does not know yet that it is at an end.
-A measured time replaces the current duration only when it differs by more than 5%, and the learned durations are
-saved in flash, so they are kept after a reboot. The configured `open_duration` and `close_duration` are used until
+A measured time replaces the current duration only when it differs by more than 5% and by more than 1 second, and
+only when it is between half and twice the configured duration. The learned durations are saved in flash, so they are
+kept after a reboot. The configured `open_duration` and `close_duration` are used until
 a duration is learned. Changing them in the configuration discards the learned durations.
 
-With `learn_durations: true` there is no need to measure `open_duration` and `close_duration`. If you do not know
-them, set both to a value longer than the real travel, for example `200s`. They are replaced with the measured times
-once the cover has reached an end with the motor running and then made one full travel in each direction.
+With `learn_durations: true`, `open_duration` and `close_duration` only need to be roughly right: a measured time
+outside half to twice the configured duration is not learned. Time one full travel with a stopwatch and use that.
 
 The measured time includes the delay of the current sensor, so a shorter `update_interval` of the current sensor gives
-more accurate durations. If the motor stops in the middle of a travel, for example because of a thermal cut-out, the
-shorter time is learned and corrected by the next full travel.
+more accurate durations. If the motor stops in the middle of a travel, for example because of a thermal cut-out, a time
+shorter than half the configured duration is not learned.
 
 To learn both durations right away, open the cover fully, close it fully, open it fully and close it fully again.
 The first travel that actually runs the motor only finds the end position.
