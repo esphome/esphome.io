@@ -1,0 +1,50 @@
+---
+description: "Instructions for setting up NMEA GNSS receivers in ESPHome."
+title: "NMEA GNSS Receiver"
+---
+
+import Figure from '@components/Figure.astro';
+import gpsFullImg from '../images/gps-full.jpg';
+import APIRef from '@components/APIRef.astro';
+
+The `nmea` [GNSS](/components/gnss/) platform reads receivers that send the standard NMEA 0183 sentences, which
+almost every GNSS module does by default.
+
+<Figure
+  src={gpsFullImg}
+  alt=""
+  caption="GNSS Module. Image by [Adafruit](https://www.adafruit.com)"
+  layout="constrained"
+/>
+
+A [UART bus](/components/uart) is required in your configuration; only the RX pin is needed.
+
+```yaml
+# Example configuration entry
+uart:
+  rx_pin: GPIO16
+  baud_rate: 9600
+
+gnss:
+  - platform: nmea
+
+sensor:
+  - platform: gnss
+    type: latitude
+    name: "Latitude"
+  - platform: gnss
+    type: longitude
+    name: "Longitude"
+```
+
+## Configuration variables
+
+- **uart_id** (*Optional*, [ID](/guides/configuration-types/#id)): The UART bus of the receiver. Only needed when
+  there is more than one.
+- All options from the [GNSS base configuration](/components/gnss/#base-configuration).
+
+## See Also
+
+- [GNSS Component](/components/gnss/)
+- [TinyGPS++ library](https://github.com/esphome/TinyGPSPlus)
+- <APIRef text="nmea_gnss.h" path="nmea/nmea_gnss.h" />

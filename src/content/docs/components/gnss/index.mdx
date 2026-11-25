@@ -1,0 +1,114 @@
+---
+description: "Instructions for setting up GNSS receivers (GPS, Galileo, GLONASS, BeiDou) in ESPHome."
+title: "GNSS Component"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `gnss` hub component reads position, speed and time from GNSS receivers (GPS, Galileo, GLONASS, BeiDou and
+others). Each receiver is set up as a `gnss` platform for the protocol it speaks, and its values are read with
+`gnss` sensors and the [GNSS time source](/components/time/gnss/).
+
+```yaml
+# Example configuration entry
+gnss:
+  - platform: nmea
+    id: gnss_receiver
+
+sensor:
+  - platform: gnss
+    type: latitude
+    name: "Latitude"
+  - platform: gnss
+    type: longitude
+    name: "Longitude"
+  - platform: gnss
+    type: altitude
+    name: "Altitude"
+
+time:
+  - platform: gnss
+```
+
+## Platforms
+
+- [NMEA](/components/gnss/nmea/): any receiver that sends standard NMEA 0183 sentences.
+
+## Configuration variables
+
+### Base configuration
+
+These options are shared by all `gnss` platforms.
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of this receiver, used by the sensors and
+  the time source when there is more than one receiver.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often the sensors publish the
+  latest values. Defaults to `20s`.
+
+## Sensor
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: gnss
+    type: speed
+    name: "Speed"
+```
+
+### Configuration variables
+
+- **type** (**Required**): The value to report. One of:
+
+  - `latitude`: Latitude in degrees.
+  - `longitude`: Longitude in degrees.
+  - `altitude`: Altitude above mean sea level in meters.
+  - `speed`: Speed over ground in km/h.
+  - `course`: Course over ground in degrees from true north.
+  - `satellites`: Number of satellites used in the solution.
+  - `hdop`: Horizontal dilution of precision.
+
+- **gnss_id** (*Optional*, [ID](/guides/configuration-types/#id)): The receiver to read from. Only needed when
+  there is more than one.
+- All other options from [Sensor](/components/sensor).
+
+## Moving From `gps`
+
+The `gps` component is deprecated and will be removed in 2027.6.0. It becomes a `gnss` receiver with
+`platform: nmea`, each of its sensors becomes a `gnss` sensor with a `type`, and the time source becomes
+`platform: gnss`. The values do not change.
+
+```yaml
+# Before
+gps:
+  latitude:
+    name: "Latitude"
+  longitude:
+    name: "Longitude"
+
+time:
+  - platform: gps
+```
+
+```yaml
+# After
+gnss:
+  - platform: nmea
+
+sensor:
+  - platform: gnss
+    type: latitude
+    name: "Latitude"
+  - platform: gnss
+    type: longitude
+    name: "Longitude"
+
+time:
+  - platform: gnss
+```
+
+## See Also
+
+- [Sensor Filters](/components/sensor/#sensor-filters)
+- [NMEA GNSS platform](/components/gnss/nmea/)
+- [GNSS Time Source](/components/time/gnss/)
+- <APIRef text="gnss.h" path="gnss/gnss.h" />
