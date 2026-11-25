@@ -50,6 +50,10 @@ on_...:
         - logger.log:
             format: "vendor id 0x%08x"
             args: ["(unsigned) x"]
+      on_error:
+        - logger.log:
+            format: "read failed: %s, abort code 0x%08x"
+            args: ["LOG_STR_ARG(canopen::sdo_result_to_string(result))", "(unsigned) abort_code"]
 ```
 
 Configuration variables:
@@ -132,18 +136,26 @@ later request; see [Shared SDO Channel](#shared-sdo-channel).
 ```cpp
 // value read with a width check: a different width gives SIZE_MISMATCH
 id(my_canopen).read_sdo<uint32_t>(0x01, 0x1018, 1, [](void *context, const canopen::SDOReply &reply) {
-  if (reply.ok())
+  if (reply.ok()) {
     ESP_LOGI("main", "vendor id 0x%08x", reply.as<uint32_t>());
+  } else {
+    ESP_LOGW("main", "read failed: %s, abort code 0x%08x",
+             LOG_STR_ARG(canopen::sdo_result_to_string(reply.result)), (unsigned) reply.abort_code);
+  }
 }, nullptr);
 
-// value write
-id(my_canopen).write_sdo<uint16_t>(0x01, 0x1017, 0, 2000);
+// value write; a failure also calls the callback, so a rejected request is logged here too
+id(my_canopen).write_sdo<uint16_t>(0x01, 0x1017, 0, 2000, [](void *context, const canopen::SDOReply &reply) {
+  if (!reply.ok())
+    ESP_LOGW("main", "write failed: %s", LOG_STR_ARG(canopen::sdo_result_to_string(reply.result)));
+}, nullptr);
 
 // buffer read (strings, domains); the buffer must stay valid until the callback
 static uint8_t name[64];
 id(my_canopen).read_sdo_data(0x01, 0x1008, 0, name, sizeof(name), [](void *context, const canopen::SDOReply &reply) {
   if (reply.ok())
     ESP_LOGI("main", "name: %.*s", (int) reply.len, (const char *) reply.data);
+  // a name longer than the buffer ends in SDO_RESULT_ABORT
 }, nullptr);
 ```
 
