@@ -126,6 +126,8 @@ mqtt:
   `certificate_authority` the broker is checked against that CA, otherwise against ESP-IDF's certificate bundle (the
   Mozilla root store), which is then included in the build. Set it to `false` for a broker whose certificate cannot
   be checked at all; this cannot be combined with `certificate_authority` or `skip_cert_cn_check`.
+- **ssl_fingerprints** (*Optional*, list): Only on ESP8266. The SHA1 fingerprint of the broker's TLS certificate,
+  which turns on TLS for the connection. Exactly one fingerprint. See [TLS (ESP8266)](#mqtt-ssl_fingerprints).
 - **certificate_authority** (*Optional*, string): Only on ESP32. CA certificate in PEM format, used instead of the
   certificate bundle. See [TLS (ESP32)](#mqtt-tls-idf).
 - **client_certificate** (*Optional*, string): Only on `esp32`. Client certificate in PEM format.
@@ -395,6 +397,31 @@ mqtt:
 If the birth message and last will message have empty topics or topics
 that are different from each other, availability reporting will be
 disabled.
+
+<span id="mqtt-ssl_fingerprints"></span>
+
+## TLS (ESP8266)
+
+On the ESP8266, set `ssl_fingerprints` to connect to the broker over TLS. The ESP8266 does not check the certificate
+chain: it only compares the SHA1 fingerprint of the broker's certificate with the configured one. When the broker's
+certificate changes, for example when it is renewed, update the fingerprint and flash the device again. SHA1 is weak,
+so this protects against a different server, not against a determined attacker.
+
+Get the fingerprint of the broker's certificate with `openssl`:
+
+```bash
+openssl s_client -connect mqtt.example.com:8883 < /dev/null 2>/dev/null | openssl x509 -noout -fingerprint -sha1
+```
+
+```yaml
+mqtt:
+  broker: mqtt.example.com
+  port: 8883
+  ssl_fingerprints:
+    - a502ff13999f8b398ef1834f1123650b3236fc07
+```
+
+The fingerprint can be written as 40 hexadecimal digits or as 20 pairs separated by colons, as `openssl` prints it.
 
 <span id="mqtt-tls-idf"></span>
 
