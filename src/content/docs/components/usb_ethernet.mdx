@@ -76,7 +76,20 @@ and static ip address `192.168.137.100`
 
 Without `manual_ip`, the microcontroller may get any address in 192.168.137.0/24.
 
-### USB Host configuration on Linux
+### USB Host Configuration on macOS
+
+macOS needs no driver: the microcontroller appears as a new network interface.
+
+1. Prepare your microcontroller by flashing ESPHome with Ethernet over USB and static ip address `192.168.137.100`
+2. Connect the microcontroller
+3. Open System Settings > Network and select the new interface (its name depends on the board, for example
+   `RP2040`), or find it as a new `en` interface in ``ifconfig``
+4. Under Details > TCP/IP, set Configure IPv4 to Manually, with IP address `192.168.137.1` and subnet mask
+   `255.255.255.0`
+5. ``ping 192.168.137.100``. It should respond.
+6. Follow [Connecting to Home Assistant via API](#connecting-to-home-assistant-via-api).
+
+### USB Host Configuration on Linux
 
 Network configuration on Linux depends on your network management software.
 If you don’t know which one you are running, try these commands:
@@ -217,9 +230,9 @@ On the USB Host: `ssh user@your-home-assistant-server -R 6053:192.168.137.100:60
 7. After successful setup, stop the SSH tunnel.
 8. The connection should fail and then reestablish on its own as the outbound connection comes alive.
 
-### Other options
+### Other Options
 
-Connection can also be established in ways other than `outbound_connection`.
+Connection can also be established in ways other than `outgoing_connection`.
 For example you may setup port forwarding, use [Wireguard](/components/wireguard/) or
 remove the NAT and setup a static route.
 
