@@ -53,13 +53,13 @@ RJ9 pins, when the connector is viewed from the contacts side, cables exiting at
 | 3   | Not Connected          |
 | 4   | Sensor Ground          |
 
-The following example assumes that you connect the following:
+Connect the RJ9 power and data wires to different GPIO pins on your board. Replace each `GPIOXX` with the pin you use:
 
-- `Pin 1` of RJ9 connector (power) to `GPIO27`
-- `Pin 2` of RJ9 connector (data) to `GPIO25`
+- `Pin 1` of RJ9 connector (power) to `GPIOXX`
+- `Pin 2` of RJ9 connector (data) to a different `GPIOXX`
 - `Pin 4` of RJ9 connector (ground) to `GND`
 
-### Example configuration
+### Example Configuration
 
 The optional `throttle_average` filter averages readings over each 15-second interval to reduce updates sent to
 Home Assistant.
@@ -68,14 +68,14 @@ Home Assistant.
 # Sample configuration entry
 uart:
   - id: uart_bus
-    rx_pin: GPIO25  # GPIO connected to WTS01 data (RJ9 pin 2)
+    rx_pin: GPIOXX  # GPIO connected to WTS01 data (RJ9 pin 2)
     baud_rate: 9600
 
 switch:
   # This is needed to power the external sensor.
   # The sensor receives 3.3V from this pin, which is driven HIGH at boot by restore_mode: ALWAYS_ON.
   - platform: gpio
-    pin: GPIO27  # GPIO connected to WTS01 power (RJ9 pin 1)
+    pin: GPIOXX  # A different GPIO connected to WTS01 power (RJ9 pin 1)
     id: WTS01_sensor_power
     restore_mode: ALWAYS_ON
 
