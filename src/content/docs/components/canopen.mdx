@@ -40,7 +40,7 @@ canopen:
 
 ### `on_heartbeat` Trigger
 
-Runs for every heartbeat frame on the bus (CAN IDs `0x701` to `0x77F`), from any node. Variables: `node_id`
+Runs for every heartbeat frame on the bus (CAN IDs `0x701` to `0x77F`, 1 data byte), from any node. Variables: `node_id`
 (`uint8_t`) and `state` (`canopen::NMTState`: `NMT_STATE_BOOTUP`, `NMT_STATE_STOPPED`, `NMT_STATE_OPERATIONAL`,
 `NMT_STATE_PRE_OPERATIONAL`, or `NMT_STATE_UNKNOWN` for other values). `canopen::nmt_state_to_string(state)` gives its
 name.
@@ -60,12 +60,12 @@ canopen:
 
 ### `on_emcy` Trigger
 
-Runs for every emergency (EMCY) frame on the bus (CAN IDs `0x081` to `0x0FF`), from any node, also for an error reset
-(error code `0x0000`, sent when an error clears). Each one is also logged: an error as a warning, an error reset at
-info level. Variables:
+Runs for every emergency (EMCY) frame on the bus (CAN IDs `0x081` to `0x0FF`, 8 data bytes), from any node, also for an
+error reset (error code `0x0000`, sent when an error clears). Each one is also logged: an error as a warning, an error
+reset at info level. Variables:
 
 - `node_id` (`uint8_t`): the node that sent it.
-- `emergency` (`const canopen::Emergency &`): `error_code` (`uint16_t`), `error_register` (`uint8_t`) and
+- `emergency` (`canopen::Emergency`): `error_code` (`uint16_t`), `error_register` (`uint8_t`) and
   `manufacturer_data` (5 bytes).
 
 ```yaml
@@ -167,14 +167,14 @@ confirmation only by a write, a late read answer only by a read). That request t
 ### SDO Client
 
 The SDO client has one channel; requests are queued (up to 16) and sent one after another. Every request ends in exactly
-one call of its callback, if one was given (it may be `nullptr`) and the request wasn't cancelled (`cancel_sdo()`), with a `canopen::SDOReply`: `result`
-(`SDO_RESULT_SUCCESS`, `SDO_RESULT_ABORT`, `SDO_RESULT_TIMEOUT`, `SDO_RESULT_SIZE_MISMATCH`,
-`SDO_RESULT_TRANSPORT_ERROR` or `SDO_RESULT_REJECTED`), `abort_code`, `value` / `size` for a successful value read or
-write, and `data` / `len` for a successful `read_sdo_data()` (valid only during the callback; otherwise `nullptr` and
-0). A rejected request (queue full, invalid arguments, failed component) calls back before the call returns `false`.
-Requests made at boot, before the component is set up, wait in the queue; if the setup fails (for example on a failed
-CAN bus), they are rejected then. A node's SDO channel is shared with any other client, and late answers can reach a
-later request; see [Shared SDO Channel](#shared-sdo-channel).
+one call of its callback, if one was given (it may be `nullptr`) and the request wasn't cancelled (`cancel_sdo()`), with
+a `canopen::SDOReply`: `result` (`SDO_RESULT_SUCCESS`, `SDO_RESULT_ABORT`, `SDO_RESULT_TIMEOUT`,
+`SDO_RESULT_SIZE_MISMATCH`, `SDO_RESULT_TRANSPORT_ERROR` or `SDO_RESULT_REJECTED`), `abort_code`, `value` / `size` for a
+successful value read or write, and `data` / `len` for a successful `read_sdo_data()` (valid only during the callback;
+otherwise `nullptr` and 0). A rejected request (queue full, invalid arguments, failed component) calls back before the
+call returns `false`. Requests made at boot, before the component is set up, wait in the queue; if the setup fails (for
+example on a failed CAN bus), they are rejected then. A node's SDO channel is shared with any other client, and late
+answers can reach a later request; see [Shared SDO Channel](#shared-sdo-channel).
 
 ```cpp
 // value read with a width check: a different width gives SIZE_MISMATCH
@@ -210,12 +210,12 @@ id(my_canopen).read_sdo_data(0x01, 0x1008, 0, name, sizeof(name), [](void *conte
   limited to 65,535 bytes: a longer write is rejected, and a read of a longer object is aborted. Requests run
   one at a time, so queued reads can share a buffer if each callback uses the data before it returns.
 - `cancel_sdo(context)` drops all queued requests with that `context` and aborts its transfer in progress (an SDO abort
-  is sent to the node), without callbacks. The component doesn't use the request's buffer after the call, so use it
-  before a buffer or `context` goes away. The next request (to any node) waits 50 ms after the abort, so a late answer
-  to the cancelled transfer isn't taken for it. The 50 ms count from when the CAN controller took the abort, not from
-  when it was on the bus. A node busy in a slow object handler can answer the cancelled request even later, hundreds
-  of milliseconds after the abort; a request for the same object running then takes that answer as its own (see
-  [Shared SDO Channel](#shared-sdo-channel)).
+  is sent to the node; if the CAN bus doesn't take it within the response timeout, it's dropped), without callbacks. The
+  component doesn't use the request's buffer after the call, so use it before a buffer or `context` goes away. The next
+  request (to any node) waits 50 ms after the abort, so a late answer to the cancelled transfer isn't taken for it. The
+  50 ms count from when the CAN controller took the abort, not from when it was on the bus. A node busy in a slow object
+  handler can answer the cancelled request even later, hundreds of milliseconds after the abort; a request for the same
+  object running then takes that answer as its own (see [Shared SDO Channel](#shared-sdo-channel)).
 
 ### Raw Frames
 
