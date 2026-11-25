@@ -210,14 +210,17 @@ id(my_canopen).read_sdo_data(0x01, 0x1008, 0, name, sizeof(name), [](void *conte
   limited to 65,535 bytes: a longer write is rejected, and a read of a longer object is aborted. Requests run
   one at a time, so queued reads can share a buffer if each callback uses the data before it returns.
 - `cancel_sdo(context)` drops all queued requests with that `context` and aborts its transfer in progress (an SDO abort
-  is sent to the node), without callbacks. Use it before a buffer or `context` goes away. The next request (to any
-  node) waits 50 ms after the abort, so a late answer to the cancelled transfer isn't taken for it.
+  is sent to the node), without callbacks. The component doesn't use the request's buffer after the call, so use it
+  before a buffer or `context` goes away. The next request (to any node) waits 50 ms after the abort, so a late answer
+  to the cancelled transfer isn't taken for it. The 50 ms count from when the CAN controller took the abort, not from
+  when it was on the bus: on a congested bus a late answer can still get through.
 
 ### Raw Frames
 
 Frames the component doesn't handle itself, for example the PDOs of other devices, can be received and sent
-directly. Listeners can be added at any time, also before the component is set up; they get standard (11-bit) data
-frames, including the SDO answers and heartbeats the component handles. The data is valid only during the callback.
+directly. Listeners can be added at any time, also before the component is set up, but not removed: add them at
+setup or boot, for example in `on_boot`. They get standard (11-bit) data frames, including the SDO answers and
+heartbeats the component handles. The data is valid only during the callback.
 
 ```cpp
 // every TPDO1 frame (CAN IDs 0x181 to 0x1FF)
