@@ -9,7 +9,8 @@ The USB Host interface on the ESP32-S2, ESP32-S3, ESP32-S31, ESP32-P4 and ESP32-
 devices may be configured, but only one can be connected at any time. By default the device must be directly
 connected to the ESP32, but this can be changed by setting the `enable_hubs` option to `true`.
 
-This component is used by the `usb_uart` component to allow the ESP32 to connect to USB-serial devices. It is also
+This component is used by the `usb_uart` component to allow the ESP32 to connect to USB-serial devices, and by the
+`usb_bluetooth` component for USB Bluetooth dongles. It is also
 possible to configure devices directly in this component, but this has no application other than for debug purposes.
 
 ```yaml
@@ -35,6 +36,11 @@ usb_host:
 - **enable_hubs** (*Optional*, boolean): Whether to include support for hubs. Defaults to `false`.
 - **max_transfer_requests** (*Optional*, int): Maximum number of concurrent USB transfer requests. Range: 1-32. Defaults to `16`. Increase this value for high-throughput devices (e.g., USB UART at 115200+ baud) if you see "All X transfer slots in use" errors.
 - **max_packet_size** (*Optional*, int): Maximum USB packet size in bytes. Defaults to `64` (USB Full Speed). Valid option values are 64, 128, 256, 512 and 1024. Intended for use with USB-HS capable devices like the ESP32-P4.
+- **full_speed_only** (*Optional*, boolean): ESP32-P4 only. Run the high-speed USB port as a full-speed and low-speed
+  host. Set this when full-speed or low-speed devices (keyboards, mice, Bluetooth dongles) are connected through a
+  hub, including a hub built into the development board: the ESP-IDF USB host does not support the split transactions
+  these devices need behind a high-speed hub, and fails with "TT not supported". With this option the hub runs at full
+  speed too, so high-speed devices are limited to 12 Mbit/s. Defaults to `false`.
 - **devices** (*Optional*, list): A list of devices to configure.
 
 ## Device configuration options
@@ -79,4 +85,5 @@ a log entry will appear at the DEBUG level.
 ## See Also
 
 - [USB Host UART Interface](/components/usb_uart/)
+- [USB Bluetooth](/components/usb_bluetooth/)
 - <APIRef text="usb_host.h" path="usb_host/usb_host.h" />
