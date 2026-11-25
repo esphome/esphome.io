@@ -223,7 +223,9 @@ Frames the component doesn't handle itself, for example the PDOs of other device
 directly. A listener is a `canopen::FrameListener` that you own: `{can_id, mask, callback, context}`. It must stay
 valid for as long as the device runs (make it `static`), and it can't be removed. Listeners can be added at any time,
 also before the component is set up or from a frame callback. They get standard (11-bit) data frames, including the
-SDO answers and heartbeats the component handles. The data is valid only during the callback.
+SDO answers and heartbeats the component handles. The callback is a plain function, so a lambda can't capture
+anything: it gets what it needs through `context`, which must stay valid as long as the listener, so for as long as the
+device runs. It's called from the main loop, and the data is valid only during the call.
 
 ```cpp
 // every TPDO1 frame (CAN IDs 0x180 to 0x1FF; node ID 0 isn't used)
