@@ -53,11 +53,14 @@ RJ9 pins, when the connector is viewed from the contacts side, cables exiting at
 | 3   | Not Connected          |
 | 4   | Sensor Ground          |
 
-Connect the RJ9 power and data wires to different GPIO pins on your board. Replace each `GPIOXX` with the pin you use:
+On a generic board, use the board's regulated `3V3` supply:
 
-- `Pin 1` of RJ9 connector (power) to `GPIOXX`
-- `Pin 2` of RJ9 connector (data) to a different `GPIOXX`
-- `Pin 4` of RJ9 connector (ground) to `GND`
+- RJ9 pin 1 (power) to `3V3`
+- RJ9 pin 2 (data) to `GPIOXX`, using the UART RX pin selected for your board
+- RJ9 pin 4 (ground) to `GND`
+
+Alternatively, RJ9 pin 1 can use a separate output-capable 3.3V GPIO rated for the sensor's current. Only this wiring
+requires the `switch` block below; use different GPIOs for power and data.
 
 ### Example Configuration
 
