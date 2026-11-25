@@ -37,6 +37,8 @@ sx127x:
 - **cs_pin** (**Required**, [Pin Schema](/guides/configuration-types/#pin-schema)): SPI chip select pin.
 - **rst_pin** (**Required**, [Pin Schema](/guides/configuration-types/#pin-schema)): Reset pin.
 - **dio0_pin** (**Optional**, [Pin Schema](/guides/configuration-types/#pin-schema)): Digital IO pin 0.
+- **dio1_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): Digital IO pin 1. Required
+  for long packets in FSK/OOK packet mode, see `payload_length`, and only accepted there.
 - **auto_cal** (**Optional**, bool): Enable automatic image calibration on temperature changes. Defaults to `true`.
 - **frequency** (**Required**, frequency): Frequency in Hz of the transceiver.
 - **modulation** (**Required**, enum): Modulation can be `OOK`, `FSK` or `LORA`  `.
@@ -87,8 +89,15 @@ sx127x:
   automation and received with the `on_packet` trigger. If not enabled continuous mode is
   used and raw data is sent and received on DIO2.
 
-- **payload_length** (**Optional**, int): Length of the payload in packet mode. If not configured then
-  the variable length packet format is used. Maximum length is 64.
+- **payload_length** (*Optional*, int or [lambda](/automations/templates/)): Length of the payload in
+  packet mode. If not configured or `0`, the variable length packet format is used. Range: `0` to `1024`.
+  As a lambda, it computes the received packet length from the bytes received so far, passed as `x`
+  (`std::vector<uint8_t>`). Return a negative value to discard the current packet, return `0` while the
+  length is still unknown, or return the full packet length in bytes (at most `1024`).
+
+  Lengths above 64 bytes and a lambda require `packet_mode: true` and `dio1_pin` (`dio0_pin` is not needed),
+  and are not available with `crc_enable`. They are supported for receive only, using the chip's unlimited
+  length packet function: the packet is read from the chip in pieces while it is still being received.
 
 - **crc_enable** (**Optional**, bool): Enables a 16 bit CRC calculation/check in packet mode.
 - **bitrate** (**Optional**, int): Bit rate of the signal. Required in packet mode and recommended
@@ -129,8 +138,7 @@ sx127x:
 
 - **on_packet** (*Optional*, [Automation](/automations)): An automation to perform in packet mode
   when a packet has been decoded. A variable `x` of type `std::vector<uint8_t>` is passed to the automation
-  for use in lambdas. In LoRa mode the variables `snr` and `rssi` are also available. In FSK and OOK modes `rssi`
-  is 0 and `snr` is `NAN`.
+  for use in lambdas. The variables `rssi` and `snr` are also available. In FSK and OOK modes `snr` is `NAN`.
 
 ```yaml
 sx127x:
@@ -214,7 +222,8 @@ on_...:
 ### Configuration variables
 
 - **data** (**Required**, list, [templatable](/automations/templates)): The packet to send, length should match the configured
-  payload_length.
+  payload_length. Sending (including `sx127x.set_mode_tx`) is not supported when `payload_length` is above
+  64 or a lambda, and neither `packet_transport` nor `packet_interface` can be used with such a configuration.
 
 ## LoRa
 
