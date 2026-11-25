@@ -213,9 +213,9 @@ id(my_canopen).read_sdo_data(0x01, 0x1008, 0, name, sizeof(name), [](void *conte
   is sent to the node; if the CAN bus doesn't take it within the response timeout, it's dropped), without callbacks. The
   component doesn't use the request's buffer after the call, so use it before a buffer or `context` goes away. The next
   request (to any node) waits 50 ms after the abort, so a late answer to the cancelled transfer isn't taken for it. The
-  50 ms count from when the CAN controller took the abort, not from when it was on the bus. A node busy in a slow object
-  handler can answer the cancelled request even later, hundreds of milliseconds after the abort; a request for the same
-  object running then takes that answer as its own (see [Shared SDO Channel](#shared-sdo-channel)).
+  50 ms are counted from when the CAN controller took the abort, not from when it was on the bus. A node busy in a slow
+  object handler can answer the cancelled request even later, hundreds of milliseconds after the abort; a request for
+  the same object running then takes that answer as its own (see [Shared SDO Channel](#shared-sdo-channel)).
 
 ### Raw Frames
 
@@ -226,7 +226,7 @@ also before the component is set up or from a frame callback. They get standard 
 SDO answers and heartbeats the component handles. The data is valid only during the callback.
 
 ```cpp
-// every TPDO1 frame (CAN IDs 0x181 to 0x1FF)
+// every TPDO1 frame (CAN IDs 0x180 to 0x1FF; node ID 0 isn't used)
 static canopen::FrameListener tpdo1{0x180, 0x780, [](void *context, uint32_t can_id, const uint8_t *data, uint8_t len) {
   ESP_LOGD("main", "TPDO1 from node 0x%02x", (unsigned) (can_id & 0x7F));
 }, nullptr};
