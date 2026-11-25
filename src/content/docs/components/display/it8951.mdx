@@ -75,6 +75,12 @@ dimensions, VCOM) is preset but can be overridden.
   or list): One or more GPIOs driven high during setup to power on the panel,
   before reset and initialization. Useful for boards with one or more
   power-enable rails for the display.
+  If `enable_pin` is not set, the model's default enable pins are used, if it
+  has any. A default enable pin that is also used elsewhere in the
+  configuration, for example by a GPIO switch, is left out, so you can control
+  that pin yourself. If every other use of the pin sets
+  `allow_other_uses: true`, the pin is shared with the display instead.
+  Setting `enable_pin` replaces all of the model's default enable pins.
 - **dimensions** (**Required** for generic, _Optional_ for integrated boards):
   Dimensions of the screen, specified either as _width_ **x** _height_
   (e.g. `960x540`) or with separate config keys. The dimensions are in pixels

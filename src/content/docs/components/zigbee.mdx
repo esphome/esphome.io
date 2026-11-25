@@ -23,7 +23,8 @@ Additional properties must be configured manually in Home Assistant.
 
 Zigbee is only supported on `nRF52` platforms and on `ESP32` with IEEE 802.15.4 connectivity (`ESP32-C5`, `ESP32-C6`, or `ESP32-H2` 
 and in the future `ESP32-H4` and `ESP32-H21`). Both platforms support different features and have different limitations:
-- On `nRF52` a maximum of 8 endpoints is supported and each ESPHome entity consumes one Zigbee endpoint.
+- On `nRF52` a maximum of 8 registered endpoints is supported. Each exposed entity consumes one endpoint.
+  See [nRF52 Endpoint Assignment](#nrf52-endpoint-assignment) for numbering and limitations.
 - On `ESP32` a maximum of 239 endpoints is supported and ESPHome entities are combined on Zigbee endpoints.
 - `ESP32-H2` seems to work more reliably than `ESP32-C6`. There are reports of `ESP32-C6` boards that work only if placed next 
 to the coordinator.
@@ -42,26 +43,18 @@ to the coordinator.
 ## Full Configuration
 
 ```yaml
-# Example configuration entry on ESP32
 zigbee:
   id: my_zigbee
   router: true
-```
-```yaml
-# Example configuration entry on nRF52
-zigbee:
-  id: my_zigbee
+  power_source: MAINS_SINGLE_PHASE
   on_join:
     then:
       - logger.log:
           format: "%s network."
           args: ['x ? "Joined" : "Rejoined"']
-  power_source: BATTERY
 ```
 
 ## Configuration variables
-
-- **model** (*Optional*, string): Model Identifier of the Zigbee device. Defaults to the ESPHome node name.
 
 - **id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID to use for this `zigbee` component.
 
@@ -70,15 +63,37 @@ zigbee:
   for a stable Zigbee network. For this reasons battery-powered devices should not be used as routers.
   Defaults to `false`.
 
+- **sleepy** (*Optional*, boolean): Disable RX during idle to reduce power consumption for battery-powered devices.
+  Only valid for end devices, not routers. The device polls for data typically every 3-5 s, or at the interval set
+  with `polling_interval` on `ESP32`. Device interview is considerably slower and can take a long time if many
+  sensors are used. Defaults to `false`.
+
 - **power_source** (*Optional*, enum): Indicates what kind of power the device uses. Affects
   sleep behavior. One of `UNKNOWN`, `MAINS_SINGLE_PHASE`, `MAINS_THREE_PHASE`, `BATTERY`,
   `DC_SOURCE`, `EMERGENCY_MAINS_CONST`, or `EMERGENCY_MAINS_TRANSF`. Defaults to `DC_SOURCE`.
+
+- **version** (*Optional*, int): Application version number in range `0` to `255`. Defaults to `0`.
+
+- **model** (*Optional*, string): Model Identifier of the Zigbee device. Maximum length is 31 ASCII
+  characters. Defaults to the ESPHome node name.
+
+- **manufacturer** (*Optional*, string): Manufacturer name of the Zigbee device. Change this only if you want
+  to provide your own converter/quirks as it might break some default handling in ZHA or Zigbee2MQTT. Maximum
+  length is 31 ASCII characters. Defaults to `esphome`.
 
 - **on_start** (*Optional*, [Automation](/automations/#automation)): Automation to run when the Zigbee stack is fully
   initialized and can be interacted with. It will then try to (re-)join a network.
 
 - **on_join** (*Optional*, [Automation](/automations/#automation)): Automation to run when the device joins the network.
   In [Lambdas](/automations/templates/#config-lambda) you can get the join type with `x`. It is `true` for join and `false` for rejoin.
+
+Only on `ESP32`:
+
+- **polling_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The time between polls for data of a
+  sleepy end device, also known as the long poll interval. Do not set a value higher than `7s` if the device needs to
+  be reachable from the coordinator (e.g. switch or number components). For non-sleepy end devices this is the
+  interval of the keep-alive message and has no influence on responsiveness. Only valid for end devices, not
+  routers. Must be between `200ms` and `1h`. Defaults to `3s`.
 
 Only on `nRF52`:
 
@@ -96,9 +111,6 @@ Only on `nRF52`:
   This is useful during development to force the coordinator (ZHA/Z2M) to recognize the device
   as new after firmware updates.
 
-- **sleepy** (*Optional*, boolean): Disable RX during idle to reduce power consumption for battery-powered devices.
-  It may cause stability problems with the Zigbee connection. Defaults to `false`.
-
 > [!WARNING]
 > Overusing `random` may exhaust memory in the Zigbee coordinator by creating many "ghost" devices.
 
@@ -115,6 +127,17 @@ on_...:
     - zigbee.factory_reset
 ```
 
+### `zigbee.report` Action (`ESP32` only)
+
+This [action](/automations/actions/#config-action) triggers a report of all attributes of
+components with `report: enable` or `report: force`.
+
+```yaml
+on_...:
+  then:
+    - zigbee.report
+```
+
 
 ## Zigbee Component Base Configuration
 
@@ -127,13 +150,20 @@ Zigbee can have some overrides for specific options.
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
   not be exposed over Zigbee. Only specifying an `id` without a `name` will implicitly set this to true.
   Use this if you run out of Zigbee endpoints.
+- **endpoint** (*Optional*, int): Endpoint number in the range from 1 to 239. Available on `ESP32` and `nRF52`
+  for `sensor`, `binary_sensor`, `number`, and `switch` entities. Set this directly on the entity, alongside
+  `name`, not inside a `zigbee:` block. If omitted, the endpoint is assigned automatically.
+  On `nRF52`, each exposed entity must use a different endpoint;
+  see [nRF52 Endpoint Assignment](#nrf52-endpoint-assignment).
+  On `ESP32`, entities can share an endpoint; see [ESP32 Endpoint Assignment](#esp32-endpoint-assignment).
 
 Only on `ESP32`:
 
-- **report** (*Optional*, enum): How the state is reported. One of `default` or `force`. `default` activates reporting with default settings
-  and uses the configuration from the coordinator if possible. `force` sends manual reports for every change to the coordinator.
-  On `nRF52` the coordinator configuration is always used.
-  Defaults to `default`.
+- **report** (*Optional*, enum): How the state is reported. One of `default`, `enable`, or `force`. `default` activates
+  reporting of all reportable attributes with default settings and uses the configuration from the coordinator if
+  possible. `enable` is the same but additionally activates manual reporting through the `zigbee.report` action.
+  `force` sends manual reports for every change to the coordinator and enables manual reporting. On `nRF52` the
+  coordinator configuration is always used. Defaults to `default`.
 
 > [!NOTE]
 > ZHA sets the minimum reporting interval to 30 seconds for some sensor devices. If a faster response is needed set `report` to `force`.
@@ -145,13 +175,6 @@ Only on `ESP32`:
   `on_off` for switches. Benefits are better support by Z2M/ZHA and compatibility with 3rd party Zigbee devices. Component names
   are not exposed when using `device_class` or cluster names. On `nRF52` only the basic clusters are supported.
   Defaults to `generic`.
-- **endpoint** (*Optional*, int): Endpoint number in the range from 1 to 239. This defines which entity goes
-  on which endpoint, giving a more stable configuration and letting you manually combine entities that logically
-  belong together. Only entities that map to different Zigbee clusters can be combined (for example
-  a `binary_sensor` and a `sensor`); two entities of the same type, such as two sensors, cannot share an
-  endpoint unless `cluster: device_class` maps them to different clusters (for example a temperature and
-  a humidity sensor). If more than one entity on an endpoint has a Zigbee device type, set
-  `use_device_type: true` on one of them.
 - **use_device_type** (*Optional*, boolean): Use the Zigbee Home Automation device type of this entity for the endpoint.
   Some entities have a
   [device type](https://community.nxp.com/pwmxy87654/attachments/pwmxy87654/wireless-connectivity/698/1/075367r03ZB_AFG-Home_Automation_Profile_for_Public_Download.pdf#G12.1028193)
@@ -160,6 +183,59 @@ Only on `ESP32`:
   entity has no device type of its own, the endpoint uses the generic `CUSTOM_ATTR` type. For exposing entities to Home
   Assistant, device types are not needed. It can be set to `true` on only one entity per endpoint.
 
+### ESP32 Endpoint Assignment
+
+When assigning `endpoint` on `ESP32`, you can manually combine entities that logically belong together.
+Usually, only entities that map to different Zigbee clusters can be combined (for example
+a `binary_sensor` and a `sensor`); two entities of the same type, such as two sensors, cannot share an
+endpoint unless `cluster: device_class` maps them to different clusters (for example a temperature and
+a humidity sensor) or they map to different attributes on the same cluster (for example voltage and battery sensors
+with `cluster: power_config`). If more than one entity on an endpoint has a Zigbee device type, set
+`use_device_type: true` on one of them.
+
+### nRF52 Endpoint Assignment
+
+Set `endpoint` on an exposed entity to keep its endpoint ID stable when other entities are reordered or added.
+This is optional: configurations without explicit endpoint IDs keep their existing automatic assignment order.
+
+Explicit IDs are reserved before automatic assignment. Entities without `endpoint` receive the lowest available ID,
+starting at 1 and skipping reserved or already assigned IDs. Mixing explicit and automatic assignments can therefore
+change the automatically assigned IDs. Assign explicit IDs to every entity whose endpoint must remain stable.
+
+For example, add these entities to a node configured with the [nRF52 platform](/components/nrf52/) and `zigbee:`:
+
+```yaml
+sensor:
+  - platform: template
+    name: "Sample Level"
+    endpoint: 17
+    lambda: return 42.0;
+
+binary_sensor:
+  - platform: template
+    name: "Sample Status"
+    lambda: return true;
+```
+
+With no other exposed entities or Zigbee time source, the sensor uses endpoint 17 and the binary sensor uses endpoint 1.
+
+The following limitations apply on `nRF52`:
+
+- Two exposed entities cannot share an explicit endpoint ID, even if they have different types. Duplicate IDs fail
+  configuration validation. Unlike `ESP32`, `nRF52` does not combine these entities onto one endpoint.
+- The limit is **8 registered endpoints**, not a maximum ID of 8. For example, endpoint 239 is valid, but a ninth
+  registered endpoint is not. Internal entities do not consume endpoints.
+- The [Zigbee time source](/components/time/zigbee/) uses an automatically assigned endpoint and counts towards the
+  same limit. It does not expose an `endpoint` configuration option.
+- Explicit IDs do not change the clusters used by an entity. Sensors and numbers still use the generic analog
+  input/output clusters; binary sensors and switches use the generic binary input/output clusters.
+  A sensor's `device_class` does not select a standard Zigbee measurement cluster on `nRF52`.
+  The `cluster`, `report`, and `use_device_type` options remain `ESP32`-only.
+
+> [!NOTE]
+> Existing configurations do not need to add `endpoint`. Changing an existing endpoint ID changes the device's Zigbee
+> description; follow the re-pairing and re-interview guidance under [Supported Hardware](#supported-hardware).
+
 ## Supported Components
 
 The following components are exposed over Zigbee if they have a name and if they are not marked as internal:
@@ -167,8 +243,9 @@ The following components are exposed over Zigbee if they have a name and if they
 - [Binary Sensor](/components/binary_sensor/#config-binary_sensor): only **state** and **name** (not with `cluster: device_class`)
   are exposed over Zigbee.
 
-- [Sensor](/components/sensor/#config-sensor): **state**, **name** (not with `cluster: device_class`) and **unit_of_measurement**
-  are exposed over Zigbee. If no unit is given or if it is not supported it will fall back to unitless.
+- [Sensor](/components/sensor/#config-sensor): **state**, **name** (not with `cluster: device_class` or
+  `cluster: power_config`) and **unit_of_measurement** are exposed over Zigbee. If no unit is given or
+  if it is not supported it will fall back to unitless.
 
 - [Switch](/components/switch/#config-switch): only **state** and **name** (not with `cluster: on_off`) are exposed over Zigbee.
 
@@ -189,8 +266,7 @@ device class.
 
 [Sensors](/components/sensor/#config-sensor) are implemented by default as analog input clusters with description,
 engineering_units, and present_value attributes. On `ESP32` additionally the application type and resolution
-attributes are set if applicable. `cluster: device_class` is supported for `temperature`, `humidity`,
-`atmospheric_pressure`, `pressure`, `volume_flow_rate`, `illuminance`, `pm25`, and `carbon_dioxide` device classes.
+attributes are set if applicable.
 
 #### Additional configuration variables
 
@@ -198,6 +274,19 @@ attributes are set if applicable. `cluster: device_class` is supported for `temp
   the unit of the component is used and if the component does not set a unit, values are unitless.
   Only a limited set of units is supported. Unsupported units will revert to unitless.
   This is exposed as the Zigbee engineering units attribute.
+
+Only on `ESP32`:
+
+- **cluster** (*Optional*, enum): One of `generic`, `device_class`, and `power_config`. `device_class`
+  is supported for `temperature`, `humidity`, `atmospheric_pressure`, `pressure`, `volume_flow_rate`,
+  `illuminance`, `pm25`, and `carbon_dioxide` device classes and uses the corresponding measurement
+  clusters. `power_config` is supported for `battery` and `voltage` device classes and should only be
+  used for the device's own battery. This cluster should be used only on the first endpoint which is
+  automatically applied if `endpoint` is not set explicitly.
+  Defaults to `generic`.
+
+> [!NOTE]
+> Battery voltage is currently not detected by Z2M and ZHA adds it as an extra attribute to the battery entity.
 
 ### Switch
 

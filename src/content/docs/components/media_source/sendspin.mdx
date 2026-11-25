@@ -35,6 +35,9 @@ media_player:
 
 - **sample_rate** (*Optional*, positive integer): The sample rate, in Hz, advertised to the Sendspin
   server. Must be between `16000` and `96000`. Defaults to `48000`.
+- **bits_per_sample** (*Optional*, positive integer): The bits per sample advertised to the Sendspin
+  server for the `flac` and `pcm` codecs. Either `16` or `24`. `opus` is always advertised at 16 bits
+  per sample. Defaults to `16`.
 - **codecs** (*Optional*, list of strings): The audio codecs advertised to the Sendspin server, in
   order of preference. Each entry is one of `flac`, `opus`, or `pcm`, and a codec may only be listed
   once. The list must include `flac` or `pcm`. Defaults to `[flac, opus, pcm]`, or `[flac, pcm]` when
@@ -54,7 +57,8 @@ media_player:
   added to the playback delay. This can be toggled at runtime with the
   [`sendspin.media_source.enable_static_delay_adjustment`](#sendspin-media_source-enable-action)
   and [`sendspin.media_source.disable_static_delay_adjustment`](#sendspin-media_source-disable-action)
-  actions. Defaults to `false`.
+  actions. Set to `false` for devices that drive their speakers directly, and use `fixed_delay` for
+  their known delay instead. Defaults to `true`.
 - **task_stack_in_psram** (*Optional*, boolean): If `true`, the FreeRTOS playback task stack is
   allocated in PSRAM instead of internal RAM. Requires the [psram](/components/psram/) component.
   Defaults to `false`.

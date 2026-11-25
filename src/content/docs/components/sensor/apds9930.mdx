@@ -1,0 +1,53 @@
+---
+description: "Instructions for setting up the APDS9930 ambient light and proximity sensor."
+title: "APDS9930 Sensor"
+---
+
+import Figure from '@components/Figure.astro';
+import APIRef from '@components/APIRef.astro';
+
+The `apds9930` sensor platform allows you to use the Broadcom APDS9930 ambient light and proximity sensor
+([datasheet](https://docs.broadcom.com/doc/AV02-3190EN)) with ESPHome. The [I²C](/components/i2c/) bus is
+required to be set up in your configuration for this sensor to work.
+
+<Figure
+  src="/images/apds9930.jpg"
+  alt="APDS9930 sensor module"
+  caption="APDS9930 ambient light and proximity sensor module"
+  layout="constrained"
+  width={300}
+  height={300}
+/>
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: apds9930
+    illuminance:
+      name: Room Illuminance
+    proximity:
+      name: Object Proximity
+```
+
+## Configuration Variables
+
+- **illuminance** (*Optional*): The ambient light level in lux, computed from the visible and infrared channels
+  with infrared compensation. All options from [Sensor](/components/sensor/).
+- **proximity** (*Optional*): The reflected infrared light as a raw count from `0` to `1023`. A larger count means a
+  closer object; the scale depends on the LED current, the gain, the cover glass and how reflective the object is, so
+  pick thresholds for your own setup. All options from [Sensor](/components/sensor/).
+- **led_drive** (*Optional*, string): The infrared LED current used for proximity detection. One of `100ma`, `50ma`,
+  `25ma` or `12.5ma`. More current gives more range and uses more power. Defaults to `100ma`.
+- **proximity_gain** (*Optional*, string): The proximity detector gain. One of `1x`, `2x`, `4x` or `8x`. Defaults to
+  `8x`.
+- **ambient_light_gain** (*Optional*, string): The ambient light gain. One of `1x`, `8x`, `16x` or `120x`. Pick a
+  higher gain for dim rooms; a gain that is too high saturates in bright light. Defaults to `1x`.
+- **address** (*Optional*, int): The I²C address of the sensor. Defaults to `0x39`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval to check the sensor.
+  Defaults to `60s`.
+
+## See Also
+
+- [Sensor Filters](/components/sensor/#sensor-filters)
+- [APDS9960 Sensor](/components/sensor/apds9960/)
+- <APIRef text="apds9930.h" path="apds9930/apds9930.h" />

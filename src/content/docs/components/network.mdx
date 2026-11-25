@@ -16,9 +16,20 @@ network:
 
 ## Configuration variables
 
-- **enable_ipv6** (*Optional*, boolean): Enables IPv6 support. Defaults to `false`.
-Always `true` on nRF52 because IPv4 is not supported.
-- **min_ipv6_addr_count** (*Optional*, integer): ESPHome considers the network to be connected when it has one IPv4 address and this number of IPv6 addresses. Defaults to `0` so as to not hang on boot with networks where IPv6 is not enabled. `2` is typically a reasonable value for configurations requiring IPv6.
+- **enable_ipv4** (*Optional*, boolean): Enables IPv4 support. Defaults to `true`, except with
+  [OpenThread](/components/openthread/) or on [nRF52](/components/nrf52/) where it defaults to `false` unless
+  something else requires IPv4. On ESP32 with OpenThread this is a change from earlier versions, where IPv4 stayed
+  enabled; set `enable_ipv4: true` to keep it. Setting this to `false` is rejected if a configured component or
+  platform requires IPv4, such as ESP8266, the ESP32 Arduino framework, [MQTT](/components/mqtt/), a `manual_ip` on
+  [WiFi](/components/wifi/) or [Ethernet](/components/ethernet/), or WiFi `lease_cache` or `ap`; the error names them.
+  At least one of IPv4 and IPv6 must stay enabled. See [IPv6-Only Networks](#ipv6-only-networks).
+- **enable_ipv6** (*Optional*, boolean): Enables IPv6 support. Defaults to `false` unless a configured component or
+  platform requires IPv6, such as [OpenThread](/components/openthread/) or [nRF52](/components/nrf52/). Setting this
+  to `false` is rejected if IPv6 is required; the error names the components.
+- **min_ipv6_addr_count** (*Optional*, integer): ESPHome considers the network to be connected when it has an IPv4
+  address (if IPv4 is enabled) and at least this number of IPv6 addresses. Defaults to `0` so as to not hang on boot
+  with networks where IPv6 is not enabled. `2` is typically a reasonable value for configurations requiring IPv6.
+  With IPv4 disabled, at least `1` is used.
 - **enable_high_performance** (*Optional*, boolean): Explicitly enables or disables high-performance networking optimizations. Only supported on ESP32 devices. When not specified, this is automatically enabled by components that benefit from optimized network settings. Set to `false` to disable these optimizations if they cause memory issues on your device. Defaults to component-driven behavior.
 - **tcp_send_buffer** (*Optional*, int): The amount of outgoing data lwIP queues per TCP connection before
   writes stall, in bytes. Only supported on ESP32 devices. The framework default of 5744 bytes can stall
@@ -31,6 +42,36 @@ Always `true` on nRF52 because IPv4 is not supported.
   Each list entry names one of the supported interface types (`ethernet` or `wifi`); the first entry is the most
   preferred. Required when both `ethernet:` and `wifi:` are configured, and must then list every configured
   interface. See [Multi-Interface Support](#multi-interface-support).
+
+## IPv6-Only Networks
+
+On a network that only hands out IPv6 addresses (SLAAC, no DHCPv4), set `enable_ipv4: false`. This works for
+[WiFi](/components/wifi/) and [Ethernet](/components/ethernet/) on ESP32 with the ESP-IDF framework:
+
+```yaml
+network:
+  enable_ipv6: true
+  min_ipv6_addr_count: 2
+  enable_ipv4: false
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+```
+
+The node counts as connected once it has `min_ipv6_addr_count` IPv6 addresses, and at least one. With
+`min_ipv6_addr_count: 2` it waits for its link-local address and one address from the router. Use `1` only if Home
+Assistant is on the same network segment.
+
+IPv4 is still required, and `enable_ipv4: false` is rejected, when WiFi or Ethernet uses `manual_ip`, or WiFi uses
+`lease_cache` or the fallback access point (`ap`). Components that only work over IPv4, such as
+[MQTT](/components/mqtt/), also reject it; the error names them.
+
+DNS servers are taken from the router advertisement (RDNSS) or from stateless DHCPv6. Anything the node itself
+connects to, like an NTP server, must be reachable over IPv6.
+
+The node can't resolve `.local` names in this mode, so give anything it fetches from, like the Home Assistant URL
+used for TTS, a regular DNS name with an AAAA record.
 
 ## High-performance networking
 

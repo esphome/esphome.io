@@ -236,6 +236,9 @@ That's no good. Here are some steps that resolve some problems:
 - **If you're having Wi-Fi problems**: See [My node keeps reconnecting randomly](#wifi-problems).
 - [Enable verbose logs](/components/logger/#log-levels) in your ESPHome device's `logger:` section.
 - **If your device is crashing**: See the [Troubleshooting](/guides/troubleshooting/) guide for how to get a backtrace.
+- **If the problem happens before the network is up**: See
+  [Seeing Logs From Before the Network Came Up](/guides/troubleshooting/#seeing-logs-from-before-the-network-came-up)
+  for how to keep those messages and replay them over the API.
 - **Still seeing an error?** Check if there is a known issue in the
   [ESPHome issue tracker](https://github.com/esphome/esphome/issues). If not, you can create a new issue to describe
   your problem there. We will take a look at it as soon as we can. Thanks!
@@ -513,8 +516,13 @@ If you disable mDNS, expect the following repercussions:
 
 ## Can configuration files be recovered from the device?
 
-ESPHome YAML configuration files are not stored on ESPHome devices. If you lost your configuration(s), there's no way
-to recover them from the device; you'll have to recreate them from scratch if you don't have a backup elsewhere.
+By default, ESPHome YAML configuration files are not stored on ESPHome devices, and there is no way to recover them
+once the originals are lost.
+
+If you anticipate this risk, add the [`store_yaml`](/components/store_yaml/) component: it stores the local YAML
+files used to build the firmware on the device, so you can recover them later with
+[`esphome recover-yaml`](/guides/cli/#recover-yaml-command). Remote packages are not stored, so they must be fetched
+again.
 
 Always back up your files!
 

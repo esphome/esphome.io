@@ -34,6 +34,7 @@ canbus:
 
   - `NORMAL`: Normal operation, sends ACK signals. *(default)*
   - `LISTENONLY`: Receive data only, no ACK signals sent.
+  - `NO_ACK`: Transmit without requiring an acknowledgment from another node. See [NO_ACK Mode](#no_ack-mode).
 
 - **rx_queue_len** (*Optional*, int): Length of RX queue.
 - **tx_queue_len** (*Optional*, int): Length of TX queue, 0 to disable.
@@ -76,6 +77,28 @@ canbus:
 > [!TIP]
 > The `tx_pin` is still required even in listen-only mode, as the ESP32 TWAI driver requires both pins for initialization. However, no data will be transmitted on this pin when using `LISTENONLY` mode.
 
+## NO_ACK Mode
+
+`mode: NO_ACK` puts the TWAI controller in its self-test mode: frames the ESP32 sends are not checked for an
+acknowledgment from another node, while frames from other nodes are still received and acknowledged. Use it when the
+only other device on the bus is a passive listener, such as a capture tool, or to check wiring and bit rate with a
+single node. In `NORMAL` mode a missing acknowledgment makes the controller retransmit the frame without end.
+
+```yaml
+# Example configuration entry
+canbus:
+  - platform: esp32_can
+    tx_pin: GPIOXX
+    rx_pin: GPIOXX
+    bit_rate: 50kbps
+    mode: NO_ACK
+    can_id: 4
+```
+
+> [!NOTE]
+> `LISTENONLY` is the opposite: it neither transmits nor acknowledges. `NO_ACK` transmits and acknowledges, and only
+> skips checking the ACK slot of its own frames.
+
 <span id="esp32-can-bit-rate"></span>
 
 The following table lists the bit rates supported by the component for ESP32 variants:
@@ -87,7 +110,7 @@ The following table lists the bit rates supported by the component for ESP32 var
 | 10KBPS            |       | x               |
 | 12K5BPS           |       | x               |
 | 16KBPS            |       | x               |
-| 20KBPS            |       | x               |
+| 20KBPS            | x     | x               |
 | 25KBPS            | x     | x               |
 | 31K25BPS          |       |                 |
 | 33KBPS            |       |                 |
@@ -104,6 +127,11 @@ The following table lists the bit rates supported by the component for ESP32 var
 | 1000KBPS          | x     | x               |
 
 Other variants: ESP32-C3, ESP32-C5, ESP32-C6, ESP32-H2, ESP32-P4, ESP32-S2, ESP32-S3
+
+> [!NOTE]
+> On the original ESP32, 20 kbit/s requires chip revision v2.0 (ECO2) or later. Set `minimum_chip_revision: "2.0"`
+> (or higher) under [`esp32.framework.advanced`](/components/esp32/#advanced-configuration). This enables the
+> extended baud rate prescaler range in the ESP-IDF TWAI driver.
 
 > [!NOTE]
 > ESP32-C2 and ESP32-C61 do not have TWAI/CAN hardware and are not supported.
@@ -134,4 +162,5 @@ If you prefer to only have a 3.3V power supply, special 3.3V CAN transceivers ar
 ## See Also
 
 - [Canbus Component](/components/canbus/)
+- [Espressif TWAI (Two-Wire Automotive Interface)](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/twai.html)
 - <APIRef text="canbus.h" path="canbus/canbus.h" />
