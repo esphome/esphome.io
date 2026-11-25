@@ -18,6 +18,10 @@ tflite_text:
 - **max_sequence_length** (*Optional*, integer): Length of the token, attention-mask and segment
   inputs.
 
+- **position_output** (*Optional*, boolean): Decode the `[1, 2]` output as start and end positions. A
+  two-entry output is ambiguous, so by default it is read as two class logits and classified, like any other
+  output. Set it to `true` for a span model. It needs a `[1, 2]` output. Defaults to `false`.
+
 - **id** (*Optional*, [ID](/guides/configuration-types/#id)): The runtime helper for this model. Set it
   when a lambda or another component references the instance.
 - **decoder_id** (*Optional*, [ID](/guides/configuration-types/#id)): The output decoder. Set it to read
@@ -34,7 +38,8 @@ tflite_text:
 
 ## Output
 
-The decoder reports logits or start/end positions. The model takes token ids, an attention
+The decoder classifies the output logits, or reports start and end positions when `position_output` is
+set. The model takes token ids, an attention
 mask and a segment mask as int32 tensors; the tokenizer stays in the consumer.
 
 ## See Also
