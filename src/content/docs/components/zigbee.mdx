@@ -144,12 +144,15 @@ on_...:
 All components in ESPHome that do some sort of communication through
 Zigbee can have some overrides for specific options.
 
-### Configuration variables
+The entity's `name` is exposed as the Zigbee description attribute. Mark an entity as `internal` to prevent it
+from being exposed over Zigbee. Only specifying an `id` without a `name` implicitly sets `internal` to true.
+Use this if you run out of Zigbee endpoints.
 
-- **name** (**Required**, string): The name for the component. This is exposed as the Zigbee description attribute.
-- **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
-  not be exposed over Zigbee. Only specifying an `id` without a `name` will implicitly set this to true.
-  Use this if you run out of Zigbee endpoints.
+{/* schema: sensor._SENSOR_SCHEMA+binary_sensor._BINARY_SENSOR_SCHEMA
+  +number._NUMBER_SCHEMA+switch._SWITCH_SCHEMA */}
+
+### Configuration Variables
+
 - **endpoint** (*Optional*, int): Endpoint number in the range from 1 to 239. Available on `ESP32` and `nRF52`
   for `sensor`, `binary_sensor`, `number`, and `switch` entities. Set this directly on the entity, alongside
   `name`, not inside a `zigbee:` block. If omitted, the endpoint is assigned automatically.

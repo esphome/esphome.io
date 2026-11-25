@@ -53,7 +53,7 @@ const MIN_EMITTED_INTROS = {
 };
 
 const CONFIG_VARS_RE = /^Configuration (variables|options):?$/i;
-const MARKER_RE = /^\s*\/\*\s*schema:\s*(\S+)\s*\*\/\s*$/;
+const MARKER_RE = /^\s*\/\*\s*schema:\s*([^\s+]+(?:\s*\+\s*[^\s+]+)*)\s*\*\/\s*$/;
 const REGISTRY_TYPES = new Set(["action", "condition", "filter", "effects"]);
 
 // Bus and base schema keys that the extractor copies into every device schema;
@@ -189,7 +189,8 @@ export class SchemaStore {
       return inner;
     }
     if (ref.includes("+")) {
-      const parts = ref.split("+");
+      const parts = [...new Set(ref.split("+"))];
+      if (parts.length === 1) return this.resolve(parts[0]);
       const inners = await Promise.all(parts.map((r) => this.resolve(r)));
       if (inners.some((i) => !i)) return null;
       const variants = inners.flatMap((i) => i.variants);
@@ -199,10 +200,18 @@ export class SchemaStore {
       const bases = new Set(comps.map((c) => c.replace(/_(i2c|spi)$/, "")));
       // A heading naming several actions documents each of them too
       const registryUnion = parts.every((r) => /\.(action|condition|filter|effects)\./.test(r));
-      const multi = (bases.size === 1 && comps.every((c) => /_(i2c|spi)$/.test(c))) || registryUnion;
-      // A platform page's hub schema is audited on its own page; bus wirings and
-      // grouped actions are only documented here, so audit all of them
-      const out = { variants, primaryCount: multi ? variants.length : inners[0].variants.length, multi };
+      const platformBases = parts.every((r) => {
+        const [platform, name] = r.split(".");
+        return (
+          this.isPlatform(platform) &&
+          [`${platform.toUpperCase()}_SCHEMA`, `_${platform.toUpperCase()}_SCHEMA`].includes(name)
+        );
+      });
+      const multi = (bases.size === 1 && comps.every((c) => /_(i2c|spi)$/.test(c))) || registryUnion || platformBases;
+      // Platform bases have their own pages: a shared section documents only its listed keys.
+      // A platform page's hub is also audited separately; bus wirings and grouped actions are not.
+      const primaryCount = platformBases ? 0 : multi ? variants.length : inners[0].variants.length;
+      const out = { variants, primaryCount, multi };
       if (!multi && inners[0].typedKey) {
         // A typed platform joined with its hub: the discriminator and the variant
         // group stay the platform's; the hub is not another variant
@@ -1538,7 +1547,7 @@ export class Walker {
       return;
     }
     this.dropMarker();
-    this.pendingMarker = { ref: m[1], line: node.position.start.line };
+    this.pendingMarker = { ref: m[1].replace(/\s+/g, ""), line: node.position.start.line };
   }
 
   /** Report a marker that applied to nothing and forget it. */
@@ -1631,7 +1640,7 @@ export class Walker {
       return;
     }
 
-    if (this.section) this.section.enumProp = null;
+    if (this.section) this.section.enumProps = null;
     // A marker applies to the section right after it; a second heading means it was not used
     if (this.pendingMarker && this.pendingMarker.line < (this.lastMarkerHeadingLine ?? 0)) this.dropMarker();
     this.lastMarkerHeadingLine = line;
@@ -2005,8 +2014,9 @@ export class Walker {
     if (code && this.section && node.depth > this.section.depth) {
       const prop = await store.findProp(this.section.inner, code);
       if (prop?.type === "enum") {
-        this.lastEnumProps = [prop];
-        this.section.enumProp = prop;
+        const enums = await this.enumHolders(this.section.inner, code, { prop });
+        this.lastEnumProps = enums;
+        this.section.enumProps = enums;
         this.section.documented.add(code);
         return;
       }
@@ -2061,8 +2071,8 @@ export class Walker {
   }
 
   async listItems(node) {
-    if (this.section.enumProp) {
-      this.emitEnumList([this.section.enumProp], node);
+    if (this.section.enumProps) {
+      this.emitEnumList(this.section.enumProps, node);
       return;
     }
     await this.items(node, this.section.inner, this.section.documented);

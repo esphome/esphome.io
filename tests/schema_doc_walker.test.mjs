@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -43,6 +43,171 @@ const core = (components, platforms = {}) => ({
   },
 });
 const schema = (config_vars, extra = {}) => ({ type: "schema", schema: { config_vars }, ...extra });
+
+function platformBundle(underscore = true) {
+  const platforms = ["sensor", "binary_sensor", "number", "switch"];
+  const refs = platforms.map((p) => `${p}.${underscore ? "_" : ""}${p.toUpperCase()}_SCHEMA`);
+  const bundle = {
+    esphome: core(["zigbee", "template"], Object.fromEntries(platforms.map((p) => [p, {}]))),
+    zigbee: { zigbee: { schemas: { CONFIG_SCHEMA: schema({ model: { key: "Optional" } }) } } },
+    template: {},
+  };
+  bundle.esphome.core.schemas.ENTITY_BASE_SCHEMA = schema({
+    name: { key: "Optional", docs: "Keep name." },
+    internal: { key: "Optional", docs: "Keep internal." },
+  });
+  for (const [i, p] of platforms.entries()) {
+    const base = schema({
+      endpoint: { key: "Optional", type: "integer" },
+      cluster: { key: "Optional", type: "enum", values: { generic: null, [p]: { docs: "Keep domain choice." } } },
+      report: { key: "Optional", type: "enum", values: { default: null, force: null } },
+      use_device_type: { key: "Optional", type: "boolean" },
+      unrelated: { key: "Optional", docs: "Documented on the platform page." },
+      settings: { key: "Optional", ...schema({ value: { key: "Optional" }, omitted: { key: "Optional" } }) },
+    });
+    const entity = bundle.esphome.core.schemas.ENTITY_BASE_SCHEMA.schema.config_vars;
+    base.schema.config_vars.name = entity.name;
+    if (p !== "binary_sensor") base.schema.config_vars.internal = entity.internal;
+    base.schema.extends = ["core.ENTITY_BASE_SCHEMA"];
+    bundle[p] = { [p]: { schemas: { [refs[i].split(".")[1]]: base } } };
+    bundle.template[`template.${p}`] = { schemas: { CONFIG_SCHEMA: { schema: { extends: [refs[i]] } } } };
+  }
+  return { platforms, refs, bundle };
+}
+
+test("shared platform bases document every definition", async () => {
+  const { platforms, refs, bundle } = platformBundle(false);
+  const ref = [...refs, refs[0]].join(" +\n  ");
+  const { store, report } = await walk({
+    schema: bundle,
+    pages: {
+      "zigbee.mdx": [
+        "Zigbee.",
+        "## Configuration variables",
+        "- **model** (*Optional*): Device model.",
+        "## Shared Options",
+        "The `name` and `internal` options also affect Zigbee exposure.",
+        `{/* schema: ${ref} */}`,
+        "### Configuration variables",
+        "- **endpoint** (*Optional*, int): See [assignment](#assignment).",
+        "- **cluster** (*Optional*, enum): The cluster.\n  - `generic`: Basic cluster.",
+        "- **report** (*Optional*, enum): Reporting mode.",
+        "- **use_device_type** (*Optional*, boolean): Use the device type.",
+        "- **settings** (*Optional*, mapping): Settings.\n  - **value** (*Optional*): Nested value.",
+      ].join("\n\n"),
+    },
+  });
+  for (const p of platforms) {
+    const inner = await store.resolve(`template.${p}.CONFIG_SCHEMA`);
+    for (const key of ["endpoint", "cluster", "report", "use_device_type"]) {
+      assert.ok((await store.findProp(inner, key)).docs, `${p}.${key}`);
+    }
+    assert.match(
+      (await store.findProp(inner, "endpoint")).docs,
+      /https:\/\/esphome.io\/components\/zigbee\/#assignment/,
+    );
+    const cluster = await store.findProp(inner, "cluster");
+    assert.deepEqual(Object.keys(cluster.values), ["generic", p]);
+    assert.match(cluster.values.generic.docs, /Basic cluster/);
+    assert.equal(cluster.values[p].docs, "Keep domain choice.");
+    assert.match((await store.findProp(inner, "settings")).schema.config_vars.value.docs, /Nested value/);
+    assert.equal((await store.findProp(inner, "name")).docs, "Keep name.");
+    assert.equal((await store.findProp(inner, "internal")).docs, "Keep internal.");
+  }
+  assert.deepEqual(Object.keys(store.files.get("zigbee").zigbee.schemas.CONFIG_SCHEMA.schema.config_vars), ["model"]);
+  assert.equal(report.stats.emitted.props, 25);
+  assert.equal(report.stats.emitted.propsSkipped, 0);
+  assert.ok(store.ownKeys(await store.resolve(refs[0])).has("unrelated"));
+  assert.equal((await store.resolve(`${refs[0]}+zigbee.CONFIG_SCHEMA`)).multi, false);
+  assert.equal(report.stats.keysUnmatched, 0);
+  assert.equal(report.stats.keysUndocumented, 1);
+  assert.deepEqual(
+    report.findings.filter((f) => f.kind === "undocumented_key").map((f) => f.key),
+    ["omitted"],
+  );
+});
+
+test("a duplicated base reference keeps the singleton audit", async () => {
+  for (const ref of ["sensor._SENSOR_SCHEMA", "sensor._SENSOR_SCHEMA+sensor._SENSOR_SCHEMA"]) {
+    const { report } = await walk({
+      schema: {
+        esphome: core([], { sensor: {} }),
+        sensor: {
+          sensor: {
+            schemas: { _SENSOR_SCHEMA: schema({ endpoint: { key: "Optional" }, unrelated: { key: "Optional" } }) },
+          },
+        },
+      },
+      pages: {
+        "sensor/index.mdx": `Sensor.\n\n{/* schema: ${ref} */}\n\n## Configuration variables\n\n- **endpoint** (*Optional*): Endpoint.`,
+      },
+    });
+    assert.deepEqual(
+      report.findings.filter((f) => f.kind === "undocumented_key").map((f) => f.key),
+      ["unrelated"],
+      ref,
+    );
+    assert.equal(report.stats.emitted.props, 1);
+    assert.equal(report.stats.emitted.propsSkipped, 0);
+    assert.equal(report.stats.keysUndocumented, 1);
+  }
+});
+
+test("an enum heading documents every accepting platform base", async () => {
+  const { bundle } = platformBundle();
+  const { store, report } = await walk({
+    schema: bundle,
+    pages: {
+      "zigbee.mdx": [
+        "Zigbee.",
+        "{/* schema: sensor._SENSOR_SCHEMA+switch._SWITCH_SCHEMA */}",
+        "## Configuration variables",
+        "### `cluster`",
+        "- `generic` (default): See [Zigbee](/components/zigbee/).\n- `switch`: Switch cluster.\n- `absent`: Invalid choice.",
+        '<EnumValues values={[{ value: "sensor", description: "Sensor cluster." }]} />',
+      ].join("\n\n"),
+    },
+  });
+  for (const platform of ["sensor", "switch"]) {
+    const prop = await store.findProp(await store.resolve(`${platform}._${platform.toUpperCase()}_SCHEMA`), "cluster");
+    assert.deepEqual(Object.keys(prop.values), ["generic", platform]);
+    assert.match(prop.values.generic?.docs ?? "", /https:\/\/esphome.io\/components\/zigbee\//, platform);
+    assert.equal(prop.values.generic.default, true);
+    assert.match(prop.values[platform].docs, new RegExp(`${platform} cluster`, "i"));
+  }
+  assert.deepEqual(
+    report.findings.filter((f) => f.kind === "unknown_enum_value").map((f) => f.key),
+    ["absent"],
+  );
+  assert.equal(report.stats.emitted.enumDocs, 3);
+});
+
+test("the Zigbee page routes only its shared Zigbee options to entity bases", async () => {
+  const { platforms, bundle } = platformBundle();
+  const page = readFileSync(new URL("../src/content/docs/components/zigbee.mdx", import.meta.url), "utf8").replace(
+    /^---[\s\S]*?---\n/,
+    "",
+  );
+  const { store } = await walk({ schema: bundle, pages: { "zigbee.mdx": page } });
+  for (const p of platforms) {
+    const inner = await store.resolve(`template.${p}.CONFIG_SCHEMA`);
+    for (const key of ["endpoint", "cluster", "report", "use_device_type"]) {
+      assert.ok((await store.findProp(inner, key)).docs, `${p}.${key}`);
+    }
+    assert.equal((await store.findProp(inner, "name")).docs, "Keep name.");
+    assert.equal((await store.findProp(inner, "internal")).docs, "Keep internal.");
+  }
+  assert.deepEqual(Object.keys(store.files.get("zigbee").zigbee.schemas.CONFIG_SCHEMA.schema.config_vars), ["model"]);
+});
+
+test("schema markers reject whitespace inside a reference", async () => {
+  const { report } = await walk({
+    schema: { esphome: core(["foo"]), foo: { foo: { schemas: { CONFIG_SCHEMA: schema({}) } } } },
+    pages: { "foo.mdx": "Foo.\n\n{/* schema: foo. CONFIG_SCHEMA */}\n\n## Configuration variables" },
+  });
+  assert.equal(report.findings.filter((f) => f.kind === "malformed_schema_marker").length, 1);
+  assert.equal(report.stats.sectionsByMarker, 0);
+});
 
 test("a bus heading re-targets only its own subtree", async () => {
   const { docs, report, store } = await walk({
@@ -885,6 +1050,36 @@ test("a nested typed schema that two outer variants define keeps its discriminat
   }
   assert.deepEqual(
     report.findings.filter((f) => f.kind === "unmatched_key").map((f) => f.key),
+    [],
+  );
+});
+
+test("a nested mapping heading is not redirected to another variant's enum", async () => {
+  const variant = (kind) => ({ config_vars: { options: schema({ kind }, { key: "Optional" }) } });
+  const config = {
+    type: "typed",
+    typed_key: "model",
+    types: {
+      a: variant(schema({ child: { key: "Optional" } }, { key: "Optional" })),
+      b: variant({ key: "Optional", type: "enum", values: { other: null } }),
+    },
+  };
+  const { store, report } = await walk({
+    schema: { esphome: core(["foo"]), foo: { foo: { schemas: { CONFIG_SCHEMA: config } } } },
+    pages: {
+      "foo.mdx": [
+        "Foo.",
+        "## Configuration variables",
+        "### `options`",
+        "#### `kind`",
+        "- **child** (*Optional*): Child value.",
+      ].join("\n\n"),
+    },
+  });
+  const options = store.files.get("foo").foo.schemas.CONFIG_SCHEMA.types.a.config_vars.options;
+  assert.match(options.schema.config_vars.kind.schema.config_vars.child.docs ?? "", /Child value/);
+  assert.deepEqual(
+    report.findings.filter((f) => f.kind === "unknown_enum_value"),
     [],
   );
 });
