@@ -18,7 +18,8 @@ stack. The node:
   [`on_emcy`](#on_emcy-trigger));
 - receives and sends other frames in lambdas, for example PDOs (see [Raw Frames](#raw-frames)).
 
-The node doesn't send emergency (EMCY) frames, has no PDOs of its own, and doesn't support SYNC, LSS or EDS files.
+The node sends emergency (EMCY) messages only for errors the stack detects itself, such as a full CAN transmit queue;
+there is no API to send your own. It has no PDOs of its own, and doesn't support SYNC, LSS or EDS files.
 
 Without a `node_id` the component is no CANopen node, only an SDO client: it reads and writes objects of other
 devices, see [SDO Client Only](#sdo-client-only).
@@ -40,7 +41,8 @@ canopen:
 - **canbus_id** (*Optional*, [ID](/guides/configuration-types/#id)): The [CAN bus](/components/canbus/) to use. Required
   if there is more than one bus.
 - **heartbeat_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often this node sends its
-  heartbeat. From `100ms` (it's sent from the main loop) to `65535ms`. Defaults to `5s`.
+  heartbeat. From `100ms` to `65535ms`. Defaults to `5s`. It's sent from the main loop, so the actual period is the
+  interval plus up to one loop pass (for example about 1,008 ms for `1s`).
 - **response_timeout** (*Optional*, [Time](/guides/configuration-types/#time)): How long an SDO request waits for an
   answer. Up to `65535ms`. Defaults to `500ms`.
 - **sdo_client** (*Optional*, boolean): Whether the SDO client is compiled in. Not set by default: it's compiled in
@@ -136,7 +138,8 @@ COB-IDs `0x600` + node id (requests) and `0x580` + node id (responses), with exp
 
 ### `on_nmt_state_change` Trigger
 
-Runs when this node's own NMT state changes: after boot, on an NMT command from a master, or after `set_nmt_state()`.
+Runs when this node's own NMT state changes: after boot (in the component's first loop pass), on an NMT command from
+a master, or after `set_nmt_state()`.
 Variable: `state` (`canopen::NMTState`).
 
 ```yaml
@@ -340,7 +343,8 @@ id(my_canopen).read_sdo_data(0x01, 0x1008, 0, name, sizeof(name), [](void *conte
 ### NMT State of This Node
 
 ```cpp
-// the node's own NMT state (UNKNOWN before setup, and without node_id)
+// the node's own NMT state: UNKNOWN until the component's first loop pass (also in an on_boot automation that runs
+// right after setup) and without node_id
 id(my_canopen).get_nmt_state() == canopen::NMTState::NMT_STATE_OPERATIONAL;
 // OPERATIONAL, PRE_OPERATIONAL or STOPPED; no NMT master needed (false without node_id)
 id(my_canopen).set_nmt_state(canopen::NMTState::NMT_STATE_OPERATIONAL);
