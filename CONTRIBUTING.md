@@ -127,6 +127,18 @@ Use **relative paths** starting with `/`:
 
 **Important**: Always include trailing slash `/` for internal links.
 
+This holds when the link carries an anchor, where the slash goes before the `#`:
+
+```markdown
+- See [Manual IPs](/components/wifi/#manual-ips) to configure a static address
+- The value is an [ID](/guides/configuration-types/#id)
+```
+
+Astro's `build.format` defaults to `directory`, so every page is emitted as `<path>/index.html`. Netlify then
+answers a request for the slash-less `/components/wifi` with a 301 to `/components/wifi/`, and the browser
+re-applies the anchor. A link written without the slash therefore costs every reader who follows it an
+avoidable redirect. `npm run lint` fails on an internal link written that way.
+
 #### Anchors
 
 Headings automatically create anchors using their slugified form. To link to a specific section:
@@ -459,6 +471,7 @@ npm run build
 ### Before Submitting
 
 - [ ] Check that all links work (internal and external with trailing slashes)
+- [ ] Internal links with an anchor keep the trailing slash before the `#` (`/components/wifi/#manual-ips`)
 - [ ] Verify code examples are syntactically correct
 - [ ] Ensure images are optimized and properly sized
 - [ ] Confirm line length is ≤120 characters
@@ -562,5 +575,6 @@ sensor:
 - **Use literal `GPIOXX`** - the XX is literal, don't replace with numbers (unless fixed hardware)
 - **Link to dependencies** instead of including their config
 - **Target correct branch** (current vs next)
-- **Internal links**: Include trailing slash (e.g., `/components/wifi/`)
+- **Internal links**: Include trailing slash (e.g., `/components/wifi/`), before the `#` when there is an anchor
+  (e.g. `/components/wifi/#manual-ips`)
 - **GitHub CLI not available** - ask user for GitHub information if needed
