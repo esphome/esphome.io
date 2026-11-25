@@ -271,7 +271,9 @@ Configuration variables:
 These apply to both actions and to the [lambda calls](#sdo-client).
 
 Another SDO client talking to the same node at the same time (a CANopen master, a PC tool) shares the node's SDO
-channel, so either side's requests can end with an abort: handle `on_error`.
+channel, so either side's requests can end with an abort: handle `on_error`. This includes the other `canopen`
+components of the same device (see [Several Nodes](#several-nodes)): each has its own SDO client, and they all use the
+same channel of the node they talk to, so two of them shouldn't send requests to the same node at the same time.
 
 SDO frames carry no request id, so a late answer to a request that timed out can be taken as the answer to the next
 request for the same object of the same node, such as a retry (a late abort by any request, a late write
