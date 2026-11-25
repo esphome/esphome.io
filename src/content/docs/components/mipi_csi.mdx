@@ -64,10 +64,6 @@ mipi_csi:
 - **frame_buffer_count** (*Optional*, int): The number of V4L2 capture buffers to allocate in PSRAM, from
   `1` to `3`. Defaults to `2`. More buffers make it less likely that a slow consumer causes a frame to be
   dropped, at the cost of more PSRAM.
-- **init_ldo** (*Optional*, boolean): Whether this component should power up the MIPI D-PHY's internal LDO
-  regulator (channel 3) itself. Defaults to `true`. Set this to `false` if another peripheral (for example
-  a MIPI-DSI display configured through [`esp_ldo`](/components/esp_ldo/)) already powers that channel;
-  attempting to acquire it twice fails and prevents the camera from starting.
 - **horizontal_flip** (*Optional*, boolean): Whether to flip the image horizontally.
 - **vertical_flip** (*Optional*, boolean): Whether to flip the image vertically.
 - **i2c_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the [I²C bus](/components/i2c)
@@ -105,7 +101,8 @@ Automations:
 
 Only the driver for the configured `sensor` is compiled in, which keeps the firmware small. Each sensor
 can only capture the resolution/frame rate/pixel format combinations its register tables were built for;
-picking a `resolution` outside that list fails during setup and logs the ones that are actually available.
+for the sensors listed below, a `resolution` outside that list is rejected when the configuration is validated,
+with the list of the supported ones.
 Check [espressif/esp_cam_sensor](https://components.espressif.com/components/espressif/esp_cam_sensor) for
 an up to date list.
 
@@ -169,9 +166,9 @@ resolutions or frame rates.
 
 ## Sharing the LDO channel with a display
 
-The MIPI D-PHY on the ESP32-P4 is powered from LDO channel 3. If a MIPI-DSI display (or anything else) on
-the same board already powers that channel through [`esp_ldo`](/components/esp_ldo/), set `init_ldo: false`
-so this component does not try to acquire it a second time:
+The MIPI D-PHY on the ESP32-P4 is powered from LDO channel 3. By default this component powers it. If
+[`esp_ldo`](/components/esp_ldo/) already configures channel 3 (for example for a MIPI-DSI display on the same
+board), the component uses that instead of acquiring the channel a second time:
 
 ```yaml
 # The display already powers LDO channel 3.
@@ -182,18 +179,14 @@ esp_ldo:
 mipi_csi:
   name: My Camera
   sensor: SC2336
-  init_ldo: false
   sccb_frequency: 100kHz
 ```
 
-Leaving `init_ldo` at its default of `true` while the channel is already in use makes camera setup fail with
-`Camera sensor initialization failed`.
-
 ## Troubleshooting
 
-- **`The sensor cannot capture WxH`**: The requested `resolution` is not one this sensor was built for. The
-  log lists every resolution the driver actually supports; pick one of those, or omit `resolution` to keep
-  the sensor's own default.
+- **`The sensor cannot capture WxH`**: The requested `resolution` is not one this sensor was built for (only
+  possible with a driver from another component). The log lists every resolution the driver actually supports;
+  pick one of those, or omit `resolution` to keep the sensor's own default.
 - **`The camera cannot deliver FORMAT at WxH`**: The requested `pixel_format` is not available at this
   resolution, most often because the chosen sensor format has no ISP tuning data for it. Try a different
   `pixel_format` or resolution.
