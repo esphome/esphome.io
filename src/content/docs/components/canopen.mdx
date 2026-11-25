@@ -167,7 +167,7 @@ confirmation only by a write, a late read answer only by a read). That request t
 ### SDO Client
 
 The SDO client has one channel; requests are queued (up to 16) and sent one after another. Every request ends in exactly
-one call of its callback, if one was given (it may be `nullptr`), with a `canopen::SDOReply`: `result`
+one call of its callback, if one was given (it may be `nullptr`) and the request wasn't cancelled (`cancel_sdo()`), with a `canopen::SDOReply`: `result`
 (`SDO_RESULT_SUCCESS`, `SDO_RESULT_ABORT`, `SDO_RESULT_TIMEOUT`, `SDO_RESULT_SIZE_MISMATCH`,
 `SDO_RESULT_TRANSPORT_ERROR` or `SDO_RESULT_REJECTED`), `abort_code`, `value` / `size` for a successful value read or
 write, and `data` / `len` for a successful `read_sdo_data()` (valid only during the callback; otherwise `nullptr` and
@@ -214,8 +214,8 @@ id(my_canopen).read_sdo_data(0x01, 0x1008, 0, name, sizeof(name), [](void *conte
   before a buffer or `context` goes away. The next request (to any node) waits 50 ms after the abort, so a late answer
   to the cancelled transfer isn't taken for it. The 50 ms count from when the CAN controller took the abort, not from
   when it was on the bus. A node busy in a slow object handler can answer the cancelled request even later, hundreds
-  of milliseconds after the abort; a request for the same object running then takes that answer as its own (see the
-  late answers note under [`canopen.sdo_write`](#canopen-sdo_write-action)).
+  of milliseconds after the abort; a request for the same object running then takes that answer as its own (see
+  [Shared SDO Channel](#shared-sdo-channel)).
 
 ### Raw Frames
 
