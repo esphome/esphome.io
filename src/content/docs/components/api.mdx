@@ -120,10 +120,11 @@ api:
 - **keepalive** (*Optional*, [Time](/guides/configuration-types/#time)): How long the connection may be idle before
   the device sends a ping to the client. The device disconnects a client that doesn't answer within 1.5 times this
   interval (at most 5 minutes) after the ping. While a vanished client is not yet disconnected, it keeps occupying
-  one of the `max_connections` slots. The value is also sent to the client when it connects, so clients that support
-  it ping less often and wait longer for an answer. Raise it for battery-powered devices that sleep between radio
-  polls, such as an OpenThread `MTD` with a long `poll_period`, where frequent pings dominate power consumption. A
-  longer interval also means that a lost connection, for example after a reboot, is detected later.
+  one of the `max_connections` slots. A value other than the default is also sent to the client when it connects, so
+  clients that support it ping less often and wait longer for an answer. Raise it for battery-powered devices that
+  sleep between radio polls, such as an OpenThread `MTD` with a long `poll_period`, where frequent pings dominate
+  power consumption. A longer interval also means that a lost connection, for example after a reboot, is detected
+  later.
   Range `60s` to `1h`, so it can only lengthen the default. Defaults to `60s`.
 
 - **wizard** (*Optional*): A setup wizard that Home Assistant shows when the device is added.
