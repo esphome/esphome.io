@@ -75,9 +75,11 @@ Automations:
   starts a continuous stream.
 - **on_stream_stop** (*Optional*, [Automation](/automations/)): An automation to perform when a client
   stops a continuous stream.
-- **on_image** (*Optional*, [Automation](/automations/)): An automation called every time a frame is
-  captured. The encoded JPEG frame is available as the `image` variable, a struct with `data`
-  (`uint8_t *`) and `length` (`size_t`) members.
+- **on_image** (*Optional*, [Automation](/automations/)): An automation called every time a requested frame
+  (for a stream, a still image or the idle refresh) has been encoded; frames nobody asked for are not
+  encoded. The JPEG frame is available as the `image` variable, a struct with `data` (`uint8_t *`) and
+  `length` (`size_t`) members. `data` points into the encoder's output buffer, which the next frame reuses,
+  so it is only valid while the automation runs: copy the bytes to keep them.
 
   ```yaml
   on_image:
