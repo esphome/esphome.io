@@ -52,13 +52,15 @@ are listed with the configuration in the logs, so open the logs again once disco
 
 ```text
 [C][duco]: Discovered nodes:
-[C][duco]:   Node 1: type 17 (BOX)
-[C][duco]:   Node 2: type 8 (UCBAT)
-[C][duco]:   Node 3: type 12 (UCCO2)
-[C][duco]:   Node 4: type 12 (UCCO2)
-[C][duco]:   Node 52: type 18 (SWITCH)
-[C][duco]:   Node 67: type 9 (UC)
+[C][duco]:   Node 1: type 17 (BOX) network: Virtual
+[C][duco]:   Node 2: type 8 (UCBAT) network: RF
+[C][duco]:   Node 3: type 12 (UCCO2) network: RF
+[C][duco]:   Node 4: type 12 (UCCO2) network: RF
+[C][duco]:   Node 52: type 18 (SWITCH) network: RF
+[C][duco]:   Node 67: type 9 (UC) network: RF
 ```
+
+Discovery also reports each node's network type: `Wired`, `RF`, `Virtual`, `-`, or `unknown`.
 
 The known node types are:
 
@@ -179,12 +181,21 @@ The text sensor reports the serial number of the box.
 text_sensor:
   - platform: duco
     name: "Serial Number"
+  - platform: duco
+    node_network_type:
+      - name: "Node Network Type"
+        address: 3
 ```
 
 ### Configuration Variables
 
 - **duco_id** (*Optional*, [ID](/guides/configuration-types/#id)): The Duco component to use. Only needed with more
   than one.
+- **node_network_type** (*Optional*): A list of node network-type text sensors. Each entry accepts:
+  - **address** (*Optional*, int): Node address from `1` to `68`. Defaults to `1`.
+  - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often the network type is read.
+    Defaults to `300s`.
+  - All other options from [Text Sensor](/components/text_sensor/).
 - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often the serial number is read.
   Defaults to `300s`.
 - All other options from [Text Sensor](/components/text_sensor/).
