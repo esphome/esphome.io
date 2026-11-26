@@ -85,21 +85,18 @@ after its request timed out is dropped and reported in a debug log message.
 
 ## Automations
 
-- **on_image** (*Optional*, [Automation](/automations)): Runs after a frame has
+- **on_image** (*Optional*, [Automation](/automations/)): Runs after a frame has
   been decoded. Use it to refresh the display.
-- **on_error** (*Optional*, [Automation](/automations)): Runs when the camera
+- **on_error** (*Optional*, [Automation](/automations/)): Runs when the camera
   returns an empty frame, does not deliver one within `timeout`, or the frame
   cannot be decoded, cropped or rotated.
 
 ## Examples
 
-Show a cropped, rotated view of the camera on a small display:
+Show a cropped, rotated view of the camera on a small display, with an
+[ESP32 camera](/components/esp32_camera/) configured as `my_camera`:
 
 ```yaml
-esp32_camera:
-  id: my_camera
-  # ... camera pins and resolution ...
-
 image:
   - platform: camera_image
     id: camera_frame
