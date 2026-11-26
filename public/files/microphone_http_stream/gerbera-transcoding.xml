@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Gerbera 3.3.0 example for an ESPHome mono S16LE microphone at 16 kHz.
+     Merge these entries into the existing transcoding section of config.xml.
+     Set input -ar to sample_rate_hz from GET /audio/microphones. -->
+<transcoding enabled="yes">
+  <mimetype-profile-mappings>
+    <transcode mimetype="application/octet-stream" using="esphome_mic_mp3" />
+  </mimetype-profile-mappings>
+  <profiles>
+    <profile name="esphome_mic_mp3" enabled="yes" type="external">
+      <mimetype>audio/mpeg</mimetype>
+      <dlna-profile>MP3</dlna-profile>
+      <accept-url>yes</accept-url>
+      <first-resource>yes</first-resource>
+      <hide-original-resource>yes</hide-original-resource>
+      <audio-channels>2</audio-channels>
+      <sample-frequency>44100</sample-frequency>
+      <agent command="ffmpeg"
+        arguments="-loglevel error -nostdin -f s16le -ar 16000 -ac 1 -i %in
+                   -ar 44100 -ac 2 -c:a libmp3lame -b:a 128k -f mp3 -y %out" />
+      <buffer size="131072" chunk-size="8192" fill-size="16384" />
+    </profile>
+  </profiles>
+</transcoding>
