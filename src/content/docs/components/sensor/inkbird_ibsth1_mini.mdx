@@ -75,11 +75,20 @@ like so:
 
 ```yaml
 esp32_ble_tracker:
+  scan_parameters:
+    continuous: false
+
+esphome:
+  on_boot:
+    then:
+      - delay: 5s
+      - esp32_ble_tracker.start_scan:
 ```
 
-After uploading the ESP32 will immediately try to scan for BLE devices such as the Inkbird IBS-TH1/TH2.
-When it detects these sensors, it will automatically parse the BLE message print a
-message like this one:
+The tracker only logs the devices it finds when it is not scanning continuously, and it then does not start a
+scan by itself, so the configuration starts one a few seconds after boot, once Bluetooth is up. After uploading,
+the ESP32 scans for BLE devices such as the Inkbird IBS-TH1/TH2 for one scan period (5 minutes by default) and
+prints a message like this one for each device it finds:
 
 ```log
 [13:36:43][D][esp32_ble_tracker:544]: Found device XX:XX:XX:XX:XX:XX RSSI=-53
@@ -92,7 +101,8 @@ should say 'PUBLIC' and the device name should be 'sps', this is how you find th
 other devices.
 
 Then just copy the address (`XX:XX:XX:XX:XX:XX`  ) into a new `sensor.inkbird_ibsth1_mini` platform
-entry like in the configuration example at the top.
+entry like in the configuration example at the top, and remove the `continuous: false` and `on_boot` lines again so the
+sensor keeps receiving data.
 
 > [!NOTE]
 > The ESPHome Inkbird IBS-TH1/TH2 component listens passively to packets the device sends by itself.
