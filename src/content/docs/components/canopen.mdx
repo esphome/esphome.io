@@ -126,8 +126,10 @@ have different node ids, as on any CANopen bus. They receive each other's frames
 a node can monitor another one's heartbeat with `heartbeat_clients`, their `on_heartbeat` and `on_emcy` triggers and
 frame listeners see the other's frames, and SDO requests and NMT commands between them work. The frames are also sent
 on the bus as usual. A node gets the frames of the other nodes on the device in its next loop pass, in the order they
-were sent. Up to 16 can wait; when more are sent in between (for example a long burst of `send_frame()` calls in one
-lambda), the rest is lost, as on a bus, and a warning is logged. A bus can have only one `canopen` component without `node_id`
+were sent, and in order with the frames from the bus (a frame another node sends in reply to a bus frame comes after
+that frame). Up to 16 can wait; when more are sent in between (for example a long burst of `send_frame()` calls in one
+lambda), the rest is lost, as on a bus, and a warning is logged; a frame from the bus that finds the queue full is lost
+for that node too. A bus can have only one `canopen` component without `node_id`
 (SDO client only): two would share the SDO client's CAN IDs.
 
 ```yaml
