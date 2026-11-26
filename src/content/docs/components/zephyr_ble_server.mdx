@@ -41,6 +41,11 @@ zephyr_ble_server:
           accept: true
 ```
 
+> [!NOTE]
+> The BLE server also comes up when the device is in [safe mode](/components/safe_mode/), so a device stuck in a boot
+> loop can still be updated over BLE. This automation does not run while the device is in safe mode, so the device then
+> rejects every new pairing request. Computers that are already paired (bonded) with the device can still connect.
+
 ## `ble_server.numeric_comparison_reply` Action
 
 This action triggers an authentication attempt after a numeric comparison.
@@ -89,5 +94,6 @@ zephyr_ble_server:
 
 ## See Also
 
+- [Adafruit BLE OTA](/components/ota/adafruit_ble/)
 - [BLE Client](/components/ble_client)
 - [Automations](/automations)

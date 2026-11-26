@@ -35,9 +35,9 @@ The entry's own `id` refers to the slot, which is what the action targets. The `
 
 ## Configuration variables
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the artwork slot. Use this to target the
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the artwork slot. Use this to target the
   action below.
-- **format** (**Required**): The format the artwork is encoded with. One of `JPEG`, `PNG` or `BMP`.
+- **format** (**Required**): The format the artwork is encoded with. One of `JPEG` or `PNG`.
 - **resize** (**Required**, string): The size the artwork is requested and rendered at, as `WIDTHxHEIGHT`. The
   Sendspin server scales the artwork to these dimensions before sending it.
 - **type** (**Required**): Specifies how to encode the image internally.
@@ -45,11 +45,14 @@ The entry's own `id` refers to the slot, which is what the action targets. The `
   - `BINARY`: Two colors, suitable for 1 color displays or a 2 color image on color displays. Uses 1 bit per
     pixel, 8 pixels per byte. Only `chroma_key` transparency is available.
   - `GRAYSCALE`: Full scale grey. Uses 8 bits per pixel, 1 pixel per byte.
+  - `RGB111`  : RGB image with one bit per channel (3 bits per pixel). Supports alpha channel transparency (4 bits/pixel).
+                Useful for e.g. color e-paper displays.
+                Cannot be used for LVGL images.
   - `RGB565`: Lossy RGB color. Uses 2 bytes per pixel, 3 with an alpha channel.
   - `RGB`: Full RGB color. Uses 3 bytes per pixel, 4 with an alpha channel.
 - **current_image** (**Required**): The image showing the artwork that is currently playing.
 
-  - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID to reference the image in your display
+  - **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID to reference the image in your display
   or LVGL code.
 - **transition_image** (*Optional*): A second image holding the outgoing artwork while a transition runs, for
   transitions that must keep it on screen after `on_image_display` returns. It holds the current artwork at any
@@ -58,9 +61,9 @@ The entry's own `id` refers to the slot, which is what the action targets. The `
   [`sendspin.image.transition_finished`](#sendspin-image-transition_finished-action) runs. See
   [Cross-fading between tracks](#cross-fading-between-tracks).
 
-  - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID to reference the outgoing artwork.
+  - **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID to reference the outgoing artwork.
 - **source** (*Optional*): Which artwork to display. One of `album` (default) or `artist`.
-- **display_offset** (*Optional*, [Time](/guides/configuration-types#time)): Request a shift when
+- **display_offset** (*Optional*, [Time](/guides/configuration-types/#time)): Request a shift when
   `on_image_display` fires relative to the moment the server asked for the artwork to appear. A positive value
   fires it early, a negative value delays it. Must be a whole number of milliseconds between `-60s` and `60s`.
   Defaults to `0ms`.
@@ -70,10 +73,10 @@ The entry's own `id` refers to the slot, which is what the action targets. The `
 - **byte_order** (*Optional*, string): For RGB565 images, the pixels are converted to 16 bit values. By default
   these are stored in little endian byte order (LSB first), but you can override this by setting `byte_order` to
   `big_endian`. Options are `little_endian` (default) and `big_endian`. Not applicable to other image formats.
-- **placeholder** (*Optional*, [ID](/guides/configuration-types#id)): ID of another [image](/components/image/)
+- **placeholder** (*Optional*, [ID](/guides/configuration-types/#id)): ID of another [image](/components/image/)
   to display until the first artwork has been received. This placeholder image will **not** be resized. It only
   applies when the image is drawn from a display lambda; LVGL widgets show nothing instead.
-- **sendspin_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the
+- **sendspin_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the
   [Sendspin](/components/sendspin/) hub to attach to. Only needed if you have more than one hub configured.
 
 > [!NOTE]
@@ -85,7 +88,7 @@ The entry's own `id` refers to the slot, which is what the action targets. The `
 - **on_image_display** (*Optional*, [Automation](/automations)): An automation to perform when new artwork is
   ready to be shown. A common use is to refresh the display so the new artwork is drawn.
 
-  The variable `lateness_ms` is available in [lambdas](/automations/templates#config-lambda). It reports how
+  The variable `lateness_ms` is available in [lambdas](/automations/templates/#config-lambda). It reports how
   many milliseconds past the intended moment the artwork actually arrived, so a transition can be shortened by
   that much and still finish on schedule.
 - **on_image_clear** (*Optional*, [Automation](/automations)): An automation to perform when the artwork is
@@ -110,7 +113,7 @@ for more. Only needed when a `transition_image` is configured.
 
 #### Configuration variables
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The artwork slot the transition belongs to.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The artwork slot the transition belongs to.
 
 ```yaml
 on_...:
@@ -221,7 +224,7 @@ lvgl:
 The fade outlives the automation that starts it, so the transition is reported as finished from the animation's
 `on_stop` rather than at the end of `on_image_display`. The fade always runs for the same length here; to have
 it end on schedule even when artwork arrives late, pass a duration to
-[`lvgl.animation.start`](/components/lvgl/animation#lvgl-animation-start-action) shortened by `lateness_ms`.
+[`lvgl.animation.start`](/components/lvgl/animation/#lvgl-animation-start-action) shortened by `lateness_ms`.
 
 ## See Also
 

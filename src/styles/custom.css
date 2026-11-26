@@ -112,7 +112,7 @@ dialog::backdrop {
 
 /* Blog list post previews (starlight-blog): tighten the default 1.5rem gap
    between the title/metadata, excerpt paragraph and tags. */
-article.preview {
+article.sl-blog-preview {
   gap: 1rem;
 }
 
@@ -618,6 +618,13 @@ article.preview {
 .main-pane:has(.sl-markdown-content .posts),
 .main-pane:has(.post-footer) {
   --sl-content-width: 50rem;
+}
+
+/* starlight-blog renders the post cover above the metadata on the post page.
+   Covers are the generated OpenGraph card, which only belongs on blog list cards
+   and social previews, so hide it on the post page itself. */
+.sl-markdown-content > figure:first-child:has(+ .metadata) {
+  display: none;
 }
 
 .main-pane:has(.post-footer) figure img,

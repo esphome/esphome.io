@@ -1,38 +1,60 @@
 name: ImgBot Auto Merge
 
+# Plain pull_request on purpose. imgbot pushes its branch to this repository,
+# so its pull requests run with this repository's secrets. A pull request from
+# a fork gets a read-only token and no secrets whatever it does to this file,
+# and the job below is skipped for it.
+#
+# The guard does not check github.actor: a push to the imgbot branch by anyone
+# else must still be verified, so that auto-merge is switched off again when
+# the pull request no longer holds only images.
+#
+# Everything is bound to the commit this run was started for: the file list
+# must have been read at that commit, the approval names it, and auto-merge is
+# only enabled while it is still the head. A push in between gets its own run.
+# When that run finds anything but images, it switches auto-merge off and
+# dismisses the approvals this job gave for earlier heads.
+
 on:
-  pull_request_target:
+  pull_request:
     types: [opened, reopened, synchronize]
 
-permissions:
-  pull-requests: write
-  contents: read
+permissions: {}
 
 jobs:
   auto-merge:
+    name: Auto merge
     runs-on: ubuntu-latest
-    if: github.event.pull_request.user.login == 'imgbot[bot]'
+    timeout-minutes: 5
+    if: >-
+      github.event.pull_request.head.repo.full_name == github.repository
+      && github.event.pull_request.user.login == 'imgbot[bot]'
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+      cancel-in-progress: false
+    permissions:
+      pull-requests: read  # list the files changed by the pull request
+    env:
+      OWNER: ${{ github.repository_owner }}
+      REPO: ${{ github.event.repository.name }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      PR_URL: ${{ github.event.pull_request.html_url }}
+      HEAD_SHA: ${{ github.event.pull_request.head.sha }}
     steps:
-      - name: Generate a token
-        id: generate-token
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
-        with:
-          client-id: ${{ vars.ESPHOME_GITHUB_APP_CLIENT_ID }}
-          private-key: ${{ secrets.ESPHOME_GITHUB_APP_PRIVATE_KEY }}
-
       - name: Verify only image files are changed
+        id: verify
         env:
-          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
-          OWNER: ${{ github.repository_owner }}
-          REPO: ${{ github.event.repository.name }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ github.token }}
         run: |
-          if ! files=$(gh api graphql \
+          # One line per file: the head commit the page was read at, a tab, the path.
+          # The dollar names in the single-quoted query and filter are GraphQL and jq variables, not shell ones.
+          # shellcheck disable=SC2016
+          if ! listing=$(gh api graphql \
             -F owner="$OWNER" -F repo="$REPO" -F pr="$PR_NUMBER" \
             -f query='query($owner:String!,$repo:String!,$pr:Int!,$endCursor:String){
               repository(owner:$owner,name:$repo){
                 pullRequest(number:$pr){
+                  headRefOid
                   files(first:100,after:$endCursor){
                     pageInfo{hasNextPage endCursor}
                     nodes{path}
@@ -41,27 +63,83 @@ jobs:
               }
             }' \
             --paginate \
-            --jq '.data.repository.pullRequest.files.nodes[].path'); then
+            --jq '.data.repository.pullRequest | .headRefOid as $oid | .files.nodes[] | [$oid, .path] | @tsv'); then
             echo "::error::Failed to fetch PR files."
             exit 1
           fi
-          if [ -z "$files" ]; then
+          if [ -z "$listing" ]; then
             echo "::error::PR has no changed files."
             exit 1
           fi
-          non_image=$(printf '%s\n' "$files" | grep -viE '\.(png|jpe?g|gif|svg|webp)$' || true)
-          if [ -n "$non_image" ]; then
-            echo "::error::PR touches non-image files; refusing to auto-merge:"
-            printf '%s\n' "$non_image"
-            echo "Disabling auto-merge in case it was enabled by a prior run."
-            gh pr merge --disable-auto "$PR_URL" || true
+          heads=$(printf '%s\n' "$listing" | cut -f1 | sort -u)
+          if [ "$heads" != "$HEAD_SHA" ]; then
+            echo "::error::The pull request head moved while its files were listed. The run for the new head decides."
             exit 1
           fi
+          non_image=$(printf '%s\n' "$listing" | cut -f2- | grep -viE '\.(png|jpe?g|gif|svg|webp)$' || true)
+          if [ -n "$non_image" ]; then
+            echo "PR touches non-image files:"
+            # The prefix keeps a file name from being read as a workflow command.
+            printf '%s\n' "$non_image" | sed 's/^/- /'
+            echo "images_only=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "images_only=true" >> "$GITHUB_OUTPUT"
+          fi
 
-      - name: Approve and enable auto-merge
+      # Minted only after the read-only check, and limited to this repository and the two permissions used below.
+      - name: Generate a token
+        id: generate-token
+        uses: actions/create-github-app-token@v3.4.0
+        with:
+          client-id: ${{ vars.ESPHOME_GITHUB_APP_CLIENT_ID }}
+          private-key: ${{ secrets.ESPHOME_GITHUB_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ github.event.repository.name }}
+          permission-contents: write  # auto-merge performs the squash merge
+          permission-pull-requests: write  # approve, switch auto-merge on or off
+
+      - name: Disable auto-merge on non-image changes
+        if: steps.verify.outputs.images_only != 'true'
         env:
           GH_TOKEN: ${{ steps.generate-token.outputs.token }}
-          PR_URL: ${{ github.event.pull_request.html_url }}
+          APP_SLUG: ${{ steps.generate-token.outputs.app-slug }}
         run: |
-          gh pr review --approve "$PR_URL"
-          gh pr merge --auto --squash "$PR_URL"
+          echo "::error::PR touches non-image files; refusing to auto-merge."
+          # Both clean-ups are attempted even when one fails, each failure is reported, and the step
+          # always ends red.
+          if ! enabled=$(gh pr view "$PR_URL" --json autoMergeRequest --jq '.autoMergeRequest != null'); then
+            echo "::error::Could not read the auto-merge state. Check the pull request by hand."
+          elif [ "$enabled" = "true" ]; then
+            echo "Disabling auto-merge enabled by a prior run."
+            if ! gh pr merge --disable-auto "$PR_URL"; then
+              echo "::error::Failed to disable auto-merge. Disable it by hand."
+            fi
+          fi
+          # An approval this App gave for an earlier head would still count towards the required review.
+          if ! reviews=$(gh api --paginate "repos/$OWNER/$REPO/pulls/$PR_NUMBER/reviews" \
+            --jq '.[] | [.id, .state, .user.login] | @tsv'); then
+            echo "::error::Could not list the reviews. Dismiss any earlier approval by hand."
+            exit 1
+          fi
+          approvals=$(printf '%s\n' "$reviews" \
+            | awk -F'\t' -v login="${APP_SLUG}[bot]" '$2 == "APPROVED" && $3 == login { print $1 }')
+          if [ -n "$approvals" ]; then
+            while IFS= read -r id; do
+              echo "Dismissing approval $id, given for an earlier head."
+              if ! gh api --method PUT "repos/$OWNER/$REPO/pulls/$PR_NUMBER/reviews/$id/dismissals" \
+                -f message="This pull request no longer holds only image files." -f event=DISMISS --silent; then
+                echo "::error::Failed to dismiss approval $id. Dismiss it by hand."
+              fi
+            done <<< "$approvals"
+          fi
+          exit 1
+
+      - name: Approve and enable auto-merge
+        if: steps.verify.outputs.images_only == 'true'
+        env:
+          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
+        run: |
+          # Both calls name the verified commit. The merge call fails if the head has moved since.
+          gh api --method POST "repos/$OWNER/$REPO/pulls/$PR_NUMBER/reviews" \
+            -f event=APPROVE -f commit_id="$HEAD_SHA" --silent
+          gh pr merge --auto --squash --match-head-commit "$HEAD_SHA" "$PR_URL"

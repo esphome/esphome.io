@@ -1,0 +1,127 @@
+---
+description: "Instructions for setting up a Pioneer WT mini split air conditioner over its Wi-Fi module serial link"
+title: "Pioneer WT Climate"
+---
+import APIRef from '@components/APIRef.astro';
+
+The `pioneer_wt` climate platform controls Pioneer mini split air conditioners that use the "WT" Wi-Fi module.
+These units are made by TCL and are also sold under other names, such as Parker Davis. The ESPHome device takes the
+role of the Wi-Fi module and talks directly to the indoor unit, so the unit is controlled locally without a cloud
+service.
+
+The serial link runs at 115200 baud, 8N1, and each frame starts with the bytes `A5 01`. It is different from the serial
+protocol of other TCL units, which runs at 9600 baud.
+
+The platform requires a [UART](/components/uart/) bus; the UART must use 115200 baud, 8N1, with both TX and RX.
+
+> [!NOTE]
+> Tested on one Pioneer WT series unit, with the original Wi-Fi module (a WBR3) running ESPHome and with an
+> ESP8266 wired to the same serial lines.
+
+```yaml
+# Example configuration entry
+climate:
+  - platform: pioneer_wt
+    name: Pioneer WT
+```
+
+## Configuration Variables
+
+- **uart_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the
+  [UART](/components/uart/) bus. Required if you have more than one UART bus.
+- All other options from [Climate](/components/climate/#config-climate).
+
+## Supported Features
+
+- HVAC modes: `OFF`, `HEAT_COOL`, `COOL`, `HEAT`, `DRY`, `FAN_ONLY`.
+- Fan modes: `AUTO`, plus the custom modes `Speed 1` to `Speed 7`.
+- Swing: `OFF` and `VERTICAL`.
+- Presets: `NONE` and `ECO`.
+- Current temperature and target temperature (16–31 °C, 1 °C steps). The unit keeps its setpoint in whole degrees
+  Fahrenheit, so a setpoint in Celsius is rounded to the nearest degree Fahrenheit.
+
+The unit reports its state after every change, including changes made with the handheld remote, so the state in
+ESPHome follows the unit.
+
+## Switches
+
+The `pioneer_wt` switch platform adds switches for two settings of the indoor unit.
+
+```yaml
+# Example configuration entry
+switch:
+  - platform: pioneer_wt
+    display:
+      name: Display
+    beeper:
+      name: Beeper
+```
+
+### Configuration Variables
+
+- **pioneer_wt_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `pioneer_wt` climate.
+  Required if you have more than one.
+- **display** (*Optional*): Turns the display on the front of the indoor unit on or off.
+  All options from [Switch](/components/switch/#config-switch).
+- **beeper** (*Optional*): Turns the beep that the indoor unit makes when it receives a command on or off.
+  All options from [Switch](/components/switch/#config-switch).
+
+The state of both switches follows what the unit reports. With the default `restore_mode` of `DISABLED`, ESPHome
+leaves both settings as the unit has them when it starts; any other restore mode sets them at boot.
+
+## Hardware
+
+The Wi-Fi module plugs into a socket on the indoor unit. The socket has the shape of a USB connector, but it carries
+a serial link and power, not USB. Do not plug it into a computer or a USB charger.
+
+There are two ways to connect ESPHome to the unit.
+
+### Using the Original Module
+
+The original module contains a WBR3 (RTL8720CF), which ESPHome supports through the
+[RTL87xx](/components/libretiny/) platform. The WBR3 is connected to the unit on `PA14` (TX) and `PA13` (RX).
+Its log port is UART2, so the logger must stay on that port:
+
+```yaml
+rtl87xx:
+  board: wbr3
+
+logger:
+  hardware_uart: UART2
+
+uart:
+  tx_pin: PA14
+  rx_pin: PA13
+  baud_rate: 115200
+
+climate:
+  - platform: pioneer_wt
+    name: Pioneer WT
+```
+
+The first installation must be done over wires, because the original firmware does not accept other firmware over
+Wi-Fi. The WBR3 is flashed through its log port (`PA15` and `PA16`) with `PA00` held high during reset; see the
+[WBR3 board page](https://docs.libretiny.eu/boards/wbr3/) in the LibreTiny documentation. Make a backup of the original
+firmware first. After that, updates can be installed over Wi-Fi.
+
+### Using Another Board
+
+Any board with a free hardware UART can be used in place of the module. Wire its UART to the serial lines of the
+socket, and leave the original module unplugged so that only one device drives the lines:
+
+| Indoor unit | Board |
+|---|---|
+| TX | UART RX (for example `GPIOXX`) |
+| RX | UART TX (for example `GPIOXX`) |
+| GND | Common ground |
+
+The table has no supply row because the supply pin of the socket is not confirmed. Power the board separately, or
+find and measure the supply pin first: the WBR3 is a 3.3 V part, so use a regulator if the socket supplies more than
+your board accepts.
+
+## See Also
+
+- [Climate Component](/components/climate/)
+- [Switch Component](/components/switch/)
+- [UART Bus](/components/uart/)
+- <APIRef text="pioneer_wt.h" path="pioneer_wt/pioneer_wt.h" />

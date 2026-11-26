@@ -1,0 +1,107 @@
+---
+description: "Instructions for setting up a USB HID keyboard with media keys on ESP32 variants in ESPHome"
+title: "TinyUSB Keyboard"
+---
+
+The `tinyusb_keyboard` component makes the device appear to a USB host as a keyboard with media keys, built on
+[TinyUSB](/components/tinyusb/). Actions press and release keys, so a button, a sensor or any other automation can
+type on the connected computer or control its volume and playback.
+
+You must have [TinyUSB](/components/tinyusb/) in your device's configuration to use this component. It cannot be
+combined with [USB CDC-ACM](/components/usb_cdc_acm/), because the keyboard supplies the only USB configuration
+descriptor.
+
+The following ESP32 microcontroller variants are currently supported:
+
+- ESP32-H4
+- ESP32-P4
+- ESP32-S2
+- ESP32-S3
+- ESP32-S31
+
+```yaml
+# Example configuration entry
+tinyusb:
+
+tinyusb_keyboard:
+  id: kb
+
+binary_sensor:
+  - platform: gpio
+    pin: GPIOXX
+    name: "Shift + H"
+    on_press:
+      - tinyusb_keyboard.press:
+          id: kb
+          key: h
+          modifiers: 0x02  # Left Shift
+    on_release:
+      - tinyusb_keyboard.release: kb
+```
+
+## Configuration Variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID for this component.
+
+## Actions
+
+### `tinyusb_keyboard.press` Action
+
+Presses one key, releasing any key pressed before. The key stays pressed until
+[`tinyusb_keyboard.release`](#tinyusb_keyboard-release-action) is called. Only the latest state is kept, so put a
+short [`delay`](/automations/actions/#delay-action) of at least `20ms` between consecutive key actions in one
+automation, otherwise a press can replace a release that the host has not received yet.
+
+```yaml
+- tinyusb_keyboard.press:
+    id: kb
+    key: a
+```
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the keyboard.
+- **key** (**Required**, [templatable](/automations/templates/#config-templatable), string or int): The key to
+  press, as a single lowercase letter or digit, or as a HID keyboard usage id (for example `0x28` for Enter). Quote
+  digits, since an unquoted number is taken as a usage id.
+- **modifiers** (*Optional*, [templatable](/automations/templates/#config-templatable), int): Bitmask of modifier
+  keys held with the key: `0x01` Left Ctrl, `0x02` Left Shift, `0x04` Left Alt, `0x08` Left GUI, and the same four
+  bits shifted left by four for the right-hand keys. Defaults to `0`.
+
+### `tinyusb_keyboard.release` Action
+
+Releases all keys.
+
+```yaml
+- tinyusb_keyboard.release: kb
+```
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the keyboard.
+
+### `tinyusb_keyboard.media_press` Action
+
+Presses one media key, releasing any media key pressed before.
+
+```yaml
+- tinyusb_keyboard.media_press:
+    id: kb
+    usage: 0xE9  # Volume Up
+```
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the keyboard.
+- **usage** (**Required**, [templatable](/automations/templates/#config-templatable), int): The HID consumer
+  control usage id, for example `0xE9` Volume Up, `0xEA` Volume Down, `0xE2` Mute, `0xCD` Play/Pause, `0xB5` Next
+  Track, `0xB6` Previous Track.
+
+### `tinyusb_keyboard.media_release` Action
+
+Releases all media keys.
+
+```yaml
+- tinyusb_keyboard.media_release: kb
+```
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the keyboard.
+
+## See Also
+
+- [TinyUSB](/components/tinyusb/)
+- [USB CDC-ACM](/components/usb_cdc_acm/)

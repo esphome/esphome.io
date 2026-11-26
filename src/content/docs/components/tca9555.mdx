@@ -13,7 +13,7 @@ pins for your projects. Within ESPHome they emulate a real internal GPIO pin
 and can therefore be used with many of ESPHome's components such as the GPIO
 binary sensor or GPIO switch.
 
-Any option accepting a [Pin Schema](/guides/configuration-types#pin-schema) can theoretically be used, but some more
+Any option accepting a [Pin Schema](/guides/configuration-types/#pin-schema) can theoretically be used, but some more
 complicated components that do communication through this I/O expander will
 not work.
 
@@ -35,10 +35,10 @@ switch:
 
 ## Configuration variables
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The id to use for this TCA9555 component.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The id to use for this TCA9555 component.
 - **address** (*Optional*, int): The I²C address of the driver.
   Defaults to `0x21`.
-- **interrupt_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The pin connected to the
+- **interrupt_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The pin connected to the
   INT output of the TCA9555. When configured, the component becomes interrupt-driven instead of
   polling — it only reads the chip when a pin actually changes state, significantly reducing I²C bus traffic
   and CPU usage. The INT pin is active-low and open-drain, so an external or internal pull-up resistor is
@@ -46,7 +46,9 @@ switch:
 
 ## Pin configuration variables
 
-- **TCA9555** (**Required**, [ID](/guides/configuration-types#id)): The id of the TCA9555 component of the pin.
+- **tca9555** (**Required**, [ID](/guides/configuration-types/#id)): The id of the TCA9555 component of the pin.
+  Instead of an id, an `address:` can be given to select the hub by its I²C address; see
+  [Selecting an I2C Expander by Address](/guides/configuration-types/#selecting-an-i2c-expander-by-address).
 - **number** (**Required**, int): The pin number.
 - **inverted** (*Optional*, boolean): If all read and written values
   should be treated as inverted. Defaults to `false`.

@@ -1,31 +1,37 @@
-SAVE YOUR RESPONSES TO TWO FILES:
+SAVE YOUR RESPONSES TO THREE FILES:
   1. Feature Highlights: {{ highlights_file }}
   2. Release Overview: {{ overview_file }}
+  3. Tagline and Description: {{ tagline_file }}
 
 NOTE: The output files and directories may not exist yet - that's fine, create them.
       You can use: Write tool with the full path, or create directories first if needed.
 
-IMPORTANT: Both files will be COMBINED into the same final changelog document:
+IMPORTANT: All three files feed the same final release notes blog post:
   - Feature Highlights ({{ highlights_file }}): Detailed ## sections explaining major features
-  - Release Overview ({{ overview_file }}): Short 2-4 sentence summary placed BEFORE the highlights
+  - Release Overview ({{ overview_file }}): Short summary, one sentence per theme, placed BEFORE the highlights
+  - Tagline and Description ({{ tagline_file }}): The post title, description, excerpt and social card
 
 Think of it like an executive summary:
-  - Overview = "Here are the 3-10 big themes of this release" (concise, high-level)
-  - Highlights = "Here's what each theme actually means and why it matters" (detailed, technical)
+  - Overview = "Here are the big themes of this release" (concise, high-level)
+  - Highlights = "Here's what each theme actually means for the user" (detailed, technical)
 
 ════════════════════════════════════════════════════════════════════════════════
 
-TASK: Write BOTH the Release Overview AND Feature Highlights for ESPHome {{ version }}.
+TASK: Write the Feature Highlights, the Release Overview, and the Tagline for ESPHome {{ version }}.
 
 WHY COMBINED: These sections appear in the same document, so they must work together.
 The overview is a concise summary of the highlights, not a separate narrative.
+
+WRITING FOR NON-NATIVE ENGLISH READERS (applies to everything you write):
+
+{% include "_writing_style.txt" %}
 
 ════════════════════════════════════════════════════════════════════════════════
 STEP 1: FEATURE HIGHLIGHTS (write first - save to {{ highlights_file }})
 ════════════════════════════════════════════════════════════════════════════════
 
 Write the detailed feature highlight sections FIRST (see PART 2 below for full instructions).
-This is the main content - 3-10 detailed ## sections with measurements, examples, and context.
+This is the main content - up to 15 detailed ## sections with measurements, examples, and context.
 
 ════════════════════════════════════════════════════════════════════════════════
 STEP 2: RELEASE OVERVIEW (write second - save to {{ overview_file }})
@@ -33,32 +39,88 @@ STEP 2: RELEASE OVERVIEW (write second - save to {{ overview_file }})
 
 CONTEXT:
 This is a SHORT executive summary that appears BEFORE the feature highlights in the final document.
-It simply introduces the 3-10 major themes that you detailed in the feature highlights.
+It simply introduces the major themes that you detailed in the feature highlights.
 
 CRITICAL: This is NOT a separate article - it's an introduction to the highlights you just wrote.
-Think: "This release focuses on X, Y, and Z" then the highlights explain X, Y, and Z in detail.
+Think: one sentence naming theme X, then one naming theme Y, then one naming theme Z; the highlights
+explain each in detail.
 
 AUDIENCE: ESPHome users (makers, DIY enthusiasts, home automation enthusiasts)
 
-STYLE EXAMPLE from ESPHome 2025.10.0:
+STYLE EXAMPLE from ESPHome 2026.9.0:
 
-  "ESPHome 2025.10.0 delivers major architectural improvements, new communication protocols, and
-   extensive performance optimizations. This release focuses on enhancing security, improving memory
-   efficiency, and expanding hardware support while introducing groundbreaking new features."
+  ESPHome 2026.9.0 focuses on the build system and platform work. The scaffolding for an ESP8266 native
+  toolchain lands across eight infrastructure PRs. PlatformIO installs run in parallel from start to end. The
+  package phase drops from 36% of build time to 25% on CI benchmarks. A sweep across 60 files moves 211
+  log strings off ESP8266 RAM into flash.
+
+  This release also adds Noise encryption for OTA updates. The flash cost of encryption drops by close to half
+  on every platform. Improv serial now works on Ethernet-only boards. The modbus overhaul continues with a
+  heap-free write path and continuous polling. Six new components and around twenty feature additions to
+  existing components are also included.
 
 INSTRUCTIONS:
 
-1. Look at the 3-10 ## section headings you wrote in feature_highlights.md
-2. Write 2-4 sentences that name these themes in order of priority
-3. Keep it VERY concise - just name the themes, don't explain them (that's what the highlights do)
-4. Include a number or two if highly impactful ("7 new sensors", "5KB RAM savings")
-5. DO NOT duplicate the detailed content from feature highlights
+1. Look at the ## section headings you wrote in feature_highlights.md
+2. Give each major theme its own sentence, in the same order as the highlights (most users affected first)
+3. One theme per sentence. Never join several themes into one sentence with commas; a reader should be
+   able to stop after any sentence and have understood one complete thing
+4. Name the theme and add one concrete detail (a number, a platform, a component); the highlights explain the
+   rest
+5. Open with one sentence that says what the release is mostly about
+6. Lead with themes that affect the most users; a fix for one component never opens the overview
+7. Plain descriptive words only. No "delivers", "groundbreaking", "major", "extensive", "powerful"
+8. The overview only names themes, so it does not define acronyms or jargon; the highlights do that
 
 OUTPUT FORMAT FOR OVERVIEW:
-- 1-2 paragraphs, 2-4 sentences total
+- One opening sentence plus one sentence per theme, each under 25 words, in 2-3 paragraphs
 - No headings, no bullet points, no PR links
-- Just a concise prose introduction to the themes you detailed in the highlights
+- Just a prose introduction to the themes you detailed in the highlights
 - Should be roughly 1/10th the length of the feature highlights
+
+════════════════════════════════════════════════════════════════════════════════
+STEP 3: TAGLINE AND DESCRIPTION (write last - save to {{ tagline_file }})
+════════════════════════════════════════════════════════════════════════════════
+
+CONTEXT:
+The tagline and description are inserted directly into the blog post frontmatter:
+
+  title: "ESPHome {{ version }}: <TAGLINE>"
+  description: "<DESCRIPTION>"
+  excerpt: "<DESCRIPTION>"
+
+The tagline is also rendered onto the OpenGraph social card, so it must be short.
+Base both on the themes you just wrote into the highlights file: pick the one or two
+headline items a user would care about most.
+
+HOUSE STYLE: read a few previous release posts under src/content/docs/blog/ (for example
+src/content/docs/blog/2026/08/19/) and match the tone of their `title:` lines. Existing
+taglines look like:
+
+  Bluetooth on more chips than ever
+  Native toolchains by default
+  Device Builder enters public beta
+  Performance overhaul and first-class RP2040
+
+OUTPUT FORMAT - the file must contain exactly these two lines and nothing else:
+
+TAGLINE: <short headline for the release, roughly 3-7 words>
+DESCRIPTION: <one sentence, roughly 120-200 characters>
+
+TAGLINE RULES:
+- Under 60 characters (it must fit the social card)
+- Plain language in sentence case, with no jargon and no abbreviations, e.g.
+  "Faster builds and encrypted updates" rather than "Faster builds and encrypted OTA"
+- No colon, no double quote, no markdown, no trailing period
+- No em dashes or double dashes (--); this repository bans them
+- Do not repeat "ESPHome {{ version }}", that prefix is added automatically
+
+DESCRIPTION RULES:
+- One sentence of plain prose in sentence case, roughly 120-200 characters
+- Plain language, no jargon and no abbreviations, same as the tagline
+- No markdown, no quotes, no links, no PR numbers
+- No em dashes or double dashes (--)
+- It is used verbatim as both `description:` and `excerpt:`, so it must read well alone
 
 ════════════════════════════════════════════════════════════════════════════════
 DETAILED INSTRUCTIONS FOR STEP 1: FEATURE HIGHLIGHTS
@@ -69,7 +131,8 @@ These are detailed deep-dive sections that appear AFTER the release overview and
 "Breaking Changes". Each major feature gets its own ## heading. This is the main content.
 
 WHAT TO WRITE ABOUT:
-Select the 3-10 MOST IMPORTANT features/changes from the PRs and ORDER BY PRIORITY:
+Select the MOST IMPORTANT features/changes from the PRs, up to 15, and ORDER BY PRIORITY.
+A small release can have fewer sections; never add a section just to reach a count:
 
 **Priority Order (MOST USERS AFFECTED first, niche features last):**
 1. **Platform-Wide Changes** - Changes that affect ALL users of a platform (default setting changes, crash handlers, new diagnostics). ~40% of ESPHome users are on ESP8266, so ESP8266 changes are high-impact.
@@ -98,7 +161,7 @@ STYLE EXAMPLES from ESPHome 2025.10.0:
 
 ## Z-Wave proxy
 
-The new [zwave_proxy](/components/zwave_proxy) component enables network-based connectivity
+The new [zwave_proxy](/components/zwave_proxy/) component enables network-based connectivity
 for Z-Wave hardware by proxying serial communication between a Z-Wave modem SoC and Z-Wave JS.
 
 **Key Features:**
@@ -126,15 +189,14 @@ This release includes a fundamental change - **Arduino is now integrated as an E
 
 This release fixes critical WiFi mesh network failover issues that left devices stuck attempting to connect to failed access points ([#11805](https://github.com/esphome/esphome/pull/11805)).
 
-**The Problem:**
-Devices running ESPHome 2025.8.2+ would get stuck connecting to the strongest AP in a mesh network, even when that AP rejected the connection due to auth failures or capacity limits. The priority degradation system (designed to cycle through APs on failure) was rendered useless by a bug that always sorted by signal strength first.
+Devices running ESPHome 2025.8.2+ would get stuck connecting to the strongest AP in a mesh network. This happened
+even when that AP rejected the connection because of auth failures or capacity limits. The priority degradation
+system was meant to cycle through APs on failure, but a bug always sorted by signal strength first, so it never ran.
 
-**The Fix:**
 - **Priority-based failover restored** - Failed APs are now correctly sorted lower, enabling automatic failover to working APs
 - **False positive filtering** - Two connection attempts per BSSID before marking as failed (eliminates transient auth failures)
 - **Hidden network handling fixed** - Networks marked `hidden: true` are tried before scanning, with smart skip logic to avoid wasting time on visible networks
 
-Devices now automatically fail over to the next strongest AP when connection fails, making mesh networks reliable again.
 
 INSTRUCTIONS:
 
@@ -150,7 +212,7 @@ INSTRUCTIONS:
    - Framework PRs = internal improvements affecting existing components
    - Don't mischaracterize platform features (read the PR description!)
 
-3. **Identify 5-15 major themes** - group related PRs:
+3. **Identify up to 15 major themes** - group related PRs; fewer is fine for a small release:
    - Performance optimizations in their own section (API, scheduler, loop elimination, etc.)
    - Memory optimizations in a SEPARATE section from performance (RAM savings, heap→BSS, field packing)
    - IDF/SDK compatibility prep in its own section if 10+ PRs
@@ -172,22 +234,23 @@ INSTRUCTIONS:
    - Write all ## and ### headings in sentence case: only the first word and
      proper nouns/acronyms are capitalized (e.g. "ESP8266 native toolchain
      foundation", "Arduino as an ESP-IDF component")
-   - Opening paragraph: what it is and why it matters
-   - **Key Features/Benefits** bulleted list with bold labels
+   - Opening paragraph in plain prose: what it is and what changes for the user
+   - **Key Features/Benefits** bulleted list with bold labels when there are several parallel items
    - Subsections (###) for migration guidance or recommendations
-   - Use `[component_name](/components/component_name)` for component links
+   - Link documentation pages ONLY by copying a URL from {{ docs_urls_file }} (see the
+     DOCUMENTATION LINKS section below - this is a hard rule)
    - Use `code formatting` for config keys
    - Use **bold** for emphasis
 
 6. **What makes good sections**:
-   ✓ Explains WHY the feature matters, not just what it does
+   ✓ Gives the context a user needs (what changes for them), not just what the code does
    ✓ Includes specific numbers (RAM savings, performance gains, benchmark results)
    ✓ Groups related PRs into one cohesive narrative
    ✓ Credits the lead contributor with [@username](https://github.com/username) when one person drove the work
    ✓ Credits authors of new components (e.g., "by [@author](https://github.com/author)")
    ✓ Links back to previous release notes when continuing multi-release efforts
    ✓ Links to relevant documentation pages for detailed config (don't duplicate docs)
-   ✓ Professional but enthusiastic tone
+   ✓ Plain, direct tone; let the numbers carry the interest
 
 7. **What to avoid**:
    ✗ Don't write about every PR - focus on major themes
@@ -198,10 +261,12 @@ INSTRUCTIONS:
    ✗ Don't include sections about "Deprecation Removals" or "Migration Considerations"
    ✗ Don't claim breaking changes are "backward compatible" - be honest about compatibility
    ✗ Don't use em dashes (—) or double dashes (--) to separate clauses; use commas or semicolons
-   ✗ Don't use "The problem:" / "The fix:" as bold headers - write flowing prose instead
+   ✗ Don't use "The problem:" / "The fix:" / "Why it matters:" as bold labels for an explanation - write prose instead
    ✗ Don't include config examples for dangerous options (e.g., options that can brick devices) - link to docs instead
    ✗ Don't include config examples for niche features - link to docs instead
    ✗ Don't put non-sensor items in the "New Sensors" section - use "Other Notable Features" instead
+   ✗ Don't write an internal link that you did not copy from {{ docs_urls_file }} - see the
+     DOCUMENTATION LINKS section below
 
    **CRITICAL - Handling Breaking Change PRs:**
 
@@ -220,12 +285,58 @@ INSTRUCTIONS:
    - Save migration details for the Breaking Changes section
 
 OUTPUT FORMAT FOR HIGHLIGHTS:
-- 5-15 complete ## sections ordered by PRIORITY (see Priority Order above)
+- Up to 15 complete ## sections ordered by PRIORITY (see Priority Order above)
 - Order: Platform-wide changes → Performance → Memory → Architecture → IDF compat → Networking → Security → Infrastructure → New Hardware → New Features → Other Notable → Correctness
 - Do NOT include "Feature Highlights" heading - just write the ## sections
 - Do NOT include introductory text
 - Do NOT include "Deprecation Removals" or "Migration Considerations" sections
 - The release overview should match the section ordering (broadest impact first)
+
+════════════════════════════════════════════════════════════════════════════════
+DOCUMENTATION LINKS - READ THIS BEFORE WRITING A SINGLE INTERNAL LINK
+════════════════════════════════════════════════════════════════════════════════
+
+⚠️  Every internal link you write MUST be copied verbatim from this file:
+
+  {{ docs_urls_file }}
+
+It lists every documentation page URL on esphome.io, one per line, and under each page its
+heading anchors in the form /page/#anchor. It is several thousand lines long, so search it
+with grep instead of reading it end to end:
+
+  grep -n "hoermann" {{ docs_urls_file }}
+
+Do that for every component you are about to link, before you write the link.
+
+HARD RULES:
+
+1. NEVER build a link path from a component name. `/components/<name>/` is a guess, and
+   guesses have shipped 404s in previous release notes.
+2. A link is only allowed if the exact string appears in {{ docs_urls_file }}. Search that
+   file for the component name and copy the matching line.
+3. Documentation pages are platform-nested. The page for a cover component lives under
+   /components/cover/, a climate component under /components/climate/, and so on.
+4. Some components are only a SECTION of a shared page. Then the file lists them as an
+   anchor, and the anchor form is what you link.
+5. If a component has NO entry in the file at all, it has no documentation page. Name it in
+   **bold** with no link. Do not invent a page, and do not link to a parent page instead.
+6. These rules apply to any internal link, not just components: platforms, guides, cookbook
+   pages, and automation actions all have to be copied from the file too.
+7. Links to github.com PRs and to @username profiles are external and are not affected by
+   this; keep writing those as normal.
+
+REAL FAILURES FROM THE ESPHome 2026.9.0 RELEASE NOTES (what the AI wrote → what was correct):
+
+  /components/noise/                  → no documentation page exists; the link was dropped
+                                        and the component named in bold instead
+  /components/lvgl/widgets/list/      → /components/lvgl/widgets/#list
+  /components/lvgl/widgets/table/     → /components/lvgl/widgets/#table
+  /components/online_image/           → /components/image/online_image/
+  /components/climate/climate_ir_lg/  → /components/climate/climate_ir/#climate_ir_lg
+  /components/hoermann_hcp/           → /components/cover/hoermann_hcp/
+
+Every one of those was a plausible-looking path built from a component name, and every one
+of them had to be fixed by hand after publication. Copy from the file instead.
 
 ────────────────────────────────────────────────────────────────────────────────
 📁 PR DATA FILES - CRITICAL: You MUST read ALL of these files using the Read tool
@@ -282,19 +393,25 @@ BREAKING CHANGE PR FILES ({{ breaking_changes|length }} total) - READ ALL {{ bre
 {% endfor %}
 {% endif %}
 ────────────────────────────────────────────────────────────────────────────────
-⚠️  FINAL REMINDER: Read ALL files above, then write BOTH files:
+⚠️  FINAL REMINDER: Read ALL files above, plus {{ docs_urls_file }}, then write ALL THREE files:
 
 STEP 1 - Write Feature Highlights FIRST:
    File: {{ highlights_file }}
-   Content: 3-10 detailed ## sections with measurements, examples, context
-   Length: ~10-15KB of detailed technical content
+   Content: up to 15 detailed ## sections with measurements, examples, context
+   Length: roughly 1KB per section of detailed technical content
 
 STEP 2 - Write Release Overview SECOND (based on the highlights you just wrote):
    File: {{ overview_file }}
-   Content: 2-4 sentence introduction that names the themes from your highlights
-   Length: ~1KB - roughly 1/10th the length of highlights
+   Content: one opening sentence plus one short sentence per theme, in the order of your highlights
+   Length: ~1-1.5KB - roughly 1/10th the length of highlights
    Purpose: Concise executive summary that introduces the detailed sections
 
-Remember: Both go in the same final document. Overview comes first, then highlights.
+STEP 3 - Write Tagline and Description LAST (based on the themes in your highlights):
+   File: {{ tagline_file }}
+   Content: exactly two lines, "TAGLINE: ..." and "DESCRIPTION: ..."
+   Purpose: the blog post title, description, excerpt and OpenGraph card
+
+Remember: all three go in the same final blog post. Overview comes first, then highlights.
 Don't repeat detailed information - overview introduces, highlights explain.
+Every internal link must be copied verbatim from {{ docs_urls_file }}.
 ────────────────────────────────────────────────────────────────────────────────

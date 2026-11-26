@@ -1,0 +1,162 @@
+---
+title: "Packet interface: a layered way for devices to talk to each other"
+description: "ESPHome 2026.12 adds packet_interface, for sending data directly between devices, and entity_transport."
+date: 2026-12-16
+authors:
+  - clyde
+tags:
+  - Announcements
+excerpt: "ESPHome 2026.12 adds packet_interface, for sending data directly between devices, and entity_transport."
+cover:
+  alt: "Packet interface: a layered way for devices to talk to each other"
+  image: "https://assets.openhomefoundation.org/opengraph?url=https://esphome.io/blog/2026/12/16/packet-interface"
+head:
+  - tag: meta
+    attrs:
+      property: "og:image"
+      content: "https://assets.openhomefoundation.org/opengraph?url=https://esphome.io/blog/2026/12/16/packet-interface"
+  - tag: meta
+    attrs:
+      name: "twitter:image"
+      content: "https://assets.openhomefoundation.org/opengraph?url=https://esphome.io/blog/2026/12/16/packet-interface"
+  - tag: meta
+    attrs:
+      property: "og:image:title1"
+      content: "Packet interface"
+  - tag: meta
+    attrs:
+      property: "og:image:title2"
+      content: "A layered way for devices to talk to each other"
+  - tag: meta
+    attrs:
+      property: "og:image:author"
+      content: "Clyde Stubbs"
+  - tag: meta
+    attrs:
+      property: "og:image:category"
+      content: "Announcements"
+---
+
+import Figure from "@components/Figure.astro";
+
+ESPHome 2026.12 adds two components for sending data directly between devices. The
+[packet interface](/components/packet_interface/) component moves packets of bytes over a channel, through a stack of
+layers that each do one job. The [entity transport](/components/entity_transport/) component uses a packet interface
+to send sensor and binary sensor states from one device to another.
+
+## Where This Came From
+
+[Packet transport](/components/packet_transport/) was added so that ESPHome devices could send sensor states to each
+other without Home Assistant or an MQTT broker in between. It works, and it is used over Wi-Fi, ESP-NOW, serial
+ports and LoRa radios. Real use over those channels also showed its limits:
+
+- Each data packet includes the ID of every entity it reports, so packets are large. On a LoRa radio at a high
+  spreading factor, a large packet can take seconds to send.
+- A lost packet is not sent again. Its states arrive only with the next update.
+- Encryption, the rolling code and the ping-pong check are part of packet transport itself, so no other component
+  can use them.
+- Each channel needs its own packet transport platform, which repeats the same work for every channel.
+
+Fixing these one at a time inside packet transport would have made one large component larger. So the job was split
+into parts instead, based on what packet transport had shown about each part.
+
+The opportunity was also taken to improve the encryption layer, providing a choice of levels of security against
+replay and spoofing attacks, and closing a denial-of-service loophole.
+
+## Links and Layers
+
+A packet interface has a *link* at the bottom, which sends packets over one kind of channel. The links available are
+[UART](/components/packet_interface/uart/), [UDP](/components/packet_interface/udp/),
+[TCP](/components/packet_interface/tcp/), [ESP-NOW](/components/packet_interface/espnow/), and the
+[SX126x](/components/packet_interface/sx126x/) and [SX127x](/components/packet_interface/sx127x/) radios.
+
+Above the link, each layer is optional and does one job:
+
+- **addressing**: lets several devices share one channel, with a 16-bit address for each device.
+- **encryption**: encrypts each packet with a shared key, with an optional rolling code so a recorded packet sent
+  again is dropped.
+- **reliability**: acknowledges packets, and sends again those that are lost.
+- **fragmentation**: splits a packet that is too large for the channel, and joins it again on the other device.
+- **compression**: makes packets smaller before they are sent, with a dictionary of text that both devices hold.
+- **session**: sends keep-alives, and tells the components above when the other device can be reached.
+
+Layers are always stacked in the same order, whatever order they are written in. A layer knows only about the
+layers next to it, so a layer can be added or left out without a change to the others. A link can also do a layer's
+job itself: TCP already resends what is lost, so a TCP link does not need the reliability layer.
+
+<Figure
+  src="/images/packet_interface_layers.svg"
+  alt="Two devices, each with a stack of layers from the application down to the link, joined by a channel"
+  caption="The layers of a packet interface. A packet passes down through each layer, and up on the other device."
+  layout="constrained"
+  width={720}
+  height={624}
+/>
+
+## Extensibility
+
+Each kind of layer has a `type` option, and each type is registered under its name. So a different encryption
+cipher could be added as a new type. A new reliability method could be implemented that suits certain transports.
+These can be provided as [external components](/components/external_components/),
+and used in place of the built-in one with the rest of the
+stack unchanged. New transport links can be added without re-implementing any of the other layers.
+
+New kinds of layers can also be added if a need becomes apparent.
+
+## Entity Transport
+
+Entity transport does the job of packet transport on top of a packet interface. It sends a *dictionary* of entity
+IDs at boot and when the other device needs it. Each state is then sent with a number in place of the ID, so its
+packets are small. Encryption, resends and the connection status come from the layers, not from entity transport.
+
+One device sends the state of a sensor over a serial port:
+
+```yaml
+uart:
+  tx_pin: GPIOXX
+  rx_pin: GPIOXX
+  baud_rate: 115200
+
+packet_interface:
+  - platform: uart
+    id: serial_link
+    encryption: !secret serial_link_key
+    reliability:
+    session:
+
+entity_transport:
+  - packet_interface: serial_link
+    sensors:
+      - outdoor_temperature
+```
+
+The other device, with the same `uart` and `packet_interface` configuration, shows that state as its own sensor:
+
+```yaml
+sensor:
+  - platform: entity_transport
+    provider: garden-node
+    remote_id: outdoor_temperature
+    name: Outdoor temperature
+```
+
+With a reliability layer and a session layer, entity transport sends a state when it changes, and sends all states
+again at boot and each time the other device can be reached again. Without them, it also sends all states at an
+interval, so that a lost packet is soon made good.
+
+## Extensively Tested
+
+Extensive bench testing has been done on all the links and layers, and in addition it has been used in a
+significant real-world application using LoRa as the link, with multiple devices communicating over both
+plain-text broadcast, and encrypted point-to-point links, over distances up to 15km.
+
+## Packet Transport Is Still There
+
+Packet transport is not removed, and existing configurations do not change. Packet transport can also use any
+packet interface as its channel, through its new
+[packet_interface](/components/packet_transport/packet_interface/) platform, so an
+existing setup can gain resends or fragmentation without a change to its sensors.
+
+Entity transport and packet transport do not understand each other's packets, so both devices must use the same one.
+See the [packet interface](/components/packet_interface/) and [entity transport](/components/entity_transport/) pages
+for the full options.

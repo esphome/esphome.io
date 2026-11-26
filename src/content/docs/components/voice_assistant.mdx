@@ -28,23 +28,40 @@ voice_assistant:
 
 ## Configuration variables
 
-- **microphone** (*Optional*, [Microphone Source Configuration](/components/microphone#config-microphone-source) or list
+- **microphone** (*Optional*, [Microphone Source Configuration](/components/microphone/#config-microphone-source) or list
   of them): The [microphone](/components/microphone/) settings to use for input. A single source may be provided
   directly, or up to two sources may be provided as a list. When two sources are configured, audio from both is streamed
   to Home Assistant; see [Second microphone channel](#second-microphone-channel) below.
 
-- **micro_wake_word** (*Optional*, [ID](/guides/configuration-types#id)): The [micro_wake_word](/components/micro_wake_word/)
+- **micro_wake_word** (*Optional*, [ID](/guides/configuration-types/#id)): The [micro_wake_word](/components/micro_wake_word/)
   component used for wake word detection. Configuring this allows Home Assistant to change which wake word model is enabled.
 
-- **speaker** (*Optional*, [ID](/guides/configuration-types#id)): The [speaker](/components/speaker/) to use to output
+- **wake_word_audio** (*Optional*): Lets Home Assistant verify each wake word that `micro_wake_word` detects. Requires
+  `micro_wake_word`. See [Wake Word Verification](#wake-word-verification) below.
+
+  - **buffer_duration** (*Optional*, [Time](/guides/configuration-types/#time)): How much audio from before each
+    detection to send to Home Assistant. Between `100ms` and `5s`. Defaults to `1500ms`.
+  - **timeout** (*Optional*, [Time](/guides/configuration-types/#time)): How long to wait for Home Assistant to accept
+    or reject a detection. When it expires, the run stops and `on_error` is called with the code
+    `wake-word-verification-timeout`. Defaults to `2s`.
+
+- **speaker** (*Optional*, [ID](/guides/configuration-types/#id)): The [speaker](/components/speaker/) to use to output
   the response. Cannot be used with `media_player` below.
 
-- **media_player** (*Optional*, [ID](/guides/configuration-types#id)): The [media_player](/components/media_player/)
+- **media_player** (*Optional*, [ID](/guides/configuration-types/#id)): The [media_player](/components/media_player/)
   to use to output the response. Cannot be used with `speaker` above.
 
 - **use_wake_word** (*Optional*, boolean): Enable wake word on the assist pipeline. Defaults to `false`.
-- **conversation_timeout** (*Optional*, [Time](/guides/configuration-types#time)): How long to wait before resetting the `conversation_id`
+- **conversation_timeout** (*Optional*, [Time](/guides/configuration-types/#time)): How long to wait before resetting the `conversation_id`
   sent to the voice assist pipeline, which contains the context of the current assist pipeline. Defaults to `300s`.
+- **tts_playback_start_timeout** (*Optional*, [Time](/guides/configuration-types/#time)): How long to wait for the
+  media player to start playing the TTS response. Must be at least `1ms`. Defaults to `15s`.
+  Increase this if a slow TTS engine, such as XTTS, takes longer than that to start. If playback has not started in
+  time, the response is treated as finished and the follow-up turn Home Assistant asked for is skipped. Continuous
+  mode (`voice_assistant.start_continuous`) still starts listening again. A larger value only delays recovery when
+  the media player never starts. Once playback has started, the response ends when the media player stops playing
+  it. With a `speaker` this option has no effect: the response finishes 2 seconds after the speaker stops, unless a
+  stream-end event ends it first.
 
 - **on_intent_start** (*Optional*, [Automation](/automations)): An automation to perform when intent processing starts.
 - **on_intent_progress** (*Optional*, [Automation](/automations)): An automation to perform when intent progress happens.
@@ -60,6 +77,9 @@ voice_assistant:
 - **on_wake_word_detected** (*Optional*, [Automation](/automations)): An automation
   to perform when the assist pipeline has detected a wake word.
 
+- **on_wake_word_rejected** (*Optional*, [Automation](/automations/)): An automation to perform when Home Assistant
+  rejects a wake word detected on the device. Requires `wake_word_audio`.
+
 - **on_end** (*Optional*, [Automation](/automations)): An automation to perform
   when the voice assistant is finished all tasks.
 
@@ -68,10 +88,11 @@ voice_assistant:
   available to automations as the variable `x`.
 
 - **on_stt_vad_start** (*Optional*, [Automation](/automations)): An automation to perform when voice activity
-  detection starts speech-to-text processing.
+  detection starts speech-to-text processing. Some speech-to-text providers do not send this event.
 
 - **on_stt_vad_end** (*Optional*, [Automation](/automations)): An automation to perform when voice activity
-  detection ends speech-to-text processing.
+  detection ends speech-to-text processing. Some speech-to-text providers do not send this event, so consider using
+  `on_stt_end` instead.
 
 - **on_tts_start** (*Optional*, [Automation](/automations)): An automation to perform
   when the voice assistant has started text-to-speech. The text to be spoken is
@@ -194,6 +215,63 @@ voice_assistant:
 
 See our [example YAML files on GitHub](https://github.com/esphome/wake-word-voice-assistants/blob/main/m5stack-atom-echo/m5stack-atom-echo.yaml)
 for continuous wake word detection.
+
+## Wake Word Verification
+
+With `wake_word_audio`, Home Assistant can check each wake word that [Micro Wake Word](/components/micro_wake_word/)
+detects. A device can then detect at a lower probability cutoff without more false activations.
+
+```yaml
+voice_assistant:
+  id: va
+  microphone: mic_id
+  micro_wake_word: mww
+  wake_word_audio: {}
+```
+
+The device only does this while Home Assistant asks for it, and otherwise behaves as if `wake_word_audio` was not
+configured. While it is active:
+
+- The device keeps the last `buffer_duration` of audio from each microphone channel.
+- After a detection, `voice_assistant.start` sends that audio and then the live audio to Home Assistant, without
+  waiting for a response. Call it right away from the `on_wake_word_detected` automation of `micro_wake_word`: when it
+  starts more than one second after the detection, the run starts without verification, and nothing is logged. Don't
+  play a wake sound before it.
+- If Home Assistant accepts the wake word, the run continues as usual. If it rejects it, the device stops streaming
+  and calls `on_wake_word_rejected`. Without an answer within `timeout`, `on_error` is called with the code
+  `wake-word-verification-timeout`.
+- The `vad` model of `micro_wake_word` is disabled, because it blocks detections at lower cutoffs.
+
+Use `id(va).is_wake_word_audio_active()` in a lambda to change the device's behavior only while Home Assistant
+verifies wake words, for example to lower the wake word model's cutoff when Home Assistant connects. The cutoff is
+set as an integer from 0 to 255, the probability multiplied by 255.
+
+```yaml
+micro_wake_word:
+  id: mww
+  microphone: mic_id
+  models:
+    - model: okay_nabu
+      id: okay_nabu
+
+voice_assistant:
+  id: va
+  # ...
+  on_client_connected:
+    - lambda: |-
+        // 0.40 while Home Assistant verifies detections, 0.85 otherwise
+        id(okay_nabu).set_probability_cutoff(id(va).is_wake_word_audio_active() ? 102 : 217);
+    - micro_wake_word.start:
+  on_client_disconnected:
+    - lambda: id(okay_nabu).set_probability_cutoff(217);
+```
+
+> [!NOTE]
+> Each microphone channel needs a buffer of 32 bytes for every millisecond of `buffer_duration` plus one second, about
+> 80 kB with the default, kept for as long as Home Assistant is connected. A device without PSRAM may not have enough
+> memory. If the buffers can't be allocated, the device logs an error and detects wake words without verification
+> until Home Assistant reconnects, and `is_wake_word_audio_active()` returns `false`. Home Assistant 2026.12.0 or later
+> is required.
 
 ## Push to Talk
 

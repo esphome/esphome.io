@@ -11,12 +11,18 @@ thermometers broadcasting in [BTHome](https://bthome.io/) v2 format — that is,
 advertisement type. The component listens passively to the advertisements, so it does not pair with
 the device and has no impact on its battery life.
 
+Other BTHome v2 thermometers work too, as long as they send temperature and humidity in one of the
+standard formats the component decodes: temperature in 0.01 °C (object `0x02`, PVVX) or 0.1 °C
+(object `0x45`), humidity in 0.01 % (object `0x03`, PVVX) or 1 % (object `0x2E`). Each object is
+decoded on its own, so any combination works. The Shelly BLU H&T, for example, sends temperature as
+`0x45` and humidity as `0x2E`.
+
 It requires a BLE tracker, for example the [ESP32 BLE Tracker](/components/esp32_ble_tracker), to
 receive the advertisements.
 
 For choosing between the firmware options of these thermometers (stock MiBeacon, ATC, PVVX and
 their advertisement formats) and for flashing/bindkey instructions, see
-[LYWSD03MMC on the Xiaomi BLE page](/components/sensor/xiaomi_ble#lywsd03mmc) — this page is the
+[LYWSD03MMC on the Xiaomi BLE page](/components/sensor/xiaomi_ble/#lywsd03mmc) — this page is the
 option reference for the `bthome_mithermometer` platform itself.
 
 ```yaml
@@ -40,17 +46,39 @@ sensor:
 > unencrypted devices work without one. It is the same 32-character (16-byte) hex key you set when
 > enabling encryption on the device (for example in the ATC/PVVX web configurator).
 
+## Replay Protection
+
+A `bindkey` makes sure that only the device can create valid advertisements, but a valid advertisement
+recorded by someone in range can still be sent again later. With `replay_protection: true` the
+component uses the counter carried by every encrypted advertisement to ignore:
+
+- an exact repeat of the last advertisement;
+- an advertisement whose counter is lower than the last accepted one (a warning is logged).
+
+An advertisement with the same counter but new data is accepted, because some firmwares (for example
+PVVX) send new readings without increasing the counter. If the device restarts its counter, for
+example after a battery change, its advertisements are accepted again once none has been accepted
+for 10 minutes, so expect a gap of up to 10 minutes in that case. The last counter is not stored
+across reboots of the ESP, so the first valid advertisement after a reboot is always accepted.
+
+So the check holds only while the device keeps being heard. After a reboot of the ESP, or after 10 minutes
+without an accepted advertisement, one recorded advertisement is accepted again and becomes the new baseline,
+and recorded advertisements with higher counters can then follow it in order. On a firmware that does not
+increase the counter it only blocks advertisements with a lower counter.
+
 ## Configuration variables
 
 - **mac_address** (**Required**, MAC Address): The MAC address of the device to receive data from.
 - **bindkey** (*Optional*, 32-character hex string): The encryption key for devices that broadcast
   encrypted BTHome advertisements. Omit it for unencrypted devices.
+- **replay_protection** (*Optional*, boolean): Ignore repeated or older encrypted advertisements,
+  see [Replay protection](#replay-protection). Requires `bindkey`. Defaults to `false`.
 - **temperature** (*Optional*): The temperature, in °C. All options from [Sensor](/components/sensor).
 - **humidity** (*Optional*): The relative humidity, in %. All options from [Sensor](/components/sensor).
 - **battery_level** (*Optional*): The battery level, in %. All options from [Sensor](/components/sensor).
 - **battery_voltage** (*Optional*): The battery voltage, in V. All options from [Sensor](/components/sensor).
 - **signal_strength** (*Optional*): The signal strength (RSSI), in dBm. All options from [Sensor](/components/sensor).
-- **esp32_ble_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the
+- **esp32_ble_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the
   [ESP32 BLE Tracker](/components/esp32_ble_tracker) to receive advertisements from.
   Only needed when more than one tracker is configured.
 
@@ -59,6 +87,6 @@ sensor:
 - [ESP32 Bluetooth Low Energy Tracker Hub](/components/esp32_ble_tracker/)
 - [Bluetooth Low Energy RSSI Sensor](/components/sensor/ble_rssi/)
 - [Sensor Component](/components/sensor/)
-- [Xiaomi BLE — LYWSD03MMC firmware guide](/components/sensor/xiaomi_ble#lywsd03mmc)
+- [Xiaomi BLE — LYWSD03MMC firmware guide](/components/sensor/xiaomi_ble/#lywsd03mmc)
 - [BTHome](https://bthome.io/)
 - <APIRef text="bthome_ble.h" path="bthome_mithermometer/bthome_ble.h" />

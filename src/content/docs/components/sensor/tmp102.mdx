@@ -1,5 +1,5 @@
 ---
-description: "Instructions for setting up TMP102 temperature sensors."
+description: "TMP102 temperature, thermostat, alert, and threshold-status configuration."
 title: "TMP102 Temperature Sensor"
 ---
 
@@ -9,10 +9,9 @@ import tmp102FullImg from './images/tmp102-full.jpg';
 import temperatureImg from './images/temperature.png';
 import APIRef from '@components/APIRef.astro';
 
-The TMP102 Temperature sensor allows you to use your TMP102
-([Sparkfun](https://www.sparkfun.com/products/13314)) and LM75 sensors with
-ESPHome. The [I²C Bus](/components/i2c) is required to be set up in your
-configuration for this sensor to work.
+The TMP102 temperature sensor allows you to use [Texas Instruments TMP102](https://www.ti.com/product/TMP102)
+and LM75 sensors with ESPHome. TMP102 breakout boards are available from
+[SparkFun](https://www.sparkfun.com/products/13314). The [I²C Bus](/components/i2c/) must be configured first.
 
 <Figure
   src={tmp102FullImg}
@@ -31,17 +30,229 @@ sensor:
     update_interval: 60s
 ```
 
-## Configuration variables
+## Configuration Variables
 
-- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the sensor. Defaults to `60s`.
-- **address** (*Optional*, int): The I²C address of the sensor. Defaults to `0x48`.
-  See [I²C Addresses](/components/sensor/tmp117#tmp117_i2c_addresses) for more information.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the sensor ID. Use this when another
+  TMP102 platform must select one of multiple TMP102 sensors.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often ESPHome reads the sensor.
+  Defaults to `60s`.
+- **address** (*Optional*, int): The I²C address. Defaults to `0x48`. TMP102 supports `0x48` through `0x4B`,
+  selected by the ADD0 pin.
+- All other options from [Sensor](/components/sensor/).
 
-- All other options from [Sensor](/components/sensor).
+### Optional Hardware Settings
+
+Temperature-only configurations work unchanged and write no registers at startup. Setting any option below or
+adding a [TMP102 number](#adjustable-thresholds) makes ESPHome write the configuration register and both threshold
+registers during setup, using the listed defaults for omitted settings. These settings apply to TMP102 chips; do not
+enable them for LM75 sensors.
+Adding only an alert binary sensor or threshold status text sensor does not enable hardware configuration or write
+these registers.
+
+Before each update ESPHome reads the configuration register back. If it no longer matches, for example after the chip
+alone lost power, ESPHome rewrites the configuration and both thresholds, skips that update and sets the sensor's
+warning status until the next reading succeeds. Do not use another controller to change these registers while ESPHome
+manages them.
+
+The defaults below are the chip's power-on values and apply once any of these options is set or a TMP102 number is
+added.
+
+- **extended_mode** (*Optional*, boolean): Use the 13-bit temperature format. Defaults to `false`.
+- **conversion_rate** (*Optional*, string): Chip conversion rate: `0.25Hz`, `1Hz`, `4Hz`, or `8Hz`. Defaults to `4Hz`.
+  This is independent of `update_interval`.
+- **one_shot_mode** (*Optional*, boolean): Keep the chip in shutdown between readings and trigger one conversion
+  per update. The thresholds are then compared only once per `update_interval`, so ALERT can lag a crossing by up to
+  `fault_queue` intervals, and `conversion_rate` has no effect. Defaults to `false`.
+- **alert_polarity** (*Optional*, string): ALERT pin polarity, `active_low` or `active_high`. Defaults to `active_low`.
+- **thermostat_mode** (*Optional*, string): How the ALERT pin behaves. In `comparator` mode ALERT asserts when the
+  temperature reaches `temperature_high` and clears when it falls below `temperature_low`. In `interrupt` mode
+  ALERT asserts on crossing either threshold and stays asserted until a register is read; because ESPHome reads the
+  chip on every update, the pin clears at the next `update_interval` at the latest. Defaults to `comparator`.
+- **fault_queue** (*Optional*, int): Consecutive fault conversions required before ALERT changes: `1`, `2`, `4`, or `6`.
+  Defaults to `1`.
+- **temperature_high** (*Optional*, temperature): High threshold. Defaults to `80°C`. With a TMP102 number, this is
+  the number's starting value.
+- **temperature_low** (*Optional*, temperature): Low threshold. Defaults to `75°C`. With a TMP102 number, this is
+  the number's starting value.
+
+Thresholds accept Celsius or Fahrenheit values, such as `30°C` or `86°F`. The low threshold must not exceed the high
+threshold. Supported thresholds range from `-55°C` to `127.9375°C` in normal mode, or `150°C` in extended mode.
+The chip stores thresholds in steps of `0.0625°C`; values are rounded to the nearest step, with exact half-steps
+rounded away from zero. Temperature sensor filters do not change thermostat thresholds or alert decisions.
+
+In continuous mode, the chip makes conversions independently of ESPHome polling. In one-shot mode, ESPHome waits
+40 ms after triggering a conversion before reading it. Continuous-mode reads happen immediately and do not force
+a new conversion. Very short update intervals do not restart a pending one-shot conversion. Each reading uses the
+format flag in the temperature register, including when a sample still uses the previous mode's format.
+
+## Adjustable Thresholds
+
+The TMP102 [Number](/components/number/) platform adjusts thermostat thresholds at runtime. It requires a TMP102
+temperature sensor in the same configuration. Other hardware settings remain in YAML. This platform applies to
+TMP102 chips, not LM75 sensors.
+
+```yaml
+sensor:
+  - platform: tmp102
+    id: freezer_temperature
+    name: "Freezer Temperature"
+    temperature_high: -12°C
+    temperature_low: -13°C
+
+number:
+  - platform: tmp102
+    tmp102_id: freezer_temperature
+    temperature_high:
+      name: "High Temperature Threshold"
+    temperature_low:
+      name: "Clear Temperature Threshold"
+```
+
+### Number Configuration Variables
+
+- **tmp102_id** (*Optional*, [ID](/guides/configuration-types/#id)): The TMP102 temperature sensor to control. Required
+  when the configuration contains more than one TMP102 sensor.
+- **temperature_high** (*Optional*): High threshold number.
+- **temperature_low** (*Optional*): Low threshold number.
+
+At least one threshold number is required. Only one TMP102 number platform may reference each temperature sensor.
+Both threshold numbers support:
+
+- **restore_value** (*Optional*, boolean): Save accepted changes and restore them after reboot. Defaults to `true`.
+- All other options from [Number](/components/number/).
+
+These numbers use Celsius internally, have a step of `0.0625°C`, and default to configuration entities. Their range is
+the chip's range: `-55°C` to `127.9375°C`, or `150°C` in extended mode. Number states and saved values reflect the
+rounded hardware thresholds.
+
+The sensor's `temperature_high` and `temperature_low` are the numbers' starting values, or `80°C` and `75°C` when
+omitted. With `restore_value: true`, a saved value takes precedence over the starting value, so once a number has
+saved a value, changing the sensor's threshold in YAML has no effect until the number is changed again or
+`restore_value` is set to `false`. With `restore_value: false`, that threshold starts from its starting value on
+every boot. ESPHome loads both saved
+thresholds before checking their relationship. A saved value out of range is discarded. If the resulting pair is
+inverted, both thresholds use their starting values. After successful hardware setup, corrected values are saved and
+the fallback is logged.
+
+Runtime changes must stay within range and keep the low threshold at or below the high threshold. A change that
+crosses the other threshold is rejected, and the entity keeps the accepted value. A failed I²C write also keeps the
+accepted value and sets the sensor's warning status until the next reading succeeds. If hardware setup failed,
+changes are rejected with a warning and the numbers have no state. When moving both thresholds, change the high
+threshold first when raising the pair, or the low threshold first when lowering it.
+
+## Threshold Status Text Sensor
+
+The TMP102 [Text Sensor](/components/text_sensor/) platform reports threshold validation, writes, restoration, and
+configuration recovery. It requires a TMP102 temperature sensor in the same configuration. This platform applies to
+TMP102 chips, not LM75 sensors.
+
+```yaml
+sensor:
+  - platform: tmp102
+    id: freezer_temperature
+    name: "Freezer Temperature"
+    temperature_high: -12°C
+    temperature_low: -13°C
+
+text_sensor:
+  - platform: tmp102
+    tmp102_id: freezer_temperature
+    name: "Threshold Status"
+```
+
+- **tmp102_id** (*Optional*, [ID](/guides/configuration-types/#id)): The TMP102 temperature sensor to monitor. Required
+  when the configuration contains more than one TMP102 sensor.
+- All other options from [Text Sensor](/components/text_sensor/).
+
+Only one threshold status text sensor may reference each TMP102 sensor. It defaults to the `diagnostic` entity
+category. The possible states are:
+
+| State | Meaning |
+| --- | --- |
+| `OK` | Setup completed with no other result to report, or an accepted runtime threshold write completed. |
+| `Not configured` | No hardware setting or threshold number enables ESPHome management. |
+| `Setup failed` | Writing the configuration or thresholds during setup failed. |
+| `Restored thresholds reset` | Invalid saved thresholds were replaced with configured starting values. |
+| `Restore reset; save failed` | Corrected thresholds reached the chip, but saving the corrected values failed. |
+| `Preference save failed` | A runtime threshold reached the chip, but saving it failed. |
+| `Write failed: high threshold` | Writing a requested high threshold failed. |
+| `Write failed: low threshold` | Writing a requested low threshold failed. |
+| `Rejected: sensor setup failed` | A runtime threshold change was rejected because setup failed. |
+| `Rejected: high VALUE°C crosses low VALUE°C` | A high-threshold change would cross the low threshold. |
+| `Rejected: low VALUE°C crosses high VALUE°C` | A low-threshold change would cross the high threshold. |
+| `Configuration restored` | Changed configuration or threshold registers were restored. |
+| `Configuration recovery failed` | Restoring changed registers failed. |
+
+`VALUE` is printed with four decimal places. Adding this entity alone does not enable hardware configuration or write
+registers. This entity reports threshold-management results, not general sensor connectivity.
+
+## Alert Binary Sensor
+
+The TMP102 [Binary Sensor](/components/binary_sensor/) platform reports the chip's AL comparator-status bit over I²C.
+It requires a TMP102 temperature sensor in the same configuration. This platform applies to TMP102 chips, not LM75
+sensors.
+
+```yaml
+sensor:
+  - platform: tmp102
+    id: freezer_temperature
+    name: "Freezer Temperature"
+    temperature_high: -15°C
+    temperature_low: -18°C
+
+binary_sensor:
+  - platform: tmp102
+    tmp102_id: freezer_temperature
+    name: "Freezer Too Warm"
+```
+
+- **tmp102_id** (*Optional*, [ID](/guides/configuration-types/#id)): The TMP102 temperature sensor to read. Required
+  when the configuration contains more than one TMP102 sensor.
+- All other options from [Binary Sensor](/components/binary_sensor/).
+
+Only one alert binary sensor may reference each TMP102 sensor. `on` means the comparator status is active, regardless
+of the configured ALERT polarity. The status becomes active once the temperature reaches the high threshold and
+remains active until it falls below the low threshold, subject to the configured fault queue. ESPHome updates the
+entity after reading the temperature, so changes appear at the sensor's polling rate. A failed temperature or
+configuration read invalidates the binary-sensor state until a complete read succeeds.
+
+The entity is read-only. Adding it does not change the TMP102 configuration, polarity, or thresholds. Without
+`temperature_high` and `temperature_low` on the sensor and without a TMP102 number, the status follows the thresholds
+already stored in the chip, which are `80°C` and `75°C` after power-on.
+
+> [!NOTE]
+> This entity reports comparator status, not the physical ALERT pin level. In interrupt mode, reading a chip register
+> clears the latched ALERT pin; the AL bit still reports comparator status.
+
+## Physical ALERT Pin
+
+To monitor the physical ALERT pin, wire it to a GPIO and use a
+[GPIO Binary Sensor](/components/binary_sensor/gpio/). The example below uses the default active-low polarity.
+
+```yaml
+sensor:
+  - platform: tmp102
+    name: "Freezer Temperature"
+    one_shot_mode: true
+    thermostat_mode: comparator
+    alert_polarity: active_low
+    temperature_high: -15°C
+    temperature_low: -18°C
+
+binary_sensor:
+  - platform: gpio
+    name: "Freezer Too Warm"
+    pin:
+      number: GPIOXX
+      inverted: true
+      mode:
+        input: true
+        pullup: true
+```
 
 ## See Also
 
-- [Sensor Filters](/components/sensor#sensor-filters)
+- [Sensor Filters](/components/sensor/#sensor-filters)
 - [DHT Temperature+Humidity Sensor](/components/sensor/dht/)
 - [DHT12 Temperature+Humidity Sensor](/components/sensor/dht12/)
 - [HDC1080 Temperature+Humidity Sensor](/components/sensor/hdc1080/)
