@@ -1039,7 +1039,8 @@ when the chart is created; use the actions below to change the data.
 - `lvgl.chart.update` [action](/automations/actions/#actions-action) updates chart properties and common widget
   styles, states and flags.
   - **id** (**Required**): The ID or a list of IDs of chart widgets to update.
-  - **update_mode**, **point_count** (*Optional*): As in the chart configuration above.
+  - **update_mode** (*Optional*): As in the chart configuration above. **point_count** can only be set when the chart
+    is created, since changing it reallocates the data of every series.
   - **x_axis**, **y_axis**, **secondary_x_axis**, **secondary_y_axis** (*Optional*): A new range (**min_value** and
     **max_value**, both required), new **grid_lines**, or both. The **multiplier** set when the chart was created
     applies to the new range; it cannot be changed. The chart **type** cannot be changed either.
@@ -1071,8 +1072,7 @@ when the chart is created; use the actions below to change the data.
 
   At least one of **color** or **hidden** is required.
 
-**values** and **points** in these actions must not have more entries than the smallest **point_count** the chart
-can have, including any **point_count** set by `lvgl.chart.update`.
+**values** and **points** in these actions must not have more entries than the chart's **point_count**.
 
 **Triggers:**
 
