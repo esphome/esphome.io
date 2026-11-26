@@ -63,10 +63,12 @@ microchip_atsha204a:
 
 Use `type: swi_uart` with a dedicated [hardware UART](/components/uart/) at 230400 baud, 7 data
 bits, no parity and 1 stop bit. Use non-inverted TX and RX, leave `flow_control_pin` unset, and set
-`rx_buffer_size` to at least 680 bytes. On ESP8266, use UART0 (TX/RX on GPIO1/GPIO3 or GPIO15/GPIO13) and
-disable serial logging on that port or move it to UART1. Connect RX to the pulled-up signal. Connect
-TX through a low-forward-voltage Schottky diode with the anode at the signal and the cathode at TX, or
-through an equivalent open-drain buffer.
+`rx_buffer_size` to at least 680 bytes. On ESP32, keep `rx_timeout` above zero. On ESP8266, use UART0
+(TX/RX on GPIO1/GPIO3 or GPIO15/GPIO13) and disable serial logging on that port or move it to UART1.
+LibreTiny supports ATSHA204A over I²C only. Its UART receive buffer is too small for the longest single-wire replies.
+
+Connect RX to the pulled-up signal. Connect TX through a low-forward-voltage Schottky diode with the
+anode at the signal and the cathode at TX, or through an equivalent open-drain buffer.
 
 ```yaml
 microchip_atsha204a:
