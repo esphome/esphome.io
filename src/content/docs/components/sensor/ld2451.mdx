@@ -4,6 +4,8 @@ title: "LD2451 Sensor"
 ---
 
 import APIRef from '@components/APIRef.astro';
+import Figure from '@components/Figure.astro';
+import ld2451OrientationImg from './images/ld2451-orientation.svg';
 
 ## Component
 
@@ -75,9 +77,16 @@ While no target is detected, the module sends an empty report about every 1.4 se
 
 ### Placement
 
-- Mount the module with its antenna patterns oriented as shown in the vendor's user manual. Turned 90 degrees, the
-  angle it reports measures height instead of the side-to-side position, and nearby movement such as branches can be
-  reported far from the road.
+<Figure
+  src={ld2451OrientationImg}
+  alt="Front of the HLK-LD2451 standing upright, with the pin header at the top and both antenna arrays vertical"
+  caption="Mounting orientation, viewed from the front"
+  layout="constrained"
+/>
+
+- Mount the module upright, with the pin header at the top and the antenna arrays running vertically. Turned 90
+  degrees, the angle it reports measures height instead of the side-to-side position, and nearby movement such as
+  branches can be reported far from the road.
 - Point the module along the road rather than across it. The speed it measures is the part of a vehicle's speed
   towards or away from the module, so a vehicle crossing at a wide angle reads slower than it is, and it stays in view
   for less time.
