@@ -587,6 +587,78 @@ on_...:
 >             - delay: 0.1s
 > ```
 
+### `light.move` Action
+
+This [Action](/automations/actions/#all-actions) changes the brightness of a light at a constant speed until it reaches
+its limit or a [`light.stop`](#light-stop-action) action runs. Use it for hold-to-dim buttons.
+
+```yaml
+on_...:
+  then:
+    - light.move:
+        id: light_1
+        direction: UP
+```
+
+**Configuration variables:**
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the light.
+- **direction** (**Required**, [templatable](/automations/templates), `UP` or `DOWN`): The direction of the move. In a
+  lambda, return `true` for `UP` and `false` for `DOWN`.
+- **duration** (*Optional*, [Time](/guides/configuration-types/#time), [templatable](/automations/templates)): The time
+  the move takes to cross the **whole** range, from one limit to the other. A move over part of the range takes the
+  same share of this time. Defaults to `5s`. In a lambda, return the time in milliseconds.
+- **brightness_limits** (*Optional*): Limits for the move.
+  - **min_brightness** (*Optional*, percentage): The brightness to dim down to. Defaults to `1%`.
+  - **max_brightness** (*Optional*, percentage): The brightness to brighten up to. Defaults to `100%`.
+
+How a move behaves:
+
+- The speed is constant. The light moves toward `max_brightness` (`UP`) or `min_brightness` (`DOWN`).
+- A move `UP` on a light that is off turns it on at `min_brightness`. `DOWN` on a light that is off does
+  nothing.
+- With `min_brightness: 0%`, the light stays on while it dims and turns off when it reaches 0%.
+- As with a transition, the target is reported as the state at once. A [`light.stop`](#light-stop-action) reports the
+  value the light got to.
+- The color temperature stays where it is, also when the move takes over a running transition.
+- On an addressable light without an effect, a move sets one color on all LEDs, as `light.turn_on` does.
+- On a [Home Assistant light](/components/light/homeassistant/), the brightness changes on the remote light only when
+  the move stops or reaches its limit.
+
+### `light.stop` Action
+
+This [Action](/automations/actions/#all-actions) stops a running [`light.move`](#light-move-action) where the light is
+now. It does not stop normal transitions, flashes or effects, and it does nothing when nothing is moving.
+
+```yaml
+on_...:
+  then:
+    - light.stop:
+        id: light_1
+    # Shorthand
+    - light.stop: light_1
+```
+
+**Configuration variables:**
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the light.
+
+> [!NOTE]
+> Example: dimming a light while a button is held
+>
+> ```yaml
+> binary_sensor:
+>   - platform: gpio
+>     # ...
+>     on_press:
+>       - light.move:
+>           id: light_1
+>           direction: DOWN
+>           duration: 4s
+>     on_release:
+>       - light.stop: light_1
+> ```
+
 ### `light.effect.next` / `light.effect.previous` Action
 
 These [Actions](/automations/actions/#all-actions) cycle through the effects configured for a light. `light.effect.next`
