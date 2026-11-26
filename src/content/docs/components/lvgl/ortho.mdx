@@ -98,6 +98,12 @@ panel timings, the UI, rotation, memory bandwidth and available resources.
 - If PPA initialisation fails, check the logs. The renderer can use CPU tile rotation when PPA acceleration is
   unavailable.
 
+> [!NOTE]
+> A rejected hardware submission can fall back to CPU rendering after outstanding transactions finish. If an accepted
+> PPA or GDMA transaction fails to complete, or a dispatched render worker does not finish within its safety timeout,
+> the renderer enters the ESP-IDF panic path to avoid reusing memory that may still be in use. Depending on the panic
+> configuration, the device may restart.
+
 ## See also
 
 - [LVGL Graphics](/components/lvgl/)
