@@ -11,7 +11,7 @@
     '<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M13.29 5.29a1 1 0 0 1 1.42 0l6 6a1 1 0 0 1 0 1.42l-6 6a1 1 0 0 1-1.42-1.42l4.3-4.29H4a1 1 0 1 1 0-2h13.59l-4.3-4.29a1 1 0 0 1 0-1.42Z"/></svg>';
 
   const decorate = (article) => {
-    const link = article.querySelector(":scope > header > a.preview-link");
+    const link = article.querySelector(":scope > header > a.sl-blog-preview-link");
     const href = link?.getAttribute("href");
     if (!href || article.querySelector(":scope > a.read-more")) return;
 
@@ -31,7 +31,7 @@
   };
 
   const init = () => {
-    for (const article of document.querySelectorAll("article.preview")) {
+    for (const article of document.querySelectorAll("article.sl-blog-preview")) {
       decorate(article);
     }
   };
@@ -41,7 +41,7 @@
 </script>
 
 <style is:global>
-  article.preview a.read-more {
+  article.sl-blog-preview a.read-more {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
@@ -51,22 +51,22 @@
     font-weight: 600;
     text-decoration: none;
   }
-  article.preview a.read-more:hover {
+  article.sl-blog-preview a.read-more:hover {
     color: var(--sl-color-white);
   }
-  article.preview a.read-more svg {
+  article.sl-blog-preview a.read-more svg {
     flex-shrink: 0;
     fill: currentColor;
     transition: transform 0.15s ease;
   }
-  article.preview a.read-more:hover svg {
+  article.sl-blog-preview a.read-more:hover svg {
     transform: translateX(0.15rem);
   }
   @media (prefers-reduced-motion: reduce) {
-    article.preview a.read-more svg {
+    article.sl-blog-preview a.read-more svg {
       transition: none;
     }
-    article.preview a.read-more:hover svg {
+    article.sl-blog-preview a.read-more:hover svg {
       transform: none;
     }
   }
