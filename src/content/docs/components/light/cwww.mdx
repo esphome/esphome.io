@@ -28,7 +28,61 @@ the [light control actions](/components/light/#light-turn_on-action).
 
 If the color temperature of both lights is supplied, it is also possible to control the two channels together by
 setting a color temperature, using the `white` (interpreted as brightness) and `color_temperature` options. This
-calculation assumes that both lights have the same illuminance, which might not always be accurate.
+calculation assumes that both lights have the same illuminance, which might not always be accurate. If they differ,
+set [`cold_to_warm_ratio`](#cold-to-warm-ratio).
+
+## Constant Brightness
+
+The setting decides what the two channels do at 100% brightness as the color temperature changes.
+
+| `constant_brightness` | Behavior |
+| --- | --- |
+| `false` | Each channel follows its share of the color temperature. Both channels are full in the middle of the range, so the light is brightest there. |
+| `true` | The total output stays constant, at most one channel's full output. This reduces the maximum brightness, but suits power supplies that cannot run both channels at full brightness at once. |
+| `color_temperature_priority` | The light stays constant across color temperatures while both channels have headroom. Beyond that point the color temperature wins and the output drops toward the ends of the range. 100% means both channels are full where they balance, so the power supply must be able to run both at full output. |
+
+```yaml
+light:
+  - platform: cwww
+    name: "Livingroom Lights"
+    cold_white: output_component1
+    warm_white: output_component2
+    cold_white_color_temperature: 6536 K
+    warm_white_color_temperature: 2000 K
+    constant_brightness: color_temperature_priority
+```
+
+> [!NOTE]
+> With `color_temperature_priority`, "constant" refers to linear light output. With the default
+> [`gamma_correct`](/components/light/#config-light) of `2.8` and equal channels, the constant range reaches about 78%
+> on the brightness slider. With a [`cold_to_warm_ratio`](#cold-to-warm-ratio) other than `1`, it ends earlier: the
+> weaker channel alone has to be able to give the light.
+
+## Cold to Warm Ratio
+
+Cold and warm white strips rarely give the same amount of light at full output. `cold_to_warm_ratio` is the light of
+the cold channel divided by the light of the warm channel, both at full output. With the ratio set, the channels are
+mixed by light instead of by output level, so the color temperature shown is the real mix. This works with every
+`constant_brightness` setting.
+
+To get the ratio, divide the measured lumens of the cold strip by those of the warm strip. If both strips have a similar
+efficiency, you can divide their current (A) or power (W) instead. For example, a cold strip drawing 0.92 A and a warm
+strip drawing 1.30 A gives `0.92 / 1.30 = 0.708`.
+
+```yaml
+light:
+  - platform: cwww
+    name: "Livingroom Lights"
+    cold_white: output_component1
+    warm_white: output_component2
+    cold_white_color_temperature: 6536 K
+    warm_white_color_temperature: 2000 K
+    cold_to_warm_ratio: 0.708
+```
+
+> [!NOTE]
+> Setting `max_power` on the stronger [output](/components/output/) also balances the channels, but that strip's extra
+> output is then not used. `cold_to_warm_ratio` keeps it.
 
 ## Configuration variables
 
@@ -40,7 +94,10 @@ calculation assumes that both lights have the same illuminance, which might not 
 - **warm_white_color_temperature** (*Optional*, float): The color temperature (in [mireds](https://en.wikipedia.org/wiki/Mired) or Kelvin)
   of the warm white channel. Note that this option is required to control the mixing from Home Assistant.
 
-- **constant_brightness** (*Optional*, boolean): When enabled, this will keep the overall brightness of the cold and warm white channels constant by limiting the combined output to 100% of a single channel. This reduces the possible overall brightness but is necessary for some power supplies that are not able to run both channels at full brightness at once. Defaults to `false`.
+- **constant_brightness** (*Optional*, boolean or `color_temperature_priority`): How the brightness is spread over the
+  two channels. Defaults to `false`. See [Constant Brightness](#constant-brightness).
+- **cold_to_warm_ratio** (*Optional*, float): The light of the cold white channel divided by the light of the warm white
+  channel, both at full output. Range `0.01` to `100`. Defaults to `1.0`. See [Cold to Warm Ratio](#cold-to-warm-ratio).
 - All other options from [Light](/components/light/#config-light).
 
 ## See Also
