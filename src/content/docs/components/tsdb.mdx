@@ -38,7 +38,7 @@ tsdb:
 
 ## Configuration variables
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the component,
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the component,
   which is used by the [actions](#actions) and to [call it from a lambda](#lambdas).
 - **columns** (**Required**, list): The columns of the database, one to 16 entries. See [Columns](#columns).
 - **file** (*Optional*, string): File name of the database inside `mount_point`. Defaults to `history.tsdb`.
@@ -78,9 +78,9 @@ tsdb:
 - **page_size** (*Optional*, size): Page size for `paged_allocation`. Defaults to `4KB`. Range is `1KB` to
   `64KB`. With `paged_allocation` enabled, a page size that splits one of the engine's blocks across two
   pages is rejected; `4KB` or more always works.
-- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): How often a record is written.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often a record is written.
   Defaults to `60s` - one record per interval.
-- **sync_interval** (*Optional*, [Time](/guides/configuration-types#time)): How often the header inside the
+- **sync_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often the header inside the
   database file is folded back into it. Defaults to `15min`; `0s` folds after every record. See
   [Durability and flash wear](#durability-and-flash-wear).
 - **min_free_bytes** (*Optional*, size): Free-space guard. Defaults to `32KB`; `0` disables it. Must be
@@ -95,16 +95,16 @@ tsdb:
   counter in the boot log counts the records written that way. A configuration with `require_time: true` and
   no [Time](/components/time/) component is rejected at validation, because the clock could never become
   valid.
-- **time_id** (*Optional*, [ID](/guides/configuration-types#id)): The [Time](/components/time/) component
+- **time_id** (*Optional*, [ID](/guides/configuration-types/#id)): The [Time](/components/time/) component
   the timestamps come from. Without it the system clock is read instead, which every
   [Time](/components/time/) component sets; with `require_time: true` the history then stays empty until one
   of them has synced.
 - **on_missing** (*Optional*, string): What to do with a column whose sensor has never published, or
   publishes `NaN`. One of `skip` (the default), `hold` or `sentinel` - see
   [How a record is written](#how-a-record-is-written).
-- **aggregate_window** (*Optional*, [Time](/guides/configuration-types#time)): Time window of the
+- **aggregate_window** (*Optional*, [Time](/guides/configuration-types/#time)): Time window of the
   per-column aggregates. Defaults to `1h`.
-- **aggregate_interval** (*Optional*, [Time](/guides/configuration-types#time)): How often the aggregates
+- **aggregate_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often the aggregates
   are computed and published. Defaults to `5min`; `0s` disables them.
 - **dump_rows** (*Optional*, integer): Number of records the CSV dump prints. Defaults to `60`. Range is `1`
   to `1000`. Only used when the configuration has a [`tsdb.dump`](#actions) action. See
@@ -127,7 +127,7 @@ tsdb:
       offset: 0
 ```
 
-- **sensor** (**Required**, [ID](/guides/configuration-types#id)): The `sensor:` the column is read from.
+- **sensor** (**Required**, [ID](/guides/configuration-types/#id)): The `sensor:` the column is read from.
   The component reads its last published value; the sensor itself keeps working as before.
 - **name** (**Required**, string): Column name stored in the file header. At most 31 bytes (UTF-8) and
   unique across all columns. Must not contain a comma, a double quote or a line break.
@@ -256,7 +256,7 @@ text_sensor:
       name: History log
 ```
 
-- **tsdb_id** (*Optional*, [ID](/guides/configuration-types#id)): The `tsdb` instance the platform reads
+- **tsdb_id** (*Optional*, [ID](/guides/configuration-types/#id)): The `tsdb` instance the platform reads
   from.
 - **records** (*Optional*, [Sensor](/components/sensor/)): Number of records currently stored.
 - **used** and **free** (*Optional*, [Sensor](/components/sensor/)): Number of bytes used and still free on
@@ -306,7 +306,7 @@ button:
 
 ## Lambdas
 
-The following methods are available from [lambdas](/automations/templates#config-lambda):
+The following methods are available from [lambdas](/automations/templates/#config-lambda):
 
 - `id(history).request_flush()`: Commit the database immediately (`tsdb_sync_h()`) - for "the power is about
   to be cut".
