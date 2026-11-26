@@ -49,7 +49,8 @@ The following properties are inherited from the source sensor unless set explici
 
 ## Behaviour
 
-- The first reading ever only establishes the baseline; nothing is published.
+- The first valid reading after each startup only establishes the baseline; nothing is
+  published for it. The baseline is not persisted, so this happens again after every reboot.
 
 - A `NaN` reading publishes nothing and discards the baseline. The next valid reading only
   re-establishes the baseline and publishes nothing, so a gap between samples never produces
