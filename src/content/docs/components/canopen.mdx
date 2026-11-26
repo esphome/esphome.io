@@ -60,6 +60,10 @@ canopen:
   `node_id`). Set it to `true` when only lambdas use it (see [SDO Client](#sdo-client)), or to `false` to make sure
   it isn't compiled in (an error if something uses it). It's a build option of the stack: the same for all `canopen`
   components of the device.
+- **nmt_master** (*Optional*, boolean): Set it to `true` to compile in the NMT master when only lambdas send NMT
+  commands (see [NMT Master](#nmt-master)). Without it the NMT master is compiled in when the configuration uses a
+  [`canopen.nmt`](#canopen-nmt-action) action. Like `sdo_client`, it's the same for all `canopen` components of the
+  device.
 - **nmt_startup** (*Optional*, enum): The NMT state after boot. One of `operational` or `pre_operational`. Defaults to
   `operational`. A node that starts `pre_operational` stays there until an NMT master starts it, or until it starts
   itself (see [NMT State of This Node](#nmt-state-of-this-node)).
@@ -112,7 +116,7 @@ interval:
 Available without `node_id`: `canbus_id`, `response_timeout`, `sdo_client` (not `false`), `on_heartbeat`, `on_emcy`,
 the [`canopen.sdo_read`](#canopen-sdo_read-action) and [`canopen.sdo_write`](#canopen-sdo_write-action) actions, the
 [SDO Client](#sdo-client) and [Raw Frames](#raw-frames) lambdas. The options of a node (`heartbeat_interval`,
-`heartbeat_clients`, `nmt_startup`, `identity`, `device_name`, `hardware_version`, `software_version`,
+`heartbeat_clients`, `nmt_master`, `nmt_startup`, `identity`, `device_name`, `hardware_version`, `software_version`,
 `on_nmt_state_change`, `on_node_event`) and the [`canopen.nmt`](#canopen-nmt-action) action are rejected.
 
 ## Several Nodes
@@ -193,7 +197,7 @@ COB-IDs `0x600` + node id (requests) and `0x580` + node id (responses), with exp
 | `0x1009` | Hardware version | read | `hardware_version`, only if set |
 | `0x100A` | Software version | read | `software_version` |
 | `0x1014` | EMCY COB-ID | read | `0x80` + node id |
-| `0x1016` | Consumer heartbeat time | read/write | one entry per node in `heartbeat_clients`, only with them |
+| `0x1016` | Consumer heartbeat time | read | one entry per node in `heartbeat_clients`, only with them |
 | `0x1017` | Producer heartbeat time | read/write | `heartbeat_interval`; a write takes effect at once |
 | `0x1018` | Identity | read | `identity` |
 | `0x1200` | SDO server parameter | read | |
@@ -353,7 +357,9 @@ Configuration variables:
 
 ### `canopen.nmt` Action
 
-Sends an NMT command, as an NMT master. A command to this node's own id, or to all nodes, applies to this node too.
+Sends an NMT command, as an NMT master. A command to this node's own id, or to all nodes, applies to this node too;
+a `reset_node` to all nodes restarts this node once the command is sent. A command that can't be sent is logged as a
+warning (see [NMT Master](#nmt-master) for when).
 
 ```yaml
 on_...:
@@ -454,11 +460,13 @@ id(my_canopen).set_nmt_state(canopen::NMTState::NMT_STATE_OPERATIONAL);
 
 ### NMT Master
 
-The NMT master is compiled in when the configuration uses a [`canopen.nmt`](#canopen-nmt-action) action.
+The NMT master is compiled in when the configuration uses a [`canopen.nmt`](#canopen-nmt-action) action, or with
+`nmt_master: true`.
 
 ```cpp
-// false without node_id, for a node id above 127, or while the previous NMT command is still waiting to be sent (a
-// command the CAN controller can't take at once is resent from the main loop)
+// false (with a warning in the log) without node_id, for a node id above 127, while the previous NMT command is still
+// waiting to be sent (a command the CAN controller can't take at once is resent from the main loop), or, for this
+// node's own id or 0, while the previous command for this node isn't applied yet (in the next loop pass)
 id(my_canopen).send_nmt(0x01, canopen::NMTCommand::NMT_COMMAND_PRE_OPERATIONAL);
 ```
 
