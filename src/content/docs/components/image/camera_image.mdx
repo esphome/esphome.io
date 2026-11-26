@@ -25,10 +25,10 @@ image:
 
 Each update requests one frame with `camera::COMPONENT_REQUESTER`, which is
 served to this component only: API and web-server streams are not affected. A
-request that does not produce a frame within 5 seconds is abandoned and retried
-on the next update.
+request that does not produce a frame within `timeout` is abandoned, and the
+next update requests a new one.
 
-## Configuration variables
+## Configuration Variables
 
 - **id** (**Required**, [ID](/guides/configuration-types/#id)): The image ID.
 - **camera_id** (**Required**, [ID](/guides/configuration-types/#id)): The
@@ -36,7 +36,7 @@ on the next update.
 - **format** (**Required**): The camera's encoded format. Only `JPEG` (or its
   alias `JPG`) is accepted, because a camera delivers JPEG frames.
 - **type** (**Required**): How the image is stored internally: `BINARY`,
-  `GRAYSCALE`, `RGB565` or `RGB`. See the
+  `GRAYSCALE`, `RGB111`, `RGB565` or `RGB`. See the
   [image component](/components/image/).
 - **resize** (*Optional*, string): Fit the decoded image inside `WIDTHxHEIGHT`,
   preserving the aspect ratio.
@@ -45,21 +45,27 @@ on the next update.
   camera's `resolution`, or, with `resize`, the result of scaling that
   resolution uniformly to fit `WIDTHxHEIGHT`. That is smaller than the resize
   box when the aspect ratios differ, for example 640x480 into 320x320 decodes to
-  320x240. Checked when the configuration is validated.
+  320x240. Checked when the configuration is validated, and again against each
+  decoded frame. An OV2640 with a camera `window` delivers a smaller frame than
+  the `resolution`, so validation logs a warning for that combination.
   - **x** (**Required**, int): Horizontal offset.
   - **y** (**Required**, int): Vertical offset.
   - **width** (**Required**, int): Crop width.
   - **height** (**Required**, int): Crop height.
 - **rotation** (*Optional*, int): `0` (default), `90`, `180` or `270` degrees,
   applied after `crop`. The output is the decoded size, or the `crop`, with the
-  axes swapped for `90` and `270`. A rotation allocates one scratch buffer of
-  the decoded size for the whole run, so a larger `resolution` with no `resize`
-  or `crop` needs correspondingly more memory. `crop` and `rotation` need `type`
+  axes swapped for `90` and `270`. A rotation reserves one scratch buffer of the
+  output size for the whole run, in PSRAM when available, so a larger
+  `resolution` with no `resize` or `crop` needs correspondingly more memory. A
+  `crop` without rotation needs no scratch buffer. `crop` and `rotation` need `type`
   `GRAYSCALE`, `RGB565` or `RGB`, and cannot be combined with
   `transparency: alpha_channel`.
 - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)):
   How often to request a frame. Defaults to `never`; use `component.update` or
   set an interval.
+- **timeout** (*Optional*, [Time](/guides/configuration-types/#time)): How long
+  to wait for a requested frame. Defaults to `5s`. Keep it longer than the time
+  between two frames at the camera's `max_framerate`.
 - **double_buffer** (*Optional*, boolean): Decode into a second buffer.
   Incompatible with `crop` and `rotation`. Defaults to `false`.
 - **placeholder** (*Optional*, [ID](/guides/configuration-types/#id)): Image to
@@ -73,13 +79,17 @@ The referenced camera must deliver JPEG frames: keep `pixel_format: JPEG`, or
 set `jpeg_quality` above `0` so the camera converts its raw frames. A camera
 configured for raw frames is rejected when the configuration is validated.
 
+The camera captures at most one frame per `max_framerate` period. If that period
+is not shorter than `timeout`, validation logs a warning. A frame that arrives
+after its request timed out is dropped and reported in a debug log message.
+
 ## Automations
 
 - **on_image** (*Optional*, [Automation](/automations)): Runs after a frame has
   been decoded. Use it to refresh the display.
 - **on_error** (*Optional*, [Automation](/automations)): Runs when the camera
-  returns an empty frame, does not deliver one within 5 seconds, or decoding
-  fails.
+  returns an empty frame, does not deliver one within `timeout`, or the frame
+  cannot be decoded, cropped or rotated.
 
 ## Examples
 
