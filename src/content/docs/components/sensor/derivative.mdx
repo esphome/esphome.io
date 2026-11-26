@@ -12,12 +12,13 @@ configurable time unit. This can for example be useful to derive a speed (in m/s
 distance sensor (in m).
 
 This component can be considered the counterpart of the [Integration Sensor](/components/sensor/integration/).
+Like the Integration Sensor, the sensor to differentiate is declared with the `sensor` key.
 
 ```yaml
 # Example configuration entry
 sensor:
   - platform: derivative
-    source_id: my_distance
+    sensor: my_distance
     name: "Speed"
 
   # The sensor to differentiate, here a distance sensor in m
@@ -29,7 +30,7 @@ sensor:
 
 ## Configuration variables
 
-- **source_id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the sensor to differentiate.
+- **sensor** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the sensor to differentiate.
 
 - **time_unit** (*Optional*, string): The time unit of the resulting rate, one of
   `ms`, `s`, `min`, `h` or `d`. Defaults to `s`.
