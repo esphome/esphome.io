@@ -16,25 +16,13 @@ Requires an [I²C](/components/i2c/) bus and a [PSRAM](/components/psram/) confi
 
 ```yaml
 # Example configuration entry
-i2c:
-  - id: cam_i2c
-    sda: GPIO7
-    scl: GPIO8
-    frequency: 400kHz
-
-psram:
-  speed: 200MHZ
-
 mipi_csi:
   name: My Camera
   sensor: OV5647
-  resolution: 1920x1080
-  pixel_format: RGB565
-  framerate: 15 fps
   sccb_frequency: 400kHz
 ```
 
-## Configuration variables
+## Configuration Variables
 
 - **name** (*Optional*, string): The name of the camera.
 - **sensor** (**Required**, string): The camera sensor model that is connected. Only the driver for
@@ -66,7 +54,7 @@ mipi_csi:
   dropped, at the cost of more PSRAM.
 - **horizontal_flip** (*Optional*, boolean): Whether to flip the image horizontally.
 - **vertical_flip** (*Optional*, boolean): Whether to flip the image vertically.
-- **i2c_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the [I²C bus](/components/i2c)
+- **i2c_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the [I²C bus](/components/i2c/)
   the sensor is connected to, when using more than one bus.
 - **sccb_frequency** (**Required**, frequency): The clock frequency to use for the sensor's control bus
   (SCCB, layered over I²C), between `10kHz` and `1MHz`. Check the sensor's datasheet for the supported
@@ -82,11 +70,11 @@ mipi_csi:
 
 Automations:
 
-- **on_stream_start** (*Optional*, [Automation](/automations)): An automation to perform when a client
+- **on_stream_start** (*Optional*, [Automation](/automations/)): An automation to perform when a client
   starts a continuous stream.
-- **on_stream_stop** (*Optional*, [Automation](/automations)): An automation to perform when a client
+- **on_stream_stop** (*Optional*, [Automation](/automations/)): An automation to perform when a client
   stops a continuous stream.
-- **on_image** (*Optional*, [Automation](/automations)): An automation called every time a frame is
+- **on_image** (*Optional*, [Automation](/automations/)): An automation called every time a frame is
   captured. The encoded JPEG frame is available as the `image` variable, a struct with `data`
   (`uint8_t *`) and `length` (`size_t`) members.
 
@@ -97,7 +85,7 @@ Automations:
         args: [image.length]
   ```
 
-## Supported sensors
+## Supported Sensors
 
 Only the driver for the configured `sensor` is compiled in, which keeps the firmware small. Each sensor
 can only capture the resolution/frame rate/pixel format combinations its register tables were built for;
@@ -157,14 +145,14 @@ mipi_csi:
   sccb_frequency: 400kHz
 ```
 
-## PSRAM bandwidth
+## PSRAM Bandwidth
 
 Every frame is copied out of a PSRAM capture buffer and into the JPEG encoder, so the PSRAM clock speed
 directly limits how quickly frames can be produced without corruption. Configure `psram: speed: 100MHz` (or
 faster, if the board supports it); a slower PSRAM clock can produce visibly corrupted frames at higher
 resolutions or frame rates.
 
-## Sharing the LDO channel with a display
+## Sharing the LDO Channel With a Display
 
 The MIPI D-PHY on the ESP32-P4 is powered from LDO channel 3. By default this component powers it. If
 [`esp_ldo`](/components/esp_ldo/) already configures channel 3 (for example for a MIPI-DSI display on the same
