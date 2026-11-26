@@ -9,7 +9,8 @@ frames from an [ESP32 Camera](/components/esp32_camera/). It decodes each frame 
 out of that image and reads the digits with `seven_segment_ocr`. No trained model is involved: the crop is thresholded
 and every digit is recognised from its seven segments, so a clean, tightly cropped and evenly lit display is needed.
 
-<Image src="/images/7_segment_display.png" width={350} height={350} layout="constrained" alt="A seven-segment display with the segments labelled A to G and the decimal point DP" />
+<Image src="/images/7_segment_display.png" width={350} height={350} layout="constrained"
+  alt="A seven-segment display with the segments labelled A to G and the decimal point DP" />
 
 A seven-segment display draws each digit from the seven segments labelled A to G.
 
@@ -37,13 +38,14 @@ sensor:
       name: "Water meter confidence"
 ```
 
-## Configuration variables
+## Configuration Variables
 
 - **id** (*Optional*, [ID](/guides/configuration-types/#id)): The reader ID.
 - **camera_id** (**Required**, [ID](/guides/configuration-types/#id)): The `esp32_camera` that produces the frames.
 - **decoder_id** (**Required**, [ID](/guides/configuration-types/#id)): The `camera_decoder` that decodes the frames.
-  `output_type: GRAYSCALE` uses the least RAM; `RGB888` also works and is converted to grayscale. `RGB565` and
-  `YUV422` are rejected.
+  Its `output_type` must be `GRAYSCALE` or `RGB888`; `RGB565` and `YUV422` are rejected. Both accepted types need
+  the same decoder buffer of 3 bytes per pixel, because grayscale is made from an RGB888 frame. With `RGB888` the
+  reader converts the crop to grayscale itself.
 - **crop_x** (*Optional*, int): Left edge of the crop in the decoded frame. Defaults to `0`.
 - **crop_y** (*Optional*, int): Top edge of the crop. Defaults to `0`.
 - **crop_w** (**Required**, int): Width of the rectangle around the digits. It must be greater than zero.
@@ -74,7 +76,7 @@ sensor:
 - **value** (*Optional*, [Sensor](/components/sensor/)): The reading, shown as a whole number.
 - **confidence** (*Optional*, [Sensor](/components/sensor/)): How confident the recognition is, from 0 to 100 %.
 
-## How a display is read
+## How a Display Is Read
 
 1. The camera frame is decoded once.
 2. The configured rectangle is copied out as one byte per pixel. An `RGB888` decoder is converted to luma.
@@ -83,9 +85,10 @@ sensor:
 4. When exactly `digit_count` digits were found and all of them were recognised, `value` and `confidence` are
    published.
 
-A digit run narrower than a third of the image height is a single bar and is read as a `1`.
+A digit run narrower than a third of the image height is a single bar. It is read as a `1` when both of its halves are
+lit; otherwise it is unknown and nothing is published.
 
-## Requirements and behaviour
+## Requirements and Behaviour
 
 - The camera must deliver JPEG frames. Use `pixel_format: JPEG`, or set `jpeg_quality` on a camera with another pixel
   format so the frames are converted to JPEG for the reader.
