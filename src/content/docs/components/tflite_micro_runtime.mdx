@@ -157,9 +157,9 @@ component and its own YAML key, and it auto-loads this component:
 | Component | Options | Output |
 |---|---|---|
 | [`tflite_image`](/components/tflite_image/) | the image options above | a class and a confidence |
-| [`tflite_detection`](/components/tflite_detection/) | image options and thresholds | boxes and scores |
-| [`tflite_segmentation`](/components/tflite_segmentation/) | the image options | one class id per pixel |
-| [`tflite_pose`](/components/tflite_pose/) | the image options | keypoints and their scores |
+| [`tflite_detection`](/components/tflite_detection/) | image input options and thresholds | boxes and scores |
+| [`tflite_segmentation`](/components/tflite_segmentation/) | the image input options | one class id per pixel |
+| [`tflite_pose`](/components/tflite_pose/) | the image input options | keypoints and their scores |
 | [`tflite_tabular`](/components/tflite_tabular/) | none | a regression value, or a class and a confidence |
 | [`tflite_text`](/components/tflite_text/) | `position_output` | logits, or start and end positions |
 | [`tflite_audio`](/components/tflite_audio/) | the audio tuning options | windowed probabilities |
@@ -236,7 +236,8 @@ YAML wins over the model. Each kind page lists the same options with its own exa
 - **output_processing** (*Optional*, string): How the output tensor is turned into a class and a confidence.
   One of `"argmax"`, `"softmax"`, `"qat_quantized"` or `"auto_detect"`. Defaults to `"argmax"`.
 - **scale_factor** (*Optional*, float): Divides the reported class index for multi-class models. Range
-  `0.1`–`100.0`. Defaults to `1.0`.
+  `0.1`–`100.0`. Defaults to `1.0`. `tflite_detection`, `tflite_segmentation` and `tflite_pose` accept neither
+  this option nor `output_processing`.
 - **normalize** (*Optional*, boolean): Normalize input pixels to `[0.0, 1.0]`. Defaults to `false`.
 - **invert** (*Optional*, boolean): Invert input pixel values. Defaults to `false`.
 
