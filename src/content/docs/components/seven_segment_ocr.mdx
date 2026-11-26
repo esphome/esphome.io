@@ -9,7 +9,8 @@ The `seven_segment_ocr` component reads the digits of a seven-segment display ou
 developer-facing library component: it has no YAML configuration of its own, and a consumer crops the display out of a
 frame and feeds the crop to it.
 
-<Image src="/images/7_segment_display.png" width={350} height={350} layout="constrained" alt="A seven-segment display with the segments labelled A to G and the decimal point DP" />
+<Image src="/images/7_segment_display.png" width={350} height={350} layout="constrained"
+  alt="A seven-segment display with the segments labelled A to G and the decimal point DP" />
 
 The seven segments are labelled A to G, and the component reads them in that order: `A` top, `B` top right,
 `C` bottom right, `D` bottom, `E` bottom left, `F` top left and `G` middle.
@@ -17,7 +18,7 @@ The seven segments are labelled A to G, and the component reads them in that ord
 Digits must be upright: correct the skew of slanted displays before calling `recognize()`, because the side probes
 expect the two strokes on each side to share a column.
 
-## How a consumer uses it
+## How a Consumer Uses It
 
 The reader keeps its column projection between frames, so a consumer creates one instance, calls `reserve()` once at
 setup with the widest crop, and calls `recognize()` for each crop:
@@ -46,13 +47,14 @@ A run narrower than a third of the image height is a single bar and is read as a
 
 ## Recognition
 
-| Step | Behaviour |
-| --- | --- |
-| Threshold | Pixels above `threshold_level` are lit. |
-| Column projection | Each column counts its lit pixels. |
-| Digit runs | Consecutive columns with more than 1/40 of the height (at least 1 pixel) lit form one run. Runs narrower than the larger of 2 pixels and a thirtieth of the height, or whose tallest column is under a third of the height, are ignored as noise or marks. |
-| Segments | Seven probes sample a 3x3 window; the side probes use the strongest column of each half, so the vertical strokes can sit at the run edges or inset. |
-| Digit | The seven on/off bits index a table of the ten digits; an unmatched mask is unknown. |
+1. **Threshold**: pixels above `threshold_level` are lit.
+2. **Column projection**: each column counts its lit pixels.
+3. **Digit runs**: consecutive columns with more lit pixels than `height / 40` (rounded down, at least 1) form one
+   run. A run narrower than `height / 30` pixels (rounded down, at least 2), or whose tallest column has fewer than
+   `height / 3` (rounded down) lit pixels, is ignored as noise or a mark.
+4. **Segments**: seven probes sample a 3x3 window. The side probes use the strongest column of each half, so the
+   vertical strokes can sit at the run edges or inset.
+5. **Digit**: the seven on/off bits index a table of the ten digits; an unmatched mask is unknown.
 
 ## Memory
 
