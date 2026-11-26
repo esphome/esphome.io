@@ -71,6 +71,43 @@ If `path` begins with:
 
 Note that there may be multiple `builds` specified within a single JSON file.
 
+## Delta Patches
+
+On the ESP32 (ESP-IDF or Arduino framework), the `ota` block can also list patches against earlier firmware.
+A device whose [ESPHome OTA platform](/components/ota/esphome/#delta-updates-on-esp32) has `allow_delta: true`
+and runs one of those firmwares downloads the patch instead of the whole image:
+
+```json
+"ota": {
+  "md5": "1234567890abcdef1234567890abcdef",
+  "path": "firmware.ota.bin",
+  "delta": [
+    {
+      "from_sha256": "SHA-256 of the firmware the patch starts from",
+      "path": "previous-to-new.delta.bin",
+      "md5": "MD5 of the patch file"
+    }
+  ]
+}
+```
+
+- `from_sha256` is the SHA-256 the device reports for its running firmware: the one appended to the image, not the
+  hash of the whole file.
+- `path` follows the same rules as the `path` of the full image.
+- `md5` is the MD5 of the patch file. The top-level `md5` stays the MD5 of the full new image, which the patch has to
+  rebuild.
+
+If the patch can't be downloaded or applied, the device downloads the full image in the same update. Devices without
+`allow_delta`, and devices running other firmware, ignore the list.
+
+To make a patch and the values for its entry, run:
+
+```
+python -m esphome.delta_patch previous.ota.bin firmware.ota.bin previous-to-new.delta.bin
+```
+
+It writes the patch and prints `from_sha256`, the patch MD5 and its size. It needs the `detools` Python package.
+
 ## See Also
 
 - [HTTP Request](/components/http_request/)
