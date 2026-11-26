@@ -23,7 +23,6 @@ trigger this automation.
 
 ```yaml
 vbus:
-  uart_id: resol
   on_datagram:
     then:
       - lambda: |-
@@ -36,8 +35,8 @@ The lambda receives five arguments:
 - `command` (`uint16_t`): The datagram command.
 - `source` (`uint16_t`): The sender address.
 - `destination` (`uint16_t`): The recipient address.
-- `value_id` (`uint16_t`): The datagram's 16-bit parameter, also used as a value identifier by some commands.
-- `value` (`uint32_t`): The raw 32-bit parameter, with all bits preserved.
+- `value_id` (`uint16_t`): The datagram's 16-bit field; for value read and write commands, the value ID.
+- `value` (`uint32_t`): The datagram's 32-bit payload, with all bits preserved.
 
 Interpretation, scaling, and valid identifiers depend on the command and controller model. When a documented value
 is signed, use `static_cast<int32_t>(value)` before applying its scale. Arguments are passed by value and remain
