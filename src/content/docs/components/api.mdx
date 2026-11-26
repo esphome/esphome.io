@@ -117,6 +117,16 @@ api:
   a client with a stale encryption key, does not hold off the reboot.
   Can be disabled by setting this to `0s`. Defaults to `15min`.
 
+- **keepalive** (*Optional*, [Time](/guides/configuration-types/#time)): How long the connection may be idle before
+  the device sends a ping to the client. The device disconnects a client that doesn't answer within 1.5 times this
+  interval (at most 5 minutes) after the ping. While a vanished client is not yet disconnected, it keeps occupying
+  one of the `max_connections` slots. A value other than the default is also sent to the client when it connects, so
+  clients that support it ping less often and wait longer for an answer. Raise it for battery-powered devices that
+  sleep between radio polls, such as an OpenThread `MTD` with a long `poll_period`, where frequent pings dominate
+  power consumption. A longer interval also means that a lost connection, for example after a reboot, is detected
+  later.
+  Range `60s` to `1h`, so it can only lengthen the default. Defaults to `60s`.
+
 - **wizard** (*Optional*): A setup wizard that Home Assistant shows when the device is added.
   See [Wizard](#wizard).
 
@@ -461,8 +471,9 @@ This [Condition](/automations/actions/#all-conditions) checks if at least one cl
   clients that have subscribed to entity state updates. This filters out log-only connections, which can cause false
   positives when waiting for Home Assistant. Since ESPHome 2026.4.0, `esphome logs` (also used by the
   [ESPHome Device Builder](/install/) log viewer) subscribes to entity states by default to show state changes in the
-  log, which means it is counted here unless started with [`--no-states`](/guides/cli/#logs-command).
-  Defaults to `false`.
+  log, which means it is counted here unless state changes are turned off: with
+  [`--no-states`](/guides/cli/#logs-command) or the `ESPHOME_LOG_STATES` environment variable set to `false` for
+  `esphome logs`, or with the **States** button in the Device Builder log window. Defaults to `false`.
 
 **Check if any client is connected:**
 
