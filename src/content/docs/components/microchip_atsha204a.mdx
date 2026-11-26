@@ -19,7 +19,7 @@ electrical specifications.
 
 ## Configuration
 
-For `type: i2c`, connect the chip directly to a top-level [I²C bus](/components/i2c/) running at 10–100 kHz.
+For `type: i2c`, connect the chip directly to a top-level [I²C bus](/components/i2c/) running at 25–100 kHz.
 
 ```yaml
 microchip_atsha204a:
@@ -65,7 +65,8 @@ microchip_atsha204a:
 Use `type: swi_uart` with a dedicated [hardware UART](/components/uart/) at 230400 baud, 7 data
 bits, no parity and 1 stop bit. Use non-inverted TX and RX and leave `flow_control_pin` unset.
 
-On ESP32, ESP8266, and RP2040, set `rx_buffer_size` to at least 680 bytes. On ESP32, keep `rx_timeout` above zero.
+On ESP32, ESP8266, and RP2040, set `rx_buffer_size` to at least 680 bytes.
+On ESP32, keep `rx_timeout` between 1 and 32 (default 2).
 On ESP8266, use UART0 (TX/RX on GPIO1/GPIO3 or GPIO15/GPIO13) and disable serial logging on that port or move it to
 UART1.
 
