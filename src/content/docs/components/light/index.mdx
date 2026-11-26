@@ -1490,8 +1490,10 @@ merged):
 - The source with the highest priority wins.
 - Between sources of equal priority, the one with the lowest CID wins, so the same set of sources always gives the
   same result.
-- A source that sends nothing for 2.5 seconds, or sends a stream terminated packet, is dropped, and the next packet
-  from the remaining sources takes over.
+- A source that sends nothing for 2.5 seconds, or sends a stream terminated packet, is dropped. The best of the
+  remaining sources then takes over: until a source of at least the priority of the best one kept out so far
+  sends, lower priority sources are ignored, for up to 2.5 seconds.
+- When a source takes over, the channels it does not send are set to zero.
 - Packets marked as preview data are ignored, and so are out-of-order packets from the winning source.
 
 Any number of sources is handled: only the winning source is remembered for each universe, so there is no "sources
