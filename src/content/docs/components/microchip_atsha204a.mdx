@@ -62,11 +62,23 @@ microchip_atsha204a:
 ### Single-Wire UART Transport
 
 Use `type: swi_uart` with a dedicated [hardware UART](/components/uart/) at 230400 baud, 7 data
-bits, no parity and 1 stop bit. Use non-inverted TX and RX, leave `flow_control_pin` unset, and set
-`rx_buffer_size` to at least 680 bytes. On ESP32, keep `rx_timeout` above zero. On ESP8266, use UART0
-(TX/RX on GPIO1/GPIO3 or GPIO15/GPIO13) and disable serial logging on that port or move it to UART1.
-LibreTiny sets its hardware UART receive buffer at build time. ESPHome's `rx_buffer_size` has no effect
-on LibreTiny, so ATSHA204A on this platform uses I²C.
+bits, no parity and 1 stop bit. Use non-inverted TX and RX and leave `flow_control_pin` unset.
+
+On ESP32, ESP8266, and RP2040, set `rx_buffer_size` to at least 680 bytes. On ESP32, keep `rx_timeout` above zero.
+On ESP8266, use UART0 (TX/RX on GPIO1/GPIO3 or GPIO15/GPIO13) and disable serial logging on that port or move it to
+UART1.
+
+On LibreTiny 1.8.0 or later, a receive buffer override is **required**. Set `LT_SERIAL_BUFFER_SIZE` to at least
+680 bytes under the board's `framework.options`. This sets the shared receive buffer size for all hardware UARTs.
+Use I²C on LN882x, whose UART backend lacks seven-bit framing support.
+
+```yaml
+bk72xx:
+  board: cb3s
+  framework:
+    options:
+      LT_SERIAL_BUFFER_SIZE: 1024
+```
 
 Connect RX to the pulled-up signal. Connect TX through a low-forward-voltage Schottky diode with the
 anode at the signal and the cathode at TX, or through an equivalent open-drain buffer.
