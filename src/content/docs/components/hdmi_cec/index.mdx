@@ -215,11 +215,11 @@ For an advanced implementation, a beta-test version of the required code can be 
 
 ## Extended Installation
 
-Two additions make the connection more robust.
+Three additions make the component behavior more robust.
 
 ![Schematics with a relay and a diode](images/cec_uart_schematics.png)
 
-### Disconnect from the CEC Line on Power-Down
+### 1. Disconnect from the CEC Line on Power-Down
 
 The CEC line stays at 3.3V while the TV is on. A GPIO pin must not see a voltage above the device's own
 supply, so with the ESPHome device powered off the line is outside the pin's operating conditions. This is
@@ -229,10 +229,7 @@ The schematic shows a small signal relay (a TQ2-5V or G6K-2P-5V, for instance) t
 from the CEC line when the power is off. An I²C level shifter such as the TXS0102 or TCA9517 does the same
 job: it tolerates a bus voltage without local power, and its open-drain behaviour matches the CEC bus.
 
-The diode and the second pin in the schematic are for driving the line from a UART, an option that is not
-part of this component yet; they can be left out.
-
-### Connect the HDMI Hot Plug Detect Pin
+### 2. Connect the HDMI Hot Plug Detect Pin
 
 HDMI pin 19, Hot Plug Detect, is not part of CEC but tells when the cable is plugged into a TV. The TV
 drives it to 5V through a 1K pull-up resistor, so it has to be limited to 3.3V: the line can be loaded to GND
@@ -259,7 +256,7 @@ binary_sensor:
       - delayed_off: 300ms
 ```
 
-### Use a UART to send messages
+### 3. Use a UART to send messages
 Configuring the *UART* will offload the sending of messages from the core, and thereby
 resolve the issues of long operation times. Without it, you will likely encounters warnings like:
 
@@ -268,15 +265,15 @@ resolve the issues of long operation times. Without it, you will likely encounte
 ```
 Such long operation times might disturb other functionality like Wifi, or even cause OS crashes and reboot.
 
-As shown in the schematics, the UART pin is connected to the CEC line through a small-signal diode.
+As shown in the schematics, the UART pin is connected to the CEC line through a diode.
 This diode converts the standard UART output drive to *pull down* functionality.
 Any standard small-signal diode should work, such as types 1N4148, 1N914.
 Schottky type diodes nicely offer a smaller voltage drop, but a low-leakage type is needed such as BAT81.
 Do NOT choose larger rectifier diodes, as those will have too high reverse leakage current.
 
-To enable the UART with the hdmi_cec component, the yaml file must declare the UART,
+To enable the UART with the `hdmi_cec` component, the yaml file must declare the UART,
 and pass its id to the cec component.
-A particular baudrate must be specified to match the CEC protocol.
+A specific baudrate must be set to match the CEC protocol.
 For example:
 
 ```yaml
@@ -293,16 +290,16 @@ hdmi_cec:
 
 Maybe, the diode on the UART output could be replaced by just a wire for some types of microcontrollers,
 such as an `esp32s3` or an `rp2350`, thanks to their flexible GPIO matrix:
-*After* the UART driver has done its standard pin configuration,
+*Immediatly after* the UART driver has done its standard pin configuration,
 the pin mode can probably be overwritten to become *open drain*.
-Omitting the diode for such cases would need further exploration.
+Omitting the diode in such case would need further exploration.
 
 
 ## Note on the HDMI Standard
 
 The HDMI 1.3a specification, available from [hdmi.org](https://www.hdmi.org), describes the CEC messages in
 *Supplement 1, Consumer Electronics Control*. Later versions are not public.
-This component is developed to support HDMI 1.4, in particular to handle the HDMI-ARC (audio) functionality.
+This component is developed to support HDMI 1.4, in particular to handle the HDMI-ARC (audio device) functionality.
 
 Marketing a product as **HDMI** needs a licence from the HDMI organisation; this component itself is
 available under the ESPHome licence.
