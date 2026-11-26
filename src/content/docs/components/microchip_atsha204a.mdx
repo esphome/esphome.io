@@ -49,7 +49,7 @@ Use `type: swi_rmt` on an original ESP32 with ESP-IDF 5.5.4 or newer. RMT transm
 `rx_pin` of a dedicated, receive-only [UART bus](/components/uart/) configured for 230400 baud,
 7 data bits, no parity and 1 stop bit. Connect that GPIO to the signal wire with a pull-up.
 Use a non-inverted, output-capable GPIO other than GPIO3, GPIO9 or GPIO16, which can bypass the
-GPIO matrix. Set `rx_buffer_size` to at least 680 bytes.
+GPIO matrix. Set `rx_buffer_size` to at least 680 bytes and keep `rx_timeout` above zero.
 The component reserves one RMT transmit memory block (64 symbols).
 
 ```yaml
@@ -122,7 +122,8 @@ Configure at least one of `serial_number` or `chip_revision`.
 
 This action sends an opcode and its arguments. See the [datasheet][datasheet] for each command's
 parameter and data encodings. The automation continues after issuing the request. Use `on_result`
-for steps that need the reply. Polling is suspended while a command or session is active.
+for steps that need the reply. Without a result handler, command failures are logged.
+Polling is suspended while a command or session is active.
 
 This example reads `UserExtra`, the first byte of configuration word `0x15`, when the chip is
 detected. Set `id: chip` and `update_interval: 1s` on the hub to enable the presence check.
