@@ -454,7 +454,8 @@ id(my_canopen).read_sdo_data(0x01, 0x1008, 0, name, sizeof(name), [](void *conte
 // the node's own NMT state: UNKNOWN until the component's first loop pass (also in an on_boot automation that runs
 // right after setup) and without node_id
 id(my_canopen).get_nmt_state() == canopen::NMTState::NMT_STATE_OPERATIONAL;
-// OPERATIONAL, PRE_OPERATIONAL or STOPPED; no NMT master needed (false without node_id)
+// OPERATIONAL, PRE_OPERATIONAL or STOPPED, applied right away; no NMT master needed (false without node_id, and while a
+// command for this node from an automation the component's processing runs, e.g. on_node_event, isn't applied yet)
 id(my_canopen).set_nmt_state(canopen::NMTState::NMT_STATE_OPERATIONAL);
 ```
 
@@ -466,7 +467,8 @@ The NMT master is compiled in when the configuration uses a [`canopen.nmt`](#can
 ```cpp
 // false (with a warning in the log) without node_id, for a node id above 127, while the previous NMT command is still
 // waiting to be sent (a command the CAN controller can't take at once is resent from the main loop), or, for this
-// node's own id or 0, while the previous command for this node isn't applied yet (in the next loop pass)
+// node's own id or 0, while the previous command for this node isn't applied yet. A command for this node applies right
+// away; from an automation the component's processing runs (e.g. on_node_event), in its next pass
 id(my_canopen).send_nmt(0x01, canopen::NMTCommand::NMT_COMMAND_PRE_OPERATIONAL);
 ```
 
