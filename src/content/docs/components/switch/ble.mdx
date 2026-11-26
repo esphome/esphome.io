@@ -1,0 +1,44 @@
+---
+description: "Instructions for setting up a switch that turns Bluetooth on and off in ESPHome."
+title: "Bluetooth Switch"
+---
+
+The `ble` switch platform provides switches that control Bluetooth. It currently requires the
+[ESP32 BLE](/components/esp32_ble/) component to be configured on the same device.
+
+```yaml
+# Example configuration entry
+switch:
+  - platform: ble
+    type: enabled
+    name: "Bluetooth"
+```
+
+## Configuration Variables
+
+- **type** (**Required**, enum): The kind of Bluetooth switch. The only option is [`enabled`](#enabled-switch).
+- **ble_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the
+  [ESP32 BLE](/components/esp32_ble/) component to control.
+- **restore_mode** (*Optional*): Control how the switch attempts to restore state on bootup.
+  Defaults to `RESTORE_DEFAULT_ON`. See [Switch](/components/switch/#config-switch) for the options.
+- All other options from [Switch](/components/switch/#config-switch), except `inverted`.
+
+Only one switch of each type can be configured.
+
+## `enabled` Switch
+
+The `enabled` switch turns Bluetooth on and off, the same as the
+[`ble.enable`](/components/esp32_ble/#ble-enable-action) and [`ble.disable`](/components/esp32_ble/#ble-disable-action)
+actions. The switch also follows those actions, so it always shows the Bluetooth state that was last requested, and
+that state is the one saved for `restore_mode`.
+
+When the switch is configured, its `restore_mode` decides whether Bluetooth is enabled when the device starts. With
+the default `RESTORE_DEFAULT_ON`, Bluetooth that was turned off stays off after a restart. The
+[`enable_on_boot`](/components/esp32_ble/#configuration-variables) option of the ESP32 BLE component is only used
+when `restore_mode` is `DISABLED`.
+
+## See Also
+
+- [ESP32 BLE](/components/esp32_ble/)
+- [Bluetooth Proxy](/components/bluetooth_proxy/)
+- [Switch Components](/components/switch/)
