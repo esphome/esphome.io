@@ -1496,8 +1496,11 @@ merged):
 - When a source takes over, the channels it does not send are set to zero.
 - Packets marked as preview data are ignored, and so are out-of-order packets from the winning source.
 
-Any number of sources is handled: only the winning source is remembered for each universe, so there is no "sources
-exceeded" condition. At the debug log level, one line is logged when a source takes over or leaves.
+Any number of sources is handled: only the winning source, and the best priority among the sources it keeps out,
+are remembered for each universe, so there is no "sources exceeded" condition. At the debug log level, a line is
+logged when a different source takes over a universe, and when that source leaves. To keep the log short, a source
+taking over several universes is logged once, so these lines show the source changes but are not a complete record
+of them.
 
 ### Adalight Effect
 
