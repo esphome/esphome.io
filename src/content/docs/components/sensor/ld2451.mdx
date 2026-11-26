@@ -1,0 +1,108 @@
+---
+description: "Instructions for setting up the Hi-Link HLK-LD2451 vehicle detection radar in ESPHome."
+title: "LD2451 Sensor"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+## Component
+
+The `ld2451` component allows you to use the Hi-Link HLK-LD2451 24GHz millimeter-wave radar module with ESPHome.
+The module is made by [Hi-Link](https://www.hlktech.net/) (vendor website).
+
+The LD2451 detects moving vehicles up to 100 m away and reports the angle, distance, speed (up to 120 km/h) and
+signal-to-noise ratio of each one. It uses Doppler, so it only sees things that move: parked cars and other stationary
+objects are not reported.
+
+The component currently offers the [sensor platform](#sensor) only.
+
+The [UART](/components/uart/) bus must be configured with at least the RX pin connected. The module reports on its
+own, so the component does not send it anything yet. The module's default baud rate is `115200` with 8 data bits,
+no parity, and 1 stop bit, and the component requires those settings. Use of a hardware UART is recommended.
+
+```yaml
+# Example configuration entry
+uart:
+  rx_pin: GPIO10
+  tx_pin: GPIO9
+  baud_rate: 115200
+
+ld2451:
+  id: ld2451_radar
+```
+
+### Configuration Variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID for this LD2451 component.
+- **uart_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the
+  [UART Component](/components/uart/) to use. Required if multiple UARTs are configured.
+
+## Sensor
+
+The `ld2451` sensor platform exposes the target count and the data for up to 5 targets, in the order the module
+reports them.
+
+```yaml
+sensor:
+  - platform: ld2451
+    ld2451_id: ld2451_radar
+    target_count:
+      name: "Target Count"
+    target_1:
+      angle:
+        name: "Target 1 Angle"
+      distance:
+        name: "Target 1 Distance"
+      speed:
+        name: "Target 1 Speed"
+      snr:
+        name: "Target 1 SNR"
+    # target_2 to target_5 follow the same shape
+```
+
+### Configuration Variables
+
+- **ld2451_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the parent LD2451
+  component. Required if multiple LD2451 components are configured.
+- **target_count** (*Optional*): Number of targets currently detected (0 to 5).
+  All options from [Sensor](/components/sensor/).
+- **target_1**, **target_2**, **target_3**, **target_4**, **target_5** (*Optional*): Data for one target.
+  Each accepts the following sensors:
+  - **angle** (*Optional*): Angle of the target from the module's forward axis, in degrees.
+    All options from [Sensor](/components/sensor/).
+  - **distance** (*Optional*): Distance from the module to the target in meters, in 1 m steps.
+    All options from [Sensor](/components/sensor/).
+  - **speed** (*Optional*): Speed of the target in km/h. Negative while the target approaches the module, positive
+    while it moves away. All options from [Sensor](/components/sensor/).
+  - **snr** (*Optional*): Signal-to-noise ratio of the detection, from 0 to 255. All options from
+    [Sensor](/components/sensor/).
+
+While no target is detected, the module sends an empty report about every 1.4 seconds. The target count then reads
+0 and the target sensors report an unknown state, as they do for any slot the latest report does not fill.
+
+### Placement
+
+- Mount the module with its antenna patterns oriented as shown in the vendor's user manual. Turned 90 degrees, the
+  angle it reports measures height instead of the side-to-side position, and nearby movement such as branches can be
+  reported far from the road.
+- Point the module along the road rather than across it. The speed it measures is the part of a vehicle's speed
+  towards or away from the module, so a vehicle crossing at a wide angle reads slower than it is, and it stays in view
+  for less time.
+- The module reports a vehicle only while it is confident of the detection, a few times a second at most, rather than
+  at a fixed rate. Tilting it down slightly so that the beam meets the road where vehicles pass gives more reports per
+  vehicle.
+
+### Direction
+
+The serial protocol (V1.03) documents direction byte `0x00` as approaching, but the module sends `0x01` for
+approaching targets: it matches the module's own approach alarm and a falling distance. The component follows the
+module, so the sign of **speed** is correct.
+
+## See Also
+
+- [LD2410 Sensor](/components/sensor/ld2410/)
+- [LD2412 Sensor](/components/sensor/ld2412/)
+- [LD2450 Sensor](/components/sensor/ld2450/)
+- [LD2460 Sensor](/components/sensor/ld2460/)
+- [UART Bus](/components/uart/)
+- <APIRef text="ld2451.h" path="ld2451/ld2451.h" />
