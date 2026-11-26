@@ -45,12 +45,12 @@ When connecting directly to a host computer running HA OS, configuration works l
 2. Visit [Settings -> System -> Network](https://my.home-assistant.io/redirect/network/) and
 take note of the network interfaces
 3. Connect the microcontroller
-4. Reboot HA OS. Note: Restarting Home Assistant is __not__ enough.
+4. Reboot HA OS. Note: Restarting Home Assistant is **not** enough.
 5. Visit [Settings -> System -> Network](https://my.home-assistant.io/redirect/network/) again.
-You should find a new one, for example ``enu1u4i2``.
+You should find a new one, for example `enu1u4i2`.
 6. Configure the new interface with IPv4 using "Static".\
-Add the address ``192.168.137.1`` and set the gateway to ``192.168.137.1``.
-7. Optionally, use a SSH addon to run ``ping 192.168.137.100``. It should respond.
+Add the address `192.168.137.1/24` and leave the gateway empty: the microcontroller is on the link.
+7. Optionally, use a SSH addon to run `ping 192.168.137.100`. It should respond.
 8. [Add ESPHome integration](https://my.home-assistant.io/redirect/config_flow_start/?domain=esphome)
 with host `192.168.137.100`
 
@@ -66,10 +66,10 @@ and static ip address `192.168.137.100`
 3. Win + R, then type `ncpa.cpl` and hit Enter
 4. Connect the microcontroller again
 5. A new network connection should appear
-6. Right click your __normal__ network connection, select Properties.
+6. Right click your **normal** network connection, select Properties.
 7. Select the `Sharing` Tab
 8. Check the box for `Allow other network users to connect through this computer’s Internet connection`
-9. As `Home networking connection`, choose the __new__ network connection that appeared in Step 5.
+9. As `Home networking connection`, choose the **new** network connection that appeared in Step 5.
 10. Win + R, then type `cmd` and hit Enter
 11. `ping 192.168.137.100`. It should respond.
 12. Follow [Connecting to Home Assistant via API](#connecting-to-home-assistant-via-api).
@@ -83,10 +83,10 @@ macOS needs no driver: the microcontroller appears as a new network interface.
 1. Prepare your microcontroller by flashing ESPHome with Ethernet over USB and static ip address `192.168.137.100`
 2. Connect the microcontroller
 3. Open System Settings > Network and select the new interface (its name depends on the board, for example
-   `RP2040`), or find it as a new `en` interface in ``ifconfig``
+   `RP2040`), or find it as a new `en` interface in `ifconfig`
 4. Under Details > TCP/IP, set Configure IPv4 to Manually, with IP address `192.168.137.1` and subnet mask
    `255.255.255.0`
-5. ``ping 192.168.137.100``. It should respond.
+5. `ping 192.168.137.100`. It should respond.
 6. Follow [Connecting to Home Assistant via API](#connecting-to-home-assistant-via-api).
 
 > [!WARNING]
@@ -109,14 +109,14 @@ One of them will be `active (running)`.
 
 1. Prepare your microcontroller by flashing ESPHome with Ethernet over USB and static ip address `192.168.137.100`
 2. Disconnect the microcontroller
-3. ``ip link`` to check your existing network interfaces
+3. `ip link` to check your existing network interfaces
 4. Connect the microcontroller again
-5. ``ip link`` again, a new network interface should be listed. This example assumes ``usb0``
-6. ``nmcli connection add type ethernet ifname usb0 con-name pico ipv4.method shared ipv4.addresses 192.168.137.1/24``
-7. ``sudo iptables -A FORWARD -i usb0 -j ACCEPT`` (or nftables equivalent)
-8. ``sudo iptables -A FORWARD -o usb0 -j ACCEPT`` (or nftables equivalent)
-9. ``ping <ip address from previous step>``
-10. make iptables rules persistent by adding them to the files in ``/etc/iptables/*.rules`` (or nftables equivalent)
+5. `ip link` again, a new network interface should be listed. This example assumes `usb0`
+6. `nmcli connection add type ethernet ifname usb0 con-name pico ipv4.method shared ipv4.addresses 192.168.137.1/24`
+7. `sudo iptables -A FORWARD -i usb0 -j ACCEPT` (or nftables equivalent)
+8. `sudo iptables -A FORWARD -o usb0 -j ACCEPT` (or nftables equivalent)
+9. `ping 192.168.137.100`
+10. make iptables rules persistent by adding them to the files in `/etc/iptables/*.rules` (or nftables equivalent)
 11. Follow [Connecting to Home Assistant via API](#connecting-to-home-assistant-via-api).
 
 #### dhcpcd
@@ -125,23 +125,23 @@ dhcpcd cannot act as a DHCP server, so we must use static ip addresses.
 
 1. Prepare your microcontroller by flashing ESPHome with Ethernet over USB and static ip address `192.168.137.100`
 2. Disconnect the microcontroller
-3. ``ip link`` to check your existing network interfaces
+3. `ip link` to check your existing network interfaces
 4. Connect the microcontroller again
-5. ``ip link`` again, a new network interface should be listed. This example assumes ``usb0``
-6. add the following to ``/etc/dhcpcd.conf``:
+5. `ip link` again, a new network interface should be listed. This example assumes `usb0`
+6. add the following to `/etc/dhcpcd.conf`:
 
 ```ini
 interface usb0
 static ip_address=192.168.137.1/24
 ```
 
-7. ``systemctl restart dhcpcd``
-8. ``ping 192.168.137.100``
-9. ``sudo sysctl -w net.ipv4.conf.all.forwarding=1``
-10. ``sudo iptables -A FORWARD -i usb0 -j ACCEPT`` (or nftables equivalent)
-11. ``sudo iptables -A FORWARD -o usb0 -j ACCEPT`` (or nftables equivalent)
-12. ``sudo iptables -t nat -A POSTROUTING -s 192.168.137.0/24 ! -o usb0 -j MASQUERADE`` (or nftables equivalent)
-13. make iptables rules persistent by adding them to the files in ``/etc/iptables/*.rules`` (or nftables equivalent)
+7. `systemctl restart dhcpcd`
+8. `ping 192.168.137.100`
+9. `sudo sysctl -w net.ipv4.conf.all.forwarding=1`
+10. `sudo iptables -A FORWARD -i usb0 -j ACCEPT` (or nftables equivalent)
+11. `sudo iptables -A FORWARD -o usb0 -j ACCEPT` (or nftables equivalent)
+12. `sudo iptables -t nat -A POSTROUTING -s 192.168.137.0/24 ! -o usb0 -j MASQUERADE` (or nftables equivalent)
+13. make iptables rules persistent by adding them to the files in `/etc/iptables/*.rules` (or nftables equivalent)
 14. Follow [Connecting to Home Assistant via API](#connecting-to-home-assistant-via-api).
 
 #### systemd-networkd
@@ -150,10 +150,10 @@ The `IPv4Forwarding=` and `IPv6Forwarding=` settings below need systemd 256 or l
 
 1. Prepare your microcontroller by flashing ESPHome with Ethernet over USB and static ip address `192.168.137.100`
 2. Disconnect the microcontroller
-3. ``ip link`` to check your existing network interfaces
+3. `ip link` to check your existing network interfaces
 4. Connect the microcontroller again
-5. ``ip link`` again, a new network interface should be listed. This example assumes ``usb0``
-6. create ``/etc/systemd/network/pico.network`` with this content:
+5. `ip link` again, a new network interface should be listed. This example assumes `usb0`
+6. create `/etc/systemd/network/pico.network` with this content:
 
 ```systemd
 [Match]
@@ -180,11 +180,11 @@ UplinkInterface=:auto
 
 ```
 
-7. ``sudo iptables -A FORWARD -i usb0 -j ACCEPT`` (or nftables equivalent)
-8. ``sudo iptables -A FORWARD -o usb0 -j ACCEPT`` (or nftables equivalent)
-9. ``sudo systemctl restart systemd-networkd``
-10. ``ping <ip address from previous step>``
-11. make iptables rules persistent by adding them to the files in ``/etc/iptables/*.rules`` (or nftables equivalent)
+7. `sudo iptables -A FORWARD -i usb0 -j ACCEPT` (or nftables equivalent)
+8. `sudo iptables -A FORWARD -o usb0 -j ACCEPT` (or nftables equivalent)
+9. `sudo systemctl restart systemd-networkd`
+10. `ping 192.168.137.100`
+11. make iptables rules persistent by adding them to the files in `/etc/iptables/*.rules` (or nftables equivalent)
 12. Follow [Connecting to Home Assistant via API](#connecting-to-home-assistant-via-api).
 
 #### Manual Configuration
@@ -193,13 +193,13 @@ This config will not survive a Linux reboot, but may be ok for testing.
 
 1. Prepare your microcontroller by flashing ESPHome with Ethernet over USB and static ip address `192.168.137.100`
 2. Disconnect the microcontroller
-3. ``ip link`` to check your existing network interfaces
+3. `ip link` to check your existing network interfaces
 4. Connect the microcontroller again
-5. ``ip link`` again, a new network interface should be listed. This example assumes ``usb0``
-6. You can also check ``lsusb -t`` and ``dmesg``
-7. ``ip link set usb0 up``
-8. ``ip addr add 192.168.137.1/24 dev usb0``
-9. ``ping 192.168.137.100``
+5. `ip link` again, a new network interface should be listed. This example assumes `usb0`
+6. You can also check `lsusb -t` and `dmesg`
+7. `ip link set usb0 up`
+8. `ip addr add 192.168.137.1/24 dev usb0`
+9. `ping 192.168.137.100`
 
 ## Connecting to Home Assistant via API
 
@@ -213,7 +213,8 @@ you can setup the ESPHome integration directly.
 ### Outgoing Connection
 
 If Home Assistant runs on a different computer, we need to establish a connection across the NAT.\
-One way is to use [Outgoing Connections](/components/api/#outgoing-connections).
+One way is to use [Outgoing Connections](/components/api/#outgoing-connections), which need Home Assistant
+2026.10.0 or later. The device dials Home Assistant on port `6054`, so the USB host must route or forward it.
 
 1. Add an encryption key and outgoing connection to your yaml.
 
@@ -229,10 +230,10 @@ api:
 You can use the key generator from the [API docs](/components/api/#configuration-variables).
 
 2. Flash the changes to your microcontroller.
-3. Build a SSH tunnel for the initial configuration, which must be an ingoing connection.\
+3. Build a SSH tunnel for the initial configuration, which must be an incoming connection.\
 On the USB Host: `ssh user@your-home-assistant-server -R 6053:192.168.137.100:6053`
 4. [Add ESPHome integration](https://my.home-assistant.io/redirect/config_flow_start/?domain=esphome)
-5. Host is ``127.0.0.1``
+5. Host is `127.0.0.1`
 6. Enter the encryption key when asked.
 7. After successful setup, stop the SSH tunnel.
 8. The connection should fail and then reestablish on its own as the outbound connection comes alive.
