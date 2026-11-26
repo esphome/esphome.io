@@ -33,7 +33,8 @@ mqtt:
 
 - **broker** (**Required**, string): The host of your MQTT broker.
 - **enable_on_boot** (*Optional*, boolean): If enabled, MQTT will be enabled on boot. Defaults to `true`.
-- **port** (*Optional*, int): The port to connect to. Defaults to `1883`, or `8883` when `tls` is enabled.
+- **port** (*Optional*, int): The port to connect to. Defaults to `1883`, or `8883` when `tls` or
+  `ssl_fingerprints` is set.
 - **username** (*Optional*, string): The username to use for
   authentication. Empty (the default) means no authentication.
 
@@ -416,12 +417,12 @@ openssl s_client -connect mqtt.example.com:8883 < /dev/null 2>/dev/null | openss
 ```yaml
 mqtt:
   broker: mqtt.example.com
-  port: 8883
   ssl_fingerprints:
     - a502ff13999f8b398ef1834f1123650b3236fc07
 ```
 
-The fingerprint can be written as 40 hexadecimal digits or as 20 pairs separated by colons, as `openssl` prints it.
+`openssl` prints a line such as `SHA1 Fingerprint=A5:02:FF:...`; copy only the part after `=`. The fingerprint can be
+written as 40 hexadecimal digits or as 20 pairs separated by colons, in upper or lower case.
 
 <span id="mqtt-tls-idf"></span>
 
