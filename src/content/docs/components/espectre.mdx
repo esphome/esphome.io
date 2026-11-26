@@ -49,10 +49,10 @@ movement. It cannot tell whether a person who stays still is in the room.
   traffic. Defaults to the Wi-Fi gateway. Use a unicast address that answers the selected mode. DNS modes need a
   DNS server on port 53, with TCP support for `dns_tcp`. Cannot be used with `wifi_raw` or `external`.
 - **traffic_generator_target_mac** (*Optional*, MAC Address): Where `wifi_raw` sends its Null Data frames.
-  Defaults to the access point the device is connected to, also after roaming. Set it to the Wi-Fi station MAC
-  address of another ESPectre device in `external` mode to measure the link between the two devices. See
-  [Two-Device Sensing](#two-device-sensing). Must be a unicast address. With the device's own address, raw
-  traffic does not start. The option applies whenever `wifi_raw` runs, also after the
+  Defaults to the currently connected access point, including after roaming. An explicitly configured
+  BSSID stays fixed. Use a unicast MAC address other than the device's own Wi-Fi station MAC. Set it to the
+  Wi-Fi station MAC address of another ESPectre device in `external` mode to measure the link between the two
+  devices. See [Two-Device Sensing](#two-device-sensing). The option applies whenever `wifi_raw` runs, also after the
   [traffic source select](#selects) switches to it. Not available on ESP32-C6 or with
   `csi_capture_profile: ht_vht`.
 - **csi_traffic_multicast_group** (*Optional*, IPv4 address): Multicast group the device joins in `external`
@@ -68,7 +68,8 @@ movement. It cannot tell whether a person who stays still is in the room.
 - **motion_off_hits** (*Optional*, int): How many detector evaluations in a row must be below the threshold to
   clear motion. Range 1 to 20. Defaults to `3`.
 
-You can also change `motion_on_hits` and `motion_off_hits` at runtime with the [numbers](#numbers).
+You can also change `motion_on_hits` and `motion_off_hits` at runtime with the [numbers](#numbers), and
+`traffic_generator_target_mac` with the [text](#text).
 
 ### Traffic Sources
 
@@ -192,7 +193,7 @@ The component changes these Wi-Fi settings for the whole firmware:
 ### Runtime Restarts
 
 If the SDK runtime fails to start or stops with a fault, the component sets its error status, logs the fault,
-and restarts the runtime after 30 seconds. The restarted runtime keeps the values set from the
+and restarts the runtime after 30 seconds. The restarted runtime keeps the values set from the [text](#text),
 [numbers](#numbers), [selects](#selects), and [switch](#switch). Lightweight detection calibrates again. High
 Accuracy detection keeps a threshold set from the threshold number, and otherwise starts from the model's default
 threshold.
@@ -398,6 +399,40 @@ The selected options are saved and restored after a reboot. If nothing is saved,
 configuration value. Changing `traffic_generator_mode`, `detection_algorithm`, or `csi_sample_spacing` in the
 configuration discards the saved option. If the SDK rejects an option, the component logs a warning and the
 select stays on the active option.
+
+## Text
+
+The text changes where `wifi_raw` sends its frames at runtime. It is a configuration entity. It is not available
+on ESP32-C6 or with `csi_capture_profile: ht_vht`, because `wifi_raw` cannot run there.
+
+```yaml
+text:
+  - platform: espectre
+    traffic_generator_target_mac:
+      name: "CSI Traffic Target MAC"
+```
+
+- **espectre_id** (*Optional*, [ID](/guides/configuration-types/#id)): ID of the ESPectre component.
+  Automatically selected when omitted.
+- **traffic_generator_target_mac** (**Required**): Runtime value of
+  [`traffic_generator_target_mac`](#configuration-variables). All options from [Text](/components/text/).
+  `mode` defaults to `text`.
+
+Set the text to `auto` to send to the access point the device is connected to, or to a unicast MAC address such as
+`aa:bb:cc:dd:ee:ff` to send to another device. See [Two-Device Sensing](#two-device-sensing). The text shows the
+address in upper case. If the target does not acknowledge the frames, the ESP receives no CSI from those
+transmissions and may be hard to reach over Wi-Fi. Set the text back to `auto` to use the access point again.
+
+A new value applies at once while `wifi_raw` runs, and restarts Lightweight calibration. High Accuracy keeps its
+threshold. With another traffic source, the value is kept and used when the
+[traffic source select](#selects) switches to `wifi_raw`.
+
+The device saves the text value separately for each `traffic_generator_target_mac` setting in YAML
+(default `auto`). At boot it restores the value saved for the current setting, or uses the YAML target if none
+has been saved. Switching back to a previous YAML target restores the value saved for it.
+
+Enter `auto` or a unicast MAC address other than the device's own Wi-Fi station MAC. If the target is rejected,
+ESPHome logs a warning and the text entity shows the previous target again.
 
 ## Switch
 
