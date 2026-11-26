@@ -1,0 +1,227 @@
+---
+title: "Microchip ATSHA204A"
+description: "Read chip identity and run commands on an ATSHA204A CryptoAuthentication device."
+---
+
+import Figure from '@components/Figure.astro';
+
+The `microchip_atsha204a` component communicates with a Microchip [ATSHA204A][product] over I²C or the
+chip's single-wire interface (SWI). It can report chip presence, serial number and revision, and run
+the chip's commands from automations. See the [Microchip datasheet][datasheet] for pinouts and
+electrical specifications.
+
+<Figure
+  src="/images/atsha204a.webp"
+  alt="Microchip ATSHA204A in a three-lead package"
+  width={512}
+  height={421}
+/>
+
+## Configuration
+
+For `type: i2c`, connect the chip directly to a top-level [I²C bus](/components/i2c/) running at 25–100 kHz.
+
+```yaml
+microchip_atsha204a:
+  type: i2c
+```
+
+To wake the chip, the I²C transport attempts a write to the general-call address (`0x00`) to hold SDA low.
+The chip requires SDA to remain high for at least 2.5 ms afterward. Multiplexer channels cannot guarantee
+that interval during channel switching. Use a dedicated bus if another device responds to general calls.
+
+### Configuration Variables
+
+- **type** (**Required**, string): One of `i2c`, `swi_rmt`, or `swi_uart`.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of this hub.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often to check for the
+  chip and read its identity. Defaults to `never`. Set an interval to update the entities automatically, or
+  use [`component.update`](/automations/actions/#component-update-action) to poll on demand.
+
+### I²C Transport
+
+- **i2c_id** (*Optional*, [ID](/guides/configuration-types/#id)): The I²C bus to use. Set this if you have
+  more than one bus.
+- **address** (*Optional*, int): The chip's 7-bit address. Defaults to `0x64`.
+
+### Single-Wire RMT Transport
+
+Use `type: swi_rmt` on an original ESP32 with ESP-IDF 5.5.4 or newer. RMT transmits on the
+`rx_pin` of a dedicated, receive-only [UART bus](/components/uart/) configured for 230400 baud,
+7 data bits, no parity and 1 stop bit. Connect that GPIO to the signal wire with a pull-up.
+Use a non-inverted, output-capable GPIO other than GPIO3, GPIO9 or GPIO16, which can bypass the
+GPIO matrix. Set `rx_buffer_size` to at least 680 bytes and keep `rx_timeout` between 1 and 32 (default 2).
+The component reserves one RMT transmit memory block (64 symbols).
+
+```yaml
+microchip_atsha204a:
+  type: swi_rmt
+```
+
+- **uart_id** (*Optional*, [ID](/guides/configuration-types/#id)): The UART bus to use.
+
+### Single-Wire UART Transport
+
+Use `type: swi_uart` with a dedicated [hardware UART](/components/uart/) at 230400 baud, 7 data
+bits, no parity and 1 stop bit. Use non-inverted TX and RX and leave `flow_control_pin` unset.
+
+On ESP32, ESP8266, and RP2040, set `rx_buffer_size` to at least 680 bytes.
+On ESP32, keep `rx_timeout` between 1 and 32 (default 2).
+On ESP8266, use UART0 (TX/RX on GPIO1/GPIO3 or GPIO15/GPIO13) and disable serial logging on that port or move it to
+UART1.
+
+On LibreTiny 1.8.0 or later, a receive buffer override is **required**. Set `LT_SERIAL_BUFFER_SIZE` to at least
+680 bytes under the board's `framework.options`. This sets the shared receive buffer size for all hardware UARTs.
+Use I²C on LN882x, whose UART backend lacks seven-bit framing support.
+
+```yaml
+bk72xx:
+  board: cb3s
+  framework:
+    options:
+      LT_SERIAL_BUFFER_SIZE: 1024
+```
+
+Connect RX to the pulled-up signal. Connect TX through a low-forward-voltage Schottky diode with the
+anode at the signal and the cathode at TX, or through an equivalent open-drain buffer.
+
+```yaml
+microchip_atsha204a:
+  type: swi_uart
+  wake_pin:
+    number: GPIOXX
+    mode:
+      output: true
+      open_drain: true
+```
+
+- **uart_id** (*Optional*, [ID](/guides/configuration-types/#id)): The UART bus to use.
+- **wake_pin** (**Required**, [Pin Schema](/guides/configuration-types/#pin-schema)): A non-inverted,
+  open-drain GPIO output connected to the signal wire.
+
+## Binary Sensor
+
+The binary sensor reports whether the chip is present.
+
+```yaml
+binary_sensor:
+  - platform: microchip_atsha204a
+    name: "Chip Present"
+```
+
+### Configuration Variables
+
+- **atsha204a_id** (*Optional*, [ID](/guides/configuration-types/#id)): The hub to use.
+- All other options from [Binary Sensor](/components/binary_sensor/).
+
+## Text Sensor
+
+The text sensors report uppercase hexadecimal values and publish an empty string when the chip is removed.
+
+```yaml
+text_sensor:
+  - platform: microchip_atsha204a
+    serial_number:
+      name: "Chip Serial Number"
+```
+
+### Configuration Variables
+
+Configure at least one of `serial_number` or `chip_revision`.
+
+- **atsha204a_id** (*Optional*, [ID](/guides/configuration-types/#id)): The hub to use.
+- **serial_number** (*Optional*): The chip's 9-byte serial number. All options from
+  [Text Sensor](/components/text_sensor/).
+- **chip_revision** (*Optional*): The chip's 4-byte silicon revision. All options from
+  [Text Sensor](/components/text_sensor/).
+
+## `microchip_atsha204a.command` Action
+
+This action sends an opcode and its arguments. See the [datasheet][datasheet] for each command's
+parameter and data encodings. The automation continues after issuing the request. Use `on_result`
+for steps that need the reply. Without a result handler, command failures are logged.
+Polling is suspended while a command or session is active.
+
+This example reads `UserExtra`, the first byte of configuration word `0x15`, when the chip is
+detected. Set `id: chip` and `update_interval: 1s` on the hub to enable the presence check.
+
+```yaml
+binary_sensor:
+  - platform: microchip_atsha204a
+    atsha204a_id: chip
+    name: "Chip Present"
+    trigger_on_initial_state: true
+    on_press:
+      - microchip_atsha204a.command:
+          id: chip
+          opcode: read
+          param1: 0x00  # Configuration zone, four-byte read
+          param2: 0x15
+          on_result:
+            - lambda: |-
+                if (status == 0 && data.size() == 4) {
+                  ESP_LOGI("atsha204a", "UserExtra = 0x%02X", static_cast<unsigned>(data[0]));
+                }
+```
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The hub to use.
+- **opcode** (**Required**, string): One of `check_mac`, `derive_key`, `dev_rev`, `gen_dig`, `hmac`,
+  `lock`, `mac`, `nonce`, `pause`, `random`, `read`, `sha`, `update_extra`, or `write`.
+- **param1** (*Optional*, int, [templatable](/automations/templates/)): An 8-bit parameter. Defaults to `0`.
+- **param2** (*Optional*, int, [templatable](/automations/templates/)): A 16-bit parameter. Defaults to `0`.
+- **data** (*Optional*, list, [templatable](/automations/templates/)): Up to 77 bytes of command data.
+  A lambda returns a `std::vector<uint8_t>`. Defaults to an empty list.
+- **end** (*Optional*, string): `sleep` clears the chip's temporary state and releases the session.
+  `keep_awake` leaves the chip awake. `idle` retains chip state as described in the datasheet and
+  wakes the chip for the next command. Defaults to `sleep`.
+- **session** (*Optional*, int, [templatable](/automations/templates/)): The token returned by a
+  previous command. Use `session: !lambda return session;` from its `on_result` automation. Defaults to `0`
+  to start a new session.
+- **expect_response** (*Optional*, boolean): Defaults to `true`. Set to `false` for a `pause` command
+  with `end: sleep` when the chip is expected to enter idle without replying. The driver sends Sleep
+  for any chip still awake and reports `-9` when the unconfirmed send completes.
+- **on_result** (*Optional*, [Automation](/automations/)): Runs on completion and receives
+  `status` (0 for confirmed success, a positive chip status code, or a negative driver status), `data`
+  (the reply payload as a byte sequence), and `session` (0 unless the session is still open).
+
+| Status | Driver result |
+| --- | --- |
+| `-1` | Busy |
+| `-2` | Response timed out |
+| `-3` | Response CRC mismatch |
+| `-4` | Invalid response framing or length |
+| `-5` | Transport error |
+| `-6` | Invalid or expired session |
+| `-7` | Invalid command arguments |
+| `-8` | Unexpected wake status |
+| `-9` | Pause sent without checking for a response |
+
+A session expires after 500 ms without a follow-up. The chip's watchdog also limits how long it can
+remain awake. On a shared single-wire bus, use a `pause` command to select the chip and
+`keep_awake` to retain that selection for follow-up commands.
+
+A successful `lock` permanently locks the selected zone. Some writes to the one-time programmable
+zone are irreversible. If a write response is lost, read back the affected state before issuing
+the command again.
+
+## `microchip_atsha204a.end_session` Action
+
+End an open session before it expires. The driver sends Sleep immediately for an awake chip. It wakes
+an idle chip first and attempts Sleep after a valid wake response. The token expires after the
+attempt, and the driver logs transport failures.
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The hub to use.
+- **session** (**Required**, int, [templatable](/automations/templates/)): The token returned by
+  `microchip_atsha204a.command`.
+
+## C++ API
+
+The hub exposes `command()` and `end_session()` for C++ integrations. `end_session()` returns `true`
+when it sends Sleep or starts waking an idle chip. It returns `false` for an invalid token or an
+immediate transport failure. A polling integration can register a callback with `set_poll_callback()`
+and chain reads with `read_block()` from that callback or its completion callback. The block pointer
+is valid for the duration of the completion callback and is null if the read fails. Use
+`set_disconnect_callback()` to clear data when the chip is removed.
+
+[datasheet]: https://ww1.microchip.com/downloads/en/devicedoc/atsha204a-data-sheet-40002025a.pdf
+[product]: https://www.microchip.com/en-us/product/ATSHA204A
