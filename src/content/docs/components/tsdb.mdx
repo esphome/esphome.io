@@ -24,7 +24,8 @@ on-disk format of the database belongs to the engine.
 > This component is only available on the ESP32, ESP32-S2, ESP32-S3, ESP32-C3, ESP32-C6, ESP32-H2 and
 > ESP32-P4 and requires the `esp-idf` framework, because both engines are ESP-IDF components. It also needs
 > a flash partition of its own, and a partition table change can only be delivered over USB - so the first
-> install of a configuration with this component needs a cable.
+> install of a configuration with this component needs a cable, and so does any later change to
+> `partition_size` or `partition`. See [Changing the configuration later](#changing-the-configuration-later).
 
 ```yaml
 # Example configuration entry
@@ -53,7 +54,8 @@ tsdb:
   [Partitions](/components/esp32/#partitions).
 - **partition_size** (*Optional*, size): Size of that partition. Defaults to `512KB`; must be a multiple of
   4 KB and at least `64KB`. The size is taken out of the two OTA slots, so each of them shrinks by half of
-  it. See [Partition sizing](#partition-sizing).
+  it. See [Partition sizing](#partition-sizing). A later change needs a full flash over USB, see
+  [Changing the configuration later](#changing-the-configuration-later).
 - **format_on_first_boot** (*Optional*, boolean): Format the partition when it is *blank*, meaning every byte
   of it reads `0xFF`. Defaults to `true`. The whole partition is scanned before formatting, so a partition
   that holds data but does not mount - or whose head happens to be erased - is never reformatted: that
@@ -65,7 +67,9 @@ tsdb:
   deliverable by an OTA update alone.
 - **max_file_size** (*Optional*, size): Data budget of the database file. Defaults to `224KB`. The record
   capacity is derived from it, and the file never grows beyond it - the ring buffer overwrites the oldest
-  records instead. The partition has to hold it twice, see [Partition sizing](#partition-sizing).
+  records instead. The partition has to hold it twice, see [Partition sizing](#partition-sizing). The
+  capacity is written into the file when it is created, so a later change needs the history recreated, see
+  [Changing the configuration later](#changing-the-configuration-later).
 - **index_stride** (*Optional*, integer): Number of records between two entries of the sparse time index.
   Defaults to `380`. Range is `1` to `100000`; a smaller stride means faster lookups and more index bytes.
 - **buffer_pool_size** (*Optional*, size): Buffer pool the engine uses for block I/O. Defaults to `4KB`.
@@ -107,8 +111,8 @@ tsdb:
 - **aggregate_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often the aggregates
   are computed and published. Defaults to `5min`; `0s` disables them.
 - **dump_rows** (*Optional*, integer): Number of records the CSV dump prints. Defaults to `60`. Range is `1`
-  to `1000`. Only used when the configuration has a [`tsdb.dump`](#actions) action. See
-  [CSV dump](#csv-dump).
+  to `1000`. Setting it compiles the dump code in, so `request_dump()` is available from a lambda; a
+  [`tsdb.dump`](#actions) action does the same. See [CSV dump](#csv-dump).
 
 The diagnostics (record count, partition usage, record ages, evictions, errors and the log) are configured on
 the `sensor` and `text_sensor` platforms, see [Diagnostic sensors](#diagnostic-sensors).
@@ -219,6 +223,30 @@ The OTA slot values assume a 4 MB flash with the auto-generated partition table,
 slot with 1.75 MB (see [Partitions](/components/esp32/#partitions)); on a board with less flash, check that
 the remaining slots still fit the firmware.
 
+## Changing the configuration later
+
+An OTA update writes the application images only, so what a change needs depends on where the value lives:
+
+- **In `partitions.csv` - `partition_size` and `partition`**: a change here needs a **full flash over USB**
+  (`esphome run` with a cable); OTA cannot rewrite the partition table. A new `partition_size` moves or
+  resizes the data region, so the stored history is lost and the partition is formatted again on the next
+  boot. A pure `partition` (label) change keeps the same region and its records, but still needs the cable.
+  Plan the partition once: growing it later costs a cable, not an OTA.
+- **In the database file - `max_file_size`, `index_stride` and the column count**: the header stores the
+  capacity, the index stride and the number of columns, and the engine keeps them when it reopens an
+  existing file. `max_file_size` and `index_stride` therefore apply to a new file only; the boot log reports
+  the mismatch (`saved capacity is N records, the configured budget asks for M - recreate the history to
+  change it`). A column count change is handled by `recreate_on_schema_change: true`, which deletes the file
+  over OTA. To apply a new budget or stride, recreate the file the same way - change the column count twice,
+  or erase the flash over USB (which also clears the saved Wi-Fi credentials) - and keep the sizing rule
+  above in mind: a file that no longer fits the partition cannot be folded.
+- **Read at boot**: everything else (`update_interval`, `sync_interval`, `on_missing`, `require_time`,
+  `aggregate_window`, `aggregate_interval`, `dump_rows`, `buffer_pool_size`, `memory`, `paged_allocation`,
+  `page_size`, `min_free_bytes`, `format_on_first_boot`, `mount_point` and `file`) takes effect on the next
+  boot and can be changed over OTA. `mount_point` and `file` only change where the database is looked for: a
+  new `file` name starts an empty database and leaves the old file on the partition, where it keeps taking
+  space until it is deleted.
+
 ## Diagnostic sensors
 
 The diagnostics are ordinary `sensor:`s and `text_sensor:`s on the `sensor` and `text_sensor` platforms, so
@@ -275,7 +303,8 @@ text_sensor:
   - **column** (**Required**, string): The `name` of the column in `tsdb:`.
   - **average**, **min** and **max** (*Optional*, [Sensor](/components/sensor/)): Published every
     `aggregate_interval`, and `unknown` - never a `0` - while no stored record lies inside
-    `aggregate_window`.
+    `aggregate_window`. Each one takes the unit and the device class of the column's source sensor unless
+    they are set explicitly.
 - **log** (*Optional*, [Text Sensor](/components/text_sensor/)): Mirrors the important log lines as text:
   `history opened`, `history flushed`, `history cleared`, `history recreated (the column set changed)`,
   `clearing the history did not persist` and `history cleared, its recovery copies remain`.
@@ -312,8 +341,8 @@ The following methods are available from [lambdas](/automations/templates/#confi
   to be cut".
 - `id(history).request_dump()`: Print the newest `dump_rows` stored records as CSV to the log, see
   [CSV dump](#csv-dump). Pass a count to print that many records instead: `id(history).request_dump(200)`.
-  The dump code is only compiled in when the configuration has a `tsdb.dump` action, so this method is not
-  available without one.
+  The dump code is only compiled in when the configuration sets `dump_rows` or has a `tsdb.dump` action, so
+  this method is not available without one.
 - `id(history).request_clear()`: Delete every stored record. The file, the partition and the column
   configuration stay.
 - `id(history).is_ready()`: `true` once the partition is mounted and the database is open.
@@ -351,7 +380,8 @@ margin) that the engine seeks to directly, so it never scans the whole history a
 loop. A gap wider than that margin widens the window to the whole history once - which is logged - so the
 newest `dump_rows` stored records are still printed; only a database holding fewer records than `dump_rows`
 prints fewer. A failed record count aborts the dump instead of printing old records as the newest. So does a
-column header too long for one log line: shorten the column names or raise the logger's `tx_buffer_size`.
+line that does not fit one log line - the column header, or with very wide values a row: shorten the column
+names or raise the logger's `tx_buffer_size`.
 
 There is no file download: the CSV dump over the log is the export path that needs no Home Assistant.
 
