@@ -45,28 +45,28 @@ display:
 
 ## Configuration variables
 
-- **cs_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin you have the CS line hooked up to.
+- **cs_pin** (**Required**, [Pin Schema](/guides/configuration-types/#pin-schema)): The pin you have the CS line hooked up to.
 - **num_chips** (*Optional*, int): The number of chips you wish to use for daisy chaining. Defaults to
   `1`.
 
 - **intensity** (*Optional*, int): The intensity with which the MAX7219 should drive the outputs. Range is from
   0 (least intense) to 15 (the default).
 
-- **lambda** (*Optional*, [lambda](/automations/templates#config-lambda)): The lambda to use for rendering the content on the MAX7219.
+- **lambda** (*Optional*, [lambda](/automations/templates/#config-lambda)): The lambda to use for rendering the content on the MAX7219.
   See [Rendering Lambda](#display-max7219_lambda) for more information.
 
-- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to re-draw the screen. Defaults to `1s`.
-- **spi_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [SPI Component](/components/spi) if you want
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval to re-draw the screen. Defaults to `1s`.
+- **spi_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the [SPI Component](/components/spi) if you want
   to use multiple SPI buses.
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation.
 - **reverse_enable** (*Optional*, boolean): For some displays the order of the chips is reversed so you'll see "56781234" instead of "12345678". This option will adjust the output to compensate. Defaults to `false`.
 
 <span id="display-max7219_lambda"></span>
 
 ## Rendering Lambda
 
-The MAX7219 has a similar API to the fully fledged [Display Rendering Engine](/components/display#display-engine), but it's only a subset as the MAX7219
+The MAX7219 has a similar API to the fully fledged [Display Rendering Engine](/components/display/#display-engine), but it's only a subset as the MAX7219
 7-segment displays don't have a concept of individual pixels. In the lambda you're passed a variable called `it`
 as with all other displays. In this case however, `it` is an MAX7219 instance (see API Reference).
 
@@ -116,8 +116,8 @@ display:
       it.set_intensity(id(my_brightness));
 ```
 
-Please see [Formatted Text](/components/display#display-printf) for a quick introduction into the `printf` formatting rules and
-[Displaying Time](/components/display#display-strftime) for an introduction into the `strftime` time formatting.
+Please see [Formatted Text](/components/display/#display-printf) for a quick introduction into the `printf` formatting rules and
+[Displaying Time](/components/display/#display-strftime) for an introduction into the `strftime` time formatting.
 
 <span id="display-max7219_characters"></span>
 
