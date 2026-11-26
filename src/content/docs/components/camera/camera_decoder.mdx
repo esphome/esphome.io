@@ -17,9 +17,10 @@ camera_decoder:
 ```
 
 The decoder owns its output buffer and reuses it across decodes when the size
-allows, so a consumer can decode repeatedly without allocating every frame.
+allows, so a consumer can decode repeatedly without allocating every frame. Set
+`width` and `height` to reserve the buffer at boot.
 
-## Configuration variables
+## Configuration Variables
 
 - **id** (*Optional*, [ID](/guides/configuration-types/#id)): The decoder ID.
 - **output_type** (*Optional*): `RGB888` (default), `RGB565`, `YUV422` or
@@ -27,6 +28,11 @@ allows, so a consumer can decode repeatedly without allocating every frame.
 - **rotation** (*Optional*, int): `0` (default), `90`, `180` or `270` degrees,
   applied while decoding. The image dimensions must be multiples of 8 for
   rotation.
+- **width**, **height** (*Optional*, int): The largest frame to expect, from `1`
+  to `8192` pixels. Set both or neither. The output buffer is then allocated at
+  boot, sized in whole 16x16 pixel blocks, and frames that fit it need no new
+  output buffer. A larger frame replaces it with a bigger one. If the allocation
+  at boot fails, a warning is logged and the first frame tries again.
 
 > [!WARNING]
 > **Grayscale costs three times the frame RAM while decoding.** `esp_new_jpeg`
