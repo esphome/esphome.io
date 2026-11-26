@@ -61,7 +61,10 @@ canopen:
   - **product_code** (*Optional*, int): Defaults to `0`.
   - **revision_number** (*Optional*, int): Defaults to `0`.
   - **serial_number** (*Optional*, int): Defaults to `0`.
-- **device_name** (*Optional*, string): The device name (`0x1008`). Defaults to the node's name.
+- **device_name** (*Optional*, string): The device name (`0x1008`). Defaults to the device's `name` from the
+  [`esphome`](/components/esphome/) block (with the MAC suffix when
+  [`name_add_mac_suffix`](/components/esphome/#esphome-mac_suffix) is set), the same for every `canopen` component of
+  the device.
 - **hardware_version** (*Optional*, string): The hardware version (`0x1009`). Not present if not set.
 - **software_version** (*Optional*, string): The software version (`0x100A`). Defaults to the ESPHome version.
 - **on_nmt_state_change** (*Optional*, [Automation](/automations/)): See
@@ -147,15 +150,10 @@ Variable: `state` (`canopen::NMTState`).
 ```yaml
 canopen:
   # ...
-  nmt_startup: pre_operational
   on_nmt_state_change:
-    - if:
-        condition:
-          lambda: "return state == canopen::NMTState::NMT_STATE_PRE_OPERATIONAL;"
-        then:
-          # start ourselves after 2 seconds
-          - delay: 2s
-          - lambda: "id(my_canopen).set_nmt_state(canopen::NMTState::NMT_STATE_OPERATIONAL);"
+    - logger.log:
+        format: "NMT state: %s"
+        args: ["LOG_STR_ARG(canopen::nmt_state_to_string(state))"]
 ```
 
 ### `on_heartbeat` Trigger
