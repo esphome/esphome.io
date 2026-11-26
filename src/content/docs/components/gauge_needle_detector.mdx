@@ -1,4 +1,4 @@
-﻿---
+---
 description: "Instructions for detecting the needle angle of analog gauges in an image in ESPHome."
 title: "Gauge Needle Detector"
 ---
@@ -43,12 +43,16 @@ carries the scan window (`min_scan_radius`, `max_scan_radius`, both fractions of
 the dial radius), the ignored centre circle (`deadzone_diameter`, in pixels) and
 a `debug` flag that makes every compiled-in algorithm run and log its result.
 A `deadzone_diameter` that reaches past `max_scan_radius` leaves no pixels to
-sample: `detect()` then returns a zero-confidence result and logs one warning
-per dial, not one per frame.
+sample: `detect()` then returns a zero-confidence result.
 
-Every crop has to fit the reservation: a larger crop, or a call before
-`reserve()` succeeds, returns a zero-confidence result for every algorithm,
-`legacy` included, so nothing is read past the reserved buffers.
+Every crop has to fit the reservation, counted in pixels. The reservation never
+shrinks, so a shared detector can call `reserve()` once per crop size. A crop
+with more pixels, or a call before `reserve()` succeeds, returns a
+zero-confidence result for every algorithm, `legacy` included, so nothing is read
+past the reserved buffers.
+
+An oversize crop, an empty scan window and a missing algorithm are each logged
+once, for the first dial that hits the problem, not once per frame.
 
 The crop is one byte per pixel. The detector does not crop, rotate or scale, and
 it does not publish anything; the consumer owns the entities and the value
@@ -64,8 +68,9 @@ mapping.
 | `template_match` | Searches ray angles for the brightest average line. Slowest, useful as a cross-check. |
 | `auto` | Runs the compiled-in filtered algorithms and keeps the most confident result. |
 
-The first three work on a preprocessed image (a clipped contrast stretch and a
-top-hat filter sized from the dial radius); `legacy` works on the raw crop. The
+All algorithms except `legacy` work on a preprocessed image (a clipped contrast
+stretch and a top-hat filter sized from the dial radius); `legacy` works on the
+raw crop. The
 detector preprocesses once per `detect()` call and shares the result between the
 filtered algorithms. The top-hat kernel is at least seven pixels across and
 grows with the dial radius, so needles up to six pixels wide survive it. The
@@ -81,14 +86,19 @@ algorithm is built and uses it only when nothing else is.
 ## Compile-time selection
 
 Each algorithm is a separate translation unit behind its own define, so a build
-only carries the algorithms it uses. A consumer enables them from Python with
-the names above:
+only carries the algorithms it uses. A consumer lists the component in
+`AUTO_LOAD`, which adds its sources to the build, and enables the algorithms from
+its `to_code` with the names above:
 
 ```python
-import esphome.codegen as cg
 from esphome.components import gauge_needle_detector
+from esphome.types import ConfigType
 
-gauge_needle_detector.enable_detectors({"radial_profile"})
+AUTO_LOAD = ["gauge_needle_detector"]
+
+
+async def to_code(config: ConfigType) -> None:
+    gauge_needle_detector.enable_detectors({"radial_profile"})
 ```
 
 | Define | Algorithm |
@@ -98,11 +108,11 @@ gauge_needle_detector.enable_detectors({"radial_profile"})
 | `USE_GAUGE_NEEDLE_HOUGH_TRANSFORM` | `hough_transform` |
 | `USE_GAUGE_NEEDLE_TEMPLATE_MATCH` | `template_match` |
 
-`USE_GAUGE_NEEDLE_DETECTOR` enables the component itself, and
-`enable_detectors()` sets it too, so a consumer only has to call that. `auto`
-and debug logging compare every algorithm, so they need all four algorithm
-defines. Selecting an algorithm that was not compiled in returns a
-zero-confidence result and logs one error per dial, not one per frame.
+`enable_detectors()` also sets `USE_GAUGE_NEEDLE_DETECTOR`, which enables the
+component itself, and `USE_GAUGE_NEEDLE_PREPROCESSOR` when any algorithm other
+than `legacy` is enabled. `auto` and debug logging compare the algorithms that
+are compiled in, so enable all of them to compare all four. Selecting an
+algorithm that was not compiled in returns a zero-confidence result.
 
 ## Memory
 
@@ -119,4 +129,3 @@ a code-generation error.
 
 - [ESP32 Camera](/components/esp32_camera/)
 - <APIRef text="gauge_needle_detector.h" path="gauge_needle_detector/gauge_needle_detector.h" />
-
