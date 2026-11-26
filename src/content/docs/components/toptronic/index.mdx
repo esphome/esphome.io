@@ -77,8 +77,8 @@ toptronic:
   larger counts are rejected as corrupted headers. Range `3` to `31`, defaults to `8`.
 - **refresh_interval** (*Optional*, [Time](/guides/configuration-types#time)): Minimum spacing
   between two GET requests during a full refresh, so the bus is not saturated by one burst. The
-  main loop ticks about every 16 ms, so values below `16ms` are clamped to `16ms`. Defaults to
-  `50ms`.
+  main loop ticks about every 16 ms, so the minimum is `16ms` and smaller values are rejected.
+  Defaults to `50ms`.
 - **max_refresh_retries** (*Optional*, int): Re-sends of an unanswered GET during a refresh
   burst; `0` disables retries. Range `0` to `10`, defaults to `1`.
 - **refresh_retry_interval** (*Optional*, [Time](/guides/configuration-types#time)): Delay
@@ -159,8 +159,8 @@ hubs there are. It starts a full refresh on every hub, one hub every 15 seconds,
 sees only one burst at a time. A refresh requested while one is still running on a hub runs
 again once it ends.
 
-While an OTA update is running, the hub stops sending requests and ignores incoming frames,
-then resumes when the update finishes or aborts.
+While an OTA update is running, the hub stops sending requests, drops writes and ignores
+incoming frames, then resumes when the update finishes, fails or is aborted.
 
 ## Custom Entities
 
@@ -174,6 +174,12 @@ datapoint addressing of the device:
   needed when more than one hub is configured.
 - All other options of the platform, such as `name`, `icon` and `device_class`.
 
+On each hub a datapoint can have only one read entity (sensor or text sensor) and only one
+write entity (number, select or button). The preset entities count too, so a custom entity
+cannot use a datapoint that the presets of that device type already read or write in the same
+direction; such a configuration is rejected. The examples below use datapoints that the `WEZ`
+presets do not cover.
+
 ### Sensor
 
 Read-only numeric value. The value is decoded using **type** (**Required**, string), one of
@@ -183,10 +189,10 @@ Read-only numeric value. The value is decoded using **type** (**Required**, stri
 sensor:
   - platform: toptronic
     toptronic_id: toptronic_WEZ
-    name: Outdoor temperature
-    function_group: 0
-    function_number: 0
-    datapoint: 0
+    name: Heat generator return temperature
+    function_group: 10
+    function_number: 1
+    datapoint: 8
     type: S16
     accuracy_decimals: 1
     unit_of_measurement: °C
@@ -209,17 +215,16 @@ must be between `0` and `255`.
 text_sensor:
   - platform: toptronic
     toptronic_id: toptronic_WEZ
-    name: Heating operation choice
-    function_group: 1
+    name: Heat generator operation choice
+    function_group: 10
     function_number: 0
-    datapoint: 3050
+    datapoint: 9075
     options:
-      - Standby
-      - Week 1
-      - Week 2
-      - Constant
-      - Eco mode
-    values: [0, 1, 2, 4, 5]
+      - "Off"
+      - Automatic
+      - Heating
+      - Cooling
+    values: [0, 1, 4, 5]
 ```
 
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): How often the
@@ -231,21 +236,32 @@ Writable numeric value. **type** is required (see above).
 
 A number shows the value of a sensor on the same hub with the same `function_group`,
 `function_number` and `datapoint`, divided by `10^decimal`. The raw value of the sensor is
-used, before any of its filters. Without such a sensor the number is write-only and never
-shows a value.
+used, before any of its filters, and the number changes when that sensor next reads the
+device. Without such a sensor the number is write-only: it shows the last value written from
+ESPHome and never reads the device. A text sensor on the same datapoint is rejected.
 
 ```yaml
+sensor:
+  - platform: toptronic
+    toptronic_id: toptronic_WEZ
+    name: Constant flow setpoint reading
+    function_group: 1
+    function_number: 0
+    datapoint: 7036
+    type: S16
+    internal: true
+
 number:
   - platform: toptronic
     toptronic_id: toptronic_WEZ
-    name: Normal room temperature
+    name: Constant flow setpoint
     function_group: 1
     function_number: 0
-    datapoint: 3051
+    datapoint: 7036
     type: S16
     min_value: 100
-    max_value: 300
-    step: 5
+    max_value: 1100
+    step: 10
     decimal: 1
     unit_of_measurement: °C
     device_class: temperature
@@ -255,53 +271,57 @@ number:
 - **max_value** (**Required**, float): Highest value, in device units. It must be greater than
   `min_value`.
 - **step** (**Required**, float): Step size, in device units.
-- **decimal** (*Optional*, float): Number of decimal places the device uses, `0` or more.
+- **decimal** (*Optional*, int): Number of decimal places the device uses, `0` to `6`.
   `min_value`, `max_value` and `step` are divided by `10^decimal` for the entity, so the
-  example above shows a `10.0` to `30.0 °C` control with `0.5 °C` steps. A value written from
+  example above shows a `10.0` to `110.0 °C` control with `1.0 °C` steps. A value written from
   the entity is multiplied by `10^decimal` before it is sent. Defaults to `0`.
 
 ### Select Entity
 
 Writable value chosen from a list. It needs **options** and **values** with the same rules as
-the text sensor, and accepts **type** (*Optional*, default `U8`).
+the text sensor, and accepts **type** (*Optional*, string, default `U8`). Every value must
+also fit the type, so `S8` allows at most `127`.
 
 Like a number, a select shows the value of a text sensor on the same hub with the same
-datapoint, such as the text sensor example above. Without one it is write-only and never
-shows a value.
+datapoint, such as the text sensor example above. Without one it is write-only: it shows the
+last option written from ESPHome and never reads the device. A sensor on the same datapoint
+is rejected.
 
 ```yaml
 select:
   - platform: toptronic
     toptronic_id: toptronic_WEZ
-    name: Heating operation choice
-    function_group: 1
+    name: Heat generator operation choice
+    function_group: 10
     function_number: 0
-    datapoint: 3050
+    datapoint: 9075
     options:
-      - Standby
-      - Week 1
-      - Week 2
-      - Constant
-      - Eco mode
-    values: [0, 1, 2, 4, 5]
+      - "Off"
+      - Automatic
+      - Heating
+      - Cooling
+    values: [0, 1, 4, 5]
 ```
 
 ### Button Entity
 
-Sends one SET request when pressed. **type** and **value** (**Required**, int) describe the
-value to write; the value must fit the selected type and is checked when the configuration is
-loaded.
+Sends one SET request when pressed.
+
+- **type** (**Required**, string): Encoding of the value, one of the type names listed under
+  [Sensor](#sensor).
+- **value** (**Required**, int): Raw value to write. It must fit the selected type, which is
+  checked when the configuration is loaded.
 
 ```yaml
 button:
   - platform: toptronic
-    toptronic_id: toptronic_HV
-    name: Acknowledge filter maintenance
-    function_group: 0
+    toptronic_id: toptronic_WEZ
+    name: Set manual room temperature to 20 °C
+    function_group: 1
     function_number: 0
-    datapoint: 21054
-    type: U8
-    value: 7
+    datapoint: 7009
+    type: S16
+    value: 200
 ```
 
 ## Debug Logging
@@ -325,9 +345,9 @@ switch:
   received under the `candump` tag, as `0x00000208 : 04 42 ...`. Received frames are limited
   to one line per 33 ms; frames skipped by that limit are counted and reported with the next
   line.
-- **find_can_id** (*Optional*, [Switch](/components/switch/)): Logs each received request and
-  response frame with the node that sent it, at WARN level, so it can be caught with
-  `logger.on_message`.
+- **find_can_id** (*Optional*, [Switch](/components/switch/)): Logs each received
+  single-frame request and response with the node that sent it, at WARN level, so it can be
+  caught with `logger.on_message`. Parts of multi-frame messages are not logged.
 - Both switches default to restore mode `ALWAYS_OFF`. The debug logs apply to the whole build,
   so one switch of each kind is enough for all hubs.
 - Each debug log turns itself off after 120 seconds, so it cannot fill the log or the network
