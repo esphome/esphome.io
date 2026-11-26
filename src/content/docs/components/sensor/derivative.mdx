@@ -1,0 +1,64 @@
+---
+description: "Instructions for setting up sensors that compute the derivative of other sensors."
+title: "Derivative Sensor"
+---
+import APIRef from '@components/APIRef.astro';
+
+
+The `derivative` sensor is a helper sensor that can compute the time derivative (rate of
+change) of the values from another sensor. It publishes `d(value)/dt` — the difference
+between the current and the previous reading divided by the elapsed time — expressed in a
+configurable time unit. This can for example be useful to derive a speed (in m/s) from a
+distance sensor (in m).
+
+This component can be considered the counterpart of the [Integration Sensor](/components/sensor/integration/).
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: derivative
+    source_id: my_distance
+    name: "Speed"
+
+  # The sensor to differentiate, here a distance sensor in m
+  - platform: vl53l1x
+    # ...
+    id: my_distance
+    name: "Distance"
+```
+
+## Configuration variables
+
+- **source_id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the sensor to differentiate.
+
+- **time_unit** (*Optional*, string): The time unit of the resulting rate, one of
+  `ms`, `s`, `min`, `h` or `d`. Defaults to `s`.
+
+- All other options from [Sensor](/components/sensor/).
+
+The following properties are inherited from the source sensor unless set explicitly:
+
+- **unit_of_measurement**: The source sensor's unit combined with the configured
+  `time_unit` — for example a distance sensor in `m` with `time_unit: s` produces a
+  speed in `m/s`.
+
+- **accuracy_decimals**: Two more decimal places than the source sensor.
+
+- **icon**: The source sensor's icon.
+
+## Behaviour
+
+- The first reading ever only establishes the baseline; nothing is published.
+
+- A `NaN` reading publishes nothing and discards the baseline. The next valid reading only
+  re-establishes the baseline and publishes nothing, so a gap between samples never produces
+  a bogus spike.
+
+- If two readings arrive within the same loop iteration, no time has elapsed and nothing is
+  published.
+
+## See Also
+
+- [Sensor Filters](/components/sensor/#sensor-filters)
+- [Integration Sensor](/components/sensor/integration/)
+- <APIRef text="derivative_sensor.h" path="derivative/derivative_sensor.h" />
