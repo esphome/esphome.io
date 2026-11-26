@@ -51,9 +51,9 @@ toptronic:
 
 ### Configuration Variables
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for
   code generation. Set it when entities need to name this hub with `toptronic_id`.
-- **canbus_id** (*Optional*, [ID](/guides/configuration-types#id)): The id of the CAN bus the
+- **canbus_id** (*Optional*, [ID](/guides/configuration-types/#id)): The id of the CAN bus the
   devices are connected to. Only needed when more than one CAN bus is configured. The bus must
   run at **50 kbps**.
 - **device_type** (**Required**, string): One of the device types listed in the table above.
@@ -63,7 +63,7 @@ toptronic:
 - **language** (*Optional*, string): The preset language, one of `de`, `en`, `fr` or `it`.
   Defaults to `en`. If a device type has no presets in the requested language, English is
   used and a warning is logged.
-- **boot_refresh_delay** (*Optional*, [Time](/guides/configuration-types#time)): Delay before a
+- **boot_refresh_delay** (*Optional*, [Time](/guides/configuration-types/#time)): Delay before a
   single full refresh after boot, so the entities show real values without waiting for their
   first poll. The refresh covers every hub and runs once, when the first hub's delay ends.
   Defaults to `30s`. Set to `0` to disable it for this hub.
@@ -71,19 +71,19 @@ toptronic:
   that can be put back together at the same time. Each one reserves
   `max_frames_per_message × 7` bytes of RAM, and the build reserves room for the largest value
   of any hub. Range `1` to `16`, defaults to `2`.
-- **max_pending_age** (*Optional*, [Time](/guides/configuration-types#time)): A pending message
+- **max_pending_age** (*Optional*, [Time](/guides/configuration-types/#time)): A pending message
   without a continuation frame for this long is considered lost. Defaults to `5000ms`.
 - **max_frames_per_message** (*Optional*, int): Maximum total frames a start frame may claim;
   larger counts are rejected as corrupted headers. Range `3` to `31`, defaults to `8`.
-- **refresh_interval** (*Optional*, [Time](/guides/configuration-types#time)): Minimum spacing
+- **refresh_interval** (*Optional*, [Time](/guides/configuration-types/#time)): Minimum spacing
   between two GET requests during a full refresh, so the bus is not saturated by one burst. The
   main loop ticks about every 16 ms, so the minimum is `16ms` and smaller values are rejected.
   Defaults to `50ms`.
 - **max_refresh_retries** (*Optional*, int): Re-sends of an unanswered GET during a refresh
   burst; `0` disables retries. Range `0` to `10`, defaults to `1`.
-- **refresh_retry_interval** (*Optional*, [Time](/guides/configuration-types#time)): Delay
+- **refresh_retry_interval** (*Optional*, [Time](/guides/configuration-types/#time)): Delay
   before an unanswered GET in a burst is re-sent. Defaults to `200ms`.
-- **write_min_interval** (*Optional*, [Time](/guides/configuration-types#time)): Minimum delay
+- **write_min_interval** (*Optional*, [Time](/guides/configuration-types/#time)): Minimum delay
   between two SET requests for the same datapoint, so a fast sequence of Home Assistant
   actions cannot flood the boiler. It applies to numbers, selects and buttons. Defaults to
   `2s`. Set to `0` to disable.
@@ -170,7 +170,7 @@ datapoint addressing of the device:
 - **function_group** (**Required**, int): Function group of the datapoint, `0` to `255`.
 - **function_number** (**Required**, int): Function number of the datapoint, `0` to `255`.
 - **datapoint** (**Required**, int): Datapoint number, `0` to `65535`.
-- **toptronic_id** (*Optional*, [ID](/guides/configuration-types#id)): The hub to use. Only
+- **toptronic_id** (*Optional*, [ID](/guides/configuration-types/#id)): The hub to use. Only
   needed when more than one hub is configured.
 - All other options of the platform, such as `name`, `icon` and `device_class`.
 
@@ -202,7 +202,7 @@ sensor:
       - multiply: 0.1
 ```
 
-- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): How often the
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often the
   datapoint is polled. Defaults to `30s`.
 
 ### Text Sensor
@@ -227,7 +227,7 @@ text_sensor:
     values: [0, 1, 4, 5]
 ```
 
-- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): How often the
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often the
   datapoint is polled. Defaults to `30s`.
 
 ### Number Entity
@@ -339,7 +339,7 @@ switch:
       name: Find CAN ID
 ```
 
-- **toptronic_id** (*Optional*, [ID](/guides/configuration-types#id)): The hub to use. Only
+- **toptronic_id** (*Optional*, [ID](/guides/configuration-types/#id)): The hub to use. Only
   needed when more than one hub is configured.
 - **candump** (*Optional*, [Switch](/components/switch/)): Logs every frame that is sent or
   received under the `candump` tag, as `0x00000208 : 04 42 ...`. Received frames are limited
