@@ -34,7 +34,7 @@ ESP32-C3 is available on the `next` branch of
 > expose sensors or entities directly. It currently supports **ESP32** targets with the **ESP-IDF** framework
 > only.
 
-The core itself takes `model`, `tensor_arena_size` and `debug`. A model kind is its own YAML key:
+The core itself takes `model`, `tensor_arena_size`, `debug` and `on_result`. A model kind is its own YAML key:
 `tflite_image`, `tflite_audio` and the other kind components take the model and their own options,
 auto-load this component and call its `declare_model()` while the configuration is generated. Without
 a kind, this component accepts a raw input buffer and leaves the output tensors to the consumer.
@@ -122,7 +122,7 @@ tflite_audio:
 | `probability_cutoff` | `0.5` | Detection threshold, `0.0`–`1.0`. Only detections above it are reported. |
 | `sliding_window_size` | `10` | Number of frames the consumer averages over. |
 | `features_step_size` | `20` | Milliseconds between two feature slices, `0`–`30`. |
-| `feature_count` | the model's feature dimension | MFCC features per frame, `10`–`80`. |
+| `feature_count` | the model's feature dimension | MFCC features per frame, `10`–`80`; must match the model. |
 | `output_processing` | `argmax` | How the output tensor becomes a class and a confidence. |
 | `scale_factor` | `1.0` | Divides the reported class index, `0.1`–`100.0`. |
 | `tensor_arena_size` | `100KB` | Arena size in bytes, or a suffixed size such as `26KB`. |
@@ -182,9 +182,10 @@ frame.
 
 ## Configuration Variables
 
-All options are listed per instance below. The library components this one auto-loads have no
-configuration of their own; `tflite_op_processor` also accepts an `operators:` list, described under
-[Selective Operator Builds](#selective-operator-builds).
+All options are listed per instance below. The library components this one auto-loads normally need no
+configuration. Two of them accept a build-wide option: `tflite_memory_handler` takes `arena_location`,
+described under [Memory Management](#memory-management), and `tflite_op_processor` takes an `operators:`
+list, described under [Selective Operator Builds](#selective-operator-builds).
 
 ### Common Configuration Variables
 
@@ -192,11 +193,12 @@ configuration of their own; `tflite_op_processor` also accepts an `operators:` l
   generation. Set this when a consumer component references this instance.
 - **model** (**Required**, string or dictionary): The TFLite model source. Can be one of:
   - A local `.tflite` file path relative to the configuration directory.
-  - A `github://` shorthand URL (e.g. `github://user/repo/path/to/model.tflite`).
+  - A `github://`, `gitlab://` or `codeberg://` shorthand
+    (e.g. `github://user/repo/path/to/model.tflite`).
   - An `http://` or `https://` URL pointing to a `.tflite` file, or to a JSON manifest that names it.
 - **tensor_arena_size** (*Optional*, bytes): The tensor arena size in bytes. Supports suffixed strings such
-  as `"110KB"`, `"2MB"`, or raw bytes. If omitted, the size is estimated from the model's tensors while the
-  configuration is generated. Either way it is only where the arena probe starts: the model is loaded with
+  as `"110KB"`, `"1MB"`, or raw bytes, from `8KB` to `2000KB`. If omitted, the size is estimated from the
+  model's tensors while the configuration is generated. Either way it is only where the arena probe starts: the model is loaded with
   the smallest arena it fits in, so the boot log reports this size, the size the load asked the allocator for
   after probing, and the bytes the tensors actually occupy. A probe result above or below this size is logged
   as a warning. For a streaming model the estimate covers the model's tensors only, so set this option when
@@ -207,9 +209,8 @@ configuration of their own; `tflite_op_processor` also accepts an `operators:` l
   through `get_last_result()`. An action that keeps running after that point (`delay`, `script.execute`,
   `defer`) runs outside the hold, and the next inference reuses the tensors and the decoder: copy the values
   it needs, or read the entities the callback published.
-- **debug** (*Optional*, boolean): Enable debug logging and diagnostic features for this instance. Defaults to
-  `false`. The diagnostics are always compiled in; this flag turns them on for this instance, so it reports
-  the model architecture, its input and output tensors, and the memory status.
+- **debug** (*Optional*, boolean): Enable debug logging for this instance. Defaults to `false`. See
+  [Debug Features](#debug-features).
 
 ### Options added by the image kinds
 
@@ -252,7 +253,7 @@ set here explicitly:
 - **features_step_size** (*Optional*, integer): Step size for feature extraction in milliseconds. Range `0`–`30`.
   Defaults to `20`.
 - **feature_count** (*Optional*, integer): Number of MFCC features. Defaults to the feature dimension of the
-  model's input tensor. Range `10`–`80`.
+  model's input tensor. Range `10`–`80`. A value that differs from the model's is rejected.
 - **output_processing** (*Optional*, string): How the output tensor is turned into a class and a confidence.
   One of `"argmax"`, `"softmax"`, `"qat_quantized"` or `"auto_detect"`. Defaults to `"argmax"`.
 - **scale_factor** (*Optional*, float): Divides the reported class index for multi-class models. Range
@@ -265,10 +266,10 @@ The component resolves the model file from the `model` configuration using one o
 | Type | Syntax | Description |
 |---|---|---|
 | Local file | `"path/to/model.tflite"` | Path relative to the configuration directory. |
-| GitHub shorthand | `"github://user/repo/path/model.tflite"` | Clones the repository and reads the model file. |
+| Git shorthand | `"github://user/repo/path/model.tflite"` | Clones the repository and reads the model file. `gitlab://` and `codeberg://` work the same way. |
 | HTTP(S) URL | `"https://example.com/manifest.json"` | Downloads the file, or a JSON manifest naming it. |
 
-A `github://` source always reads a model file directly from the repository, so the shorthand must point at the
+A git shorthand source always reads a model file directly from the repository, so the shorthand must point at the
 `.tflite` file:
 
 - `github://esphome/micro-wake-word-models/models/v2/okay_nabu.tflite` (model file, read as-is).
@@ -338,9 +339,10 @@ Build flags:
 
 Global defines (`cg.add_define()`, written to the generated `defines.h`):
 
-- **`TFLITE_MICRO_MAX_OPERATORS`**: The number of distinct operators of the widest configured model, which is
-  exactly the number of resolver slots the build needs. It is read from each model's `.tflite` file.
+- **`TFLITE_MICRO_MAX_OPERATORS`**: The number of resolver slots: the distinct operators of the widest
+  configured model, read from its `.tflite` file, or the length of a longer `operators:` list.
 - **`USE_TFLITE_MICRO_HELPER`**: Compiles the TFLite Micro helper sources.
+- **`USE_TFLITE_MODEL_DEBUG`**: Compiles the diagnostics; set only when a model sets `debug: true`.
 
 ## Usage as a Dependency
 
@@ -425,18 +427,32 @@ the operator.
 
 ## Memory Management
 
-The tensor arena is allocated using one of three strategies (in priority order):
+The tensor arena is allocated from one heap, chosen for the whole build with the `arena_location` option of
+`tflite_memory_handler`:
 
-1. **PSRAM** (preferred): When PSRAM is available, the tensor arena is allocated there to avoid exhausting
-   internal SRAM.
-2. **Internal SRAM** (fallback): When no PSRAM is present, the arena is allocated from internal RAM.
-3. **Force flags**: Build flags `-DTFLITE_FORCE_SRAM` or `-DTFLITE_FORCE_PSRAM` override the automatic
-   selection.
+```yaml
+psram:
 
-The arena is allocated with `RAMAllocator` from the chosen heap and released by a `RAMUniquePtr`, so memory is
-never leaked when a model is unloaded. `ArenaProbe` then finds the size the model actually needs by trial
-allocation (a progressive increase followed by a binary search), starting from `tensor_arena_size` or from the
-estimate computed while the configuration was generated.
+tflite_memory_handler:
+  arena_location: psram
+```
+
+- **arena_location** (*Optional*, string): Defaults to `auto`.
+  - `auto`: PSRAM when the board has it, internal RAM otherwise.
+  - `internal`: always internal RAM.
+  - `psram`: always PSRAM. It requires an enabled [`psram:`](/components/psram/) component. While `psram:`
+    keeps its default `ignore_not_found: true`, a warning is logged, because a board without PSRAM only
+    reports the failed allocation at boot.
+
+There is no fallback from one heap to the other: if the allocation fails, the load fails and the log names the
+heap and its free size.
+
+The arena is allocated with `RAMAllocator` and released by a `RAMUniquePtr`, so it is freed when a model is
+unloaded. Before the load, the arena probe finds the size the model needs by trial allocation. It starts at
+`tensor_arena_size`, or at the estimate computed while the configuration was generated, tries 1.5 and 2 times
+that size if the model does not fit, and then searches down for the smallest size that works. If the probe
+fails, it is retried from half the starting size, and the configured size is used if that fails too. A reload
+of the same model reuses the size already found. A stateful model with resource variables is not probed.
 
 ### Model Data Alignment
 
@@ -448,17 +464,8 @@ traps on Xtensa instead of returning an error. The code generation side is descr
 
 ### Arena Size Configuration
 
-Arena size can be specified as a parsed size string using the `MemoryManager::parse_size_string()` utility,
-which supports:
-
-- Suffixed strings: `"110KB"`, `"2MB"`, `"51200"` (raw bytes)
-- Fallback to raw bytes if parsing fails
-
-> [!TIP]
-> On **ESP32-S3** devices, when the 64KB data cache is enabled
-> (`CONFIG_ESP32S3_DATA_CACHE_64KB` + `CONFIG_ESP32S3_DATA_CACHE_LINE_64B`), the requested arena size is
-> automatically increased by **1.5x** to accommodate the larger memory requirements of the S3 architecture.
-> This automatic bump is applied once during model loading.
+`tensor_arena_size` takes a number of bytes or a suffixed value such as `110KB` or `1MB`, from `8KB` to
+`2000KB`.
 
 ### Arena Statistics
 
@@ -531,15 +538,20 @@ struct ProcessedOutput {
 | `set_resource_variables(mrv)` | Pass the variables a stateful model needs. |
 | `set_debug(bool)` | Enable or disable debug diagnostics. |
 | `load_model()` | Verify the CRC32, allocate the arena and build the interpreter. |
-| `unload_model()` | Unload the model and free its resources. |
+| `unload_model()` | Unload the model and free its resources; refused while a result waits for its callback. |
 | `is_model_loaded()` | `true` while a model is loaded. |
 | `invoke()` | Run one inference pass; returns `TfLiteStatus`. |
+| `run(src_data, src_size)` | Fill the input, invoke and decode every output; `true` on success. |
+| `run(src_data, src_size, width, height)` | The same, for a frame whose size is known only at run time. |
+| `add_on_result_callback(callback)` | Call `callback` on the main loop after a successful run. |
 | `run_inference(src_data, src_size)` | Return an `optional<ProcessedOutput>`; empty when the run fails. |
 | `run_inference_on_buffer(src_data, src_size)` | Run inference without processing the output. |
 | `input_tensor()` | The input `TfLiteTensor`, for writing data. |
 | `output_tensor()` | The output `TfLiteTensor`, for reading results. |
 | `get_last_result()` | The `ProcessedOutput` of the current notification. |
 | `get_model_spec()` | The `ModelSpec` of the loaded model. |
+| `get_config()` | A copy of the loaded model's `ModelConfig`. |
+| `get_last_load_stats()` | Timings and success of the last `load_model()`. |
 | `get_arena_stats()` | Tensor arena utilization. |
 | `report_memory_status()` | Print memory allocation details to the log. |
 
@@ -589,6 +601,7 @@ audio-only state.
 | Method                              | Description                                |
 |-------------------------------------|--------------------------------------------|
 | `get_tensor_arena_size()`           | Get the requested tensor arena size.       |
+| `get_tensor_arena_size_effective()` | Get the size requested after probing.      |
 | `get_tensor_arena_size_actual()`    | Get the actual allocated arena size.       |
 | `get_arena_used_bytes()`            | Get the number of bytes used in the arena. |
 | `get_model_size_bytes()`            | Get the model binary size in bytes.        |
@@ -639,7 +652,7 @@ using esphome::tflite_audio::TFLiteAudio;
 
 // The tflite_audio entry creates the instance and applies the YAML tuning values.
 // A consumer holds that pointer and reads the values when it loads the model:
-const tflite_audio::AudioModelConfig &config = model_->get_audio_config();
+const esphome::tflite_audio::AudioModelConfig &config = model_->get_audio_config();
 // config.probability_cutoff is 0-255, encoded from the YAML percentage.
 ```
 
@@ -649,21 +662,18 @@ holds. The tuning values live on `tflite_audio`'s `TFLiteAudio` class, not on th
 
 ## Debug Features
 
-When `debug: true` is set on an instance, its diagnostics are turned on at run time; the code that implements
-them is compiled in whenever the component is used, so a build without it behaves the same, it just stays
-quiet. The diagnostics are:
+The diagnostics are compiled in only when at least one model sets `debug: true`. On such an instance the load
+logs the model configuration, operator codes, input dimensions and load times, and the output processing logs
+its details.
 
-- **Model Architecture Inspection**: `debug_model_architecture()` logs operator types, tensor shapes, and
-  quantization parameters.
-- **Input/Output Analysis**: Tensor data statistics (min, max, mean), quantization details, and output
-  distribution. Includes `debug_pre_inference_state()`, `debug_output_tensor_details()`, and
-  `debug_raw_outputs()`.
-- **Memory Status**: `report_memory_status()` prints arena allocation, usage, and peak memory consumption.
-- **Parameter Sweeping** (advanced): `debug_test_parameters()` runs inference across multiple configurations
-  (varying `input_order`, `input_size`, `normalize`, `input_type`) to find optimal settings. Sweeps generate
-  up to 16 configuration combinations and report the top 10 by confidence.
-- **Watchdog Feeding**: `feed_watchdog()` is called periodically during long debug operations to prevent
-  task watchdog timeouts on ESP32.
+The other diagnostics run only when code calls them:
+
+- **Parameter sweep**: `debug_test_parameters(zone_data)` logs the model architecture, the tensor types and
+  statistics of the input data. For a 4-D image input with one to three channels it then compares `RGB` and
+  `BGR`, with and without normalization, at the model's input size and type, and reports the results ordered by
+  confidence. It exists only when the diagnostics are compiled in, and is refused while a result waits for its
+  callback.
+- **Memory status**: `report_memory_status()` logs the arena allocation and usage. It is always available.
 
 Model data integrity is not one of these: the CRC32 is computed at configuration time and verified on every
 load, whatever `debug:` is set to.

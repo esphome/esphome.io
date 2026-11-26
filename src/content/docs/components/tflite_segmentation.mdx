@@ -23,6 +23,10 @@ tflite_segmentation:
 - **input_height** (*Optional*, integer): Frame height, `8`–`512`. Read from the model's input tensor.
 - **input_channels** (*Optional*, integer): `1` for grayscale or `3` for RGB/BGR. Read from the model's
   input tensor.
+- **frame_width** (*Optional*, integer): Width of the incoming frame when it differs from the model's
+  input. The pipeline scales it with nearest-neighbour sampling. Range `8`–`4096`. Set together with
+  `frame_height`.
+- **frame_height** (*Optional*, integer): Height of the incoming frame, same rules as `frame_width`.
 - **input_order** (*Optional*, string): `"RGB"`, `"BGR"` or `"GRAY"`. Defaults to `"RGB"`; a single-channel
   model is read as `"GRAY"`.
 - **normalize** (*Optional*, boolean): Scale pixels to `0.0`–`1.0`. Defaults to `false`.
