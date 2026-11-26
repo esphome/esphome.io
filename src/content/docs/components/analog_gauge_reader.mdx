@@ -1,4 +1,4 @@
-﻿---
+---
 description: "Instructions for reading analog gauges from an ESP32 camera in ESPHome."
 title: "Analog Gauge Reader"
 ---
@@ -57,7 +57,8 @@ sensor:
 
 ## Configuration variables
 
-- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The reader ID.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The reader ID. Only one reader can be configured;
+  add every dial to it.
 - **camera_id** (**Required**, [ID](/guides/configuration-types/#id)): The `esp32_camera` that produces the frames.
 - **decoder_id** (**Required**, [ID](/guides/configuration-types/#id)): The `camera_decoder` that decodes the frames.
   It must output `RGB888` or `GRAYSCALE`; dials that read a colour need `RGB888`.
@@ -78,26 +79,26 @@ Each entry of `dials` describes one dial in the frame:
 - **crop_x** (*Optional*, int): Left edge of the dial crop. Defaults to `0`.
 - **crop_y** (*Optional*, int): Top edge of the dial crop. Defaults to `0`.
 - **crop_w** (*Optional*, int): Width of the crop. Defaults to `64`.
-- **crop_h** (*Optional*, int): Height of the crop. Defaults to `64`.
+- **crop_h** (*Optional*, int): Height of the crop. Defaults to `64`. The whole crop must fit inside the frame.
 - **scale** (*Optional*, float): How much one unit of this dial is worth in the combined value.
-  Defaults to `1.0`.
-- **min_angle** (*Optional*, float): Angle of `min_value`, in degrees. Defaults to `0`.
-- **max_angle** (*Optional*, float): Angle of `max_value`, in degrees. Defaults to `360`.
+  Must be greater than `0`. Defaults to `1.0`.
+- **min_angle** (*Optional*, float): Angle of `min_value`, in degrees from `0` to `360`. Defaults to `0`.
+- **max_angle** (*Optional*, float): Angle of `max_value`, in degrees from `0` to `360`. Defaults to `360`.
   A `min_angle` greater than `max_angle` selects the wrap-around part of the scale. Angles outside the sweep
   clamp to the nearer end, so a needle resting just before `min_angle`, for example against its stop pin, reads
   `min_value` rather than wrapping round to `max_value`. A sweep may start or end at North (`0` or `360`) like
   any other angle, so `0` to `270` and `90` to `360` need no special case.
 - **angle_offset** (*Optional*, float): Rotation of the dial's coordinate system, in degrees, where `0` is north
   (12 o'clock), `90` east, `180` south and `270` west. The offset is removed before `clockwise` mirrors the
-  angle, so it always names the dial's physical origin. Defaults to `0`.
+  angle, so it always names the dial's physical origin. From `0` to `360`. Defaults to `0`.
 - **clockwise** (*Optional*, boolean): Whether the value increases clockwise. Defaults to `true`.
 - **min_value** (*Optional*, float): Value at `min_angle`. Defaults to `0`.
 - **max_value** (*Optional*, float): Value at `max_angle`. Defaults to `10`.
 - **calibration** (*Optional*, list): Points that replace the linear angle-to-value mapping with a piecewise linear
-  one. Each point has a **raw** angle and the **mapped** value at that angle. The map takes precedence over the
-  `min_angle` to `max_angle` range, including a wrap-around range.
+  one. Takes 1 to 255 points. Each point has a **raw** angle and the **mapped** value at that angle. The map takes
+  precedence over the `min_angle` to `max_angle` range, including a wrap-around range.
 - **needle_type** (*Optional*): `DARK` (default) when the needle is darker than the face, `LIGHT` when it is
-  brighter.
+  brighter. Ignored when `target_color` is set, because matching pixels are then always the dark ones.
 - **algorithm** (*Optional*): `radial_profile` (default), `legacy`, `hough_transform`, `template_match` or `auto`.
   `auto` runs every filtered algorithm and keeps the most confident result. It skips `legacy`, whose raw-image
   confidence is not comparable, unless `legacy` is the only one built.
@@ -115,14 +116,15 @@ Each entry of `dials` describes one dial in the frame:
 - **target_color** (*Optional*, hex): Read the dial by distance from this colour instead of by brightness, for
   example a red needle on a dark face.
 - **color_tolerance** (*Optional*, float): Distance from `target_color` that still counts as the needle.
-  `0` uses the legacy linear mapping. Defaults to `0.0`.
+  From `0` to `442`; `0` spreads the whole colour range linearly. Defaults to `0.0`.
 
 Each dial can also publish its own sensors, and the reader can publish the combined value. See the sensor platform
 below.
 
 ## Sensor platform
 
-The `analog_gauge_reader` sensor platform publishes the reader's values. Every sensor is optional.
+The `analog_gauge_reader` sensor platform publishes the reader's values. Every sensor is optional. Use a single
+`analog_gauge_reader` sensor entry and list all dials in it; a second entry for the same reader is rejected.
 
 ```yaml
 sensor:
@@ -141,7 +143,7 @@ sensor:
 ```
 
 - **analog_gauge_reader_id** (*Optional*, [ID](/guides/configuration-types/#id)): The reader to read from.
-  May be omitted when there is only one reader.
+  May be omitted, because only one reader can be configured.
 - **value** (*Optional*, [Sensor](/components/sensor/)): The combined value of all dials.
 - **dials** (*Optional*, list): Sensors for individual dials. Each dial can appear once here; a second entry for the
   same dial is rejected, because both would try to publish to the same sensors.
@@ -195,12 +197,14 @@ it the cheapest option and the one that suffers most from shadows and glare.
 - `stacked_digits` requires dial scales that are consecutive powers of ten (`1`, `10`, `100`, ...).
 - A frame is dropped when a crop does not fit the decoded frame or when a dial has no needle. The sensors keep
   their previous state instead of publishing a made-up value.
-- A frame is requested each update as an idle camera request, so the same image is also offered to API clients
-  and the camera's `capture_delay` does not apply to it.
+- The component shows a warning after a dropped or empty frame, or when a requested frame does not arrive within
+  5 seconds. The next good frame clears it.
+- The decoded frame is large, so use a board with PSRAM. The component logs a warning at startup when it finds
+  none.
+- Each update requests a frame, unless an earlier request is still waiting. It is an idle camera request, so the
+  same image is also offered to API clients and the camera's `capture_delay` does not apply to it.
 
 ## See Also
 
 - [ESP32 Camera](/components/esp32_camera/)
 - [Sensor Filters](/components/sensor/#sensor-filters)
-
-
