@@ -1471,8 +1471,31 @@ The [E1.31 Effect](#e131-light-effect) requires a component hub for the `e131` l
 **Configuration variables:**
 
 - **method** (*Optional*): Listening method, one of `multicast` or `unicast`. Defaults to `multicast`.
+- **arbitrate_sources** (*Optional*, boolean): Select a single source per universe when several E1.31 sources send
+  to it, as described in [Multiple E1.31 Sources](#multiple-e1-31-sources). Defaults to `false`.
 
 ESPHome will listen on UDP port `5568`.
+
+#### Multiple E1.31 Sources
+
+Several E1.31 sources, each identified by its CID, may send data for the same universe.
+
+With `arbitrate_sources: false`, every valid data packet is applied as it arrives, whatever its source: two sources
+sending at once alternate on the light. Packets marked as preview data or as the end of a stream are also applied.
+This mode does not follow the E1.31 rules for receivers.
+
+With `arbitrate_sources: true`, each universe shows the data of one source, chosen by arbitration (sources are never
+merged):
+
+- The source with the highest priority wins.
+- Between sources of equal priority, the one with the lowest CID wins, so the same set of sources always gives the
+  same result.
+- A source that sends nothing for 2.5 seconds, or sends a stream terminated packet, is dropped, and the next packet
+  from the remaining sources takes over.
+- Packets marked as preview data are ignored, and so are out-of-order packets from the winning source.
+
+Any number of sources is handled: only the winning source is remembered for each universe, so there is no "sources
+exceeded" condition. At the debug log level, one line is logged when a source takes over or leaves.
 
 ### Adalight Effect
 
