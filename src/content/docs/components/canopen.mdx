@@ -22,7 +22,8 @@ stack. The node:
 - receives and sends other frames in lambdas, for example PDOs (see [Raw Frames](#raw-frames)).
 
 The node sends emergency (EMCY) messages only for errors the stack detects itself, such as a full CAN transmit queue
-or a monitored node's heartbeat timeout; there is no API to send your own. It has no PDOs of its own, and doesn't support SYNC, LSS or EDS files.
+or a monitored node's heartbeat timeout; there is no API to send your own. It has no PDOs of its own, and doesn't
+support SYNC, LSS or EDS files.
 Of the NMT commands, Reset Node restarts the whole device, so every `canopen` component on it boots up again. Reset
 Communication is only logged for now: the node doesn't reset its communication or send a new boot-up message.
 
@@ -125,12 +126,13 @@ More than one `canopen` component can be configured, on different buses or on th
 have different node ids, as on any CANopen bus. They receive each other's frames as if they were separate devices:
 a node can monitor another one's heartbeat with `heartbeat_clients`, their `on_heartbeat` and `on_emcy` triggers and
 frame listeners see the other's frames, and SDO requests and NMT commands between them work. The frames are also sent
-on the bus as usual. A node gets the frames of the other nodes on the device in its next loop pass, in the order they
-were sent, and in order with the frames from the bus (a frame another node sends in reply to a bus frame comes after
-that frame). Up to 16 can wait; when more are sent in between (for example a long burst of `send_frame()` calls in one
-lambda), the rest is lost, as on a bus, and a warning is logged; a frame from the bus that finds the queue full is lost
-for that node too. A bus can have only one `canopen` component without `node_id`
-(SDO client only): two would share the SDO client's CAN IDs.
+on the bus as usual. A node gets the frames of the other nodes on the device at the start of its next loop pass, or
+earlier when a frame from the bus reaches it first (the waiting local frames are handled before it); either way in the
+order they were sent, and in order with the frames from the bus (a frame another node sends in reply to a bus frame
+comes after that frame). Up to 16 can wait; when more are sent in between (for example a long burst of `send_frame()`
+calls in one lambda), the rest is lost, as on a bus, and a warning is logged; a frame from the bus that finds the queue
+full is lost for that node too. A bus can have only one `canopen` component without `node_id` (SDO client only): two
+would share the SDO client's CAN IDs.
 
 ```yaml
 canopen:
@@ -158,9 +160,12 @@ Nodes listed in `heartbeat_clients` are monitored. Each monitored node reports t
 Each event is also logged: offline as a warning, the others at info level. Monitoring goes on in every NMT state of
 this node, also while it is `STOPPED` (CiA 301 keeps heartbeat monitoring running there).
 
-A heartbeat timeout or a boot-up message of a monitored node also makes this node send an emergency (EMCY) message
-with error code `0x8130` (heartbeat error) and set bit 4 (communication) of its error register; once all monitored
-nodes send heartbeats again, it sends an EMCY with error code `0x0000` (error reset). An EMCY that comes while this
+A heartbeat timeout, or a boot-up message of a monitored node that was online, also makes this node send an emergency
+(EMCY) message with error code `0x8130` (heartbeat error) and set bit 4 (communication) of its error register; once all
+monitored nodes send heartbeats again, it sends an EMCY with error code `0x0000` (error reset). A boot-up of a node that
+wasn't online (its first one, or one after a timeout) sends no EMCY, though it still gives a `NODE_EVENT_RESET`. The
+stack tracks the timeout and the boot-up as one error each, not per node: while one is active, further timeouts (or
+boot-ups) of other nodes send no new EMCY, so don't expect an EMCY for every node event. An EMCY that comes while this
 node is `STOPPED` is sent once it is pre-operational or operational again. Other nodes see these messages, for example
 in their [`on_emcy`](#on_emcy-trigger) triggers.
 
@@ -367,8 +372,9 @@ Configuration variables:
 ### `canopen.nmt` Action
 
 Sends an NMT command, as an NMT master. A command to this node's own id, or to all nodes, applies to this node too;
-a `reset_node` to all nodes restarts this node once the command is sent. A command that can't be sent is logged as a
-warning (see [NMT Master](#nmt-master) for when).
+a `reset_node` to all nodes restarts this node once the command is sent, waiting at most about 140 ms for it: if the
+bus is blocked, this device restarts anyway and the other nodes may not get the command. A command that can't be sent
+is logged as a warning (see [NMT Master](#nmt-master) for when).
 
 ```yaml
 on_...:
@@ -463,8 +469,10 @@ id(my_canopen).read_sdo_data(0x01, 0x1008, 0, name, sizeof(name), [](void *conte
 // the node's own NMT state: UNKNOWN until the component's first loop pass (also in an on_boot automation that runs
 // right after setup) and without node_id
 id(my_canopen).get_nmt_state() == canopen::NMTState::NMT_STATE_OPERATIONAL;
-// OPERATIONAL, PRE_OPERATIONAL or STOPPED, applied right away; no NMT master needed (false without node_id, and while a
-// command for this node from an automation the component's processing runs, e.g. on_node_event, isn't applied yet)
+// OPERATIONAL, PRE_OPERATIONAL or STOPPED; no NMT master needed. Applied right away, except from an automation the
+// component's processing runs (on_node_event, on_nmt_state_change): there in its next pass, so get_nmt_state() still
+// returns the old state after it returns true. false without node_id, and while a previous command for this node isn't
+// applied yet
 id(my_canopen).set_nmt_state(canopen::NMTState::NMT_STATE_OPERATIONAL);
 ```
 
