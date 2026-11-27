@@ -401,7 +401,7 @@ on_...:
 
 This [action](/automations/actions/#all-actions) sends a Denon infrared remote code to a remote transmitter.
 Denon AV receivers and other Denon devices use this 15-bit code format (the same frame layout as Sharp).
-Each code is sent twice: as written, then with the command bits inverted.
+Each code is sent twice: as written, then with the command bits and the two trailing bits inverted.
 
 ```yaml
 on_...:
@@ -410,10 +410,11 @@ on_...:
       command: 121  # Main Zone On
 ```
 
-#### Configuration variables
+#### Configuration Variables
 
 - **address** (**Required**, int, [templatable](/automations/templates)): The device code, between 0 and 31 inclusive.
-- **command** (**Required**, int, [templatable](/automations/templates)): The function number, between 0 and 255 inclusive.
+- **command** (**Required**, int, [templatable](/automations/templates)): The function number, between 0 and 255
+  inclusive.
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
 The device codes and function numbers are the "Device Code" and "Function #" columns of Denon's IR code tables.
