@@ -111,6 +111,102 @@ climate:
   - All options from [Sensor](/components/sensor).
 - All other options from [Climate](/components/climate/#config-climate).
 
+## Sensor
+
+The `midea` sensor platform reads values the appliance reports only on request: compressor and refrigerant circuit
+data, fan speeds, energy, measured humidity, outdoor unit power and louver angles. Each configured sensor adds a query
+that takes turns with the status query, so with any of them configured the climate state refreshes every second
+request (`period` apart). An appliance that does not report a value leaves its sensor unknown.
+
+```yaml
+# Example configuration entry
+climate:
+  - platform: midea
+    id: midea_ac
+    name: Midea Climate
+
+sensor:
+  - platform: midea
+    midea_id: midea_ac
+    energy_format: BCD
+    error_code:
+      name: Error Code
+    indoor_humidity:
+      name: Indoor Humidity
+    compressor_frequency:
+      name: Compressor Frequency
+    indoor_fan_speed:
+      name: Indoor Fan Speed
+    total_energy:
+      name: Total Energy
+```
+
+### Configuration Variables
+
+- **midea_id** (*Optional*, [ID](/guides/configuration-types/#id)): The `midea` climate to read from. Only needed with
+  more than one.
+- **energy_format** (*Optional*, string): How the appliance encodes `total_energy`, `current_energy` and
+  `real_time_power`. One of `BCD` (most appliances) or `BINARY`. If the values look wrong, try the other one. Defaults
+  to `BCD`.
+- **error_code** (*Optional*): The appliance error code; `0` means no error. All options from
+  [Sensor](/components/sensor/).
+- **compressor_frequency** (*Optional*): Compressor frequency in Hz. All options from [Sensor](/components/sensor/).
+- **compressor_target_frequency** (*Optional*): Compressor target frequency in Hz. All options from
+  [Sensor](/components/sensor/).
+- **compressor_current** (*Optional*): Compressor current in A. All options from [Sensor](/components/sensor/).
+- **compressor_voltage** (*Optional*): Compressor voltage in V. All options from [Sensor](/components/sensor/).
+- **indoor_coil_temperature** (*Optional*): Indoor heat exchanger temperature (T2) in °C. All options from
+  [Sensor](/components/sensor/).
+- **outdoor_coil_temperature** (*Optional*): Outdoor heat exchanger temperature (T3) in °C. All options from
+  [Sensor](/components/sensor/).
+- **discharge_temperature** (*Optional*): Compressor discharge pipe temperature (TP) in °C. All options from
+  [Sensor](/components/sensor/).
+- **indoor_fan_speed** (*Optional*): Indoor fan speed in RPM. All options from [Sensor](/components/sensor/).
+- **indoor_fan_target_speed** (*Optional*): Indoor fan target speed in RPM. All options from
+  [Sensor](/components/sensor/).
+- **total_energy** (*Optional*): Total energy use in kWh. All options from [Sensor](/components/sensor/).
+- **current_energy** (*Optional*): Energy use of the current run in kWh. All options from [Sensor](/components/sensor/).
+- **real_time_power** (*Optional*): Power use in W, from the same report as the energy values. All options from
+  [Sensor](/components/sensor/).
+- **indoor_humidity** (*Optional*): Measured indoor humidity in %, on appliances with a humidity sensor. The climate's
+  `humidity_setpoint` sensor is the humidity setpoint, not this measurement. All options from
+  [Sensor](/components/sensor/).
+- **outdoor_fan_speed** (*Optional*): Outdoor fan speed in RPM. All options from [Sensor](/components/sensor/).
+- **outdoor_unit_power** (*Optional*): Power use of the outdoor unit in W. All options from
+  [Sensor](/components/sensor/).
+- **horizontal_louver_angle** (*Optional*): Horizontal louver angle in degrees. All options from
+  [Sensor](/components/sensor/).
+- **vertical_louver_angle** (*Optional*): Vertical louver angle in degrees. All options from
+  [Sensor](/components/sensor/).
+
+## Binary Sensor
+
+```yaml
+# Example configuration entry
+binary_sensor:
+  - platform: midea
+    midea_id: midea_ac
+    defrost:
+      name: Defrost
+    filter_alert:
+      name: Filter Alert
+```
+
+### Configuration Variables
+
+- **midea_id** (*Optional*, [ID](/guides/configuration-types/#id)): The `midea` climate to read from. Only needed with
+  more than one.
+- **defrost** (*Optional*): On while the outdoor unit defrosts. All options from
+  [Binary Sensor](/components/binary_sensor/).
+- **water_pump** (*Optional*): On while the condensate pump runs. All options from
+  [Binary Sensor](/components/binary_sensor/).
+- **filter_alert** (*Optional*): On when the appliance asks for the filter to be cleaned. All options from
+  [Binary Sensor](/components/binary_sensor/).
+- **display** (*Optional*): On while the appliance display is lit. All options from
+  [Binary Sensor](/components/binary_sensor/).
+- **follow_me** (*Optional*): On while the appliance uses the FollowMe temperature. All options from
+  [Binary Sensor](/components/binary_sensor/).
+
 ## Automations
 
 ### `midea_ac.power_on` Action
