@@ -50,7 +50,8 @@ R0, the sensor resistance in clean air, comes from the configuration (`r0:`) or 
 With `pin:` the component owns the ADC: it creates a hidden `adc` sensor for that pin (named `<id>_internal_adc`) and
 checks at build time that the divider keeps the full 0 - 5 V output of the module inside the range of the pin. The
 10 kOhm / 2 kOhm divider below maps 5 V onto 0.83 V, which is inside the 0 - 1 V of an ESP8266 A0 and inside the
-12 dB measuring range of every ESP32 variant:
+default measuring range of the ESP32 variants with a `12db` attenuation (on the ESP32-S31, see
+[Notes and Limitations](#notes-and-limitations)):
 
 ```yaml
 # Example configuration entry
@@ -341,7 +342,8 @@ Where the table shows no clean-air ratio (`-`), which includes the MQ-137 and MQ
   measures. The 10 kOhm / 20 kOhm divider (3.33 V) is above the recommended 12 dB range of an ESP32 ADC - 2.45 V on a
   classic ESP32, 3.1 V on an S3 - so declare `adc_input_max: 3.33` for that wiring: the declared range is
   authoritative, and the component warns at build time that the top of the reading flattens where the attenuation
-  ends. The 10 kOhm / 2 kOhm divider (0.83 V) stays inside the 12 dB range of every variant.
+  ends. The 10 kOhm / 2 kOhm divider (0.83 V) stays inside the `12db` range of the variants that have it. The ESP32-S31
+  has only `0db`, where the component assumes 0.75 V, so declare `adc_input_max: 0.84` for that divider.
 - **Two-phase heaters**: The MQ-7 needs a cycled heater supply - 5 V for 60 s followed by 1.4 V for 90 s - which this
   component does not drive. It only measures the analog output, so the heater has to be driven by an external circuit
   or an ESPHome `output`.
@@ -356,7 +358,8 @@ Where the table shows no clean-air ratio (`-`), which includes the MQ-137 and MQ
   reading between `vcc:` and 5 % above it - a 5.1 V rail against the default `vcc: 5.0`, for example - is a real
   measurement: the value of the curve at that limit is published, which is `max_ppm:` for the built-in curves without
   a `correction_factor:`. A curve with no value there publishes `unknown`. Only a reading further above `vcc:` is
-  treated as a fault. While the output is saturated, the RS diagnostic reports `0 kOhm`, because the resistance has collapsed.
+  treated as a fault. While the output is saturated, the RS diagnostic reports `0 kOhm`, because the resistance has
+  collapsed.
 - **Accuracy**: The datasheet curves are coarse fits and the sensors are not selective - every MQ type responds to
   several gases, so the published value is an estimate of the concentration of the selected gas and not a measurement
   of it.
