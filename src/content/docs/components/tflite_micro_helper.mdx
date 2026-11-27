@@ -31,7 +31,7 @@ tflite_micro_helper:
 
 ### Common Configuration Variables
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code
   generation. Set this when a consumer component references this instance.
 - **model_type** (**Required**, string): The model type. Must be one of:
   - `"image"` — Single-shot image classification model.
@@ -43,9 +43,10 @@ tflite_micro_helper:
 - **tensor_arena_size** (*Optional*, bytes): The tensor arena size in bytes. Supports suffixed strings such
   as `"110KB"`, `"2MB"`, or raw bytes. If omitted, the size is auto-detected from the `.txt` report file or
   defaults to 100KB.
-- **debug** (*Optional*, boolean): Enable debug logging and diagnostic features. Defaults to `false`. When
-  enabled, the `DEBUG_TFLITE_MICRO_HELPER` define is set, enabling CRC32 model verification, model
-  architecture inspection, tensor input/output analysis, and memory status reporting.
+- **debug** (*Optional*, boolean): Enable debug logging and compile in the diagnostic methods. Defaults to
+  `false`. See [Debug Features](#debug-features).
+
+The model's CRC32 is computed at configuration time and verified on every load, whatever `debug` is set to.
 
 ### Image Model Configuration Variables
 
@@ -61,16 +62,22 @@ Most of these values are auto-detected from the `.txt` report file (see
 - **input_height** (*Optional*, integer): Input image height in pixels. Defaults to `20`.
 - **input_order** (*Optional*, string): Channel order for preprocessing. One of `"RGB"`, `"BGR"`, or `"GRAY"`.
   Defaults to `"RGB"`.
-- **output_processing** (*Optional*, string): Output post-processing strategy. One of:
-  - `"direct_class"` — Use raw output tensor for direct class selection.
-  - `"softmax"` — Apply softmax normalization.
-  - `"argmax"` — Return the index of the maximum value.
-  - `"logits"` — Return raw logits.
-  - `"auto_detect"` — Automatically detect the best strategy.
+- **output_processing** (*Optional*, string): Output post-processing strategy. The result is a class index,
+  divided by `scale_factor` for the strategies other than `direct_class` and `argmax`. One of:
+  - `"direct_class"` or `"argmax"` — Pick the highest output and report it as the confidence.
+  - `"softmax"` — Apply softmax normalization first.
+  - `"logits"` — Pick the highest logit; the confidence is scaled to the output range when needed.
+  - `"qat_quantized"` — Like `logits`, always scaling the confidence to the output range.
+  - `"experimental_scale"` — Multiply the outputs by 0.1, then apply softmax.
+  - `"auto_detect"` — Choose from the output values: probabilities, one-hot or logits.
+  - `"logits_jomjol"` or `"softmax_jomjol"` — Accepted, but not implemented: an error is logged and the result
+    is the same as `direct_class`.
 
-  Defaults to `"direct_class"` when a softmax output is present, or `"softmax"` otherwise.
+  With a `.txt` report, defaults to `"direct_class"` if the report lists a `SOFTMAX` operator and to
+  `"softmax"` otherwise. Without a report, defaults to `"direct_class"`.
 - **scale_factor** (*Optional*, float): Output scale factor for multi-class models. Range `0.1`–`100.0`.
-  Defaults to `1.0`.
+  Defaults to `10.0` for a 100-class model, as given by the report or by `_100cls` in the file name, and to
+  `1.0` otherwise.
 - **normalize** (*Optional*, boolean): Normalize input pixels to `[0.0, 1.0]`. Defaults to `false`.
 - **invert** (*Optional*, boolean): Invert input pixel values. Defaults to `false`.
 
@@ -85,6 +92,10 @@ models ship as JSON manifests that only name the `.tflite` file (see
 - **sliding_window_size** (*Optional*, integer): Size of the sliding window in frames.
 - **features_step_size** (*Optional*, integer): Step size for feature extraction in milliseconds. Range `0`–`30`.
 - **feature_count** (*Optional*, integer): Number of MFCC features. Range `10`–`80`.
+
+The helper only stores these audio settings. Feature extraction, the sliding window and invocation are up to
+the consumer component, so configuring an audio model does not by itself run wake word detection. The
+built-in [Micro Wake Word](/components/micro_wake_word/) component does not use this helper.
 
 ## Model Source Resolution
 
@@ -190,11 +201,12 @@ automatic configuration of:
 - Input data type (`uint8` or `float32`)
 - Recommended tensor arena size
 - Number of model operations (for operator resolver sizing)
-- Output processing strategy
+- Output processing strategy and scale factor
 
 Generate this report using `regenerate_txt_reports.py` from the
 [esphome_ai_component](https://github.com/nliaudat/esphome_ai_component) repository. If no `.txt` report is
-present, the tensor arena size and other parameters must be set manually in the YAML configuration.
+present, the channel count, channel order and scale factor of an image model are guessed from its file name and
+the other settings take their defaults, so set in YAML whatever differs for your model.
 
 > [!IMPORTANT]
 > Models using hybrid quantization (float32 I/O + int8 weights) are **not** supported by TFLite Micro on ESP32.
@@ -229,9 +241,8 @@ table, which keeps the supported operator set in a single place.
 
 - **Build time**: `-DMAX_OPERATORS` is sized automatically from the `.txt` report of every configured model
   (operator count plus a safety margin, taking the largest value across instances, or `30` when no report is
-  available), so a multi-instance configuration always has enough resolver capacity. When a `.txt` report is
-  present, the code generator also compares the operators it lists with the table and stops config generation,
-  before anything is compiled or flashed, if the model needs an operator that is not available.
+  available), so a multi-instance configuration always has enough resolver capacity. The code generator does
+  not check whether the operators are available.
 - **Model loading**: the helper reads the operators the model uses from its flatbuffer operator codes and
   registers only that set through `OpResolverManager`, which maps each operator through the table to the
   matching `Add<Operator>()` method of `MicroMutableOpResolver`. A model that uses few operators therefore
@@ -256,32 +267,23 @@ The table is verified against `esp-tflite-micro` 1.3.7 and covers operators such
 
 Operators marked unavailable in the table (for example `BIDIRECTIONAL_SEQUENCE_LSTM`, `WHERE`, `SELECT` or
 `REDUCE_PROD`) are logged as warnings and cause model loading to fail with a message naming the operator. This
-runtime check is also the safety net for models that ship without a `.txt` report, for which the build-time
-check is skipped.
+check happens on the device, when the model is loaded.
 
 ## Memory Management
 
-The tensor arena is allocated using one of three strategies (in priority order):
-
-1. **PSRAM** (preferred): When PSRAM is available, the tensor arena is allocated there to avoid exhausting
-   internal SRAM.
-2. **Internal SRAM** (fallback): When no PSRAM is present, the arena is allocated from internal RAM.
-3. **Force flags**: Build flags `-DTFLITE_FORCE_SRAM` or `-DTFLITE_FORCE_PSRAM` override the automatic
-   selection.
+The tensor arena is allocated from PSRAM when the board has it, and from internal RAM otherwise. There is no
+fallback from PSRAM to internal RAM: if the allocation fails, the load fails. The build flags
+`-DTFLITE_FORCE_SRAM` and `-DTFLITE_FORCE_PSRAM` override the automatic choice.
 
 ### Arena Size Configuration
 
-Arena size can be specified as a parsed size string using the `MemoryManager::parse_size_string()` utility,
-which supports:
+`tensor_arena_size` takes a number of bytes or a suffixed value such as `110KB` or `1MB`, from `8KB` to
+`2000KB`.
 
-- Suffixed strings: `"110KB"`, `"2MB"`, `"51200"` (raw bytes)
-- Fallback to raw bytes if parsing fails
-
-> [!TIP]
-> On **ESP32-S3** devices, when the 64KB data cache is enabled
-> (`CONFIG_ESP32S3_DATA_CACHE_64KB` + `CONFIG_ESP32S3_DATA_CACHE_LINE_64B`), the requested arena size is
-> automatically increased by **1.5x** to accommodate the larger memory requirements of the S3 architecture.
-> This automatic bump is applied once during model loading.
+When a model is loaded, the helper looks for the size the model needs by trial allocation. It starts at the
+configured size, tries 1.5 and 2 times that size if the model does not fit, and then searches down for the
+smallest size that works. The size found is used, whether it is smaller or larger than the configured one. If
+the search fails, the configured size is used.
 
 ### Arena Statistics
 
@@ -316,18 +318,14 @@ struct ModelSpec {
 
 #### ModelConfig Struct
 
+`get_config()` returns the settings that control output processing. The arena size and the image settings are
+not part of it; they have their own setters and accessors.
+
 ```cpp
 struct ModelConfig {
   std::string description;
-  std::string tensor_arena_size;    // Size string e.g. "110KB", "2MB", "51200"
-  std::string output_processing;    // Processing strategy: "direct_class", "softmax", etc.
+  std::string output_processing;
   float scale_factor{1.0f};
-  std::string input_type;           // "uint8" or "float32"
-  int input_channels{3};
-  std::string input_order{"RGB"};
-  std::vector<int> input_size;      // [width, height]
-  bool normalize{false};
-  bool invert{false};
 };
 ```
 
@@ -346,8 +344,8 @@ struct ArenaStats {
 
 ```cpp
 struct ProcessedOutput {
-  float value{0.0f};         // Class/index value
-  float confidence{0.0f};    // Confidence score
+  float value;         // Class/index value
+  float confidence;    // Confidence score
 };
 ```
 
@@ -363,7 +361,7 @@ struct ProcessedOutput {
 | `set_expected_crc32(crc)`           | Set the expected CRC32 checksum for model integrity verification (0 = skip). |
 | `set_debug(bool)`                   | Enable or disable debug diagnostics.                |
 | `load_model()`                      | Load the model, verify CRC32, allocate arena, and initialize the interpreter. |
-| `unload_model()`                    | Unload the model and free resources.                |
+| `unload_model(reset_config = false)` | Unload the model and free resources. Pass `true` before switching to a different model. |
 | `is_model_loaded()`                 | Returns `true` if a model is currently loaded.      |
 | `invoke()`                          | Run a single inference pass. Returns `TfLiteStatus`. |
 | `run_inference(src_data, src_size)` | Run inference and return the processed `ProcessedOutput`. |
@@ -371,9 +369,14 @@ struct ProcessedOutput {
 | `input_tensor()`                    | Get the input `TfLiteTensor` (for writing data).    |
 | `output_tensor()`                   | Get the output `TfLiteTensor` (for reading results). |
 | `get_model_spec()`                  | Get the `ModelSpec` describing input dimensions and type. |
+| `get_config()`                      | Get the `ModelConfig` of the loaded model. |
 | `get_arena_stats()`                 | Get tensor arena utilization statistics (thread-safe). |
 | `update_arena_stats_cache()`        | Refresh the cached arena statistics.                |
 | `report_memory_status()`            | Print memory allocation details to the log.         |
+
+`unload_model()` keeps the configuration, so the same model can be loaded again. `unload_model(true)` also
+clears the model, dimensions, arena size and preprocessing settings; call `set_model()` and the other
+setters again before the next `load_model()`.
 
 `run_inference()` fills a `ProcessedOutput` (`value` and `confidence`); `run_inference_on_buffer()` skips
 output processing and returns `true` on success.
@@ -474,22 +477,18 @@ if (!tflite.load_model()) {
 
 ## Debug Features
 
-When `debug: true` is set in the configuration, the `DEBUG_TFLITE_MICRO_HELPER` preprocessor define is
-activated, enabling:
+When `debug: true` is set on an instance, the `DEBUG_TFLITE_MICRO_HELPER` preprocessor define is activated for
+the build. The instance logs its model configuration, operator codes and output processing details, and the
+load checks the model's file header and logs its timings.
 
-- **CRC32 Model Verification**: The `ModelHandler::verify_model_crc()` method computes and checks the model
-  file CRC32 to detect data corruption. CRC32 is computed from the model binary and stored per-instance.
-- **Model Architecture Inspection**: `debug_model_architecture()` logs operator types, tensor shapes, and
-  quantization parameters.
-- **Input/Output Analysis**: Tensor data statistics (min, max, mean), quantization details, and output
-  distribution. Includes `debug_pre_inference_state()`, `debug_output_tensor_details()`, and
-  `debug_raw_outputs()`.
-- **Memory Status**: `report_memory_status()` prints arena allocation, usage, and peak memory consumption.
-- **Parameter Sweeping** (advanced): `debug_test_parameters()` runs inference across multiple configurations
-  (varying `input_order`, `input_size`, `normalize`, `input_type`) to find optimal settings. Sweeps generate
-  up to 16 configuration combinations and report the top 10 by confidence.
-- **Watchdog Feeding**: `feed_watchdog()` is called periodically during long debug operations to prevent
-  task watchdog timeouts on ESP32.
+The other diagnostics run only when code calls them:
+
+- **Parameter Sweeping** (advanced): `debug_test_parameters(zone_data)` runs the loaded model on the given
+  buffers and logs up to 10 entries ordered by average confidence. It requires the define above and a model
+  with float32 output, and produces entries only for a model whose input is 32x20 or 20x32. The buffers are not
+  preprocessed differently for each entry, so it does not compare preprocessing settings.
+- **Memory Status**: `report_memory_status()` logs the arena allocation and usage and the free heap. It is
+  always available.
 
 ## See Also
 
