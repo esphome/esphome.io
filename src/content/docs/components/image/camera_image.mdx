@@ -46,8 +46,7 @@ next update requests a new one.
   resolution uniformly to fit `WIDTHxHEIGHT`. That is smaller than the resize
   box when the aspect ratios differ, for example 640x480 into 320x320 decodes to
   320x240. Checked when the configuration is validated, and again against each
-  decoded frame. An OV2640 with a camera `window` delivers a smaller frame than
-  the `resolution`, so validation logs a warning for that combination.
+  decoded frame.
   - **x** (**Required**, int): Horizontal offset.
   - **y** (**Required**, int): Vertical offset.
   - **width** (**Required**, int): Crop width.
@@ -78,6 +77,14 @@ next update requests a new one.
 The referenced camera must deliver JPEG frames: keep `pixel_format: JPEG`, or
 set `jpeg_quality` above `0` so the camera converts its raw frames. A camera
 configured for raw frames is rejected when the configuration is validated.
+
+An OV2640 with a camera `window` delivers a smaller frame than the
+`resolution`. Validation logs a warning when a `window` is configured, and the
+component logs a warning if a frame does not produce the expected image size.
+
+Without PSRAM the rotation buffer uses internal RAM, and validation logs a
+warning with its size. A buffer that does not fit makes the firmware fail to
+link.
 
 The camera captures at most one frame per `max_framerate` period. If that period
 is not shorter than `timeout`, validation logs a warning. A frame that arrives
