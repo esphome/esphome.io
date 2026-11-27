@@ -483,8 +483,8 @@ What `prune` keeps and removes:
 - **nRF Connect SDK**: the recommended version and its toolchain are kept, along with the newer version that some
   chips need. Every other version is removed.
 - **PlatformIO**: the ESP32, ESP8266 and nRF52 platforms are removed with the packages only they use, since these
-  now build with their own toolchains. RP2 and LibreTiny still build with PlatformIO, so for them only what a newer
-  install replaced is removed. The PlatformIO download cache is cleared.
+  now build with their own toolchains. RP2 and LibreTiny still build with PlatformIO: the recommended version of each
+  platform is kept and every other version is removed. The PlatformIO download cache is cleared.
 
 Unlike [`clean-all`](#clean-all-command), `prune` leaves in place what a build with the default versions needs.
 
@@ -493,9 +493,6 @@ Unlike [`clean-all`](#clean-all-command), `prune` leaves in place what a build w
 > removed and then downloaded again the next time that configuration is built. The same goes for the PlatformIO
 > toolchain on ESP32, ESP8266 and nRF52, whether it is selected with `toolchain: platformio` in the configuration
 > or with `--toolchain platformio` on the command line.
->
-> For RP2 and LibreTiny, the platform that was installed last is the one that is kept. After building a
-> configuration that sets another version, the default one is downloaded again.
 
 > [!WARNING]
 > Do not run `prune` while a build is running, including one started by the ESPHome Device Builder. The build can
