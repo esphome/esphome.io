@@ -182,9 +182,9 @@ to show the API; a component configured through YAML receives the instance set u
 
 ### Model Report File (`.txt`)
 
-Consumer components load a `.tflite` model file by referencing its path in their YAML configuration. The model
-file must be accompanied by a `.txt` report file containing the operator list, tensor dimensions, and metadata
-for auto-detection of configuration values. When present, the report file enables automatic configuration of:
+A `.txt` report file with the same name as the `.tflite` model set in the `tflite_micro_helper` block can hold
+the operator list, tensor dimensions and other metadata. The report is optional. When present, it enables
+automatic configuration of:
 
 - Input dimensions (`input_width`, `input_height`, `input_channels`)
 - Input data type (`uint8` or `float32`)
@@ -301,7 +301,7 @@ The `TFLiteMicroHelper` class is the main entry point for consumer components. I
 
 ### Structs
 
-#### ModelSpec struct
+#### ModelSpec Struct
 
 ```cpp
 struct ModelSpec {
@@ -314,7 +314,7 @@ struct ModelSpec {
 };
 ```
 
-#### ModelConfig struct
+#### ModelConfig Struct
 
 ```cpp
 struct ModelConfig {
@@ -331,7 +331,7 @@ struct ModelConfig {
 };
 ```
 
-#### ArenaStats struct
+#### ArenaStats Struct
 
 ```cpp
 struct ArenaStats {
@@ -342,7 +342,7 @@ struct ArenaStats {
 };
 ```
 
-#### ProcessedOutput struct
+#### ProcessedOutput Struct
 
 ```cpp
 struct ProcessedOutput {
