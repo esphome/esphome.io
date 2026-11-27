@@ -115,6 +115,14 @@ used for hardware sharing change accordingly.
 The original ESP32 has three UARTs. ESP32 variants (ESP32-C3, ESP32-S2, etc.) may have a different number of UARTs
 (usually between two to six). Any pair of GPIO pins can be used, as long as they support the proper output/input modes.
 
+> [!NOTE]
+> The last UART of the ESP32-C5, ESP32-C6 and ESP32-P4 is a low-power (LP) UART with a 16-byte FIFO, so
+> `rx_full_threshold` is capped at `10` there. `clock_source` does not apply to it: it runs from half the crystal
+> frequency, and below about 4900 baud (5900 with a 48 MHz crystal) from the internal RC oscillator, which is less
+> accurate. The startup log shows the `clock_source` value for it, not the clock it runs from.
+> The last UART of the ESP32-S31 is an LP UART too: the same applies, except that it always runs from the internal RC
+> oscillator.
+
 The ESP8266 has two UARTs; the second of which is TX-only. Only a limited set of pins can be used. `UART0` may
 use either `tx_pin: GPIO1` and `rx_pin: GPIO3`, or `tx_pin: GPIO15` and `rx_pin: GPIO13`. `UART1` must
 use `tx_pin: GPIO2`. Any other combination of pins will result in use of a software UART.
