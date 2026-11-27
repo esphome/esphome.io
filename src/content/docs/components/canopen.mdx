@@ -155,7 +155,8 @@ Nodes listed in `heartbeat_clients` are monitored. Each monitored node reports t
 - `NODE_EVENT_RESET`: the node sent a boot-up message, so it restarted and lost any configuration it got at runtime.
   It counts as online again with its next heartbeat.
 
-Each event is also logged: offline as a warning, the others at info level.
+Each event is also logged: offline as a warning, the others at info level. Monitoring goes on in every NMT state of
+this node, also while it is `STOPPED` (CiA 301 keeps heartbeat monitoring running there).
 
 ```yaml
 canopen:
