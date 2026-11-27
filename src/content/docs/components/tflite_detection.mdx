@@ -61,6 +61,10 @@ set for one of them must match the model.
 The decoder reports boxes, class ids and scores. The model needs four outputs: boxes
 `[1, N, 4]`, classes `[1, N]`, scores `[1, N]` and the detection count `[1, 1]`.
 
+These are the outputs of the `TFLite_Detection_PostProcess` operator, which SSD models exported for
+TensorFlow Lite end in, and it is supported. Raw detection heads, such as those of YOLO models, are not
+decoded.
+
 Pass an RGB888 frame that matches the configured geometry to the instance, for example from `on_boot` or
 a camera callback:
 
