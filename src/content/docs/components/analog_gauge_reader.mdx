@@ -201,9 +201,11 @@ it the cheapest option and the one that suffers most from shadows and glare.
   5 seconds. The next good frame clears it.
 - The decoded frame is large, so use a board with PSRAM. The component logs a warning at startup when it finds
   none.
-- Each update requests a frame, unless an earlier request is still waiting. It is an idle camera request, so the
-  same image is also offered to API clients. The camera's `capture_delay` and its `on_capture_start` and
-  `on_capture_end` automations do not run for it, so switch on a flash or light by other means.
+- Each update requests a frame, unless an earlier request is still waiting. The camera's `capture_delay` and its
+  `on_capture_start` and `on_capture_end` automations apply to it, so they can switch on a flash or light. They do
+  not run while a camera stream is active.
+- The delay counts towards the 5 second frame timeout, so keep `capture_delay` well below 5 seconds.
+- The reader's frames are not sent to API clients.
 
 ## See Also
 
