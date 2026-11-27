@@ -33,8 +33,8 @@ PPM = a \cdot ratio^{b}
 $$
 
 The types with a `linear` curve use `log10(PPM) = (log10(ratio) - b) / a` instead, and `regression_method: inverse`
-evaluates `PPM = (ratio / a)^(1 / b)`. `ratio_mode: r0_rs` turns the ratio around (`R0 / RS`), which is the convention
-the MQUnifiedsensor library uses; the default `rs_r0` is the one the datasheet coefficients are fitted against.
+evaluates `PPM = (ratio / a)^(1 / b)`. `ratio_mode: r0_rs` turns the ratio around (`R0 / RS`) for a curve of your own
+that was fitted that way; the built-in curves are fitted against the default, `rs_r0`.
 
 R0, the sensor resistance in clean air, comes from the configuration (`r0:`) or from a clean-air calibration
 (`calibration:`). With `calibration:` the result is stored in flash and reused after a reboot.
@@ -194,7 +194,8 @@ button:
   the curve places just above zero at rest does not show up as a small concentration. Defaults to `0`.
 - **max_ppm** (*Optional*, float): The top of the measuring range. Larger readings are clamped to it. Defaults to the
   range of `sensor_type` listed below.
-- **ratio_mode** (*Optional*, string): `rs_r0` (datasheet convention, the default) or `r0_rs` (MQUnifiedsensor).
+- **ratio_mode** (*Optional*, string): `rs_r0` (datasheet convention, the default) or `r0_rs`. `r0_rs` requires
+  `coefficient_a:` and `coefficient_b:` fitted against `R0 / RS`.
 - **ratio_in_clean_air** (*Optional*, float): The RS/R0 ratio in clean air, used to derive R0 from a calibration.
   Defaults to the value of the `sensor_type`, for example `70` for the MQ-8. Some types have none (see the
   [table](#supported-sensors-and-built-in-curves)).
@@ -282,6 +283,9 @@ A calibration turns the resistance the sensor shows in clean air into the R0 eve
   half of the attempts have to be valid, and at least two, or the run fails.
 - The remaining samples have to agree: a run whose R0 values spread more than 25 % around their mean is rejected, so
   a sensor that is not yet settled in clean air does not become the reference of every later reading.
+- With temperature/humidity compensation, readings taken without a recent value of both sources are skipped, so that
+  the stored R0 is always normalized for the ambient conditions. A calibration that starts before the sources have
+  published fails and is handled like any other failed run.
 - A run that fails while no R0 is known is retried after `delay` (at least 10 s). No reading is published and the
   status warning stays up until a run succeeds.
 - A run that fails while an R0 is already in use keeps that R0 and is not retried. Readings continue, and the status
@@ -308,7 +312,7 @@ corresponding option is not set. The published value is clamped to the range of 
 | `MQ-7` | `exponential` | 27.5 | `CO` | `ALCOHOL`, `CH4`, `CO`, `H2`, `LPG` | 0 - 2000 ppm |
 | `MQ-8` | `exponential` | 70 | `H2` | `ALCOHOL`, `CH4`, `CO`, `H2`, `LPG` | 0 - 10000 ppm |
 | `MQ-9` | `exponential` | 9.6 | `LPG` | `CH4`, `CO`, `LPG` | 0 - 10000 ppm |
-| `MQ-131` | `exponential` | 15 | `O3` | `O3` | 0 - 1 ppm |
+| `MQ-131` | `linear` | 1 | `O3` | `O3` | 0 - 1 ppm |
 | `MQ-135` | `linear` | 3.6 | `NH3` | `H2`, `NH3`, `TOLUENE` | 0 - 10000 ppm |
 | `MQ-136` | `exponential` | - | `CUSTOM` | - | 0 - 200 ppm |
 | `MQ-137` | `linear` | - | `NH3` | `NH3` | 0 - 500 ppm |
@@ -318,13 +322,14 @@ corresponding option is not set. The published value is clamped to the range of 
 | `MQ-309A` | `exponential` | - | `CUSTOM` | - | 0 - 1000 ppm |
 | `CUSTOM` | `exponential` | - | `CUSTOM` | - | 0 - 10000 ppm |
 
-The MQ-131 measures ozone, whose datasheet gives its range in ppb (10 - 1000 ppb). Its coefficient pair is used with
-the exponential fit it was published for: at the clean-air ratio of 15 it reports 0.12 ppm, and the range top of 1 ppm
-is the 1000 ppb of the datasheet. Reading the same pair linearly would put clean air near 10000 ppm, which is why that
-interpretation is not used.
+The MQ-131 curve is for the low-concentration ozone sensor, with a range of 10 - 1000 ppb (0.01 - 1 ppm) and a
+resistance that rises with the concentration. Its clean-air ratio is 1, where the curve reads about 0.014 ppm. The
+sensor publishes three decimals by default; every other type publishes one.
 
-The MQ-3 alcohol curve is published in mg/L rather than ppm. The value is converted: 1 mg/L of ethanol is about
-531 ppm at 25 °C, so a clean-air reading stays in the low ppm and the top of the range is 10000 ppm.
+The MQ-3 curves are published in mg/L and are converted to ppm at 25 °C. For `LPG` an equal mix of propane and butane
+is assumed. At the clean-air ratio of 60, which lies outside the range of the datasheet chart, `ALCOHOL` and `BENZENE`
+read below 1 ppm, but `CO` reads about 73 ppm, `LPG` about 36 ppm and `HEXANE` about 18 ppm. Set `min_ppm:` above
+that value when you use one of these three.
 
 The MQ-136, MQ-214, MQ-303A, MQ-309A and `CUSTOM` have no published curve in the reference library, so
 `coefficient_a:` and `coefficient_b:` are required for them, and `gas:` is then a free label. Nothing checks that
