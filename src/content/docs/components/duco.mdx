@@ -263,7 +263,13 @@ sensor:
     flow_level:
       name: "Flow Level"
     time_remaining:
-      name: "Mode Time Remaining"
+      - name: "Mode Time Remaining"
+      - address: 2
+        name: "Bathroom Mode Time Remaining"
+      - address: 3
+        name: "Bedroom Mode Time Remaining"
+      - address: 4
+        name: "Living Room Mode Time Remaining"
     bypass:
       name: "Bypass"
     temperature_oda:
@@ -292,7 +298,12 @@ sensor:
 
 - **filter_remaining** (*Optional*): Days until the filter should be replaced. `update_interval` defaults to `1200s`.
 - **flow_level** (*Optional*): The current flow level, in %.
-- **time_remaining** (*Optional*): Seconds left in the current timed mode.
+- **time_remaining** (*Optional*): A list of sensors reporting the seconds left in the current timed mode of a node.
+  Each entry accepts:
+  - **address** (*Optional*, int): Node address from `1` to `68`. Defaults to `1` (the box).
+  - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): Defaults to `60s`.
+  - All other options from [Sensor](/components/sensor/).
+  The single-sensor configuration without a list is also supported.
 - **bypass** (*Optional*): The position of the bypass, in %.
 - **temperature_oda** (*Optional*): Temperature of the outdoor air coming into the box, in °C.
 - **temperature_sup** (*Optional*): Temperature of the supply air going to the rooms, in °C.
