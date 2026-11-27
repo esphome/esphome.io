@@ -34,7 +34,7 @@ open-drain output with a weak pull-up, so no extra parts are needed for a first 
 hdmi_cec:
   id: cec
   pin: GPIOXX
-  address: 0x5
+  address: 0x9
 ```
 
 The examples below assume `id: cec`.
@@ -48,6 +48,7 @@ The examples below assume `id: cec`.
   together with `monitor_mode: true`, as `0xF` alone still acknowledges broadcasts.
 - **physical_address** (*Optional*, int): The physical address of the device, where it is connected in the
   tree of hdmi-connected cluster of devices. See the section below on CEC addresses.
+- **osd_name** (*Optional*, string): The name for this device as shown on a TV, max length is 14 characrters.
 - **promiscuous_mode** (*Optional*, boolean): Also hand messages addressed to other devices to `on_message`.
   Defaults to `false`: only broadcasts and messages for this device's address are seen.
 - **monitor_mode** (*Optional*, boolean): Listen without taking part in the bus: no acknowledge is sent for
@@ -60,7 +61,7 @@ The examples below assume `id: cec`.
   - **data** (*Optional*, list of int): Only messages whose payload starts with these bytes, the opcode
     first.
 - **uart_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of an
-  [UART Component](/components/uart). Can be used to offload the slow sending of messages from the core.
+  [UART Component](/components/uart/). Can be used to offload the slow sending of messages from the core.
 
 Inside the automation, `source` and `destination` are the logical addresses of the message as `uint8_t`,
 and `data` is the payload starting with the opcode as a `std::span<const uint8_t>`. The payload is only
@@ -166,21 +167,21 @@ api:
             data: !lambda return std::vector<uint8_t>(cec_data.begin(), cec_data.end());
 ```
 
-## CEC bus addresses
+## CEC Bus Addresses
 Each device on the CEC bus requires both a *logical address* and a *physical address*.
 The *logical address* is a 4-bit value as mentioned above, some addresses relate to the
 functionality of the device. Each *logical address* shall appear only once in
 an HDMI-connected cluster of devices.
 
-The *physical address* relates to where the device is connected in the tree of devices.
+The *physical address* relates to where the device is connected in the HDMI-tree of devices.
 For instance, `0x4000` corresponds to the HDMI input connector 4 on the main TV.
-Or, `0x2300` could corresponds to HDMI connector 3 on a A/V-receiver which itself is connected to
+Or, `0x2300` could correspond to HDMI connector 3 on a A/V receiver which itself is connected to
 connector 2 on the TV.
 
 The *physical address* of this component can be simply configured in its yaml setup. Unfortunately,
 that means that plugging it in some other port would require re-flashing the device.
 
-Additionally, the *physical address* can be configured through a *Home assistant* parameter,
+Additionally, the *physical address* can be configured through a *Home Assistant* parameter,
 providing a value at boot-up. This can be accomplished with for instance this example:
 
 ```yaml
@@ -208,7 +209,7 @@ number:
 
 In practice, real HDMI devices auto-configure their physical address by asking that
 from the device in which they are plugged-in. This is implemented through the
-*ddc* wire-pair in the HDMI connector, which is an I²C bus.
+*ddc* wire-pair in the HDMI connector, which is a 5V I²C bus.
 For an advanced implementation, a beta-test version of the required code can be seen in
 [this comment](https://github.com/Palakis/esphome-native-hdmi-cec/issues/32#issuecomment-3478033917).
 
@@ -218,6 +219,9 @@ For an advanced implementation, a beta-test version of the required code can be 
 Three additions make the component behavior more robust.
 
 ![Schematics with a relay and a diode](images/cec_uart_schematics.png)
+
+Note that the shown microcontroller and GPIO pin selection in this schematics is by example only.
+Please choose the microcontroller and gpio pins as appropriate for your project.
 
 ### 1. Disconnect from the CEC Line on Power-Down
 
@@ -233,9 +237,9 @@ job: it tolerates a bus voltage without local power, and its open-drain behaviou
 
 HDMI pin 19, Hot Plug Detect, is not part of CEC but tells when the cable is plugged into a TV. The TV
 drives it to 5V through a 1K pull-up resistor, so it has to be limited to 3.3V: the line can be loaded to GND
-for example with a 2.2K resistor from the pin to ground or with a 3.3V zener diode.
+for example with a 1.8K resistor from the pin to ground or with a 3.3V zener diode.
 The LED in the schematic below might also serve for that: the forward voltage of a blue or white LED
-is fine.
+will be around 2.7V.
 
 ![Schematics with HPD and UART](images/hpd_uart_schematics.png)
 
@@ -258,16 +262,16 @@ binary_sensor:
 
 ### 3. Use a UART to send messages
 Configuring the *UART* will offload the sending of messages from the core, and thereby
-resolve the issues of long operation times. Without it, you will likely encounters warnings like:
+resolve the issues of long operation times. Without it, you will likely encounter warnings like:
 
 ```text
 [21:34:34.651][W][component:447]: hdmi_cec took a long time for an operation (246 ms), max is 130 ms
 ```
-Such long operation times might disturb other functionality like Wifi, or even cause OS crashes and reboot.
+Such long operation times might disturb other functionality like Wi-fi, or even cause OS crashes and reboots.
 
 As shown in the schematics, the UART pin is connected to the CEC line through a diode.
 This diode converts the standard UART output drive to *pull down* functionality.
-Any standard small-signal diode should work, such as types 1N4148, 1N914.
+Any standard small-signal diode should work, such as a 1N4148 or 1N914.
 Schottky type diodes nicely offer a smaller voltage drop, but a low-leakage type is needed such as BAT81.
 Do NOT choose larger rectifier diodes, as those will have too high reverse leakage current.
 
@@ -279,21 +283,14 @@ For example:
 ```yaml
 uart:
   id: cec_uart
-  tx_pin: GPIO7
+  tx_pin: GPIOXX
   baud_rate: 2083
 
 hdmi_cec:
-  pin: GPIO9
+  pin: GPIOXX
   uart_id: cec_uart
   ...
 ```
-
-Maybe, the diode on the UART output could be replaced by just a wire for some types of microcontrollers,
-such as an `esp32s3` or an `rp2350`, thanks to their flexible GPIO matrix:
-*Immediatly after* the UART driver has done its standard pin configuration,
-the pin mode can probably be overwritten to become *open drain*.
-Omitting the diode in such case would need further exploration.
-
 
 ## Note on the HDMI Standard
 
