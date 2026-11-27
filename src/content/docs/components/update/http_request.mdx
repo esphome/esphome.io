@@ -8,10 +8,9 @@ import APIRef from "@components/APIRef.astro";
 This platform allows you to manage the deployment of updates to your ESPHome devices. It works by reading a
 [JSON manifest file](#update_http_request-manifest_format) and using it to determine the presence of an update.
 
-To use it, the following components are required in your device's configuration:
-
-- [HTTP Request](/components/http_request/)
-- [OTA Update via HTTP Request](/components/ota/http_request/)
+The [HTTP Request](/components/http_request/) component is required in your device's configuration, together with an
+[update target](#update-targets) - the component that installs the image the manifest points to. To update the
+device's own firmware, that target is the [OTA Update via HTTP Request](/components/ota/http_request/) component.
 
 ```yaml
 # Example configuration entry
@@ -24,10 +23,17 @@ update:
 ## Configuration variables
 
 - **source** (**Required**, string): The URL of the YAML manifest file containing the firmware metadata.
+- **target_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the
+  [update target](#update-targets) that installs the image. Only needs to be set when the configuration contains
+  more than one update target.
 - **update_interval** (_Optional_, [Time](/guides/configuration-types/#time)): The interval at which to check for (**not install**) updates.
   Defaults to 6 hours.
 
 - All other options from [Update](/components/update/#config-update).
+
+> [!NOTE]
+> `target_id` was called `ota_id` before ESPHome 2026.12.0. The old name still works but logs a deprecation warning
+> and will be removed in ESPHome 2027.5.0, so rename it to `target_id` in existing configurations.
 
 > [!WARNING]
 > GitHub releases URLs (e.g., `https://github.com/<user>/<repo>/releases/latest/download/manifest.json`) redirect
@@ -36,12 +42,42 @@ update:
 >
 > Use GitHub Pages URLs instead (e.g., `https://<user>.github.io/<repo>/firmware/manifest.json`) which do not redirect, or increase the buffer size.
 
+## Update Targets
+
+This platform fetches and parses the manifest, picks the build entry that applies to your device and tracks install
+progress on the update entity. The install itself is performed by an *update target*. The
+[OTA Update via HTTP Request](/components/ota/http_request/) component is one such target and installs the device's
+own firmware, but any component that can flash something - a secondary MCU, a radio module, a display controller -
+can be an update target and reuse the same manifest handling.
+
+Each target decides for itself which entry of the manifest's `builds` array belongs to it, and which key inside that
+entry holds the image to install. The OTA component matches on the entry's `chipFamily` and reads the `ota` key;
+another target may match on different fields and read a different key.
+
+`target_id` does not need to be set when the configuration contains exactly one update target, which is the case for
+a device that only updates its own firmware. With more than one target - for example an `ota: platform: http_request`
+entry alongside another target - the configuration fails with an ambiguous ID error, and each `update:` entry has to
+name the target it installs through:
+
+```yaml
+ota:
+  - platform: http_request
+    id: device_ota
+
+update:
+  - platform: http_request
+    name: Firmware Update
+    target_id: device_ota
+    source: http://example.com/manifest.json
+```
+
 <span id="update_http_request-manifest_format"></span>
 
 ## Update Manifest Format
 
-This component expects the [ESP-Web-Tools manifest](https://github.com/esphome/esp-web-tools) with an extension in
-the `ota` block that is structured as follows:
+This component expects the [ESP-Web-Tools manifest](https://github.com/esphome/esp-web-tools), extended with a block
+holding the image for the update target. For the [OTA Update via HTTP Request](/components/ota/http_request/) target
+that block is called `ota`, and the manifest is structured as follows:
 
 ```json
 {
@@ -61,7 +97,10 @@ the `ota` block that is structured as follows:
 }
 ```
 
-While `release_url` and `summary` are optional, all other fields shown here are required.
+While `release_url` and `summary` are optional, all other fields shown here are required. A build entry is selected
+by the update target, so the fields it is matched on - `chipFamily` for the OTA target - and the name of the block
+holding the image depend on which target the `update:` entry installs through. The contents of that block are the
+same for every target.
 
 If `path` begins with:
 
