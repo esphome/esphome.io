@@ -83,7 +83,7 @@ See [Gps](/components/time/gps/) for config options for the GPS time source.
 
 - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval of sensor updates. Defaults to `20s`.
 
-## Using GPS data in lambdas
+## Using GPS Data in Lambdas
 
 `id(my_gps).get_data()` returns the values from the most recent sentences. Position and the other measurements are
 stored as integers scaled by a power of ten, which keeps the full precision of the receiver; the methods in the table
@@ -110,13 +110,13 @@ interval:
 | `speed_e3`                    | `speed_knots()`, `speed_kmh()` | Knots times 1000                            |
 | `course_e2`                   | `course()`                     | Degrees from true north times 100           |
 | `hdop_e2`                     | `hdop()`                       | HDOP times 100                              |
-| `satellites`                  |                                | Satellites used in the fix                  |
+| `satellites`                  |                                | Satellites in use, as reported in GGA       |
 | `year`, `month`, `day`        |                                | UTC date                                    |
 | `hour`, `minute`, `second`    |                                | UTC time                                    |
 
 `data.has(field)` is true once a value for that field has been received. The fields are `gps::GPS_FIELD_LOCATION`,
-`GPS_FIELD_SPEED`, `GPS_FIELD_COURSE`, `GPS_FIELD_ALTITUDE`, `GPS_FIELD_SATELLITES`, `GPS_FIELD_HDOP`,
-`GPS_FIELD_TIME` and `GPS_FIELD_DATE`.
+`gps::GPS_FIELD_SPEED`, `gps::GPS_FIELD_COURSE`, `gps::GPS_FIELD_ALTITUDE`, `gps::GPS_FIELD_SATELLITES`,
+`gps::GPS_FIELD_HDOP`, `gps::GPS_FIELD_TIME` and `gps::GPS_FIELD_DATE`.
 
 ## See Also
 
