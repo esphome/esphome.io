@@ -282,6 +282,24 @@ manifest's `model` key is used here; the `micro` tuning values in the official m
 `probability_cutoff`, `sliding_window_size` and `features_step_size` explicitly. `feature_count` defaults to
 the model's feature dimension.
 
+Instead of a string, `model` also takes a dictionary, which gives access to the options of a source:
+
+- `type: local` with **path** (**Required**).
+- `type: git` with **url** (**Required**), **file** (**Required**, the `.tflite` file in the repository), **ref**
+  (*Optional*), **refresh** (*Optional*, Time, defaults to `1d`: how often the repository is updated),
+  **username** and **password** (*Optional*).
+- `type: http` with **url** (**Required**).
+
+```yaml
+tflite_image:
+  - model:
+      type: git
+      url: https://github.com/user/repo
+      file: models/model.tflite
+      ref: main
+      refresh: 7d
+```
+
 > [!IMPORTANT]
 > Models using hybrid quantization (float32 I/O + int8 weights) are **not** supported by TFLite Micro on ESP32.
 > Use a full integer quantized model instead.
