@@ -1,0 +1,44 @@
+---
+description: "Instructions for setting up text models with TensorFlow Lite Micro in ESPHome"
+title: "TFLite Text"
+---
+
+The `tflite_text` component runs a token model on ESP32 with the ESP-IDF framework. It loads
+`tflite_micro_runtime` in the background, so the kind is the only YAML entry and `model_type` is not used.
+
+```yaml
+tflite_text:
+  - id: classifier
+    model: "models/text_classifier.tflite"
+```
+
+## Configuration variables
+
+- **position_output** (*Optional*, boolean): Decode the `[1, 2]` output as start and end positions. A
+  two-entry output is ambiguous, so by default it is read as two class logits and classified, like any other
+  output. Set it to `true` for a span model. It needs a `[1, 2]` output. Defaults to `false`.
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The runtime helper for this model. Set it
+  when a lambda or another component references the instance.
+- **decoder_id** (*Optional*, [ID](/guides/configuration-types/#id)): The output decoder. Set it to read
+  the decoded result from a lambda.
+- **on_result** (*Optional*, [Automation](/automations/)): Actions to run after a successful inference,
+  once the decoder holds the result. Read it through `decoder_id`.
+- **model** (**Required**, string or dictionary): The `.tflite` model, resolved by
+  `tflite_model_source`: a local path, a `github://` shorthand, an HTTP(S) URL, or a JSON manifest that names
+  the model.
+- **tensor_arena_size** (*Optional*, bytes): Arena size, as bytes or a suffixed value such as `200KB`. When
+  omitted, the size is estimated from the model and probed on the device.
+- **debug** (*Optional*, boolean): Enable the diagnostics of `tflite_model_debug` for this instance.
+  Defaults to `false`.
+
+## Output
+
+The decoder classifies the output logits, or reports start and end positions when `position_output` is
+set. The model takes token ids, an attention mask and a segment mask as int32 tensors; their length comes
+from the model's input tensors, and the tokenizer stays in the consumer.
+
+## See Also
+
+- [TFLite Micro Runtime](/components/tflite_micro_runtime/) - the model loader, tensor arena and C++ API
+- [Automation](/automations/)

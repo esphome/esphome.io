@@ -1,0 +1,39 @@
+---
+description: "Instructions for setting up tabular models with TensorFlow Lite Micro in ESPHome"
+title: "TFLite Tabular"
+---
+
+The `tflite_tabular` component runs a feature-vector model on ESP32 with the ESP-IDF framework. It loads
+`tflite_micro_runtime` in the background, so the kind is the only YAML entry and `model_type` is not used.
+
+```yaml
+tflite_tabular:
+  - id: meter_reading
+    model: "models/regression.tflite"
+```
+
+## Configuration variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The runtime helper for this model. Set it
+  when a lambda or another component references the instance.
+- **decoder_id** (*Optional*, [ID](/guides/configuration-types/#id)): The output decoder. Set it to read
+  the decoded result from a lambda.
+- **on_result** (*Optional*, [Automation](/automations/)): Actions to run after a successful inference,
+  once the decoder holds the result. Read it through `decoder_id`.
+- **model** (**Required**, string or dictionary): The `.tflite` model, resolved by
+  `tflite_model_source`: a local path, a `github://` shorthand, an HTTP(S) URL, or a JSON manifest that names
+  the model.
+- **tensor_arena_size** (*Optional*, bytes): Arena size, as bytes or a suffixed value such as `200KB`. When
+  omitted, the size is estimated from the model and probed on the device.
+- **debug** (*Optional*, boolean): Enable the diagnostics of `tflite_model_debug` for this instance.
+  Defaults to `false`.
+
+## Output
+
+The single input is a float32 feature vector. The output is a regression value from `[1, 1]`
+or a class distribution from `[1, C]`.
+
+## See Also
+
+- [TFLite Micro Runtime](/components/tflite_micro_runtime/) - the model loader, tensor arena and C++ API
+- [Automation](/automations/)

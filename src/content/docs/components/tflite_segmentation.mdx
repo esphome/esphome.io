@@ -1,0 +1,67 @@
+---
+description: "Instructions for setting up semantic segmentation with TensorFlow Lite Micro in ESPHome"
+title: "TFLite Segmentation"
+---
+
+The `tflite_segmentation` component assigns a class to every pixel with a segmentation model on ESP32 with
+the ESP-IDF framework. It loads `tflite_micro_runtime` in the background, so the kind is the only YAML entry
+and `model_type` is not used.
+
+```yaml
+tflite_segmentation:
+  - id: segmenter
+    model: "models/segmentation.tflite"
+    input_width: 128
+    input_height: 128
+    input_channels: 3
+```
+
+## Configuration variables
+
+`input_type`, `input_width`, `input_height` and `input_channels` describe the model's input tensor; a value
+set for one of them must match the model.
+
+- **input_type** (*Optional*, string): `"uint8"`, `"int8"` or `"float32"`. Read from the model's input tensor.
+- **input_width** (*Optional*, integer): Frame width, `8`–`512`. Read from the model's input tensor.
+- **input_height** (*Optional*, integer): Frame height, `8`–`512`. Read from the model's input tensor.
+- **input_channels** (*Optional*, integer): `1` for grayscale or `3` for RGB/BGR. Read from the model's
+  input tensor.
+- **frame_width** (*Optional*, integer): Width of the incoming frame when it differs from the model's
+  input. The pipeline scales it with nearest-neighbour sampling. Range `8`–`4096`. Set together with
+  `frame_height`.
+- **frame_height** (*Optional*, integer): Height of the incoming frame, same rules as `frame_width`.
+- **input_order** (*Optional*, string): `"RGB"`, `"BGR"` or `"GRAY"`. Defaults to `"RGB"`; a single-channel
+  model is read as `"GRAY"`.
+- **normalize** (*Optional*, boolean): Scale pixels to `0.0`–`1.0`. Defaults to `false`.
+- **invert** (*Optional*, boolean): Invert the pixel values. Defaults to `false`.
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The runtime helper for this model. Set it
+  when a lambda or another component references the instance.
+- **decoder_id** (*Optional*, [ID](/guides/configuration-types/#id)): The output decoder. Set it to read
+  the decoded result from a lambda.
+- **on_result** (*Optional*, [Automation](/automations/)): Actions to run after a successful inference,
+  once the decoder holds the result. Read it through `decoder_id`.
+- **model** (**Required**, string or dictionary): The `.tflite` model, resolved by
+  `tflite_model_source`: a local path, a `github://` shorthand, an HTTP(S) URL, or a JSON manifest that names
+  the model.
+- **tensor_arena_size** (*Optional*, bytes): Arena size, as bytes or a suffixed value such as `200KB`. When
+  omitted, the size is estimated from the model and probed on the device.
+- **debug** (*Optional*, boolean): Enable the diagnostics of `tflite_model_debug` for this instance.
+  Defaults to `false`.
+
+## Output
+
+The decoder fills one class id per pixel from a `[1, height, width, classes]` mask, up to
+256 classes.
+
+Pass an RGB888 frame that matches the configured geometry to the instance, for example from `on_boot` or
+a camera callback:
+
+```cpp
+id(segmenter)->run(frame, frame_size);
+```
+
+## See Also
+
+- [TFLite Micro Runtime](/components/tflite_micro_runtime/) - the model loader, tensor arena and C++ API
+- [Automation](/automations/)

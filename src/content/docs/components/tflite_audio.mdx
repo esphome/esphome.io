@@ -1,0 +1,71 @@
+---
+description: "Instructions for setting up streaming audio classification with TensorFlow Lite Micro in ESPHome"
+title: "TFLite Audio"
+---
+
+The `tflite_audio` component classifies streaming audio with a wake-word style model on ESP32 with the
+ESP-IDF framework. It loads `tflite_micro_runtime` in the background, so the kind is the only YAML entry and
+`model_type` is not used.
+
+```yaml
+tflite_audio:
+  - id: wake_word
+    model: "https://github.com/esphome/micro-wake-word-models/raw/main/models/v2/okay_nabu.json"
+    probability_cutoff: 0.5
+    sliding_window_size: 10
+    features_step_size: 20
+    feature_count: 40
+```
+
+## Configuration variables
+
+- **probability_cutoff** (*Optional*, percentage): Detection threshold. Defaults to `0.5`.
+- **sliding_window_size** (*Optional*, integer): Frames the consumer averages over. Defaults to `10`.
+- **features_step_size** (*Optional*, integer): Milliseconds between feature slices, `0`–`30`. Defaults to `20`.
+- **feature_count** (*Optional*, integer): MFCC features per frame, `10`–`80`. Defaults to the feature
+  dimension of the model's input tensor. A value that differs from the model's is rejected.
+- **output_processing** (*Optional*, string): How the output tensor becomes a class and a confidence. One of
+  `"argmax"`, `"softmax"`, `"qat_quantized"` or `"auto_detect"`. Defaults to `"argmax"`.
+- **scale_factor** (*Optional*, float): Divides the reported class index for multi-class models. Range
+  `0.1`–`100.0`. Defaults to `1.0`.
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The `TFLiteAudio` instance. Set it when a lambda
+  or another component references the instance; a streaming consumer reads the tuning values from it.
+- **decoder_id** (*Optional*, [ID](/guides/configuration-types/#id)): The output decoder. Set it to read
+  the decoded result from a lambda.
+- **on_result** (*Optional*, [Automation](/automations/)): Actions to run after a successful inference,
+  once the decoder holds the result. Read it through `decoder_id`.
+- **model** (**Required**, string or dictionary): The `.tflite` model, resolved by
+  `tflite_model_source`: a local path, a `github://` shorthand, an HTTP(S) URL, or a JSON manifest that names
+  the model.
+- **tensor_arena_size** (*Optional*, bytes): Arena size, as bytes or a suffixed value such as `200KB`.
+  Defaults to `100KB`: the streaming state and resource tensors are not part of the model, so it is not
+  estimated.
+- **debug** (*Optional*, boolean): Enable the diagnostics of `tflite_model_debug` for this instance.
+  Defaults to `false`.
+
+## Output
+
+The decoder classifies the windowed probabilities. The model is not loaded at boot: a
+streaming consumer owns the interpreter, the feature extractor and the sliding window.
+
+## C++ API
+
+The entry's id is a `tflite_audio::TFLiteAudio`, which extends the runtime helper. A streaming consumer
+reads the tuning values from it:
+
+| Method                           | Description                                  |
+|----------------------------------|----------------------------------------------|
+| `get_audio_config()`             | The `AudioModelConfig` the YAML set.         |
+| `set_probability_cutoff(cutoff)` | Set the quantized probability threshold (`0`–`255`). |
+| `set_sliding_window_size(n)`     | Set sliding window size in frames.           |
+| `set_features_step_size(ms)`     | Set feature extraction step size in ms.      |
+| `set_feature_count(n)`           | Set number of MFCC features.                 |
+
+The audio fields live on this class, not on the shared runtime, so an image, text or raw model does not
+carry them.
+
+## See Also
+
+- [TFLite Micro Runtime](/components/tflite_micro_runtime/) - the model loader, tensor arena and C++ API
+- [Automation](/automations/)
