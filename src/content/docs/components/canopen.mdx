@@ -79,8 +79,8 @@ canopen:
 Without `node_id` the component reads and writes objects of other CANopen devices (drives, sensors, I/O modules), but
 isn't a node itself: it sends no boot-up message or heartbeat, doesn't react to NMT commands, has no object dictionary
 other devices can read, and sends only its SDO requests (expedited and segmented transfers; no block transfer) and the
-frames lambdas send. The node part of the stack isn't compiled in, so the firmware is smaller (about 10 KB of flash on
-an ESP8266).
+frames lambdas send. When no `canopen` component has a `node_id`, the node part of the stack isn't compiled in, so the
+firmware is smaller (about 10 KB of flash on an ESP8266).
 
 ```yaml
 canopen:
@@ -297,7 +297,8 @@ example on a failed CAN bus), they are rejected then. A node in the NMT state `S
 running or queued when it stops end with `SDO_RESULT_REJECTED`, and new ones are rejected until it leaves `STOPPED`.
 A node's SDO channel is shared with any other client, and late answers can reach a later request; see
 [Shared SDO Channel](#shared-sdo-channel). Requests to this node's own id are served from its own object dictionary,
-without CAN frames. Without the actions, a node compiles the SDO client only with `sdo_client: true`.
+without CAN frames. The SDO client is compiled in for the whole firmware once any `canopen` component uses an SDO
+action or has no `node_id`; otherwise a node that only uses it from lambdas needs `sdo_client: true`.
 
 ```cpp
 // value read with a width check: a different width gives SIZE_MISMATCH
