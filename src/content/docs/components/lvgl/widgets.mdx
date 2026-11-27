@@ -1030,10 +1030,11 @@ A sensor value of `NaN` leaves a gap in the corresponding series' line.
 
 **Actions:**
 
-- `lvgl.chart.update` [action](/automations/actions/#actions-action) changes the Y-axis bounds of a chart created
-  with fixed `min_value`/`max_value`. All other options are set once, when the chart is created.
+- `lvgl.chart.update` [action](/automations/actions/#actions-action) changes the Y-axis bounds of a chart. If the
+  chart was created without `min_value` and `max_value`, this action turns off its automatic Y-axis rescaling. All
+  other options are set once, when the chart is created.
   - **id** (**Required**): The ID or a list of IDs of chart widgets to be updated.
-  - **min_value** / **max_value** (**Required**, float): The new Y-axis bounds.
+  - **min_value** / **max_value** (*Optional*, float): The new Y-axis bounds. If either is set, both must be set.
 - `lvgl.chart.add_point` [action](/automations/actions/#actions-action) pushes a new (x, y) point onto a series of a
   `SCATTER` chart.
   - **id** (**Required**): The ID or a list of IDs of chart widgets to add a point to.
