@@ -477,23 +477,29 @@ over time. No configuration file is needed.
 
 What `prune` keeps and removes:
 
-- **ESP-IDF**: the recommended version is kept, with its Python environment and the tools it uses. Every other
-  version is removed.
-- **ESP8266 Arduino**: the recommended core and its toolchain are kept. Older cores and toolchains are removed.
+- **ESP-IDF**: the version that the recommended ESP-IDF and Arduino frameworks build with is kept, with its Python
+  environment and the tools it uses. Every other version is removed.
+- **ESP8266 Arduino**: the recommended core and its toolchain are kept. Every other core and toolchain is removed.
 - **nRF Connect SDK**: the recommended version and its toolchain are kept, along with the newer version that some
   chips need. Every other version is removed.
-- **PlatformIO**: everything it installed for ESP32, ESP8266 and nRF52 is removed, since these now build with their
-  own toolchains. RP2 and LibreTiny still build with PlatformIO, so only what a newer version replaced is removed.
-  The PlatformIO download cache is cleared.
+- **PlatformIO**: the ESP32, ESP8266 and nRF52 platforms are removed with the packages only they use, since these
+  now build with their own toolchains. RP2 and LibreTiny still build with PlatformIO, so for them only what a newer
+  install replaced is removed. The PlatformIO download cache is cleared.
 
-Unlike [`clean-all`](#clean-all-command), `prune` leaves in place what a build with the default versions needs, so
-nothing is downloaded again afterwards.
+Unlike [`clean-all`](#clean-all-command), `prune` leaves in place what a build with the default versions needs.
 
 > [!NOTE]
-> A framework version that is set in a configuration is not kept. It is downloaded again the next time that
-> configuration is built. This includes `toolchain: platformio` on ESP32, ESP8266 and nRF52.
+> Setting a framework version in a configuration does not protect it. Unless it is the default version, it is
+> removed and then downloaded again the next time that configuration is built. The same goes for the PlatformIO
+> toolchain on ESP32, ESP8266 and nRF52, whether it is selected with `toolchain: platformio` in the configuration
+> or with `--toolchain platformio` on the command line.
 >
-> Do not run `prune` while a build is running.
+> For RP2 and LibreTiny, the platform that was installed last is the one that is kept. After building a
+> configuration that sets another version, the default one is downloaded again.
+
+> [!WARNING]
+> Do not run `prune` while a build is running, including one started by the ESPHome Device Builder. The build can
+> fail when the files it is using are removed.
 
 ### `dashboard` Command
 
