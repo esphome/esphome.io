@@ -998,9 +998,10 @@ sensors; its points are pushed with the `lvgl.chart.add_point` action instead (s
   > For example, 48 points with 2 series on a 280px-wide chart and the default `pad_column` (around 10px) gives
   > `48 × (10 + 2) = 576`, well over 280px, so nothing is drawn. If bars don't appear, lower `point_count`, reduce
   > `pad_column` (`0` removes the gap entirely), or widen the chart.
-- **point_count** (*Optional*, int): The number of points kept per series. Each point occupies 4 bytes of RAM per
-  series (8 bytes for a `SCATTER` series, which also keeps an X value; plus 4 bytes of flash per series when
-  `persist` is enabled), so large values increase memory usage. Defaults to `100`.
+- **point_count** (*Optional*, int): The number of points kept per series. Each point uses 8 bytes of RAM per
+  series (16 bytes for a `SCATTER` series, which also keeps X values). If `persist` is enabled, each point also
+  uses 4 more bytes of RAM and 4 bytes of flash per series for the saved history. Large values therefore use more
+  memory. Defaults to `100`.
 - **decimals** (*Optional*, 0-4): The number of decimal places kept when storing values, which also sets the
   resolution of the automatic Y-axis (and, for `SCATTER`, X-axis) range. Defaults to `1`.
 - **min_value** / **max_value** (*Optional*, float): Fixed bounds for the Y-axis. If either is set, both must be
