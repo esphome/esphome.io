@@ -239,12 +239,15 @@ correction model.
 
 A source that stops updating is not used: the reading is then published without compensation and the sensor reports a
 warning in its status. A source counts as stopped after three of its usual update intervals, and not sooner than
-5 minutes. Until its interval is known, the limit is 30 minutes. Only values that pass the filters of a source count,
-so a source with a `delta:` filter also needs to publish regularly, for example with a `heartbeat:` filter next to it
-in an `or:` filter.
+5 minutes. Until its interval is known, the limit is 30 minutes. Only values that pass the filters of a source count.
+For a source that publishes only when its value changes, for example with a `delta:` filter, set `source_timeout:`.
 
 - **temperature** / **humidity** (*Optional*, [ID](/guides/configuration-types/#id)): Ambient sensors whose states are
   used to compensate the RS/R0 ratio for temperature and humidity.
+- **source_timeout** (*Optional*, [Time](/guides/configuration-types/#time)): The longest time a value of either
+  source stays in use, instead of the limit described above. At least `1s`. With `never`, the last value is used until
+  the source publishes an unknown one, so a source that dies silently goes unnoticed. Requires `temperature:` and
+  `humidity:`.
 - **correction_mode** (*Optional*, string): `mqdatascience` (the default when both sources are linked) or `none`.
   Types without a correction model ignore the linked sources with a warning.
 - **correction_factor** (*Optional*, float): An offset added to the RS/R0 ratio before the curve is evaluated.
