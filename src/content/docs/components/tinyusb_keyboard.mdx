@@ -105,3 +105,52 @@ Releases all media keys.
 
 - [TinyUSB](/components/tinyusb/)
 - [USB CDC-ACM](/components/usb_cdc_acm/)
+
+## Keyboard Lock Binary Sensors
+
+The keyboard reports the state of the host keyboard locks — Num Lock, Caps Lock and Scroll Lock — back to ESPHome as
+binary sensors. The state is refreshed whenever the host sends an HID Set_Report with the LED state.
+
+```yaml
+# Example configuration entry
+tinyusb:
+
+tinyusb_keyboard:
+  id: kb
+
+binary_sensor:
+  - platform: tinyusb_keyboard
+    tinyusb_keyboard_id: kb
+    capslock:
+      name: "Caps Lock"
+    numlock:
+      name: "Num Lock"
+    scrolllock:
+      name: "Scroll Lock"
+```
+
+### Configuration variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `tinyusb_keyboard` component. Only needed if
+  you have given it an ID yourself.
+- **tinyusb_id** (*Required*, [ID](/guides/configuration-types/#id)): The ID of the `tinyusb` component this keyboard is
+  built on.
+
+### Binary Sensor options
+
+- **capslock** (*Optional*): The binary sensor that reports the Caps Lock state.
+- **numlock** (*Optional*): The binary sensor that reports the Num Lock state.
+- **scrolllock** (*Optional*): The binary sensor that reports the Scroll Lock state.
+
+Each binary sensor accepts the usual binary sensor options, such as a `name`.
+
+## Keyboard State Bits
+
+The host reports the lock state in a single LED byte. The bits are:
+
+- **Bit 0** — Num Lock (`0x01`)
+- **Bit 1** — Caps Lock (`0x02`)
+- **Bit 2** — Scroll Lock (`0x04`)
+
+A binary sensor is published when its state changes, so the component keeps the last known state and emits updates as
+the host toggles the lock keys.
