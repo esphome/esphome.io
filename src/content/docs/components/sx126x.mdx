@@ -141,7 +141,7 @@ sx126x:
 ## Actions
 
 > [!NOTE]
-> Mode actions (`sx126x.run_image_cal` and `sx126x.set_mode_*`) are ignored, with a warning in the log, while a packet
+> Mode actions (`sx126x.run_image_cal`, `sx126x.set_frequency` and `sx126x.set_mode_*`) are ignored, with a warning in the log, while a packet
 > is being sent, or while a received packet that a send found waiting is held for delivery. If a mode change fails, or
 > the radio cannot be put back in RX or sleep after a send, its configuration is applied again every second until it
 > succeeds, and mode actions are ignored until then. If reading a received packet fails, the read is tried again
@@ -216,6 +216,36 @@ This [action](/automations/actions/#all-actions) sets the `sx126x` mode to stand
 on_...:
   - sx126x.set_mode_standby
 ```
+
+### `sx126x.set_frequency` Action
+
+This [action](/automations/actions/#all-actions) moves the radio to another frequency without configuring it again,
+then puts it back in RX or sleep, as `rx_start` says. A later configuration, such as after a failed mode change, keeps
+the new frequency. It is much quicker than a full configuration, so it suits frequency hopping or a change of channel
+from an automation.
+
+```yaml
+on_...:
+  - sx126x.set_frequency: 916.4MHz
+```
+
+The frequency can come from a lambda:
+
+```yaml
+on_...:
+  - sx126x.set_frequency:
+      frequency: !lambda return 917000000 + id(channel).state * 400000;
+```
+
+The image calibration is not run again: it covers the band the radio started in. After a move to another band, run
+`sx126x.run_image_cal` as well.
+
+After a cold sleep the new frequency is kept, and applied when the radio wakes.
+
+#### Configuration variables
+
+- **frequency** (**Required**, frequency, [templatable](/automations/templates)): The new frequency, from 137 to
+  1020&nbsp;MHz.
 
 ### `sx126x.send_packet` Action
 
