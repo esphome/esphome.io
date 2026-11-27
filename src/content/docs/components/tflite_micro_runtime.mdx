@@ -64,8 +64,8 @@ The settings the model does not carry - `input_order`, `normalize` and `invert` 
 
 ### Image Model with Explicit Settings
 
-Every value read from the model can be overridden. The defaults are repeated in the comments so the example
-also documents what happens when a line is left out:
+The preprocessing settings can be changed. The input type and geometry describe the model's fixed input tensor,
+so a value set for them must match it. The defaults are repeated in the comments:
 
 ```yaml
 tflite_image:
@@ -98,8 +98,8 @@ tflite_image:
 | `scale_factor` | `1.0` | Divides the reported class index, `0.1`–`100.0`. |
 | `debug` | `false` | Turns the diagnostics on for this instance. |
 
-The values set here win over the model. A geometry that cannot fill the model's input tensor is reported at the
-first inference, with the tensor size and the configured geometry in the log, so a wrong value is not silent.
+An `input_type`, `input_width`, `input_height` or `input_channels` that differs from the model's input tensor
+is a configuration error. Use `frame_width` and `frame_height` for a source frame of another size.
 
 ### Audio Model
 
@@ -216,8 +216,8 @@ list, described under [Selective Operator Builds](#selective-operator-builds).
 
 These options are set on the kind entry (`tflite_image`, `tflite_camera`, ...), not on a
 `tflite_micro_runtime:` entry. They describe the model's expected input format and its output. The input
-shape and data type are read from the model itself, and any of them can be set explicitly; a value set in
-YAML wins over the model. Each kind page lists the same options with its own examples.
+shape and data type are read from the model itself; a value set for them in YAML must match the model. Each
+kind page lists the same options with its own examples.
 
 - **input_type** (*Optional*, string): Input tensor data type. One of `"uint8"`, `"int8"` or `"float32"`. Read from the
   model's input tensor.
@@ -229,8 +229,7 @@ YAML wins over the model. Each kind page lists the same options with its own exa
 - **input_width** (*Optional*, integer): Input image width in pixels. Range `8`–`512`. Read from the model's
   input tensor.
 - **input_height** (*Optional*, integer): Input image height in pixels. Range `8`–`512`. Read from the model's
-  input tensor. A geometry that cannot fill the tensor is reported at the first inference with both sizes in
-  the log.
+  input tensor.
 - **input_order** (*Optional*, string): Channel order for preprocessing. One of `"RGB"`, `"BGR"`, or `"GRAY"`.
   Defaults to `"RGB"`. A model with a single input channel is always read as `"GRAY"`.
 - **output_processing** (*Optional*, string): How the output tensor is turned into a class and a confidence.
