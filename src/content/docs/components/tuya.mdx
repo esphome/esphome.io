@@ -73,6 +73,28 @@ Here is another example output for a Tuya ME-81H thermostat:
 - **ignore_mcu_update_on_datapoints** (*Optional*, list): A list of datapoints to ignore MCU updates for. Useful for
   certain broken/erratic hardware and debugging.
 
+- **heartbeat** (*Optional*, boolean): Set to `false` for an MCU that does not answer the heartbeat. The
+  initialization then starts at the product query and the working mode is not queried. An `mcu_watchdog` with an
+  action other than `disable` cannot be used. See [MCU Without Heartbeat](#mcu-without-heartbeat). Defaults to
+  `true`.
+
+- **datapoint_ack** (*Optional*, boolean): Answers each datapoint of a report of the MCU with an acknowledgement. Some
+  MCUs repeat a report until they get one. Defaults to `false`.
+
+- **mcu_watchdog** (*Optional*, mapping): Acts when the MCU stops answering heartbeats, which ends a stall of the
+  serial transmitter of the MCU. Off when not configured. See [MCU Watchdog](#mcu-watchdog).
+
+  - **action** (*Optional*, string): What is done after `missed_heartbeats` unanswered heartbeats. Defaults to
+    `reboot`.
+
+    - `reboot`: Reboots the module, as the original Tuya module firmware does.
+    - `disable`: Turns the watchdog off, for a configuration that gets the block from a package.
+
+  - **missed_heartbeats** (*Optional*, int): The number of unanswered heartbeats that starts the action.
+    Range `1` to `20`. Defaults to `6`, the value of the original Tuya module firmware (TuyaOS 3.11): six 15 second
+    heartbeats.
+    Not accepted with `action: disable`.
+
 Automations:
 
 - **on_datapoint_update** (*Optional*): An automation to perform when a Tuya datapoint update is received. See [`on_datapoint_update`](#tuya-on_datapoint_update).
@@ -134,6 +156,107 @@ tuya:
 - **datapoint_type** (*Optional*, string): The datapoint type one of *raw*, *string*, *bool*, *int*, *uint*, *enum*,
   *bitmask* or *any*.
 - See [Automation](/automations).
+
+## MCU Watchdog
+
+The serial transmitter of some Tuya MCUs can stall while the rest of the MCU keeps running. This has been observed on
+BHT-8000 series thermostats. The display and the buttons of the device still work, but the last bytes of a frame stay
+unsent until the MCU transmits again, so every reply and every report reaches the module late. In ESPHome the entities
+stop following the device, commands seem to be ignored and heartbeat replies arrive seconds late. The MCU does not leave
+this state by itself.
+
+The component counts heartbeats that the MCU does not answer. A heartbeat is unanswered when no reply arrives within
+1 second and none within 1 second after it was sent once more. A reply that arrives later does not count. Two
+heartbeats in a row that are answered at the first send take one off the count again. A reply to the second send takes
+nothing off, because a stalled MCU answers late. An MCU that skips a heartbeat now and then is therefore never acted
+on, a silent one after `missed_heartbeats` heartbeats in a row, and one that answers only some of its heartbeats in
+time after some more. The action runs when the count reaches `missed_heartbeats`.
+
+### Reboot
+
+With `mcu_watchdog` configured the module reboots after `missed_heartbeats` unanswered heartbeats, 6 by default, which
+are sent 15 seconds apart, as the original Tuya module firmware does. Without it the module never reboots for this
+reason. The MCU is not reset and keeps its settings. As in the original firmware, the module does not reboot before
+the MCU has answered the working mode query, so an MCU that never answers does not cause a reboot loop. Heartbeats
+left unanswered before that reply do not count towards the reboot. This action is available on all platforms.
+
+```yaml
+tuya:
+  mcu_watchdog:
+    action: reboot
+    missed_heartbeats: 6
+```
+
+The reboot is logged before it happens:
+
+```text
+[E][tuya]: MCU left 6 heartbeats unanswered, rebooting
+```
+
+Before the working mode reply the count is logged instead, once until the MCU answers a heartbeat, and the
+configuration dump says that the watchdog is not armed yet:
+
+```text
+[W][tuya]: MCU left 6 heartbeats unanswered before the working mode reply, not rebooting
+[C][tuya]:   MCU Watchdog is not armed before the working mode reply of the MCU
+```
+
+### Disable
+
+```yaml
+tuya:
+  mcu_watchdog:
+    action: disable
+```
+
+With the watchdog off an unanswered heartbeat is logged as a warning, once until the MCU answers again.
+
+## MCU Without Heartbeat
+
+Some devices have a module firmware that sends no heartbeat, and their MCU does not answer one. With the default
+settings the log shows `Initialization failed at init_state 0` and the datapoints are never read.
+
+```yaml
+tuya:
+  heartbeat: false
+  datapoint_ack: true
+```
+
+With `heartbeat: false`:
+
+- No heartbeat is sent. The product query is sent at start and repeated every 3 seconds until the MCU answers it.
+- The working mode is not queried. The WiFi status is sent over the UART unless `status_pin` is set.
+- The datapoints are queried after the first WiFi status reply of the MCU, or right after the product reply when
+  `status_pin` is set. A step without a reply is tried again every 3 seconds. A WiFi status without a reply after
+  three retries is logged as `Initialization failed at init_state 3`.
+- A restart of the MCU is not detected. An `mcu_watchdog` block other than `action: disable` is rejected.
+
+With `datapoint_ack: true` each datapoint of a `0x07` report is answered with command `0x07`, the datapoint id and
+`0x00`, as the module firmware of these devices does. Without it such an MCU sends each report three times.
+
+A known device is the [EZAIOT / XYZOO thermostat](https://devices.esphome.io/devices/EZAIOT-XYZOO-Thermostat) with
+product id `dq6nlukkifyawj9n`, which uses 38400 baud. Its original module firmware (TuyaOS 3.3.31) sends no heartbeat
+and answers every datapoint report.
+
+## Serial Timing
+
+The component follows the serial timing of the original Tuya module firmware:
+
+- A heartbeat is sent every 3 seconds until the MCU has answered the working mode query, then every 15 seconds. After a
+  restart of the MCU the interval is 3 seconds again.
+- A command that needs a reply is sent once more if the MCU has not answered within 1 second. After the second second
+  without a reply it is dropped. This includes datapoint writes: an MCU that does not report a written datapoint
+  back receives the write twice, the next command waits 2 seconds and the log shows
+  `Datapoint command got no report from the MCU, dropped`. A report of either kind (`0x07` or `0x22`) that holds
+  the written datapoint is the reply to a datapoint write.
+- A datapoint write that still waits behind another command is replaced by a newer write of the same datapoint, so
+  a slow MCU gets the last value. Raw and string values are all sent. With 32 commands waiting a further datapoint
+  write is dropped and the log shows `Datapoint ... command dropped`.
+- Heartbeats and the acknowledgements of `datapoint_ack` go out ahead of the commands that wait.
+- An incomplete frame of the MCU is dropped after 400 ms without a new byte.
+- An initialization that failed starts again with the next heartbeat reply of the MCU, and the WiFi status is sent
+  again in it. With `heartbeat: false` the open step is tried again every 3 seconds.
+- An extended services frame (`0x34`) without a sub-command is ignored.
 
 ## See Also
 
