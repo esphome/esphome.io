@@ -5,6 +5,10 @@ title: "GPS Time Source"
 
 You first need to set up the [GPS](/components/gps/) component.
 
+The time is set from the first RMC sentence with a fix. After each `update_interval` (default `5min`), it is set
+again from the next RMC sentence with a fix.
+Without a fix a receiver can report the time of its own clock, which may be wrong, so those sentences are not used.
+
 ```yaml
 # Example configuration entry
 time:
