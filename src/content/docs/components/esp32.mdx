@@ -216,6 +216,21 @@ Thread and Zigbee mesh networking. It also includes a low-power coprocessor.
 - **ADC:** 7 channels
 - **DAC:** None
 
+> [!WARNING]
+> Some ESP32-C6 chips of revision v0.2 have a hardware fault in the system timer: the clock can jump backward by
+> minutes or hours. Everything scheduled on that clock then stops until it catches up, so sensors stop updating and
+> a [Bluetooth proxy](/components/bluetooth_proxy/) can reboot with `Scan never terminated, rebooting`. It has been
+> reported with both Wi-Fi and Thread. On Wi-Fi, several users have stopped it by lowering the transmit power from
+> the default:
+>
+> ```yaml
+> wifi:
+>   output_power: 15dB
+> ```
+>
+> The chip revision is printed at boot (`ESP32 Chip: ESP32-C6 rev0.2`). Espressif is tracking the fault in
+> [esp-idf#19036](https://github.com/espressif/esp-idf/issues/19036).
+
 ### ESP32-C61
 
 The ESP32-C61 is a lower-cost variant of the ESP32-C6 with Wi-Fi 6 (2.4 GHz) and BLE 5.4. It does
