@@ -178,8 +178,8 @@ number:
 
 ### Node Setpoints
 
-The CO2 and relative humidity setpoints can be read from nodes that support them. To change them, enable the
-`allow_system_configuration` switch described below.
+The CO2 and relative humidity setpoints of nodes that support them can be read and changed. They are configuration
+entities, so Home Assistant lists them under the device's configuration.
 
 ```yaml
 number:
@@ -204,26 +204,6 @@ number:
   - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often the setpoint is read.
     Defaults to `60s`.
   - All other options from [Number](/components/number/).
-
-## Switch
-
-The `allow_system_configuration` switch allows changes to protected settings, including the CO2 and humidity
-setpoints. When it is off, these settings can still be read, but changes are rejected. The switch defaults to off
-on startup; its behavior can be changed using the standard switch restore options.
-
-```yaml
-switch:
-  - platform: duco
-    allow_system_configuration:
-      name: "Allow System Configuration"
-```
-
-### Configuration Variables
-
-- **duco_id** (*Optional*, [ID](/guides/configuration-types/#id)): The Duco component to use. Only needed with more
-  than one.
-- **allow_system_configuration** (**Required**): The configuration switch. All options from
-  [Switch](/components/switch/) are supported except `inverted`.
 
 ## Text Sensor
 
