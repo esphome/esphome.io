@@ -45,10 +45,11 @@ source (a distance becomes a speed, an energy becomes a power); set it explicitl
 
 The following properties are inherited from the source sensor unless set explicitly:
 
-- **unit_of_measurement**: The source sensor's unit per the configured `time_unit`, for
-  example a distance sensor in `m` with `time_unit: s` produces a speed in `m/s`. This is
-  the reverse of the Integration Sensor: an energy total such as `kWh` with `time_unit: h`
-  produces a power in `kW`, and `Ah` produces `A`.
+- **unit_of_measurement**: The source sensor's unit per the configured `time_unit`. This is
+  the reverse of the Integration Sensor: a known rate unit with the `time_unit` appended is
+  reduced to that rate — `kWh` with `time_unit: h` produces `kW`, `Ah` produces `A`, and `Wh`
+  produces `W`. For any other unit the `time_unit` is appended, so a distance sensor in `m`
+  with `time_unit: s` produces a speed in `m/s`.
 
 - **accuracy_decimals**: The same as the source sensor.
 
