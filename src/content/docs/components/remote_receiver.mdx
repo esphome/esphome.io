@@ -44,6 +44,7 @@ Multiple remote receivers can be configured as a list of dict definitions within
   - **canalsat**: Decode and dump CanalSat infrared codes.
   - **canalsatld**: Decode and dump CanalSatLD infrared codes.
   - **coolix**: Decode and dump Coolix infrared codes.
+  - **denon**: Decode and dump Denon infrared codes.
   - **dish**: Decode and dump Dish infrared codes.
   - **dooya**: Decode and dump Dooya RF codes.
   - **drayton**: Decode and dump Drayton Digistat RF codes.
@@ -276,6 +277,10 @@ To enable signal demodulation, configure the signal carrier frequency and duty c
 
 - **on_coolix** (*Optional*, [Automation](/automations)): An automation to perform when a
   Coolix remote code has been decoded. A variable `x` of type <APIStruct text="remote_base::CoolixData" path="remote_base::CoolixData" />
+  is passed to the automation for use in lambdas.
+
+- **on_denon** (*Optional*, [Automation](/automations)): An automation to perform when a
+  Denon remote code has been decoded. A variable `x` of type <APIStruct text="remote_base::DenonData" path="remote_base::DenonData" />
   is passed to the automation for use in lambdas.
 
 - **on_dish** (*Optional*, [Automation](/automations)): An automation to perform when a
@@ -561,6 +566,11 @@ Remote code selection (exactly one of these has to be included):
   - **first** (**Required**, uint32_t): The first 24-bit Coolix code to trigger on, see dumper output for more info.
   - **second** (*Optional*, uint32_t): The second 24-bit Coolix code to trigger on, see dumper output for more info.
     If not set, trigger on only single non-strict packet, specified by the `first` parameter.
+
+- **denon**: Trigger on a decoded Denon remote code with the given data.
+
+  - **address** (**Required**, int): The device code to trigger on, between 0 and 31 inclusive.
+  - **command** (**Required**, int): The function number to trigger on, between 0 and 255 inclusive.
 
 - **dish**: Trigger on a decoded Dish Network remote code with the given data.
   Beware that Dish remotes use a different carrier frequency (57.6kHz) that many receiver hardware don't decode.
