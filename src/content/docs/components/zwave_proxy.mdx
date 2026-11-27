@@ -30,7 +30,33 @@ required in your configuration.
 zwave_proxy:
 ```
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for the `zwave_proxy`.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID for the `zwave_proxy`.
+- **uart_id** (*Optional*, [ID](/guides/configuration-types/#id) or list of IDs): The ID of the
+  [UART](/components/uart/) that the Z-Wave modem is connected to. It may be left out when only one UART is
+  defined. Give a list to work with one of [several Z-Wave modems](#supporting-several-z-wave-modems).
+
+## Supporting Several Z-Wave Modems
+
+Z-Wave modems that connect through USB do not all use the same USB serial chip, so each model may need its own
+[USB UART](/components/usb_uart/) entry. To let one ESPHome device work with whichever of them is plugged in, list
+all of their UARTs under `uart_id`:
+
+```yaml
+zwave_proxy:
+  uart_id:
+    - zwave_modem_a
+    - zwave_modem_b
+```
+
+The proxy uses the first UART in the list that has a modem connected. It stays with that modem until it is
+disconnected, then again picks the first UART in the list that has a modem connected.
+
+> [!NOTE]
+> Only one Z-Wave modem is used at a time. A second modem that is plugged in while another one is in use is
+> ignored until the first one is removed.
+
+A list of two or more UARTs may only contain [USB UART](/components/usb_uart/) channels. A UART on GPIO pins
+cannot be unplugged, so the proxy would never switch away from it; it can only be used on its own.
 
 ## Maximizing performance
 
@@ -88,4 +114,5 @@ If you choose to use Wi-Fi to bridge your Z-Wave modem to Z-Wave JS:
 - [Native API Component](/components/api/)
 - [Ethernet Component](/components/ethernet/)
 - [WiFi Component](/components/wifi/)
+- [USB UART](/components/usb_uart/)
 - <APIRef text="zwave_proxy.h" path="zwave_proxy/zwave_proxy.h" />

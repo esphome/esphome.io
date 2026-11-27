@@ -24,7 +24,7 @@ micro_wake_word:
 
 ## Configuration variables
 
-- **microphone** (*Optional*, [Microphone Source Configuration](/components/microphone#config-microphone-source)): The [microphone](/components/microphone/) settings to use for audio input.
+- **microphone** (*Optional*, [Microphone Source Configuration](/components/microphone/#config-microphone-source)): The [microphone](/components/microphone/) settings to use for audio input.
 - **stop_after_detection** (*Optional*, boolean): Whether to stop the component after detecting a wake word. Defaults to `true`.
 - **task_core** (*Optional*, integer): CPU core for the inference task: `0`, `1`, or `-1` for no explicit
   affinity. Defaults to `-1`. Core `1` requires a dual-core ESP32 variant and is unavailable when
@@ -43,7 +43,7 @@ micro_wake_word:
 - **models** (*Optional*, list): The models to use. Only the first model is enabled by default on the first boot. Each model's enabled state is then saved/restored to/from the flash.
   Defaults to an empty list, which builds the firmware without any wake word models.
 
-  - **id** (*Optional*, [ID](/guides/configuration-types#id)): The optional ID used for the model actions below.
+  - **id** (*Optional*, [ID](/guides/configuration-types/#id)): The optional ID used for the model actions below.
   - **model** (*Optional*, string): This can be one of:
 
     - A simple name of a model that exists in the official [ESPHome Models repository](https://github.com/esphome/micro-wake-word-models).
@@ -61,6 +61,8 @@ micro_wake_word:
   - **probability_cutoff** (*Optional*, percentage): The probability cutoff for the wake word detection.
     If the probability of the wake word is below this value, the wake word is not detected.
     A larger value reduces the number of false accepts but increases the number of false rejections.
+    In a lambda, the model's `set_probability_cutoff()` takes an integer from 0 to 255, the probability multiplied by
+    255.
 
   - **sliding_window_size** (*Optional*, int): The size of the sliding window average for the wake word detection. A small value lowers latency but may increase the number of false accepts.
   - **internal** (*Optional*, boolean): The wake word model is internal to the device and won't be able to enabled/disabled in Home Assistant.
@@ -87,6 +89,10 @@ micro_wake_word:
   - **sliding_window_size** (*Optional*, int): The size of the sliding window average for voice activity detection. The average probability is compared to `probability_cutoff` to determine if voice activity is detected.
 
 The `probability_cutoff` and `sliding_window_size` are provided by the JSON file but can be overridden in YAML. A default VAD model is provided with the `vad` configuration variables, but a different model can be overridden in YAML.
+
+> [!NOTE]
+> The VAD model is disabled while Home Assistant verifies wake words. See
+> [Wake Word Verification](/components/voice_assistant/#wake-word-verification).
 
 ## Memory Usage
 

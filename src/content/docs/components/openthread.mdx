@@ -81,8 +81,9 @@ openthread:
   Range depends on the chip variant: ESP32-C5/C6 from `-15dBm` to `20dBm`, ESP32-H2 from `-24dBm` to `20dBm`.
   Defaults to the platform default (typically `0dBm`). Ensure the configured value complies with local regulatory
   limits.
-- **poll_period** (*Optional*, [Time](/guides/configuration-types#time)): When set on an MTD device, the parent
+- **poll_period** (*Optional*, [Time](/guides/configuration-types/#time)): When set on an MTD device, the parent
   router enqueues any messages and waits for the child to submit a poll data request.
+  The maximum is 7200 seconds (2 hours); a larger value is limited to it with a warning, and is rejected from 2027.6.0.
 - **core_options** (*Optional*, mapping): OpenThread compile-time options to set. See
   [OpenThread Core Options](#openthread-core-options-esp32).
 
@@ -122,8 +123,10 @@ on_...:
 
 ### Configuration Variables
 
-- **poll_period** (**Required**, [Time](/guides/configuration-types#time)): The poll period to apply, e.g. the
-  short form `openthread.set_poll_period: 5s`.
+- **poll_period** (**Required**, [Time](/guides/configuration-types/#time)): The poll period to apply, e.g. the
+  short form `openthread.set_poll_period: 5s`. The maximum is 7200 seconds (2 hours); a larger value is limited to
+  it, with a warning when the configuration is validated, and is rejected from 2027.6.0. A value from a lambda is
+  limited at run time.
 
 ## OpenThread Device Type
 
@@ -135,9 +138,29 @@ See [https://openthread.io/guides/thread-primer/node-roles-and-types](https://op
 
 ## Sleepy End Device (SED)
 
-The Poll Period makes the device behave as a SED. Combine it with
+The Poll Period makes an MTD device behave as a SED. Combine it with
 [ESP32 Power Management](/components/power_management/esp32_power_management/) light sleep to save power between polls.
-If the device is always awake, the API timeout is 60 seconds, so a ping request will force interaction with the parent when the poll period is greater than 60 seconds.
+If the device is always awake, the API timeout is 60 seconds, so a ping request will force interaction with the parent
+when the poll period is greater than 60 seconds.
+
+When `poll_period` is above 0, the following values are set to define the parent-child relationship. They
+are calculated from `poll_period`, rounded up to whole seconds, and are recalculated whenever the poll period
+changes, including by the `openthread.set_poll_period` action:
+
+- **Child Timeout** - The maximum time (in seconds) a parent will wait without hearing from a SED before
+  assuming the child has detached. Set to the larger of 240 seconds (or its `core_options` value) or
+  4 * `poll_period` in seconds.
+- **Child Supervision Check Timeout** - The duration a SED waits to receive a message from its parent.
+  Set to the larger of 190 seconds (or its `core_options` value) or 3 * `poll_period` + 10 in seconds.
+- **Child Supervision Interval** - A configured interval that the parent uses to ensure at least one message
+  is sent to SED. Set to the larger of 129 seconds (or its `core_options` value) or 2 * `poll_period` - 10 in seconds.
+
+When the poll period changes back to 0, the three values return to these minimums.
+
+`OPENTHREAD_CONFIG_MLE_CHILD_TIMEOUT_DEFAULT`, `OPENTHREAD_CONFIG_CHILD_SUPERVISION_CHECK_TIMEOUT` and
+`OPENTHREAD_CONFIG_CHILD_SUPERVISION_INTERVAL` in `core_options` replace 240, 190 and 129 as these minimums. On an MTD
+they must be whole numbers of seconds, not expressions. A supervision value of 0 turns that setting off, and polling
+does not turn it back on.
 
 ### Public API
 
@@ -158,12 +181,12 @@ on_...:
 
 ## OpenThread Border Router
 
-Border Router mode bridges a Thread network to a Wi-Fi network. It requires an ESP32, IPv6 enabled in the
-[Network Component](/components/network/), and the default `device_type: FTD`. The Thread
+Border Router mode bridges a Thread network to the LAN over a backbone link, Wi-Fi or Ethernet. It requires an ESP32,
+IPv6 enabled in the [Network Component](/components/network/), and the default `device_type: FTD`. The Thread
 dataset is configured as in the [Full Configuration](#full-configuration) above; Thread starts on boot and border
-routing begins once Wi-Fi is connected.
+routing begins once the backbone is connected.
 
-The native radio is supported on ESP32-C5 and ESP32-C6:
+The native radio is supported on ESP32-C5, ESP32-C6 and ESP32-S31:
 
 ```yaml
 network:
@@ -178,9 +201,10 @@ openthread:
   network_key: !secret thread_network_key
 ```
 
-Any Wi-Fi-capable ESP32 can instead use an external OpenThread Radio Co-Processor (RCP) over UART. The
-co-processor runs OpenThread RCP firmware, for instance ESP-IDF's `examples/openthread/ot_rcp` on an ESP32-H2,
-built for the same UART speed as `baud_rate`; a mismatch gives a co-processor that never answers.
+Any Wi-Fi-capable ESP32, or an ESP32-P4 with `backbone: ethernet`, can instead use an external OpenThread Radio
+Co-Processor (RCP) over UART. The co-processor runs OpenThread RCP firmware, for instance ESP-IDF's
+`examples/openthread/ot_rcp` on an ESP32-H2, built for the same UART speed as `baud_rate`; a mismatch gives a
+co-processor that never answers.
 
 ```yaml
 openthread:
@@ -192,9 +216,23 @@ openthread:
   network_key: !secret thread_network_key
 ```
 
+With `backbone: ethernet`, border routing runs over the [Ethernet Component](/components/ethernet/) instead, with the
+native radio on ESP32-C5, ESP32-C6 or ESP32-S31, or with an RCP on any Wi-Fi-capable ESP32 or an ESP32-P4. It follows
+the Ethernet link: border routing pauses while the link is down and restarts when it returns, and it does not move to
+Wi-Fi. Wi-Fi is optional; it can be left out, or kept as a fallback uplink for the device itself with a `priority` list,
+see [Multi-Interface Support](/components/network/#multi-interface-support).
+
+```yaml
+openthread:
+  border_router:
+    backbone: ethernet
+  network_key: !secret thread_network_key
+```
+
 ### Configuration Variables
 
 - **border_router** (*Optional*, map): Enables Border Router mode.
+  - **backbone** (*Optional*, string): The link border routing runs over, `wifi` or `ethernet`. Defaults to `wifi`.
   - **rcp** (*Optional*, map): Configures an external OpenThread RCP.
     - **rx_pin** (**Required**, Pin): ESP32 receive pin connected to the RCP transmit pin.
     - **tx_pin** (**Required**, Pin): ESP32 transmit pin connected to the RCP receive pin.
@@ -202,7 +240,9 @@ openthread:
     - **reset_pin** (*Optional*, Pin): RCP reset pin, inverted (active low) unless configured otherwise. With this
       pin the RCP is reset in hardware when it stops responding, up to five times.
 
-Wi-Fi must have at least one STA network, must not use AP or fallback AP mode, and must keep `enable_on_boot: true`.
+With the Wi-Fi backbone, Wi-Fi must have at least one STA network and must keep `enable_on_boot: true`. With the
+Ethernet backbone, Ethernet must keep `enable_on_boot: true`. Wi-Fi, when configured, must not use AP or fallback AP
+mode.
 
 > [!WARNING]
 > An external RCP uses UART1 directly and cannot be combined with the ESPHome [UART Component](/components/uart/).

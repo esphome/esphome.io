@@ -50,5 +50,11 @@ the datasheet for the module you are using to be sure.
 - Not all ESP32 modules have PSRAM available. If you are unsure, consult the datasheet of your module.
 - Not all modules support all modes and speeds.
 - 120MHz is not available with octal mode, unless using ESP-IDF and the `enable_idf_experimental_features` is enabled
-  in the ESP-IDF platform [Advanced Configuration](/components/esp32#advanced-configuration).
+  in the ESP-IDF platform [Advanced Configuration](/components/esp32/#advanced-configuration).
 - Configuring an unsupported speed will usually result in the PSRAM running at the default speed.
+- On the original ESP32 only, 80MHz PSRAM requires 80MHz flash.
+  On boards that support 80MHz flash, set `esp32.flash_frequency: 80MHz` alongside `psram.speed: 80MHz`;
+  setting only the PSRAM speed may leave it at 40MHz.
+- On the original ESP32 with revision-0 32-Mbit PSRAM, 80MHz PSRAM also occupies an SPI host for its clock. ESP-IDF
+  uses SPI3 by default, so an [SPI](/components/spi/) bus assigned to `spi3` may fail to initialize. Keep SPI devices
+  on `spi2`, or keep the PSRAM at 40MHz if both hardware buses are needed.

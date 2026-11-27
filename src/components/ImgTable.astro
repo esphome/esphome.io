@@ -15,7 +15,7 @@
  * (see src/lib/badges.mjs).
  */
 
-import { resolveImagePath } from "../lib/img-table.mjs";
+import { resolveImagePath, resolveLinkPath } from "../lib/img-table.mjs";
 
 interface Props {
   items: Array<[string, string, string, string?, string?]>;
@@ -44,7 +44,7 @@ function addWordBreaks(text: string): string {
       }
     }
 
-    const resolvedLink = link.endsWith("/") ? link : `${link}/`;
+    const resolvedLink = resolveLinkPath(link);
     const resolvedImage = resolveImagePath(image);
 
     return (

@@ -1,0 +1,172 @@
+---
+description: "Instructions for setting up ADS131M02, ADS131M04 and ADS131M08 ADCs for mean and RMS readings."
+title: "ADS131M0x 2, 4 and 8-Channel 24-Bit A/D Converter"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+## Hub Configuration
+
+The `ads131m0x` domain creates a global hub for the TI ADS131M02, ADS131M04 and ADS131M08
+([datasheet](https://www.ti.com/lit/ds/symlink/ads131m08.pdf)). These are simultaneous-sampling 24-bit
+delta-sigma ADCs with 2, 4 and 8 input channels. The hub samples continuously in a background task and computes the
+mean and AC RMS value of every channel over a configurable window. Individual sensors are then created with the
+[ADS131M0x Sensor Platform](#sensor). The hub uses the [SPI Bus](/components/spi/) for communication.
+
+This component is supported on ESP32 only. The ADC buffers only two conversions, so every conversion has to be read
+within about two sample periods (1 ms at 2000 SPS). The `drdy_pin` is required because the DRDY signal tells the
+firmware when a conversion is ready.
+
+The SPI bus must be a hardware bus with both `mosi_pin` and `miso_pin`. The default `interface: any` selects a hardware
+bus while an SPI controller is free; with more buses than controllers, set `interface: hardware` on this one. The
+background task shares the bus with the main loop, and only the hardware SPI driver locks the bus for each
+transaction, so other devices on the same bus keep working. A software bus is rejected.
+
+A typical use is measuring AC current with a current transformer (CT). Connect the burden resistor directly between
+the `AINxP` and `AINxN` inputs of a channel, without a DC bias. The inputs accept voltages below ground, so the AC
+signal needs no offset. Do not bias the CT to half the supply voltage with `AINxN` at ground: 1.35 V to 1.8 V is
+already above the ±1.2 V full scale, so the signal clips. The RMS value removes any small DC offset.
+
+```yaml
+ads131m0x:
+  model: ADS131M04
+  cs_pin: GPIOXX
+  drdy_pin: GPIOXX
+```
+
+### Configuration Variables
+
+- **model** (**Required**, string): The ADC model: `ADS131M02` (2 channels), `ADS131M04` (4 channels) or
+  `ADS131M08` (8 channels).
+- **cs_pin** (**Required**, [Pin](/guides/configuration-types/#pin)): The SPI chip select pin. It must be an internal
+  GPIO, not an I/O expander pin, because the background task drives it.
+- **drdy_pin** (**Required**, [Pin](/guides/configuration-types/#pin)): The input pin connected to the DRDY output of
+  the ADC. It must be an input-capable GPIO.
+- **reset_pin** (*Optional*, [Pin](/guides/configuration-types/#pin)): The output pin connected to the RESET input of
+  the ADC. When set, the hub can reset the device. It must be an internal GPIO, like `cs_pin`.
+- **clock_frequency** (*Optional*, Frequency): The f_CLKIN of the ADC. Defaults to `8.192MHz`. The allowed range
+  depends on `power_mode`:
+  - `VERY_LOW_POWER`: 0.3 MHz to 2.08 MHz
+  - `LOW_POWER`: 0.3 MHz to 4.15 MHz
+  - `HIGH_RESOLUTION`: 0.3 MHz to 8.4 MHz, or 8.2 MHz when any channel uses a `gain` above 2
+
+  The default is too high for `VERY_LOW_POWER` and `LOW_POWER`, so set `clock_frequency` to match your clock source
+  when you use one of these modes.
+- **power_mode** (*Optional*, string): The power mode of the ADC: `VERY_LOW_POWER`, `LOW_POWER` or
+  `HIGH_RESOLUTION`. Defaults to `HIGH_RESOLUTION`.
+- **sample_rate** (*Optional*, Frequency): The output data rate of each channel. Defaults to `4000Hz`. The data rate is
+  `f_CLKIN / 2 / OSR`. The hub selects the OSR that matches `sample_rate` within 1 %. If no OSR matches, the
+  configuration fails and lists the achievable rates. With the default `clock_frequency` of 8.192 MHz, these are:
+  `32000`, `16000`, `8000`, `4000`, `2000`, `1000`, `500` and about `252` Hz (`250Hz` is accepted for the last one).
+- **window** (*Optional*, [Time](/guides/configuration-types/#time)): The length of the window over which the mean and
+  RMS are computed. Defaults to `100ms`. A window must hold at least one sample and at most 131072 samples.
+  100 ms is 5 periods of a 50 Hz signal and 6 periods of a 60 Hz signal, so the RMS of a mains signal is accurate
+  for a whole number of cycles at either frequency.
+- **gain** (*Optional*, int or list of int): The PGA gain. Use a single value for all channels or a list with one
+  value per channel. A list must have exactly as many values as the model has channels. Allowed values are `1`, `2`,
+  `4`, `8`, `16`, `32`, `64` and `128`. Defaults to `1`. See [Gain](#gain).
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID for this ADS131M0x hub. Use this
+  if you want to use multiple ADS131M0x hubs at once.
+
+#### SPI Options
+
+These options come from the [SPI Bus](/components/spi/) device configuration:
+
+- **spi_id** (*Optional*, [ID](/guides/configuration-types/#id)): The SPI bus to use, if you have more than one.
+- **data_rate** (*Optional*, Frequency): The SPI clock. Defaults to `8MHz`, at most `25MHz` (the minimum SCLK
+  period of the device; on the ESP32 the fastest rate below that is `20MHz`). A frame must fit in half a sample
+  period, so at `8MHz` the ADS131M08 supports up to `8000Hz`, the ADS131M04 up to `16000Hz` and the ADS131M02 up to
+  `32000Hz`. On the ESP32-P4 every frame is padded to a 64-byte cache line, so at `8MHz` all models support up to
+  `4000Hz`. Raise `data_rate` for higher sample rates.
+- **spi_mode** (*Optional*, string): The SPI mode. Only `MODE1` is supported, which is the default.
+
+`release_device` is not supported, because the device is read continuously.
+
+### Gain
+
+The ADC input range of each channel is ±1.2 V divided by the gain. Gain `1` gives ±1.2 V full scale, and gain `128`
+gives ±9.375 mV. Choose the largest gain whose full scale still covers the signal peak, because a higher gain gives a
+finer resolution. Signals above the full-scale range clip.
+
+```yaml
+ads131m0x:
+  model: ADS131M04
+  cs_pin: GPIOXX
+  drdy_pin: GPIOXX
+  gain: [1, 1, 16, 16]
+```
+
+## Sensor
+
+The `ads131m0x` sensor allows you to read the channels of an ADS131M0x ADC with ESPHome. First set up an
+[ADS131M0x Hub](#hub-configuration) and then create one sensor per channel with this platform.
+
+```yaml
+sensor:
+  - platform: ads131m0x
+    channel: 0
+    name: "Current Channel 0"
+```
+
+### Configuration Variables
+
+- **channel** (**Required**, int): The input channel to read, from `0` to the number of channels of the model minus one.
+- **type** (*Optional*, string): The value to report:
+  - `rms` (default): The RMS of the AC component of the window, with the DC offset removed. The value is in volts at
+    the ADC input.
+  - `mean`: The DC mean of the window, in volts at the ADC input.
+- **ads131m0x_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the
+  [ADS131M0x Hub](#hub-configuration) you want to use this sensor with.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval to publish the value.
+  Defaults to `60s`.
+- All other options from [Sensor](/components/sensor/).
+
+The sensor publishes `NaN` right away when the ADC is not healthy or has not finished a window yet. Otherwise it
+publishes the last complete window, until that window is older than two window lengths plus 1 second. After that it
+publishes `NaN`.
+
+### Converting a Current Transformer Reading to Amps
+
+For a 2000:1 current transformer with a 100 Ω burden resistor, the primary current in RMS amps is the burden
+RMS voltage multiplied by 2000 / 100 = 20. Use the `multiply` filter to convert the reading:
+
+```yaml
+sensor:
+  - platform: ads131m0x
+    channel: 0
+    name: "Line Current"
+    filters:
+      - multiply: 20
+    unit_of_measurement: "A"
+```
+
+If the burden voltage passes through a voltage divider before the ADC input, multiply the factor by the inverse of the
+divider ratio. Use `type: rms` for a CT, because the RMS value is independent of any DC offset of the burden voltage.
+
+## Robustness
+
+The hub is designed to keep working through electrical disturbances:
+
+- Every frame is checked with the output CRC. Frames with a CRC error are dropped and counted. Repeated CRC errors are
+  logged as warnings.
+- The STATUS word is checked on every frame. If the device reports a reset, for example after a supply dip, the hub
+  detects it, writes the configuration again and resumes sampling. Without this step the device would keep its default
+  gain and data rate.
+- If the device does not respond during configuration, the first failure is logged as a warning and the hub retries
+  every second; later failures are logged at debug level.
+- The sample rate is averaged over 10 seconds. If it stays below 95% of the nominal rate, for example when several
+  fast ADCs share one bus, a warning is logged because conversions are being lost. A window is completed from the
+  conversions actually read, so an occasional missed conversion shifts it by one sample and can change the mean or RMS
+  slightly. On dual-core ESP32 chips the background task runs on core 1, away from the network stack.
+- After a reset or a reconfiguration, the sensors publish `NaN` until a complete new window has been sampled.
+- If no data arrives, or the sample rate drops below a quarter of the nominal rate, the component shows a warning
+  status with the message "No data from ADC" and the log shows the sample rate. The sensors publish `NaN` until the
+  rate recovers.
+
+## See Also
+
+- [Sensor Filters](/components/sensor/#sensor-filters)
+- [SPI Bus](/components/spi/)
+- [ADS1115 4-Channel 16-Bit A/D Converter](/components/sensor/ads1115/)
+- [ADS1118 4-Channel 16-Bit A/D Converter](/components/sensor/ads1118/)
+- <APIRef text="ads131m0x.h" path="ads131m0x/ads131m0x.h" />
