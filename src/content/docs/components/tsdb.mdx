@@ -1,12 +1,21 @@
 ---
-description: "Instructions for setting up the tsdb component to keep a persistent local history of sensor readings on the device."
+description: "Instructions for setting up the tsdb component to keep a local history of sensor readings on the device."
 title: "TSDB"
 ---
 import APIRef from '@components/APIRef.astro';
+import Figure from '@components/Figure.astro';
 
 The `tsdb` component stores a persistent history of the device's own sensor readings in a time-series
 database on a LittleFS partition. Because the data lives on the board itself, a reading taken while Home
 Assistant or the whole network is unreachable is still available afterwards.
+
+<Figure
+  src="/images/tsdb.jpg"
+  alt="TSDB component logo"
+  layout="constrained"
+  width={227}
+  height={232}
+/>
 
 The storage engine is [esp_tsdb](https://github.com/zakery292/esp_tsdb) (MIT): columnar storage with one row
 of `int16_t` values per sample, a sparse time index and a ring buffer that overwrites the oldest row once
@@ -37,7 +46,7 @@ tsdb:
       name: h2_mq8_ppm
 ```
 
-## Configuration variables
+## Configuration Variables
 
 - **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the component,
   which is used by the [actions](#actions) and to [call it from a lambda](#lambdas).
@@ -159,7 +168,7 @@ clamped, not wrapped, and never silently turned into `-32768`.
 Reading a stored value back is `value = (raw - offset) / scale_factor`; the [CSV dump](#csv-dump) prints the
 engineering values already decoded.
 
-## How a record is written
+## How a Record Is Written
 
 One record is written per `update_interval`:
 
@@ -179,7 +188,7 @@ One record is written per `update_interval`:
 Dropped records are logged with the name of the column that had no value: the first one and then every
 tenth.
 
-## Durability and flash wear
+## Durability and Flash Wear
 
 Every write keeps the header durable in a small sidecar file next to the database (the engine measures that
 at 46-56 ms), so no record waits for `sync_interval` to reach the flash. What the fold adds is the header
@@ -193,6 +202,9 @@ the sidecar - older after an unclean shutdown; the engine picks the newer sideca
 The component commits once after the first record as well, which is what makes a brand-new database survive
 its first reboot, and a clean restart (an OTA update, `safe_mode:`) commits and closes.
 
+A `clear` that cannot be written to the file closes the database, so no record is written over the old
+history. The component reopens it from what is on the flash on a later interval.
+
 The commit deadline is evaluated after every write interval, including the intervals that dropped a record,
 so the last record that *was* written is never left unsynced for longer than `sync_interval` while the
 history has gaps. An interval in which nothing was written costs no commit at all.
@@ -200,7 +212,7 @@ history has gaps. An interval in which nothing was written costs no commit at al
 Every write costs one LittleFS metadata commit, which is why the default `update_interval` is `60s` and not
 a few seconds. Lower values trade flash wear for a smaller loss window.
 
-## Partition sizing
+## Partition Sizing
 
 `partition_size` is split between the two OTA slots: each of them shrinks by half of it. The capacity of the
 database comes from `max_file_size`. LittleFS is copy-on-write and a fold rewrites the file, so the partition
@@ -223,7 +235,7 @@ The OTA slot values assume a 4 MB flash with the auto-generated partition table,
 slot with 1.75 MB (see [Partitions](/components/esp32/#partitions)); on a board with less flash, check that
 the remaining slots still fit the firmware.
 
-## Changing the configuration later
+## Changing the Configuration Later
 
 An OTA update writes the application images only, so what a change needs depends on where the value lives:
 
@@ -247,7 +259,7 @@ An OTA update writes the application images only, so what a change needs depends
   new `file` name starts an empty database and leaves the old file on the partition, where it keeps taking
   space until it is deleted.
 
-## Diagnostic sensors
+## Diagnostic Sensors
 
 The diagnostics are ordinary `sensor:`s and `text_sensor:`s on the `sensor` and `text_sensor` platforms, so
 filters work as usual. Each one is optional and they are refreshed every 60 seconds.
@@ -320,7 +332,7 @@ With `logger:` at `level: DEBUG`, a statistics line is logged every 60 seconds a
 Each action takes the `id` of the `tsdb` component and is carried out at the start of a following
 `update_interval`.
 
-- `tsdb.flush`: Commit the database, for example before the power is cut.
+- `tsdb.flush`: Commit the database, for example before a planned power-off.
 - `tsdb.dump`: Print the newest `dump_rows` stored records to the log, see [CSV dump](#csv-dump).
 - `tsdb.clear`: Delete every stored record. The file, the partition and the column configuration stay.
 
@@ -337,8 +349,8 @@ button:
 
 The following methods are available from [lambdas](/automations/templates/#config-lambda):
 
-- `id(history).request_flush()`: Commit the database immediately (`tsdb_sync_h()`) - for "the power is about
-  to be cut".
+- `id(history).request_flush()`: Request a commit of the database (`tsdb_sync_h()`). It starts at the next
+  `update_interval`, not immediately, so it is no guarantee against a sudden power cut.
 - `id(history).request_dump()`: Print the newest `dump_rows` stored records as CSV to the log, see
   [CSV dump](#csv-dump). Pass a count to print that many records instead: `id(history).request_dump(200)`.
   The dump code is only compiled in when the configuration sets `dump_rows` or has a `tsdb.dump` action, so
@@ -359,7 +371,7 @@ button:
       - lambda: id(history).request_flush();
 ```
 
-## CSV dump
+## CSV Dump
 
 The `tsdb.dump` action prints the newest `dump_rows` stored records to the log: a start line, a header line
 with the column names, then one line per record with the timestamp in Unix epoch seconds and the decoded engineering
@@ -380,8 +392,8 @@ margin) that the engine seeks to directly, so it never scans the whole history a
 loop. A gap wider than that margin widens the window to the whole history once - which is logged - so the
 newest `dump_rows` stored records are still printed; only a database holding fewer records than `dump_rows`
 prints fewer. A failed record count aborts the dump instead of printing old records as the newest. So does a
-line that does not fit one log line - the column header, or with very wide values a row: shorten the column
-names or raise the logger's `tx_buffer_size`.
+line that does not fit one log line - the column header, or with very wide values a row, where the dump stops:
+shorten the column names, lower the column count or raise the logger's `tx_buffer_size`.
 
 There is no file download: the CSV dump over the log is the export path that needs no Home Assistant.
 
