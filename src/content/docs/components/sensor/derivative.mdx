@@ -35,15 +35,22 @@ sensor:
 - **time_unit** (*Optional*, string): The time unit of the resulting rate, one of
   `ms`, `s`, `min`, `h` or `d`. Defaults to `s`.
 
+- **state_class** (*Optional*, string): Defaults to `measurement`. Set it to `""` to publish
+  without a state class.
+
 - All other options from [Sensor](/components/sensor/).
+
+`device_class` is not inherited, because a rate measures something different from its
+source (a distance becomes a speed, an energy becomes a power); set it explicitly when needed.
 
 The following properties are inherited from the source sensor unless set explicitly:
 
-- **unit_of_measurement**: The source sensor's unit combined with the configured
-  `time_unit` — for example a distance sensor in `m` with `time_unit: s` produces a
-  speed in `m/s`.
+- **unit_of_measurement**: The source sensor's unit per the configured `time_unit`, for
+  example a distance sensor in `m` with `time_unit: s` produces a speed in `m/s`. This is
+  the reverse of the Integration Sensor: an energy total such as `kWh` with `time_unit: h`
+  produces a power in `kW`, and `Ah` produces `A`.
 
-- **accuracy_decimals**: Two more decimal places than the source sensor.
+- **accuracy_decimals**: The same as the source sensor.
 
 - **icon**: The source sensor's icon.
 
@@ -56,8 +63,8 @@ The following properties are inherited from the source sensor unless set explici
   re-establishes the baseline and publishes nothing, so a gap between samples never produces
   a bogus spike.
 
-- If two readings arrive within the same loop iteration, no time has elapsed and nothing is
-  published.
+- Readings that arrive within the same component call share a timestamp. The later one
+  publishes nothing, and its change is counted against the next reading.
 
 ## See Also
 
