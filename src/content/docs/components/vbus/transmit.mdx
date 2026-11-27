@@ -42,8 +42,9 @@ ESPHome rejects the second request with a warning and keeps the first. Press the
 finishes. The echo of its release can arrive while the next request is waiting.
 Use the [`on_datagram` trigger](/components/vbus/receive/#p2-datagram-automation) to handle controller replies.
 
-Use a serial UART for both directions. TCP and USB serial bridges can buffer traffic long enough for a grant to
-expire. On ESP32, VBus defaults the receiving UART’s `rx_full_threshold` to `1` so the first byte of another
+Set both `rx_pin` and `tx_pin` on the [serial UART](/components/uart/) used by the VBus hub. Use 9600 baud,
+8 data bits, no parity, and 1 stop bit. TCP and USB serial bridges can buffer traffic long enough for a grant to expire.
+On ESP32, VBus defaults the UART’s `rx_full_threshold` to `1` so the first byte of another
 transmission becomes visible promptly. If you set it explicitly, use `1`. The default ESPHome loop interval works
 with VBus. If you customize `esphome.loop_interval`, keep it at or below `50ms` when transmitting.
 
@@ -52,9 +53,6 @@ with VBus. If you customize `esphome.loop_interval`, keep it at or below `50ms` 
 - **destination** (**Required**, integer): VBus address of the controller offering the grant.
 - **source** (*Optional*, integer): Client address. Defaults to `0x0020`. Choose an unused address distinct from
   `destination`. Addresses must be nonzero with the high bit of each byte clear.
-- **uart_id** (*Optional*, [ID](/guides/configuration-types/#id)): UART used to transmit. Defaults to the VBus hub’s
-  UART. If your wiring uses separate RX and TX UARTs, connect both to the same physical VBus interface and configure
-  both for 9600 baud, 8 data bits, no parity and 1 stop bit.
 - **lease_duration** (*Optional*, Time): Maximum time from receipt of a grant, including the 100 ms contention
   period. Defaults to `500ms`; accepts `200ms` to `1000ms`. Choose a value shorter than your controller’s bus timeout.
 
@@ -76,6 +74,6 @@ to its own address with the matching parameter ID. For other commands with `expe
 valid P2 reply from the controller to its own address. A local echo does not qualify. A raw write needs a separate
 readback if you want to verify that the controller applied the value.
 
-Use one transmitting client on the bus and keep its TX UART exclusive to VBus. If the lease expires or the controller
+Use one transmitting client on the bus and dedicate the UART to VBus. If the lease expires or the controller
 resumes transmission, the hub abandons the exchange. If an accepted action loses bus access before it sends,
-ESPHome logs a warning. After the receive UART reports a disconnection, transmission requires a fresh grant.
+ESPHome logs a warning. After the UART reports a disconnection, transmission requires a fresh grant.
