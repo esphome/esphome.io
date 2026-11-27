@@ -41,13 +41,17 @@ tflite_ctc:
 
 The model needs one `[1, steps, classes]` output of type `float32`, `int8` or `uint8`. The decoder takes the
 best class of each step, collapses repeats and drops the blank (greedy decoding; there is no beam search).
-`ids()` and `id_count()` report the class ids, and `text()` joins their labels.
+`ids()` and `id_count()` report the class ids. `text(buffer, size)` joins their labels into your buffer,
+NUL-terminated, stops before the first label that does not fit whole, and returns the length written.
 
 Fill the input with the features the model expects and pass them to the instance:
 
 ```cpp
-if (id(speech_model)->run(features, features_size))
-  ESP_LOGI("speech", "%s", id(speech_decoder)->text().c_str());
+if (id(speech_model)->run(features, features_size)) {
+  char text[64];
+  id(speech_decoder)->text(text, sizeof(text));
+  ESP_LOGI("speech", "%s", text);
+}
 ```
 
 The example reads the result right after `run()`, which suits an instance without `on_result`.
