@@ -5,79 +5,10 @@ pagefind: false
 slug: "changelog/2024.11.0"
 ---
 
-import ImgTable from "@components/ImgTable.astro";
-
-<ImgTable items={[
-  ["AXS15231","/components/touchscreen/axs15231","axs15231.svg"],
-  ["ES8311","/components/audio_dac/es8311","es8311.svg"],
-  ["i2c_device","/components/i2c_device","i2c.svg"],
-  ["MAX17043","/components/sensor/max17043","max17043.jpg"],
-  ["OpenTherm","/components/opentherm","opentherm.png"],
-  ["TC74","/components/sensor/tc74","tc74.jpg"]
-]} />
-
-ESPHome has grown over time and become more friendly for vendors to create and pre-install ESPHome onto devices
-they sell / give away / provide. We are seeing more devices with ESPHome pre-installed, and we are so happy to
-see how accessible it is becoming for regular Home Assistant users (not just developers or tech-savvy people) to
-get their hands on a device that; A, works out of the box, B, works locally, and C can be fully customized by
-the person who bought it if they choose to do so.
-Because there are now more devices you can buy and do not have to install ESPHome onto yourself, we have made some
-updates to allow ignoring these discovered devices from the ESPHome Dashboard as for most of these devices, you
-don't actually need to **take control** and write and manage your own firmware for them.
-
-Further to this, we have slightly changed the identity of ESPHome as an add-on in Home Assistant. It is now called
-**ESPHome Device Compiler**, because that is what it does, and most people do not need it if they are not going to
-actually compile anything.
-
-## OpenTherm
-
-This release brings [Opentherm](/components/opentherm/) support to ESPHome. Please see the
-[documentation](/components/opentherm/) for detailed information about it and how to use it.
-
-## ESPHome `armv7` Docker Support
-
-We will be retiring ESPHome's Docker support for `armv7` hardware in the February 2025 release.
-
-This is due to both waning support as it relates to tooling and performance reasons. We strongly recommend moving to a
-more modern architecture, especially if you're using the ESPHome Device Compiler to build/compile firmware for your
-devices.
+Read the [ESPHome 2024.11.0 release notes](/blog/2024/11/20/esphome-2024-11/) on the blog for the release
+overview, feature highlights, upgrade checklist, and breaking changes.
 
 {/* markdownlint-disable MD013 */}
-
-## Release 2024.11.1 - November 22
-
-- [http_request] Fix within context with parameters. (Bugfix) [esphome#7790](https://github.com/esphome/esphome/pull/7790) by [@clydebarrow](https://github.com/clydebarrow)
-- [rtttl] Clamp gain between 0 and 1 [esphome#7793](https://github.com/esphome/esphome/pull/7793) by [@jesserockz](https://github.com/jesserockz)
-- [speaker] Add missing auto-load for `audio` [esphome#7794](https://github.com/esphome/esphome/pull/7794) by [@jesserockz](https://github.com/jesserockz)
-- [qspi_dbi] Fix garbled graphics on RM690B0 [esphome#7795](https://github.com/esphome/esphome/pull/7795) by [@manuelkasper](https://github.com/manuelkasper)
-- Check for min_version earlier in validation [esphome#7797](https://github.com/esphome/esphome/pull/7797) by [@spuder](https://github.com/spuder)
-- Fix for OTA mode not activating in safe_mode when OTA section has an on_xxxx action [esphome#7796](https://github.com/esphome/esphome/pull/7796) by [@Dilbert66](https://github.com/Dilbert66)
-- Ensure storage I/O for ignored devices runs in the executor [esphome#7792](https://github.com/esphome/esphome/pull/7792) by [@bdraco](https://github.com/bdraco)
-
-## Release 2024.11.2 - November 27
-
-- [lvgl] Bugfixes [esphome#7803](https://github.com/esphome/esphome/pull/7803) by [@clydebarrow](https://github.com/clydebarrow)
-- [docker] Leave run-time required libraries installed. [esphome#7804](https://github.com/esphome/esphome/pull/7804) by [@clydebarrow](https://github.com/clydebarrow)
-- [qspi_dbi] Fix init sequences (Bugfix) [esphome#7805](https://github.com/esphome/esphome/pull/7805) by [@clydebarrow](https://github.com/clydebarrow)
-- fix modbus crashing when bad data returned [esphome#7810](https://github.com/esphome/esphome/pull/7810) by [@ssieb](https://github.com/ssieb)
-- [Modbus Controller] Fix issue #6477. Online automation triggering Offline [esphome#7801](https://github.com/esphome/esphome/pull/7801) by [@0x3333](https://github.com/0x3333)
-- [fix] Status sensor does not check if required network component is missing [esphome#7734](https://github.com/esphome/esphome/pull/7734) by [@rvalitov](https://github.com/rvalitov)
-- keypad binary sensors should be initially off [esphome#7808](https://github.com/esphome/esphome/pull/7808) by [@ssieb](https://github.com/ssieb)
-- fix 32 char SSIDs [esphome#7834](https://github.com/esphome/esphome/pull/7834) by [@ssieb](https://github.com/ssieb)
-- [honeywell] use warning instead of failing [esphome#7862](https://github.com/esphome/esphome/pull/7862) by [@ssieb](https://github.com/ssieb)
-
-## Release 2024.11.3 - December 6
-
-- [opentherm] Fix out of memory errors on ESP8266 [esphome#7835](https://github.com/esphome/esphome/pull/7835) by [@olegtarasov](https://github.com/olegtarasov)
-- fix local time timestamp calculation [esphome#7807](https://github.com/esphome/esphome/pull/7807) by [@ssieb](https://github.com/ssieb)
-- [online_image]Don't access decoder if not initialized [esphome#7882](https://github.com/esphome/esphome/pull/7882) by [@guillempages](https://github.com/guillempages)
-- Add IRAM_ATTR to all functions used during interrupts on esp8266 chips. [esphome#7840](https://github.com/esphome/esphome/pull/7840) by [@FreeBear-nc](https://github.com/FreeBear-nc)
-- [st7920] Remove unnecessary warning when drawing outside display bounds [esphome#7868](https://github.com/esphome/esphome/pull/7868) by [@jesserockz](https://github.com/jesserockz)
-- Fix recalc_timestamp_utc [esphome#7894](https://github.com/esphome/esphome/pull/7894) by [@RouNNdeL](https://github.com/RouNNdeL)
-- Cast port to int for ota pushing [esphome#7888](https://github.com/esphome/esphome/pull/7888) by [@jesserockz](https://github.com/jesserockz)
-- [lvgl] Bugfixes [esphome#7896](https://github.com/esphome/esphome/pull/7896) by [@clydebarrow](https://github.com/clydebarrow)
-- [lvgl] Fix msgbox content [esphome#7912](https://github.com/esphome/esphome/pull/7912) by [@clydebarrow](https://github.com/clydebarrow)
-- [esp32] Fix crash with empty `platformio_options:` value [esphome#7920](https://github.com/esphome/esphome/pull/7920) by [@clydebarrow](https://github.com/clydebarrow)
 
 ## Full list of changes
 

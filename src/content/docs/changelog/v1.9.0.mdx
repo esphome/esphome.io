@@ -11,12 +11,12 @@ import ImgTable from "@components/ImgTable.astro";
   ["Beta Releases","/guides/faq.html#how-do-i-update-to-the-latest-beta-release","new-box.svg","dark-invert"],
   ["Text Sensors","/components/text_sensor/index","folder-open.svg","dark-invert"],
   ["MQTT Subscribe","/components/sensor/mqtt_subscribe","mqtt.png"],
-  ["Stepper","/components/stepper/index","stepper.svg"],
-  ["CSE7766","/components/sensor/cse7766","cse7766.svg"],
-  ["PMSX003","/components/sensor/pmsx003","pmsx003.svg"],
+  ["Stepper","/components/stepper/index","badge:STEPPER"],
+  ["CSE7766","/components/sensor/cse7766","badge:CSE7766"],
+  ["PMSX003","/components/sensor/pmsx003","badge:PMSX003"],
   ["esphomeflasher","/guides/faq.html#i-can-t-get-flashing-over-usb-to-work","logo.svg"],
   ["Total Daily Energy","/components/sensor/total_daily_energy","sigma.svg","dark-invert"],
-  ["MY9231/MY9291 LED driver","/components/output/my9231","my9231.svg"]
+  ["MY9231/MY9291 LED driver","/components/output/my9231","badge:MY9231"]
 ]} />
 
 
@@ -38,13 +38,13 @@ The features I'm particularly excited about are:
 * A lot of work has been put in to provide more context in YAML validation errors. Sometimes, esphomeyaml will even
   try to give you suggestions for how to fix a validation error!
 
-* A new release cycle: esphomeyaml now also has a [beta release channel](/guides/faq#faq-beta) kind of like Home Assistant. This helps to
+* A new release cycle: esphomeyaml now also has a [beta release channel](/guides/faq/#faq-beta) kind of like Home Assistant. This helps to
   iron out the most important bugs before each stable release
 
 * And of course, lots of stability improvements and bug fixes :)
 
 Thank you very much to everybody who contributed to this release with new code or by
-[reporting bugs](/guides/faq#faq-bug_report)!
+[reporting bugs](/guides/faq/#faq-bug_report)!
 
 ## New Components
 
@@ -80,7 +80,7 @@ Thank you very much to everybody who contributed to this release with new code o
 
 * ESP8266s now save the states of lights/switches/... internally and restores them on boot.
   Additionally, esphomelib can now operate in fully offline mode if your WiFi network goes down
-  or the MQTT broker is unreachable, see [Do Automations Work Without a Network Connection](/automations/actions#automation-networkless)
+  or the MQTT broker is unreachable, see [Do Automations Work Without a Network Connection](/automations/actions/#automation-networkless)
   ([esphome-core#258](https://github.com/esphome/esphome-core/pull/258), [esphome-core#267](https://github.com/esphome/esphome-core/pull/267), [esphome#229](https://github.com/esphome/esphome/pull/229))
 
 * The [Over-the-Air Update](/components/ota/) process was quite buggy sometimes and the Arduino-library
@@ -101,20 +101,20 @@ Thank you very much to everybody who contributed to this release with new code o
 * Stack traces in the USB logs are now automatically decoded to make debugging easier
   ([esphome#214](https://github.com/esphome/esphome/pull/214))
 
-* Added [`on_json_message` Trigger](/components/mqtt#mqtt-on_json_message) and [`mqtt.publish_json` Action](/components/mqtt#mqtt-publish_json-action) to make using JSON for MQTT payloads easier
+* Added [`on_json_message` Trigger](/components/mqtt/#mqtt-on_json_message) and [`mqtt.publish_json` Action](/components/mqtt/#mqtt-publish_json-action) to make using JSON for MQTT payloads easier
   ([esphome-core#230](https://github.com/esphome/esphome-core/pull/230), [esphome#193](https://github.com/esphome/esphome/pull/193), [esphome.io#60](https://github.com/esphome/esphome.io/pull/60))
 
 * The remote (IR) components have received support for Samsung's IR protocol
   ([esphome#176](https://github.com/esphome/esphome/pull/176), [esphome.io#48](https://github.com/esphome/esphome.io/pull/48))
 
-* Added [`component.update` Action](/automations/actions#component-update-action), [`logger.log` Action](/components/logger#logger-log-action) and [`script.execute` Action](/components/script#script-execute-action) for simplifying
+* Added [`component.update` Action](/automations/actions/#component-update-action), [`logger.log` Action](/components/logger/#logger-log-action) and [`script.execute` Action](/components/script/#script-execute-action) for simplifying
   automations
   ([esphome-core#232](https://github.com/esphome/esphome-core/pull/232), [esphome#196](https://github.com/esphome/esphome/pull/196), [esphome#198](https://github.com/esphome/esphome/pull/198), [esphome.io#61](https://github.com/esphome/esphome.io/pull/61), [esphome.io#63](https://github.com/esphome/esphome.io/pull/63))
 
-* Added [`on_multi_click`](/components/binary_sensor#binary_sensor-on_multi_click) trigger to distinguish between double, long, and single clicks.
+* Added [`on_multi_click`](/components/binary_sensor/#binary_sensor-on_multi_click) trigger to distinguish between double, long, and single clicks.
   ([esphome-core#262](https://github.com/esphome/esphome-core/pull/262), [esphome.io#77](https://github.com/esphome/esphome.io/pull/77), [esphome#226](https://github.com/esphome/esphome/pull/226))
 
-* Added an [pn532-on_tag](/components/binary_sensor/pn532#pn532-on_tag) to [PN532 NFC Readers](/components/binary_sensor/pn532/) so that automations
+* Added an [pn532-on_tag](/components/binary_sensor/pn532/#pn532-on_tag) to [PN532 NFC Readers](/components/binary_sensor/pn532/) so that automations
   can directly use the NFC tag ID
   ([esphome-core#194](https://github.com/esphome/esphome-core/pull/194), [esphome#189](https://github.com/esphome/esphome/pull/189), [esphome.io#57](https://github.com/esphome/esphome.io/pull/57))
 
@@ -124,7 +124,7 @@ Thank you very much to everybody who contributed to this release with new code o
 * All documentation pages now have comment systems powered by [disqus](https://disqus.com/)
   ([esphome.io#47](https://github.com/esphome/esphome.io/pull/47))
 
-* You now have to option to have a different log level for log messages sent over MQTT ([docs](/components/mqtt#mqtt-message),
+* You now have to option to have a different log level for log messages sent over MQTT ([docs](/components/mqtt/#mqtt-message),
   [esphome#167](https://github.com/esphome/esphome/pull/167), [esphome.io#51](https://github.com/esphome/esphome.io/pull/51))
 
 * Added a color correction option to [FastLED addressable lights](/components/light/fastled/)
@@ -149,7 +149,7 @@ Thank you very much to everybody who contributed to this release with new code o
   see esphomeyaml try with the new OTA method and fail. After that, esphomeyaml will fall back to the old OTA
   process and upload correctly ([esphome-core#204](https://github.com/esphome/esphome-core/pull/204)).
 
-* esphomelib's naming convention has been made more consistent. If you're not using any [lambdas](/automations/templates#config-lambda),
+* esphomelib's naming convention has been made more consistent. If you're not using any [lambdas](/automations/templates/#config-lambda),
   everything will still work. However, if you're using the C++ API, there are a couple of breaking changes:
 
   For sensors and binary sensors, `id(my_sensor).value` has been deprecated and `id(my_sensor).state` should be used

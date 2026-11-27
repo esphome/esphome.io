@@ -26,12 +26,19 @@ esp8266:
   - **version** (*Optional*, string): The base framework version number to use, from
     [esp8266 arduino releases](https://github.com/esp8266/Arduino/releases). Defaults to `recommended`. Additional values
 
-    - `dev`  : Use the latest commit from [https://github.com/esp8266/Arduino](https://github.com/esp8266/Arduino), note this may break at any time
-    - `latest`  : Use the latest *release* from [https://github.com/esp8266/Arduino/releases](https://github.com/esp8266/Arduino/releases), even if it hasn't been recommended yet.
+    - `dev`  : Use the latest commit from [https://github.com/esp8266/Arduino](https://github.com/esp8266/Arduino), note
+      this may break at any time. Only with the `platformio` toolchain.
+    - `latest`  : Use the latest *release* from
+      [https://github.com/esp8266/Arduino/releases](https://github.com/esp8266/Arduino/releases), even if it hasn't been
+      recommended yet. With the `arduino` toolchain, the newest version ESPHome publishes (see
+      [Toolchain](#toolchain-configuration)).
     - `recommended`  : Use the recommended framework version.
 
-  - **source** (*Optional*, string): The PlatformIO package or repository to use for the framework. This can be used to use a custom or patched version of the framework.
-  - **platform_version** (*Optional*, string): The version of the [platformio/espressif8266](https://github.com/platformio/platform-espressif8266/releases/) package to use.
+  - **source** (*Optional*, string): The PlatformIO package or repository to use for the framework. This can be used to
+    use a custom or patched version of the framework. Only with the `platformio` toolchain.
+  - **platform_version** (*Optional*, string): The version of the
+    [platformio/espressif8266](https://github.com/platformio/platform-espressif8266/releases/) package to use. Only used
+    by the `platformio` toolchain.
 
 - **restore_from_flash** (*Optional*, boolean): Whether to store some persistent preferences in flash memory. Defaults to `false`.
 - **board_flash_mode** (*Optional*, string): The SPI mode of the flash chip. One of `qio`, `qout`, `dio` and `dout`. Defaults to `dout` for compatibility with all chips. Note: on the next OTA update the actual flash mode is automatically detected and changed to the appropriate one.
@@ -40,6 +47,47 @@ esp8266:
 - **enable_serial1** (*Optional*, boolean): Force-enable the Arduino `Serial1` object (UART1) for use in lambdas or external libraries. Most users will never need this option, as the `logger` and `uart` components automatically enable the required Serial objects. Only use this if you directly access `Serial1` in a lambda and get a compilation error. Use the [UART component](/components/uart) instead when possible, as it works across all platforms. Defaults to automatic detection.
 - **enable_full_printf** (*Optional*, boolean): Enable full `FILE*`-based printf support. By default, ESPHome wraps `printf()`, `vprintf()`, and `fprintf()` with lightweight stubs that use `vsnprintf()` + `fwrite()`, saving ~1.6 KB of flash. ESPHome logging writes directly to the UART via Arduino's `Serial`, not libc printf, so these functions are typically unused unless an external component calls them. Set to `true` only if an external component needs full `FILE*`-based printf. Defaults to `false`.
 - **enable_scanf_float** (*Optional*, boolean): Enable float support for `scanf()`/`sscanf()`. By default, ESPHome removes the `-u _scanf_float` linker flag to save ~8 KB of flash. This means `sscanf()` with `%f` will silently fail to parse floating-point numbers. Nothing in ESPHome itself uses scanf; set to `true` only if you use `sscanf()` with `%f` in lambdas. Defaults to `false`.
+- **toolchain** (*Optional*, [Toolchain](#toolchain-configuration)): Toolchain used to build the firmware. Defaults to
+  `arduino`. The `platformio` toolchain is deprecated and will be removed in 2027.4.0.
+
+## Toolchain Configuration
+
+ESPHome supports two toolchains for building ESP8266 firmware. The toolchain determines how the firmware is compiled
+and which build system is used.
+
+- `arduino` (default): builds the Arduino core directly. ESPHome downloads the framework and the compiler itself and
+  drives the build natively, the same way the ESP32 platform builds ESP-IDF. The resulting firmware is functionally
+  identical to a PlatformIO build.
+- `platformio` (deprecated): builds through PlatformIO.
+
+> [!WARNING]
+> The `platformio` toolchain is deprecated and will be removed in 2027.4.0. Configurations that only select it can drop
+> `toolchain: platformio` now; configurations that need it (a custom framework `source`, a framework version other than
+> the ones ESPHome publishes, a board outside the board list) must add it when upgrading, and stop building with that
+> release.
+
+The `arduino` toolchain builds the framework versions ESPHome publishes, currently 3.1.2, which `recommended` and
+`latest` both select. It does not support a custom framework `source`, ignores `platform_version`, and only supports the
+named boards from the board list; use `platformio` for other framework versions or custom boards. Under
+`esphome: platformio_options:` it honors `build_flags`, `build_unflags`, `lib_deps`, `lib_ignore`, `board_build.f_cpu`
+and `board_build.ldscript`; other options are ignored with a warning.
+
+The `arduino` toolchain uses compiler builds from
+[esphome-libs/xtensa-lx106-elf-toolchain](https://github.com/esphome-libs/xtensa-lx106-elf-toolchain/releases/), which
+are available for Linux (x86_64 and arm64), macOS (Apple Silicon and Intel) and Windows (x86_64). On other host
+systems, use the `platformio` toolchain.
+
+> [!NOTE]
+> On Apple Silicon Macs the `platformio` toolchain needs Rosetta 2, because its compiler is only built for Intel
+> Macs. The `arduino` toolchain runs natively and does not need it.
+
+**Example for using the PlatformIO toolchain until it is removed:**
+
+```yaml
+esp8266:
+  board: nodemcuv2
+  toolchain: platformio
+```
 
 ## GPIO Pin Numbering
 

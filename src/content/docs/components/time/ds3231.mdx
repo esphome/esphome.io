@@ -1,0 +1,91 @@
+---
+title: "DS3231 Time Source"
+description: "Instructions for using the DS3231 real-time clock as a time source in ESPHome."
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `ds3231` time platform keeps the system clock from a [DS3231 real-time clock](/components/ds3231/), so the
+device knows the time right after boot, even without a network connection.
+
+Set up the [`ds3231`](/components/ds3231/) hub (and the [I²C](/components/i2c/) bus it needs) first.
+
+```yaml
+# Example configuration entry
+time:
+  - platform: ds3231
+    id: ds3231_time
+```
+
+## Configuration Variables
+
+- **ds3231_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the [`ds3231`](/components/ds3231/)
+  hub to use when more than one is configured.
+- All other options from [Base Time Configuration](/components/time/#base_time_config).
+
+The RTC holds UTC time. If the chip's oscillator was stopped (for example because the backup battery is empty),
+the stored time is invalid and is not used until a new time has been written. The
+[`oscillator_stopped`](/components/binary_sensor/ds3231/) binary sensor shows this state.
+
+## `ds3231.write_time` Action
+
+This [Action](/automations/actions/#all-actions) writes the current system time to the RTC and clears the
+oscillator-stop flag.
+
+> [!NOTE]
+> The RTC is *not* written unless this action is triggered *explicitly*.
+
+```yaml
+on_...:
+  - ds3231.write_time
+
+  # in case you need to specify the time id
+  - ds3231.write_time:
+      id: ds3231_time
+```
+
+## `ds3231.read_time` Action
+
+This [Action](/automations/actions/#all-actions) sets the system time from the RTC.
+
+> [!NOTE]
+> The RTC is read automatically every `update_interval` (15 minutes by default). This action can be used to
+> trigger *additional* synchronizations.
+
+```yaml
+on_...:
+  - ds3231.read_time
+
+  # in case you need to specify the time id
+  - ds3231.read_time:
+      id: ds3231_time
+```
+
+## Full Configuration Example
+
+Read the RTC once at boot, and update it whenever another time source has synchronized:
+
+```yaml
+esphome:
+  on_boot:
+    then:
+      - ds3231.read_time:
+
+ds3231:
+
+time:
+  - platform: ds3231
+    # the DS3231 is accurate to a few ppm, but repeated reads aren't needed
+    # while a network time source is available
+    update_interval: never
+  - platform: homeassistant
+    on_time_sync:
+      then:
+        - ds3231.write_time:
+```
+
+## See Also
+
+- [DS3231 Real-Time Clock](/components/ds3231/)
+- [Time](/components/time/)
+- <APIRef text="ds3231/time/ds3231_time.h" path="ds3231/time/ds3231_time.h" />

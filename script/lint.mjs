@@ -4,6 +4,9 @@ import { readFile, stat, readdir } from "fs/promises";
 import { join, basename, dirname, extname } from "path";
 import { execSync } from "child_process";
 import { fileURLToPath } from "url";
+import { needsAnchorTrailingSlash, withAnchorTrailingSlash } from "../src/lib/internal-links.mjs";
+
+import { collectPageAnchors } from "./heading-anchors.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -22,26 +25,29 @@ const colors = {
 };
 
 // Folders to ignore
-const ignoreFolders = ["pagefind/", "node_modules/", "dist/", ".astro/"];
+const ignoreFolders = ["pagefind/", "node_modules/", "dist/", ".astro/", "public/vendor/", ".claude/", ".agents/"];
 
 // Files to ignore (skip all linting)
-const ignoreFiles = ["script/release_notes_template.mdx"];
+const ignoreFiles = ["script/release_notes_template.mdx", "script/blog_post_template.mdx"];
 
 // File types
 const fileTypes = [
   ".cfg",
   ".css",
   ".gif",
+  ".glb",
   ".h",
   ".html",
   ".ico",
   ".jpg",
   ".js",
   ".json",
+  ".lock",
   ".md",
   ".mdx",
   ".png",
   ".py",
+  ".scss",
   ".svg",
   ".toml",
   ".txt",
@@ -56,10 +62,12 @@ const fileTypes = [
   ".sh",
   ".webp",
   ".bin",
+  ".mp4",
+  ".webm",
   "", // empty string for files without extension (like .gitignore)
 ];
 const imageTypes = [".webp", ".jpg", ".ico", ".png", ".svg", ".gif"];
-const binaryTypes = [".bin"];
+const binaryTypes = [".bin", ".glb", ".mp4", ".webm"];
 
 // Store errors
 const errors = new Map();
@@ -200,6 +208,25 @@ function checkEsphomeLinks(fname, content) {
   }
 }
 
+// Routes served by standalone src/pages/*.astro files rather than
+// src/content/docs — invisible to buildAnchorCache's content-dir walk, so
+// register them here to avoid false "non-existent page" link errors.
+async function registerAstroPageRoutes(cache) {
+  const pagesDir = join(__dirname, "..", "src/pages");
+
+  try {
+    const entries = await readdir(pagesDir, { withFileTypes: true });
+    for (const entry of entries) {
+      if (!entry.isFile() || !entry.name.endsWith(".astro") || entry.name.includes("[")) continue;
+      const slug = entry.name.replace(/\.astro$/, "");
+      if (slug === "index") continue; // "/" is already treated as always-valid
+      if (!cache.has(slug)) cache.set(slug, new Set());
+    }
+  } catch {
+    // No src/pages directory - nothing to register
+  }
+}
+
 // Build anchor cache for link validation
 async function buildAnchorCache() {
   const cache = new Map();
@@ -208,20 +235,8 @@ async function buildAnchorCache() {
   try {
     await stat(contentDir);
   } catch {
+    await registerAstroPageRoutes(cache);
     return cache;
-  }
-
-  function generateSlug(text) {
-    return (
-      text
-        .toLowerCase()
-        // Mirror src/lib/rehype-heading-slugs.mjs: dots in automation headings
-        // (e.g. `light.turn_on`) map to `-` so the anchor becomes `light-turn_on`.
-        .replace(/\./g, "-")
-        .replace(/[^\w\s-]/g, "")
-        .replace(/[-\s]+/g, "-")
-        .replace(/^-+|-+$/g, "")
-    );
   }
 
   async function processDir(dir, basePath = "") {
@@ -244,29 +259,7 @@ async function buildAnchorCache() {
         pagePath = pagePath.replace(/\\/g, "/");
 
         const content = await readFile(fullPath, "utf-8");
-        const anchors = new Set();
-
-        for (const line of content.split("\n")) {
-          // Match headings
-          const headingMatch = line.match(/^(#{1,6})\s+(.*)/);
-          if (headingMatch) {
-            const headingText = headingMatch[2].trim();
-            const anchorId = generateSlug(headingText);
-            anchors.add(anchorId);
-          }
-
-          // Match anchor shortcodes (old Hugo style)
-          const shortcodeMatch = line.match(/\{\{<\s*anchor\s+"([^\s>]+)"\s*>}}/);
-          if (shortcodeMatch) {
-            anchors.add(shortcodeMatch[1]);
-          }
-
-          // Match HTML anchor spans
-          const spanMatch = line.match(/<span id="([^"]+)"><\/span>/);
-          if (spanMatch) {
-            anchors.add(spanMatch[1]);
-          }
-        }
+        const anchors = collectPageAnchors(content);
 
         cache.set(pagePath, anchors);
       }
@@ -274,6 +267,7 @@ async function buildAnchorCache() {
   }
 
   await processDir(contentDir);
+  await registerAstroPageRoutes(cache);
   return cache;
 }
 
@@ -320,7 +314,7 @@ async function checkInternalLinks(fname, content, anchorCache) {
                 fname,
                 lineno,
                 col,
-                `Anchor-only link '#${anchorId}' not found on current page. If this should link to another page, use the full path like [${linkText}](/path/to/page#${anchorId})`,
+                `Anchor-only link '#${anchorId}' not found on current page. If this should link to another page, use the full path like [${linkText}](/path/to/page/#${anchorId})`,
               );
             }
           }
@@ -340,7 +334,7 @@ async function checkInternalLinks(fname, content, anchorCache) {
     if (linkUrl.startsWith("/images/") && /\.(png|jpg|jpeg|gif|svg|webp|pdf|zip)$/i.test(linkUrl)) {
       continue;
     }
-    if (linkUrl.startsWith("/files/") && /\.(bin|zip)$/i.test(linkUrl)) {
+    if (linkUrl.startsWith("/files/") && /\.(bin|xml|zip)$/i.test(linkUrl)) {
       continue;
     }
 
@@ -353,6 +347,18 @@ async function checkInternalLinks(fname, content, anchorCache) {
     if (!linkUrl.startsWith("/")) {
       addError(fname, lineno, col, `Relative link '${linkUrl}' should use an absolute path (e.g., /components/...)`);
       continue;
+    }
+
+    // Keep the trailing slash before an anchor. Without it the site answers with a 301 to the
+    // slashed URL, so every reader following the link pays an extra round trip.
+    if (needsAnchorTrailingSlash(linkUrl)) {
+      addError(
+        fname,
+        lineno,
+        col,
+        `Internal link '${linkUrl}' is missing the trailing slash before its anchor. ` +
+          `Use '${withAnchorTrailingSlash(linkUrl)}' instead.`,
+      );
     }
 
     // Parse internal link

@@ -1,0 +1,81 @@
+---
+description: "Instructions for setting up cst3240 touch screen controller with ESPHome"
+title: "CST3240 Touch Screen Controller"
+---
+
+import Figure from '@components/Figure.astro';
+import APIRef from '@components/APIRef.astro';
+
+The `cst3240` touchscreen platform allows using the multitouch screen controller CST3240 with ESPHome.
+It handles both interrupt (recommended for the auto standby mode) and polling modes.
+
+The touchscreen resolution is set automatically by the linked display, like other ESPHome touchscreen
+components.
+
+Unless `calibration` is set, the touch range is read from the chip's firmware settings.
+The X and Y axes can be exchanged with the `transform` option `swap_xy`.
+
+The [I²C](/components/i2c/) is required to be set up in your configuration for this touchscreen to work.
+
+This controller is used on some industrial (CAN/RS485) ESP32-S3 Panels from PanelLan / Wireless Tag.
+
+<Figure
+  src="/images/cst3240.jpg"
+  alt="CST3240"
+  caption="Touchscreen chip (Hynitron)"
+  layout="constrained"
+  width={300}
+  height={245}
+/>
+
+## Base Touchscreen Configuration
+
+```yaml
+# Example configuration entry
+touchscreen:
+  - platform: cst3240
+    interrupt_pin: GPIOXX
+```
+
+### Configuration Variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually set the ID of this touchscreen.
+- **interrupt_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The touch detection pin.
+- **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The chip reset pin.
+
+- All other options from [Touchscreen](/components/touchscreen/#config-touchscreen).
+
+### Example With a Touch Zone
+
+```yaml
+touchscreen:
+  - platform: cst3240
+    id: id_cst3240
+    display: display0
+    interrupt_pin: GPIOXX
+    setup_priority: -20 # after display
+    on_release:
+      - logger.log: "Touch released"
+
+binary_sensor:
+  - platform: touchscreen
+    name: "Test Button"
+    touchscreen_id: id_cst3240
+    # bottom right alarm test
+    x_min: 350
+    y_min: 200
+    x_max: 480
+    y_max: 272
+    on_click:
+      then:
+        - logger.log: "Test button clicked"
+```
+
+## See Also
+
+- <APIRef text="cst3240_touchscreen.h" path="cst3240/touchscreen/cst3240_touchscreen.h" />
+- [Binary Sensor Filters](/components/binary_sensor/#binary-sensor-filters)
+- [CST226 Touchscreen Controller](/components/touchscreen/cst226/)
+- [CST328 Touchscreen Controller](/components/touchscreen/cst328/)
+- [CST816 Touchscreen Controller](/components/touchscreen/cst816/)
+- [CST9220 Touchscreen Controller](/components/touchscreen/cst9220/)

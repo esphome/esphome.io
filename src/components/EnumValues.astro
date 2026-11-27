@@ -9,7 +9,7 @@
  *     - `ANY` (default): Trigger on any edge change (high to low or low to high)
  *     - `RISING`: Trigger only on rising edge (low to high)
  *
- * The structured prop form means `script/schema_doc.py` can parse the
+ * The structured prop form means `script/schema_doc.mjs` can parse the
  * value/description/default fields directly out of the MDX source — no
  * fragile bullet-list regex required.
  *
@@ -42,20 +42,18 @@ const { values } = Astro.props;
 ---
 
 <ul class="enum-values">
-  {
-    values.map((item) => (
-      <li data-enum-value={item.value} data-default={item.default ? "true" : undefined}>
-        <code>{item.value}</code>
-        {item.default && (
-          <>
-            {" "}
-            <span class="enum-default">(default)</span>
-          </>
-        )}
-        {item.description && <>: {item.description}</>}
-      </li>
-    ))
-  }
+  {values.map((item) => (
+    <li data-enum-value={item.value} data-default={item.default ? "true" : undefined}>
+      <code>{item.value}</code>
+      {item.default && (
+        <>
+          &nbsp;
+          <span class="enum-default">(default)</span>
+        </>
+      )}
+      {item.description && <>: {item.description}</>}
+    </li>
+  ))}
 </ul>
 
 <style>

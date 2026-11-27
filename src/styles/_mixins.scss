@@ -1,0 +1,66 @@
+@use "sass:math";
+
+@function strip-unit($value) {
+    @return math.div($value, $value * 0 + 1);
+}
+
+@function px-to-rem($px, $root: 16px) {
+    @return math.div(strip-unit($px), strip-unit($root)) * 1rem;
+}
+
+/// Fluid-scaling property (font-size by default) that clamps between two
+/// sizes as the viewport grows from $min-vw to $max-vw.
+///
+/// Inputs are in px (with or without the `px` suffix). Output is in rem so
+/// the clamp boundaries respect the user's browser font-size preference.
+///
+/// Usage:
+///   @include fluid(16px, 24px);                       // font-size, 500–1280 vw
+///   @include fluid(16px, 32px, 480px, 1440px);        // custom breakpoints
+///   @include fluid(8px, 32px, $property: padding);    // any single property
+@mixin fluid($min-size, $max-size, $min-vw: 500px, $max-vw: 1280px, $property: font-size, $root: 16px) {
+    $slope: math.div(
+        strip-unit($max-size) - strip-unit($min-size),
+        strip-unit($max-vw) - strip-unit($min-vw)
+    );
+    $intercept-px: strip-unit($min-size) - ($slope * strip-unit($min-vw));
+
+    #{$property}: clamp(
+        #{px-to-rem($min-size, $root)},
+        #{px-to-rem($intercept-px, $root)} + #{$slope * 100}vw,
+        #{px-to-rem($max-size, $root)}
+    );
+}
+
+@mixin bp($breakpoint) {
+    @if $breakpoint ==large-mobile {
+        @media (min-width: 500px) {
+            @content;
+        }
+    }
+
+    @else if $breakpoint ==tablet {
+        @media (min-width: 768px) {
+            @content;
+        }
+    }
+
+    @else if $breakpoint ==desktop {
+        @media (min-width: 1024px) {
+            @content;
+        }
+    }
+
+    @else if $breakpoint ==large-desktop {
+        @media (min-width: 1280px) {
+            @content;
+        }
+    }
+
+    // else if the breakpoint is a pixel value, use it as is
+    @else {
+        @media (min-width: $breakpoint) {
+            @content;
+        }
+    }
+}

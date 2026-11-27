@@ -1,0 +1,181 @@
+---
+interface Props {
+  line?: boolean;
+  direction?: "horizontal" | "vertical";
+}
+
+const { line = false, direction = "horizontal" } = Astro.props;
+---
+
+<div class={`icon-text-group ${direction} ${line ? "line" : ""}`}>
+  <slot />
+</div>
+
+<script>
+  const CONNECTOR_SVG = `<svg class="connector" viewBox="0 0 40 61" fill="none" aria-hidden="true" focusable="false">
+    <circle class="connector-dot" cx="20" cy="2.67" r="2.67" fill="var(--esk-primary-color)"/>
+    <line class="connector-line" x1="20" y1="2.67" x2="20" y2="42.67" stroke="var(--esk-primary-color)" stroke-width="1"/>
+    <path class="connector-arrow" d="M16.46 39.13 L20 42.67 L23.54 39.13" stroke="var(--esk-primary-color)" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </svg>`;
+
+  const groups = document.querySelectorAll(".icon-text-group.line");
+  groups.forEach((group) => {
+    const items = group.querySelectorAll(":scope > .icon-text");
+    for (let i = 1; i < items.length; i++) {
+      items[i].insertAdjacentHTML("afterbegin", CONNECTOR_SVG);
+    }
+  });
+
+  if (groups.length) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("in-view");
+            observer.unobserve(entry.target);
+          }
+        }
+      },
+      { threshold: 0.2 },
+    );
+    groups.forEach((el) => observer.observe(el));
+
+    groups.forEach((group) => {
+      const hoverTarget = group.closest(".card") ?? group;
+      hoverTarget.addEventListener("mouseenter", () => {
+        if (!group.classList.contains("in-view")) return;
+        group.classList.remove("in-view");
+        // Force reflow so the next class add re-triggers the animations.
+        void (group as HTMLElement).offsetHeight;
+        group.classList.add("in-view");
+      });
+    });
+  }
+</script>
+
+<style lang="scss">
+  @use "../styles/mixins" as *;
+
+  $icon-size: 2.5rem;
+  $gap-mobile: 2rem;
+  $gap-tablet: 2rem;
+
+  $line-duration: 0.7s;
+  $arrow-duration: 0.3s;
+  $arrow-delay: 0.55s;
+  $pulse-duration: 0.7s;
+  $pulse-delay: 0.7s;
+  $pulse-size: 1rem;
+
+  .icon-text-group {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-mobile;
+
+    @include bp(tablet) {
+      gap: $gap-tablet;
+    }
+  }
+
+  .icon-text-group.line :global(.icon-text) {
+    position: relative;
+  }
+
+  /* Injected SVG sits above each icon (except the first), with the line
+     spanning the gap. Native viewBox is 40x61; we render at width = gap so
+     the 40-unit line content equals the visible gap exactly. */
+  .icon-text-group.line :global(.connector) {
+    position: absolute;
+    width: $gap-mobile;
+    height: calc(#{$gap-mobile} * 61 / 40);
+    left: calc((#{$icon-size} - #{$gap-mobile}) / 2);
+    top: calc(-42.67 / 40 * #{$gap-mobile});
+    pointer-events: none;
+
+    @include bp(tablet) {
+      width: $gap-tablet;
+      height: calc(#{$gap-tablet} * 61 / 40);
+      left: calc((#{$icon-size} - #{$gap-tablet}) / 2);
+      top: calc(-42.67 / 40 * #{$gap-tablet});
+    }
+  }
+
+  /* Default (also fallback when JS hasn't added .in-view yet): everything
+     fully rendered, so the SVG is visible even if animation never runs. */
+  .icon-text-group.line :global(.connector-line) {
+    stroke-dasharray: 40;
+    stroke-dashoffset: 0;
+  }
+
+  .icon-text-group.line :global(.connector-arrow) {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  /* Ring pulse at the line's end point (top centre of the next icon). */
+  .icon-text-group.line :global(.icon-text:not(:first-child))::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: calc(#{$icon-size} / 2);
+    width: $pulse-size;
+    height: $pulse-size;
+    border: 2px solid var(--esk-primary-color);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Animate when the group scrolls into view */
+  .icon-text-group.line.in-view :global(.connector-line) {
+    animation: connector-line-draw $line-duration ease-out;
+  }
+
+  .icon-text-group.line.in-view :global(.connector-arrow) {
+    animation: connector-arrow-show $arrow-duration ease-out $arrow-delay backwards;
+  }
+
+  .icon-text-group.line.in-view :global(.icon-text:not(:first-child))::after {
+    animation: connector-pulse $pulse-duration ease-out $pulse-delay forwards;
+  }
+
+  @keyframes connector-line-draw {
+    from {
+      stroke-dashoffset: 40;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes connector-arrow-show {
+    from {
+      opacity: 0;
+      transform: translateY(-3px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes connector-pulse {
+    0% {
+      transform: translate(-50%, -50%) scale(0.4);
+      opacity: 0.7;
+    }
+    100% {
+      transform: translate(-50%, -50%) scale(3);
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .icon-text-group.line.in-view :global(.connector-line),
+    .icon-text-group.line.in-view :global(.connector-arrow),
+    .icon-text-group.line.in-view :global(.icon-text:not(:first-child))::after {
+      animation: none;
+    }
+  }
+</style>

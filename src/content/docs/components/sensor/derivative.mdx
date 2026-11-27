@@ -1,0 +1,74 @@
+---
+description: "Instructions for setting up sensors that compute the derivative of other sensors."
+title: "Derivative Sensor"
+---
+import APIRef from '@components/APIRef.astro';
+
+
+The `derivative` sensor is a helper sensor that can compute the time derivative (rate of
+change) of the values from another sensor. It publishes `d(value)/dt` — the difference
+between the current and the previous reading divided by the elapsed time — expressed in a
+configurable time unit. This can for example be useful to derive a speed (in m/s) from a
+distance sensor (in m).
+
+This component can be considered the counterpart of the [Integration Sensor](/components/sensor/integration/).
+Like the Integration Sensor, the sensor to differentiate is declared with the `sensor` key.
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: derivative
+    sensor: my_distance
+    name: "Speed"
+
+  # The sensor to differentiate, here a distance sensor in m
+  - platform: vl53l1x
+    # ...
+    id: my_distance
+    name: "Distance"
+```
+
+## Configuration Variables
+
+- **sensor** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the sensor to differentiate.
+
+- **time_unit** (*Optional*, string): The time unit of the resulting rate, one of
+  `ms`, `s`, `min`, `h` or `d`. Defaults to `s`.
+
+- **state_class** (*Optional*, string): Defaults to `measurement`. Set it to `""` to publish
+  without a state class.
+
+- All other options from [Sensor](/components/sensor/).
+
+`device_class` is not inherited, because a rate measures something different from its
+source (a distance becomes a speed, an energy becomes a power); set it explicitly when needed.
+
+The following properties are inherited from the source sensor unless set explicitly:
+
+- **unit_of_measurement**: The source sensor's unit per the configured `time_unit`. This is
+  the reverse of the Integration Sensor: a known rate unit with the `time_unit` appended is
+  reduced to that rate — `kWh` with `time_unit: h` produces `kW`, `Ah` produces `A`, and `Wh`
+  produces `W`. For any other unit the `time_unit` is appended, so a distance sensor in `m`
+  with `time_unit: s` produces a speed in `m/s`.
+
+- **accuracy_decimals**: The same as the source sensor.
+
+- **icon**: The source sensor's icon.
+
+## Behaviour
+
+- The first valid reading after each startup only establishes the baseline; nothing is
+  published for it. The baseline is not persisted, so this happens again after every reboot.
+
+- A `NaN` reading publishes nothing and discards the baseline. The next valid reading only
+  re-establishes the baseline and publishes nothing, so a gap between samples never produces
+  a bogus spike.
+
+- Readings that arrive within the same component call share a timestamp. The later one
+  publishes nothing, and its change is counted against the next reading.
+
+## See Also
+
+- [Sensor Filters](/components/sensor/#sensor-filters)
+- [Integration Sensor](/components/sensor/integration/)
+- <APIRef text="derivative_sensor.h" path="derivative/derivative_sensor.h" />

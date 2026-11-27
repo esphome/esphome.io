@@ -1,0 +1,221 @@
+---
+description: "Instructions for setting up the Texas Instruments BQ25186 battery charger in ESPHome."
+title: "Texas Instruments BQ25186 Battery Charger"
+---
+
+The `bq25186` component lets you configure and monitor the Texas Instruments BQ25186 1-cell battery charger and
+power-path IC over the [I²C bus](/components/i2c/) ([datasheet](https://www.ti.com/lit/ds/symlink/bq25186.pdf)).
+The hub writes the charging, thermal and power-path configuration to the IC and reads its status registers at
+`update_interval`; the `binary_sensor` and `text_sensor` platforms report that status, the `button` platform
+triggers the IC's reset and ship modes, and the `switch` platform drives the `/PG/GPO` pin.
+
+## Configuration
+
+```yaml
+# Example configuration entry
+bq25186:
+  id: bq25186_charger
+  fast_charge_current: 500mA
+
+binary_sensor:
+  - platform: bq25186
+    bq25186_id: bq25186_charger
+    power_good:
+      name: "BQ25186 Power Good"
+    charging:
+      name: "BQ25186 Charging"
+
+text_sensor:
+  - platform: bq25186
+    bq25186_id: bq25186_charger
+    charge_status:
+      name: "BQ25186 Charge Status"
+    ts_status:
+      name: "BQ25186 TS Status"
+
+button:
+  - platform: bq25186
+    bq25186_id: bq25186_charger
+    ship_mode:
+      name: "BQ25186 Ship Mode"
+
+switch:
+  - platform: bq25186
+    bq25186_id: bq25186_charger
+    pg_gpo:
+      name: "BQ25186 PG/GPO"
+```
+
+## BQ25186 Component
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used to reference this BQ25186 hub
+  from other components.
+- **address** (*Optional*, int): The I2C address of the device. Default: `0x6A`.
+- **i2c_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the I²C bus.
+- **update_interval** (*Optional*, time): How often to read the status registers that feed the binary and text
+  sensors. Every read also serves the I²C watchdog, see `watchdog` below. Default: `60s`.
+- **configure_on_boot** (*Optional*, boolean): Apply the configuration to the IC on boot. If `false`, the
+  configuration can be applied later with the
+  [`bq25186.apply_configuration` action](#bq25186-apply_configuration-action), for example to avoid rewriting the
+  same configuration after every reboot or to delay the I²C traffic until other components are up. Default: `true`.
+
+### Charging Configuration
+
+- **battery_regulation_voltage** (*Optional*, voltage): Battery regulation voltage, in 10 mV steps from `3.5V` to
+  `4.65V`; a value between steps is rejected. Default: `4.2V`.
+- **fast_charge_current** (*Optional*, current): Fast charge current from `5mA` to `1A`, in 1 mA steps up to `35mA` and
+  10 mA steps from `40mA`; a value between steps is rejected. Default: `10mA`.
+- **charge_enabled** (*Optional*, boolean): Enable or disable charging. Default: `true`.
+- **flash_charging_mode** (*Optional*, boolean): Enable flash charging mode (behavior undocumented in the datasheet).
+  Default: `false`.
+- **precharge_is_iterm** (*Optional*, boolean): Use precharge current as termination current. Default: `false`.
+- **termination_percent** (*Optional*, string): Termination current as a percentage of fast charge current. One of
+  `disabled`, `5%`, `10%`, `20%`. Default: `10%`.
+- **vindpm_mode** (*Optional*, string): Input voltage dynamic power management mode. One of `battery_tracking`, `4.5v`,
+  `4.7v`, `disabled`. Default: `4.5v`.
+- **thermal_regulation** (*Optional*, string): Thermal regulation threshold. One of `100c`, `80c`, `60c`, `disabled`.
+  Default: `100c`.
+- **battery_ocp_limit** (*Optional*, string): Battery over-current protection limit. One of `500ma`, `1000ma`, `1500ma`,
+  `3000ma`. Default: `3000ma`.
+- **battery_uvlo** (*Optional*, string): Battery undervoltage lockout. One of `3.0v`, `2.8v`, `2.6v`, `2.4v`, `2.2v`,
+  `2.0v`. Default: `3.0v`.
+- **vlowv** (*Optional*, string): Precharge to fast charge battery voltage transition threshold (VLOWV) from which the
+  device charges the battery at the fast charge current. One of `3.0v`, `2.8v`. Default: `3.0v`.
+- **recharge_threshold** (*Optional*, string): Recharge threshold. One of `100mv`, `200mv`. Default: `100mv`.
+- **double_timer_during_dpm** (*Optional*, boolean): Double the safety timer during DPM. Default: `false`.
+- **safety_timer** (*Optional*, string): Safety timer duration. One of `3h`, `6h`, `12h`, `disabled`. Default: `6h`.
+### Watchdog, Button and Power Path Configuration
+
+- **watchdog** (*Optional*, string): The I²C watchdog. When the bus stays quiet for the chosen period the IC restores
+  its power-on configuration, and the hardware reset variants also power cycle the system. Every status read resets
+  the watchdog, so `update_interval` must be shorter than the period. One of `disabled`, `160s_software_reset`,
+  `160s_hardware_reset`, `40s_hardware_reset`. Default: `disabled`.
+- **watchdog_15s_enable** (*Optional*, boolean): Perform a hardware reset when no I²C transaction follows within
+  15 s of VIN being connected. Requires an `update_interval` shorter than `15s`. Default: `false`.
+- **long_press_duration** (*Optional*, string): Long press duration for the push button. One of `5s`, `10s`, `15s`,
+  `20s`. Default: `10s`.
+- **hw_reset_requires_vin** (*Optional*, boolean): Require VIN for hardware reset. Default: `false`.
+- **autowake** (*Optional*, string): Auto-wake timer. One of `0.5s`, `1s`, `2s`, `4s`. Default: `1s`.
+- **input_current_limit** (*Optional*, string): Input current limit. One of `50ma`, `100ma`, `200ma`, `300ma`, `400ma`,
+  `500ma`, `665ma`, `1050ma`. Default: `500ma`.
+- **push_button_long_press_action** (*Optional*, string): Long press action. One of `none`, `hardware_reset`,
+  `ship_mode`, `shutdown_mode`. Default: `ship_mode`.
+- **wake1_timer** (*Optional*, string): Wake1 timer selection. One of `300ms`, `1s`. Default: `300ms`.
+- **wake2_timer** (*Optional*, string): Wake2 timer selection. One of `2s`, `3s`. Default: `2s`.
+- **enable_push_button** (*Optional*, boolean): Enable the push button input. Default: `true`.
+- **system_regulation** (*Optional*, string): SYS regulation target. One of `battery_tracking`, `4.4v`, `4.5v`, `4.6v`,
+  `4.7v`, `4.8v`, `4.9v`, `pass_through`. Default: `4.5v`.
+- **sys_mode** (*Optional*, string): System mode. One of `normal`, `battery_only`, `floating_off`, `pulldown_off`.
+  Default: `normal`.
+- **disable_vdppm** (*Optional*, boolean): Disable VDPPM. Default: `false`.
+
+### Temperature Control Configuration
+
+- **ts_auto_function** (*Optional*, boolean): Enable TS automatic function. Default: `true`.
+- **ts_hot** (*Optional*, string): TS hot threshold. One of `60c`, `65c`, `50c`, `45c`. Default: `60c`.
+- **ts_cold** (*Optional*, string): TS cold threshold. One of `0c`, `3c`, `5c`, `-3c`. Default: `0c`.
+- **ts_warm_disable** (*Optional*, boolean): Disable warm behavior. Default: `false`.
+- **ts_cool_disable** (*Optional*, boolean): Disable cool behavior. Default: `false`.
+- **ts_ichg** (*Optional*, string): TS charge current reduction. One of `0.5x`, `0.2x`. Default: `0.5x`.
+- **ts_vrcg** (*Optional*, string): TS regulation voltage offset. One of `-100mv`, `-200mv`. Default: `-100mv`.
+
+### Interrupt Masking
+
+- **mask_charge_status_interrupt** (*Optional*, boolean): Mask charge status interrupt. Default: `true`.
+- **mask_ilim_interrupt** (*Optional*, boolean): Mask ILIM interrupt. Default: `true`.
+- **mask_vindpm_interrupt** (*Optional*, boolean): Mask VINDPM interrupt. Default: `false`.
+- **mask_ts_interrupt** (*Optional*, boolean): Mask TS interrupt. Default: `false`.
+- **mask_treg_interrupt** (*Optional*, boolean): Mask TREG interrupt. Default: `true`.
+- **mask_bat_interrupt** (*Optional*, boolean): Mask battery interrupt. Default: `false`.
+- **mask_pg_interrupt** (*Optional*, boolean): Mask PG interrupt. Default: `false`.
+
+## Binary Sensor
+
+Configuration for `binary_sensor` platform. All options from [Binary Sensor](/components/binary_sensor/).
+
+- **bq25186_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the `bq25186` hub.
+  Required when more than one hub is configured.
+- **ts** (*Optional*): TS open status.
+- **charging** (*Optional*): Charging status (constant current or constant voltage).
+- **charge_done** (*Optional*): Charge done (or disabled) status.
+- **ilim** (*Optional*): Input current limit active status.
+- **vdppm** (*Optional*): VDPPM active status.
+- **vindpm** (*Optional*): VINDPM active status.
+- **thermreg** (*Optional*): Thermal regulation active status.
+- **power_good** (*Optional*): Power good status.
+- **vin_ovp** (*Optional*): VIN overvoltage status.
+- **battery_uvlo** (*Optional*): Battery undervoltage status.
+- **safety_timer_flag** (*Optional*): Safety timer flag.
+- **wake1_flag** (*Optional*): Wake1 flag.
+- **wake2_flag** (*Optional*): Wake2 flag.
+- **ts_flag** (*Optional*): TS flag.
+- **ilim_flag** (*Optional*): ILIM flag.
+- **vdppm_flag** (*Optional*): VDPPM flag.
+- **vindpm_flag** (*Optional*): VINDPM flag.
+- **thermreg_flag** (*Optional*): Thermal regulation flag.
+- **vin_ovp_flag** (*Optional*): VIN overvoltage flag.
+- **battery_uvlo_flag** (*Optional*): Battery undervoltage flag.
+- **battery_ocp_flag** (*Optional*): Battery overcurrent flag.
+
+## Text Sensor
+
+Configuration for `text_sensor` platform. All options from [Text Sensor](/components/text_sensor/).
+
+- **bq25186_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the `bq25186` hub.
+  Required when more than one hub is configured.
+- **charge_status** (*Optional*): Human-readable charge status. One of `Not Charging`, `Constant Current`,
+  `Constant Voltage`, `Charge Done/Disabled`.
+- **ts_status** (*Optional*): Human-readable TS status. One of `Normal`, `Hot/Cold (Charging Suspended)`,
+  `Cool (Current Reduced)`, `Warm (Voltage Reduced)`.
+
+## Button
+
+Configuration for `button` platform. All options from [Button](/components/button/).
+
+- **bq25186_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the `bq25186` hub.
+  Required when more than one hub is configured.
+- **software_reset** (*Optional*): Trigger a software reset.
+- **shutdown** (*Optional*): Trigger shutdown mode.
+- **ship_mode** (*Optional*): Trigger ship mode.
+- **hardware_reset** (*Optional*): Trigger a hardware reset.
+
+## Switch
+
+Configuration for `switch` platform. All options from [Switch](/components/switch/).
+
+- **bq25186_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the `bq25186` hub.
+  Required when more than one hub is configured.
+- **pg_gpo** (**Required**): Control the `/PG/GPO` pin as a general purpose output. When configured, the hub switches
+  the pin from power-good reporting to GPO mode at boot; the `restore_mode` of the switch decides the initial level.
+
+## `bq25186.apply_configuration` Action
+
+Applies the configuration to the IC. Any option of the `bq25186` component configuration can be overridden in the
+action; the rest keeps the value from the component. Use it to apply the configuration on demand instead of on boot
+(with `configure_on_boot: false`) or to change some options after the initial configuration has been applied.
+
+```yaml
+# Apply the configuration defined in the bq25186 component
+esphome:
+  on_boot:
+    priority: -100
+    then:
+      - bq25186.apply_configuration: bq25186_charger
+```
+
+```yaml
+# Apply the configuration with some options overridden
+esphome:
+  on_boot:
+    priority: -100
+    then:
+      - bq25186.apply_configuration:
+          id: bq25186_charger
+          battery_regulation_voltage: 4.1V
+          fast_charge_current: 200mA
+```
+
+## See Also
+
+- [I²C Bus](/components/i2c/)
+- [BQ25186 product page](https://www.ti.com/product/BQ25186)

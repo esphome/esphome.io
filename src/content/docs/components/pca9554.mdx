@@ -1,5 +1,5 @@
 ---
-description: "Instructions for setting up PCA9554, PCA9554A, PCA9536 digital port expanders in ESPHome."
+description: "Instructions for setting up the PCA953x, PCA955x, TCA955x and PCAL95xx I/O expanders in ESPHome."
 title: "PCA9554 I/O Expander"
 ---
 
@@ -7,12 +7,12 @@ import { Image } from 'astro:assets';
 import Figure from '@components/Figure.astro';
 import APIRef from '@components/APIRef.astro';
 
-The PCA9554 component allows you to use a variety of Texas Instrument I/O expanders in ESPHome using the
-[I²C Bus](/components/i2c) for communication.
-
-Devices tested as working with this component include **PCA9554**, **PCA9554A**, **PCA9536** and **PCA9535**.
-Equivalent TI I/O expanders with the same command interface and up to 16 I/O pins such as the **TCA9554**
-and **TCA9535** should also work.
+The PCA9554 component allows you to use a variety of I/O expanders in ESPHome that use the
+[I²C Bus](/components/i2c/) for communication. Once configured, you can use any of the IO pins (up to 16) with
+your projects. Within ESPHome they emulate a real internal GPIO pin and can therefore be used with many of
+ESPHome's components such as the GPIO binary sensor or GPIO switch. Any option accepting a
+[Pin Schema](/guides/configuration-types/#pin-schema) can theoretically be used, but some more complicated
+components that do communication through this I/O expander will not work.
 
 <Figure
   src="/images/pca9554a.jpg"
@@ -23,86 +23,159 @@ and **TCA9535** should also work.
   height={169}
 />
 
-Once configured, you can use any of the **16** (PCA9535), **8** (PCA9554, PCA9554A) or **4** (PCA9536) pins
-within your projects. Within ESPHome they emulate a real internal GPIO pin
-and can therefore be used with many of ESPHome's components such as the GPIO
-binary sensor or GPIO switch.
+## Supported Devices
 
-> [!NOTE]
-> The 7 bit I²C device address ranges are:
->
-> - PCA9554 and PCA9535: `0x20` to `0x27`
-> - PCA9554A: `0x38` to `0x3F`
-> - PCA9536: `0x41`
->
-> For the PCA9535, PCA9554 and PCA9554A, the actual choice of the I²C device address depends on state of the 3 address pins.
-> Please refer to the individual datasheets linked at the bottom of the page for further details to set the address.
->
-> Up to eight PCA9535 or PCA9554 and an additional eight PCA9554A devices can reside on the same I²C bus.
-> Please note that only one PCA9536 device is allowed per I²C bus due to its fixed address.
->
-> The PCA9535 provides 16 bits of GPIOs (pin numbers 0-15).
->
-> The PCA9554 and PCA9554A provide 8 bits of GPIOs (pin numbers 0-7).
->
-> The PCA9536 provides 4 bits of GPIOs (pin numbers 0-3).
->
-> Any option accepting a [Pin Schema](/guides/configuration-types#pin-schema) can theoretically be used, but some more
-> complicated components that do communication through this I/O expander will not work.
+Set `device:` to the part in use. The PCAL parts add pull resistors, input latching and a selectable output
+drive strength on top of the plain I/O. At startup every PCAL pin is set as an input with its pull resistors
+disconnected, whatever the chip's power-on state, before the configured pin modes are applied.
+
+| Device | Number of Pins | I²C Address | Features |
+| --- | --- | --- | --- |
+| PCA9536 | 4 | 0x41 | I/O |
+| PCA9534 | 8 | 0x20-0x27 | I/O |
+| PCA9534A | 8 | 0x38-0x3F | I/O |
+| PCA9538 | 8 | 0x70-0x73 | I/O |
+| PCA9554 | 8 | 0x20-0x27 | I/O |
+| PCA9554A | 8 | 0x38-0x3F | I/O |
+| TCA9554 | 8 | 0x20-0x27 | I/O |
+| PCA9535 | 16 | 0x20-0x27 | I/O |
+| PCA9555 | 16 | 0x20-0x27 | I/O |
+| TCA9535 | 16 | 0x20-0x27 | I/O |
+| TCA9555 | 16 | 0x20-0x27 | I/O |
+| PCAL9538 | 8 | 0x70-0x73 | I/O, pull up/down, latching, drive strength |
+| PCAL9555 | 16 | 0x20-0x27 | I/O, pull up/down, latching, drive strength |
+
+Devices that show a range of I²C addresses have an address that can be set using strapping pins on the device.
+Other expanders with the same register layout work when configured as the device with the same number of pins
+and features; set `address:` to match the part.
 
 ```yaml
 # Example configuration entry
 pca9554:
-  - id: 'pca9554a_device'
-    address: 0x38
+  - id: pca9554_hub
+    device: PCA9554
 
 # Individual outputs
 switch:
   - platform: gpio
-    name: "PCF9554A Pin #0"
+    name: "PCA9554 Pin 2"
     pin:
-      pca9554: pca9554a_device
-      # Use pin number 0
-      number: 0
-      # One of INPUT or OUTPUT
+      pca9554: pca9554_hub
+      number: 2
       mode:
         output: true
-      inverted: false
+
+# Individual inputs
+binary_sensor:
+  - platform: gpio
+    name: "PCA9554 Pin 3"
+    pin:
+      pca9554: pca9554_hub
+      number: 3
+      mode:
+        input: true
 ```
 
-## Configuration variables
+## Configuration Variables
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The id to use for this `pca9554` component.
-- **address** (*Optional*, int): The I²C address of the driver.
-  Defaults to `0x20`.
-
-- **pin_count** (*Optional*, int): The number of bits implemented in the expander. Defaults to 8. This should be set
-  to 16 when using a PCA9535 and 4 when using a PCA9536.
-- **interrupt_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The pin connected to the
-  INT output of the PCA9554/PCA9535. When configured, the component becomes interrupt-driven instead of
-  polling — it only reads the chip when a pin actually changes state, significantly reducing I²C bus traffic
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The id to use for this `pca9554` component.
+- **address** (*Optional*, int): The I²C address of the device; see the table above. Defaults to the lowest
+  address of the selected `device`, with all address pins low: `0x20` for most parts, `0x38` for the PCA9534A and
+  PCA9554A, `0x41` for the PCA9536 and `0x70` for the PCA9538 and PCAL9538.
+- **device** (*Optional*, string): The part in use, one of the names in the table above. Defaults to `PCA9554`,
+  or to the plain part with the pins given by `pin_count`.
+- **pin_count** (*Optional*, int): The number of pins of the expander, `4`, `8` or `16`, for configurations that
+  predate `device`. With `device` set it may be left out; if both are given they must agree.
+- **interrupt_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The pin connected to the
+  INT output of the expander. When configured, the component becomes interrupt-driven instead of
+  polling: it only reads the chip when a pin actually changes state, significantly reducing I²C bus traffic
   and CPU usage. The INT pin is active-low and open-drain, so an external or internal pull-up resistor is
-  required. Must be an internal GPIO pin (not another expander pin).
+  required. Must be an internal GPIO pin (not another expander pin). On the PCAL parts every input pin asserts
+  INT and every output pin is masked, so no per-pin setup is needed.
 
-> [!NOTE]
-> A PCA9535 will not work (even on the lower 8 bits) unless the **pin_count** is set to 16.
+## Pin Configuration Variables
 
-## Pin configuration variables
-
-- **pca9554** (**Required**, [ID](/guides/configuration-types#id)): The id of the `pca9554` component of the pin.
+- **pca9554** (**Required**, [ID](/guides/configuration-types/#id)): The id of the `pca9554` component of the pin.
+  Instead of an id, an `address:` can be given to select the hub by its I²C address; see
+  [Selecting an I2C Expander by Address](/guides/configuration-types/#selecting-an-i2c-expander-by-address).
 - **number** (**Required**, int): The pin number.
 - **inverted** (*Optional*, boolean): If all read and written values
   should be treated as inverted. Defaults to `false`.
+- **mode** (*Optional*, boolean(s)): Pin mode settings for the selected pin. Multiple pin modes may be selected by
+  indenting them after the `mode:` entry in the YAML as shown in the example above. All devices support `input` and
+  `output`. The PCAL parts additionally support `pullup` and `pulldown`; the plain parts reject them.
+- **latch** (*Optional*, boolean): PCAL parts only. Latch an `input` pin, see below. Defaults to `false`.
+- **drive_strength** (*Optional*, percentage): PCAL parts only. The drive strength of an `output` pin, one of
+  `25%`, `50%`, `75%` or `100%`. Refer to the datasheet of your device for the recommended value. Defaults to
+  `100%`; the plain parts reject this option.
 
-- **mode** (*Optional*, string): A pin mode to set for the pin at. One of `INPUT` or `OUTPUT`.
+> [!NOTE]
+> Pin numbers start at 0. Datasheets for 16-pin parts may split the pins into two ports (`P0_0`..`P0_7` and
+> `P1_0`..`P1_7`). Port 0 is pins 0-7 and port 1 is pins 8-15, so `P0_4` is pin 4 and `P1_4` is pin 12.
+
+## Description of the Mode Settings
+
+`input`:
+Configure the pin as a high impedance input.
+
+`output`:
+Configure the pin as a push/pull output.
+
+`pullup`:
+If the pin is configured as an `input` enable a 100K pull up.
+
+`pulldown`:
+If the pin is configured as an `input` enable a 100K pull down.
+
+## Latched Inputs
+
+With `latch: true` a PCAL part holds a changed input level until the component reads the input register, which
+happens on every poll or, with `interrupt_pin`, when INT fires. INT stays asserted until that read. A pulse
+shorter than the poll interval is therefore still reported once instead of being missed; the level read back is
+the latched one, even if the pin has already returned to its original state.
+
+## PCAL Example
+
+```yaml
+pca9554:
+  - id: pcal9538_hub
+    device: PCAL9538
+
+switch:
+  - platform: gpio
+    name: "PCAL9538 Pin 2"
+    pin:
+      pca9554: pcal9538_hub
+      number: 2
+      drive_strength: 50%
+      mode:
+        output: true
+
+binary_sensor:
+  - platform: gpio
+    name: "PCAL9538 Pin 3"
+    pin:
+      pca9554: pcal9538_hub
+      number: 3
+      latch: true
+      mode:
+        input: true
+        pullup: true
+```
 
 ## See Also
 
-- [I²C Bus](/components/i2c)
+- [I²C Bus](/components/i2c/)
 - [GPIO Switch](/components/switch/gpio/)
 - [GPIO Binary Sensor](/components/binary_sensor/gpio/)
 - [PCA9554 datasheet](https://www.ti.com/lit/ds/symlink/pca9554.pdf)
 - [PCA9554A datasheet](https://www.ti.com/lit/ds/symlink/pca9554a.pdf)
 - [PCA9535 datasheet](https://www.ti.com/lit/ds/symlink/pca9535.pdf)
 - [PCA9536 datasheet](https://www.ti.com/lit/ds/symlink/pca9536.pdf)
+- [PCA9538 datasheet](https://www.ti.com/lit/ds/symlink/pca9538.pdf)
+- [PCA9555 datasheet](https://www.ti.com/lit/ds/symlink/pca9555.pdf)
+- [TCA9554 datasheet](https://www.ti.com/lit/ds/symlink/tca9554.pdf)
+- [PCAL9538A datasheet](https://www.nxp.com/docs/en/data-sheet/PCAL9538A.pdf)
+- [TCAL9538 datasheet](https://www.ti.com/lit/ds/symlink/tcal9538.pdf)
+- [PCAL9555 datasheet](https://www.nxp.com/docs/en/data-sheet/PCAL9555A.pdf)
 - <APIRef text="pca9554.h" path="pca9554/pca9554.h" />
