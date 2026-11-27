@@ -34,6 +34,7 @@ operation circuit (typically caused by welded relays).
 cover:
   - platform: current_based
     name: "Current Based Cover"
+    id: blind
 
     open_sensor: open_current_sensor
     open_moving_current_threshold: 0.5
@@ -104,7 +105,48 @@ cover:
   be performed when relay malfunction is detected. Malfunction may require device servicing. You can use this action
   to notify other systems about this situation
 
+- **learn_durations** (*Optional*, boolean): Measure how long the cover takes to fully open and close, and use these
+  times instead of `open_duration` and `close_duration`. See [Learning durations](#learning-durations).
+  Defaults to `false`.
+
 - All other options from [Cover](/components/cover/#config-cover).
+
+## Learning Durations
+
+With `learn_durations: true`, the cover measures the time of each full travel and uses it to estimate the position.
+A travel is measured only when all of these are true:
+
+- it starts at one end, where the cover stopped because the motor current dropped after the motor had been running,
+- motor current is seen during the travel,
+- it ends at the other end because the motor current dropped, without being stopped, reversed or interrupted.
+
+The first travel after a reboot is never measured, because the cover does not know yet that it is at an end.
+A measured time replaces the current duration only when it differs by more than 5% and by more than 1 second, and
+only when it is between half and twice the configured duration. The learned durations are saved in flash, so they are
+kept after a reboot. The configured `open_duration` and `close_duration` are used until
+a duration is learned. Changing them in the configuration discards the learned durations.
+
+With `learn_durations: true`, `open_duration` and `close_duration` only need to be roughly right: a measured time
+outside half to twice the configured duration is not learned. Time one full travel with a stopwatch and use that.
+
+The measured time includes the delay of the current sensor, so a shorter `update_interval` of the current sensor gives
+more accurate durations. If the motor stops in the middle of a travel, for example because of a thermal cut-out, a time
+shorter than half the configured duration is not learned.
+
+To learn both durations right away, open the cover fully, close it fully, open it fully and close it fully again.
+The first travel that actually runs the motor only finds the end position.
+
+The durations in use, in milliseconds, are available in lambdas through `get_open_duration()` and
+`get_close_duration()`, for example to show them in Home Assistant:
+
+```yaml
+sensor:
+  - platform: template
+    name: "Blind open duration"
+    unit_of_measurement: s
+    accuracy_decimals: 1
+    lambda: return id(blind).get_open_duration() / 1000.0f;
+```
 
 ## Use with Shelly 2.5
 
