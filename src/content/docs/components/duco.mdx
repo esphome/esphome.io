@@ -125,12 +125,20 @@ duco:
 
 ## Select
 
-The select shows and changes the ventilation mode.
+Mode selects read and change the ventilation mode of the box or an addressed node. Multiple mode selects can be
+configured under `mode`.
 
 ```yaml
 select:
   - platform: duco
-    name: "Ventilation Mode"
+    mode:
+      - name: "Ventilation Mode"
+      - address: 2
+        name: "Bathroom Mode"
+      - address: 3
+        name: "Bedroom Mode"
+      - address: 4
+        name: "Living Room Mode"
 ```
 
 | Value  | Mode                               |
@@ -154,9 +162,11 @@ select:
 
 - **duco_id** (*Optional*, [ID](/guides/configuration-types/#id)): The Duco component to use. Only needed with more
   than one.
-- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often the mode is read.
-  Defaults to `3s`.
-- All other options from [Select](/components/select/).
+- **mode** (*Optional*): A list of mode selects. Each entry accepts:
+  - **address** (*Optional*, int): Node address from `1` to `68`. Defaults to `1` (the box).
+  - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often the mode is read.
+    Defaults to `3s`.
+  - All other options from [Select](/components/select/).
 
 ## Number
 
