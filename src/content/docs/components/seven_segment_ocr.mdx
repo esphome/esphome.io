@@ -1,0 +1,67 @@
+---
+description: "Instructions for reading seven-segment displays in ESPHome."
+title: "Seven Segment OCR"
+---
+import { Image } from 'astro:assets';
+import APIRef from '@components/APIRef.astro';
+
+The `seven_segment_ocr` component reads the digits of a seven-segment display out of a grayscale image. It is a
+developer-facing library component: it has no YAML configuration of its own, and a consumer crops the display out of a
+frame and feeds the crop to it.
+
+<Image src="/images/7_segment_display.png" width={350} height={350} layout="constrained"
+  alt="A seven-segment display with the segments labelled A to G and the decimal point DP" />
+
+The seven segments are labelled A to G, and the component reads them in that order: `A` top, `B` top right,
+`C` bottom right, `D` bottom, `E` bottom left, `F` top left and `G` middle.
+
+Digits must be upright: correct the skew of slanted displays before calling `recognize()`, because the side probes
+expect the two strokes on each side to share a column.
+
+## How a Consumer Uses It
+
+The reader keeps its column projection between frames, so a consumer creates one instance, calls `reserve()` once at
+setup with the widest crop, and calls `recognize()` for each crop:
+
+```cpp
+seven_segment_ocr::SevenSegmentOCR ocr;
+if (!ocr.reserve(crop_width))  // once, in setup(), with the widest crop
+  return;                      // or mark the component failed
+
+const auto result = ocr.recognize(grayscale_crop, crop_width, crop_height, digit_count);
+if (result.complete())
+  value_sensor->publish_state(result.value);
+```
+
+`recognize()` works on one byte per pixel and modifies the image in place: pixels above `set_threshold_level()`
+(default `128`) become `255`, the rest become `0`, so bright digits on a dark background are expected. It then builds
+a column projection, splits it into digit runs and samples the seven segment positions of each run.
+
+`OcrResult` reports how many runs were found (`digits`), how many the caller asked for (`expected`), how many did not
+match a digit (`unknown`) and the mean segment confidence. `overflow` is set when the digits do not fit in the 32-bit
+`value`. `complete()` is true when exactly the expected digits were found, all of them were recognised and the value
+did not overflow, so a consumer can decide whether to publish a value. Runs past the expected count are still counted,
+so a crop with extra digits is not complete. `value` is only meaningful when `complete()` is true.
+
+A run narrower than a third of the image height is a single bar and is read as a `1` when both of its halves are lit.
+
+## Recognition
+
+1. **Threshold**: pixels above `threshold_level` are lit.
+2. **Column projection**: each column counts its lit pixels.
+3. **Digit runs**: consecutive columns with more lit pixels than `height / 40` (rounded down, at least 1) form one
+   run. A run narrower than `height / 30` pixels (rounded down, at least 2), or whose tallest column has fewer than
+   `height / 3` (rounded down) lit pixels, is ignored as noise or a mark.
+4. **Segments**: seven probes sample a 3x3 window. The side probes use the strongest column of each half, so the
+   vertical strokes can sit at the run edges or inset.
+5. **Digit**: the seven on/off bits index a table of the ten digits; an unmatched mask is unknown.
+
+## Memory
+
+`reserve()` allocates one two-byte column counter per image column, and `recognize()` reuses it for every frame.
+There are no other allocations, so an image that is no wider than the reserved width never allocates while running.
+The segment positions and the digit masks are constant tables in flash.
+
+## See Also
+
+- <APIRef text="seven_segment_ocr.h" path="seven_segment_ocr/seven_segment_ocr.h" />
