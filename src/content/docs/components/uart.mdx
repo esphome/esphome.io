@@ -139,6 +139,16 @@ that the board assigns to it. The `Pin functions` table of the board in the
   the pin numbers that each UART can use. RTL8710B chips are the exception: they use a software UART for other pins.
 - Each hardware UART can only be used by one `uart` entry.
 
+On the [nRF52](/components/nrf52/), a hardware UART is supported only on the nRF52840, and only one `uart` entry
+with pins can be configured. It uses `UARTE1`; `UARTE0` is left for the console. Any pins can be used.
+
+- Supported baud rates: 1200, 2400, 4800, 9600, 14400, 19200, 28800, 31250, 38400, 56000, 57600, 76800, 115200,
+  230400, 250000, 460800, 921600 and 1000000.
+- `data_bits` must be 8, and `parity` must be `NONE` or `EVEN`. `stop_bits` can be 1 or 2.
+- The pins cannot be inverted or set to open drain.
+- [MCUmgr OTA](/components/ota/zephyr_mcumgr/) cannot use `hardware_uart: UART1` for its transport at the same time.
+- Virtual UARTs, such as [BLE NUS](/components/ble_nus/) with `type: uart`, can be used in addition to it.
+
 > [!NOTE]
 > The Software UART is only available on the ESP8266 and on RTL8710B chips. It is not available on ESP32 and variants.
 
@@ -286,7 +296,7 @@ Below are the methods to read current settings and modify them dynamically:
 ```
 
 - **Modifying Settings at Runtime:** You can change certain UART parameters during runtime.
-  After setting new values, invoke `load_settings()` (ESP only) to apply these changes:
+  After setting new values, invoke `load_settings()` (ESP8266, ESP32 and nRF52 only) to apply these changes:
 
 ```yaml
     select:
@@ -299,8 +309,8 @@ Below are the methods to read current settings and modify them dynamically:
           - "38400"
           - "57600"
           - "115200"
-          - "256000"
-          - "512000"
+          - "230400"
+          - "460800"
           - "921600"
         initial_option: "115200"
         optimistic: true
