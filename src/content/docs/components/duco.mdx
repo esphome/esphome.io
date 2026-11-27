@@ -52,13 +52,16 @@ are listed with the configuration in the logs, so open the logs again once disco
 
 ```text
 [C][duco]: Discovered nodes:
-[C][duco]:   Node 1: type 17 (BOX)
-[C][duco]:   Node 2: type 8 (UCBAT)
-[C][duco]:   Node 3: type 12 (UCCO2)
-[C][duco]:   Node 4: type 12 (UCCO2)
-[C][duco]:   Node 52: type 18 (SWITCH)
-[C][duco]:   Node 67: type 9 (UC)
+[C][duco]:   Node 1: type 17 (BOX) network: Virtual
+[C][duco]:   Node 2: type 8 (UCBAT) network: RF
+[C][duco]:   Node 3: type 12 (UCCO2) network: RF
+[C][duco]:   Node 4: type 12 (UCCO2) network: RF
+[C][duco]:   Node 52: type 18 (SWITCH) network: RF
+[C][duco]:   Node 67: type 9 (UC) network: RF
 ```
+
+Discovery also reports each node's network type: `Wired`, `RF`, `Virtual`, or `-` when the node reports none (or a
+code discovery does not know).
 
 The known node types are:
 
@@ -198,7 +201,8 @@ number:
 
 ## Text Sensor
 
-Text sensors can report the serial number, software version, errors, uptime, and node type of the box or a node.
+Text sensors can report the serial number, software version, errors, uptime, node type and network type of the box or a
+node.
 
 ```yaml
 text_sensor:
@@ -236,6 +240,11 @@ text_sensor:
 - **node_type** (*Optional*): A list of node-type text sensors. Each entry accepts:
   - **address** (*Optional*, int): Node address from `1` to `68`. Defaults to `1`.
   - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often the node type is read.
+    Defaults to `300s`.
+- **node_network_type** (*Optional*): A list of node network-type text sensors. Each reports `Wired`, `RF`,
+  `Virtual`, `-` (no network type) or `unknown`, and accepts:
+  - **address** (*Optional*, int): Node address from `1` to `68`. Defaults to `1`.
+  - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often the network type is read.
     Defaults to `300s`.
 
 All entries accept the options from [Text Sensor](/components/text_sensor/). The original single serial-number
