@@ -129,7 +129,7 @@ vbus:
 
 The profile supplies controller address `0x2211` and client address `0x0020`; explicit values must match.
 The nested `transmit.transactions.controller` spelling remains supported. Configure the profile in one location only.
-Advanced `transmit` options, such as a separate TX UART, can be combined with `controller`.
+Advanced `transmit` options, such as `lease_duration`, can be combined with `controller`.
 Generic TX still requires an explicit destination. The profile owns the polling queue:
 `controller` and generic `polling` are mutually exclusive. Manual bus, raw transaction and queue actions on that hub
 are rejected. Hubs without the profile keep their existing behavior.
@@ -727,8 +727,7 @@ Two-state selects retain their domains and labels.
 
 The [generic transmit reference](/components/vbus/transmit/) covers transactions, polling and P2 sensors for documented
 custom applications. Set the correct destination and protocol IDs from the controller's documentation. Selecting
-an unsupported model is not a way to bypass the qualified CS Plus validation. For a separate transmitter UART, combine
-`controller` with `transmit.uart_id`; the same UART pin and framing requirements still apply.
+an unsupported model is not a way to bypass the qualified CS Plus validation.
 
 ## Protocol Reference
 
