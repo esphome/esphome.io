@@ -399,8 +399,10 @@ Y = 0.299R + 0.587G + 0.114B
 $$
 
 A luma of `128` or more draws white, anything lower draws black. The four-level grayscale model
-(`Seeed-reTerminal-Sticky-gray4`) uses the same luma, split into four bands: below `32` draws black, `32` to `95` dark
-gray, `96` to `159` light gray, and `160` or more white.
+(`Seeed-reTerminal-Sticky-gray4`) uses the same luma and draws the nearest of its four levels, which are black (`0`),
+dark gray (`85`), light gray (`170`) and white (`255`): below `43` draws black, `43` to `127` dark gray, `128` to `212`
+light gray, and `213` or more white. The two grays split at `128`, where black and white panels split, so a color
+which draws black on a black and white panel draws black or dark gray here.
 
 Saturated colors therefore do not map the way their RGB values might suggest:
 
@@ -410,11 +412,11 @@ Saturated colors therefore do not map the way their RGB values might suggest:
 | Green `(0, 255, 0)`    | 149  | White           | Light gray      |
 | Blue `(0, 0, 255)`     | 29   | Black           | Black           |
 | Yellow `(255, 255, 0)` | 226  | White           | White           |
-| Cyan `(0, 255, 255)`   | 178  | White           | White           |
-| Magenta `(255, 0, 255)`| 106  | Black           | Light gray      |
-| Orange `(255, 165, 0)` | 173  | White           | White           |
+| Cyan `(0, 255, 255)`   | 178  | White           | Light gray      |
+| Magenta `(255, 0, 255)`| 106  | Black           | Dark gray       |
+| Orange `(255, 165, 0)` | 173  | White           | Light gray      |
 | Gray `(128, 128, 128)` | 128  | White           | Light gray      |
-| Gray `(127, 127, 127)` | 127  | Black           | Light gray      |
+| Gray `(127, 127, 127)` | 127  | Black           | Dark gray       |
 
 This has some consequences:
 
