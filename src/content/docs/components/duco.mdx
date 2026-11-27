@@ -125,8 +125,8 @@ duco:
 
 ## Select
 
-Mode selects read and change the ventilation mode of the box or an addressed node. Multiple mode selects can be
-configured under `mode`.
+Mode selects read and change the ventilation mode of the box and supported nodes. All UC nodes and some valves support mode
+selection; other node types may not respond. Multiple mode selects can be configured under `mode`.
 
 ```yaml
 select:
@@ -167,6 +167,7 @@ select:
   - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often the mode is read.
     Defaults to `3s`.
   - All other options from [Select](/components/select/).
+  The original single-select configuration without `mode` is also supported.
 
 ## Number
 
@@ -298,8 +299,8 @@ sensor:
 
 - **filter_remaining** (*Optional*): Days until the filter should be replaced. `update_interval` defaults to `1200s`.
 - **flow_level** (*Optional*): The current flow level, in %.
-- **time_remaining** (*Optional*): A list of sensors reporting the seconds left in the current timed mode of a node.
-  Each entry accepts:
+- **time_remaining** (*Optional*): A list of sensors reporting the seconds left in the current timed mode of the box or a node
+  that supports mode selection. Each entry accepts:
   - **address** (*Optional*, int): Node address from `1` to `68`. Defaults to `1` (the box).
   - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): Defaults to `60s`.
   - All other options from [Sensor](/components/sensor/).
