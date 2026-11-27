@@ -467,6 +467,34 @@ working directory. Arguments can be YAML configuration files or directories cont
 Storage files (`.json` files and the `storage` directory inside `.esphome`) are preserved so that
 the ESPHome Device Builder continues to function correctly.
 
+### `prune` Command
+
+The `esphome prune` command removes the frameworks and toolchains that this ESPHome version no longer builds with by
+default. They are shared by all configurations and stay on disk when ESPHome moves to a newer version, so they add up
+over time. No configuration file is needed.
+
+- `--dry-run`: list what would be removed without removing anything.
+
+What `prune` keeps and removes:
+
+- **ESP-IDF**: the recommended version is kept, with its Python environment and the tools it uses. Every other
+  version is removed.
+- **ESP8266 Arduino**: the recommended core and its toolchain are kept. Older cores and toolchains are removed.
+- **nRF Connect SDK**: the recommended version and its toolchain are kept, along with the newer version that some
+  chips need. Every other version is removed.
+- **PlatformIO**: everything it installed for ESP32, ESP8266 and nRF52 is removed, since these now build with their
+  own toolchains. RP2 and LibreTiny still build with PlatformIO, so only what a newer version replaced is removed.
+  The PlatformIO download cache is cleared.
+
+Unlike [`clean-all`](#clean-all-command), `prune` leaves in place what a build with the default versions needs, so
+nothing is downloaded again afterwards.
+
+> [!NOTE]
+> A framework version that is set in a configuration is not kept. It is downloaded again the next time that
+> configuration is built. This includes `toolchain: platformio` on ESP32, ESP8266 and nRF52.
+>
+> Do not run `prune` while a build is running.
+
 ### `dashboard` Command
 
 > [!NOTE]
