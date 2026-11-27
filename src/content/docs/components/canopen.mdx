@@ -1,20 +1,30 @@
 ---
-description: "Instructions for reading and writing objects of CANopen devices over SDO in ESPHome"
+description: "Instructions for setting up a CANopen node, or an SDO client for CANopen devices, in ESPHome"
 title: "CANopen"
 ---
 import APIRef from '@components/APIRef.astro';
 
-The `canopen` component reads and writes objects of [CANopen](https://www.can-cia.org/can-knowledge/canopen/)
-devices (CiA 301), for example drives, sensors and I/O modules, on a [CAN bus](/components/canbus/), using the SDO
-client of the [CANopenNode](https://github.com/CANopenNode/CANopenNode) stack. Reads and writes are started from
-automations ([`canopen.sdo_read`](#canopen-sdo_read-action), [`canopen.sdo_write`](#canopen-sdo_write-action)) or
-lambdas (see [SDO Client](#sdo-client)). It also reports the heartbeats and emergency messages of the nodes on the bus
-([`on_heartbeat`](#on_heartbeat-trigger), [`on_emcy`](#on_emcy-trigger)), and lambdas can receive and send other
-frames, for example PDOs (see [Raw Frames](#raw-frames)).
+The `canopen` component turns an ESPHome device into a [CANopen](https://www.can-cia.org/can-knowledge/canopen/) node
+(CiA 301) on a [CAN bus](/components/canbus/), using the [CANopenNode](https://github.com/CANopenNode/CANopenNode)
+stack. The node:
 
-The ESPHome device isn't a CANopen node itself: it sends no boot-up message or heartbeat, doesn't react to NMT
-commands and has no object dictionary other devices can read. It sends only its SDO requests (expedited and
-segmented transfers; no block transfer) and the frames lambdas send.
+- runs the NMT state machine (it reacts to NMT commands from a master) and sends a heartbeat;
+- answers SDO requests from other nodes and tools, with its identity, device name and versions, see
+  [Object Dictionary](#object-dictionary);
+- reads and writes objects of other devices over SDO, from automations
+  ([`canopen.sdo_read`](#canopen-sdo_read-action), [`canopen.sdo_write`](#canopen-sdo_write-action)) or lambdas (see
+  [SDO Client](#sdo-client));
+- reports the heartbeats and emergency messages of the nodes on the bus ([`on_heartbeat`](#on_heartbeat-trigger),
+  [`on_emcy`](#on_emcy-trigger));
+- receives and sends other frames in lambdas, for example PDOs (see [Raw Frames](#raw-frames)).
+
+The node sends emergency (EMCY) messages only for errors the stack detects itself, such as a full CAN transmit queue;
+there is no API to send your own. It has no PDOs of its own, and doesn't support SYNC, LSS or EDS files.
+Of the NMT commands, Reset Node restarts the whole device, so every `canopen` component on it boots up again. Reset
+Communication is only logged for now: the node doesn't reset its communication or send a new boot-up message.
+
+Without a `node_id` the component is no CANopen node, only an SDO client: it reads and writes objects of other
+devices, see [SDO Client Only](#sdo-client-only).
 
 This component requires a [CAN bus](/components/canbus/) platform, for example
 [ESP32 CAN](/components/canbus/esp32_can/) or [MCP2515](/components/canbus/mcp2515/). Set the bus's `bit_rate` to the
@@ -23,20 +33,128 @@ one used by the CANopen network.
 ```yaml
 # Example configuration entry
 canopen:
+  node_id: 0x10
 ```
 
 ## Configuration Variables
 
+- **node_id** (*Optional*, int): The node id of this node, from `1` to `127`. It must be unique on the bus. Without
+  it the component is an SDO client only, see [SDO Client Only](#sdo-client-only).
 - **canbus_id** (*Optional*, [ID](/guides/configuration-types/#id)): The [CAN bus](/components/canbus/) to use. Required
-  if there is more than one bus. One `canopen` component per bus.
+  if there is more than one bus.
+- **heartbeat_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often this node sends its
+  heartbeat. From `100ms` to `65535ms`. Defaults to `5s`. It's sent from the main loop, so the actual period is the
+  interval plus up to one loop pass (for example about 1,008 ms for `1s`).
 - **response_timeout** (*Optional*, [Time](/guides/configuration-types/#time)): How long an SDO request waits for an
   answer. Up to `65535ms`. Defaults to `500ms`.
+- **sdo_client** (*Optional*, boolean): Whether the SDO client is compiled in. Not set by default: it's compiled in
+  when the configuration uses it (the `canopen.sdo_read` / `canopen.sdo_write` actions, or a component without
+  `node_id`). Set it to `true` when only lambdas use it (see [SDO Client](#sdo-client)), or to `false` to make sure
+  it isn't compiled in (an error if something uses it). It's a build option of the stack: the same for all `canopen`
+  components of the device.
+- **nmt_startup** (*Optional*, enum): The NMT state after boot. One of `operational` or `pre_operational`. Defaults to
+  `operational`. A node that starts `pre_operational` stays there until an NMT master starts it, or until it starts
+  itself (see [NMT State of This Node](#nmt-state-of-this-node)).
+- **identity** (*Optional*): The identity object (`0x1018`). Vendor IDs are assigned by
+  [CiA](https://www.can-cia.org/).
+  - **vendor_id** (*Optional*, int): Defaults to `0`.
+  - **product_code** (*Optional*, int): Defaults to `0`.
+  - **revision_number** (*Optional*, int): Defaults to `0`.
+  - **serial_number** (*Optional*, int): Defaults to `0`.
+- **device_name** (*Optional*, string): The device name (`0x1008`). Defaults to the device's `name` from the
+  [`esphome`](/components/esphome/) block (with the MAC suffix when
+  [`name_add_mac_suffix`](/components/esphome/#esphome-mac_suffix) is set), the same for every `canopen` component of
+  the device.
+- **hardware_version** (*Optional*, string): The hardware version (`0x1009`). Not present if not set.
+- **software_version** (*Optional*, string): The software version (`0x100A`). Defaults to the ESPHome version.
+- **on_nmt_state_change** (*Optional*, [Automation](/automations/)): See
+  [`on_nmt_state_change`](#on_nmt_state_change-trigger).
 - **on_heartbeat** (*Optional*, [Automation](/automations/)): See [`on_heartbeat`](#on_heartbeat-trigger).
 - **on_emcy** (*Optional*, [Automation](/automations/)): See [`on_emcy`](#on_emcy-trigger).
 - **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation and
   in lambdas.
 
+## SDO Client Only
+
+Without `node_id` the component reads and writes objects of other CANopen devices (drives, sensors, I/O modules), but
+isn't a node itself: it sends no boot-up message or heartbeat, doesn't react to NMT commands, has no object dictionary
+other devices can read, and sends only its SDO requests (expedited and segmented transfers; no block transfer) and the
+frames lambdas send. When no `canopen` component has a `node_id`, the node part of the stack isn't compiled in, so the
+firmware is smaller (about 10 KB of flash on an ESP8266).
+
+```yaml
+canopen:
+  id: my_canopen
+  response_timeout: 200ms
+
+interval:
+  - interval: 60s
+    then:
+      - canopen.sdo_read:
+          node_id: 0x20
+          index: 0x6000
+          size: 2
+          on_value:
+            - logger.log:
+                format: "input: 0x%04x"
+                args: ["(unsigned) x"]
+```
+
+Available without `node_id`: `canbus_id`, `response_timeout`, `sdo_client` (not `false`), `on_heartbeat`, `on_emcy`,
+the [`canopen.sdo_read`](#canopen-sdo_read-action) and [`canopen.sdo_write`](#canopen-sdo_write-action) actions, the
+[SDO Client](#sdo-client) and [Raw Frames](#raw-frames) lambdas. The options of a node (`heartbeat_interval`,
+`nmt_startup`, `identity`, `device_name`, `hardware_version`, `software_version`, `on_nmt_state_change`) are rejected.
+
+## Several Nodes
+
+More than one `canopen` component can be configured, on different buses or on the same one. Nodes on the same bus must
+have different node ids, as on any CANopen bus. They receive each other's frames as if they were separate devices:
+their `on_heartbeat` and `on_emcy` triggers and frame listeners see the other's frames, and SDO requests between them
+work. The frames are also sent on the bus as usual. A bus can have only one `canopen` component without `node_id`
+(SDO client only): two would share the SDO client's CAN IDs.
+
+```yaml
+canopen:
+  - id: node_a
+    node_id: 0x10
+  - id: node_b
+    node_id: 0x11
+```
+
+## Object Dictionary
+
+Other nodes and tools read and write the node's objects with SDO. The node has one SDO server, on the default
+COB-IDs `0x600` + node id (requests) and `0x580` + node id (responses), with expedited and segmented transfers.
+
+| Index | Object | Access | Notes |
+|---|---|---|---|
+| `0x1000` | Device type | read | `0` |
+| `0x1001` | Error register | read | |
+| `0x1008` | Device name | read | `device_name` |
+| `0x1009` | Hardware version | read | `hardware_version`, only if set |
+| `0x100A` | Software version | read | `software_version` |
+| `0x1014` | EMCY COB-ID | read | `0x80` + node id |
+| `0x1017` | Producer heartbeat time | read/write | `heartbeat_interval`; a write takes effect at once |
+| `0x1018` | Identity | read | `identity` |
+| `0x1200` | SDO server parameter | read | |
+| `0x1280` | SDO client parameter | read | only with the SDO client |
+
 ## Automations
+
+### `on_nmt_state_change` Trigger
+
+Runs when this node's own NMT state changes: after boot (in the component's first loop pass), on an NMT command from
+a master, or after `set_nmt_state()`.
+Variable: `state` (`canopen::NMTState`).
+
+```yaml
+canopen:
+  # ...
+  on_nmt_state_change:
+    - logger.log:
+        format: "NMT state: %s"
+        args: ["LOG_STR_ARG(canopen::nmt_state_to_string(state))"]
+```
 
 ### `on_heartbeat` Trigger
 
@@ -156,7 +274,9 @@ Configuration variables:
 These apply to both actions and to the [lambda calls](#sdo-client).
 
 Another SDO client talking to the same node at the same time (a CANopen master, a PC tool) shares the node's SDO
-channel, so either side's requests can end with an abort: handle `on_error`.
+channel, so either side's requests can end with an abort: handle `on_error`. This includes the other `canopen`
+components of the same device (see [Several Nodes](#several-nodes)): each has its own SDO client, and they all use the
+same channel of the node they talk to, so two of them shouldn't send requests to the same node at the same time.
 
 SDO frames carry no request id, so a late answer to a request that timed out can be taken as the answer to the next
 request for the same object of the same node, such as a retry (a late abort by any request, a late write
@@ -173,8 +293,12 @@ a `canopen::SDOReply`: `result` (`SDO_RESULT_SUCCESS`, `SDO_RESULT_ABORT`, `SDO_
 successful value read or write, and `data` / `len` for a successful `read_sdo_data()` (valid only during the callback;
 otherwise `nullptr` and 0). A rejected request (queue full, invalid arguments, failed component) calls back before the
 call returns `false`. Requests made at boot, before the component is set up, wait in the queue; if the setup fails (for
-example on a failed CAN bus), they are rejected then. A node's SDO channel is shared with any other client, and late
-answers can reach a later request; see [Shared SDO Channel](#shared-sdo-channel).
+example on a failed CAN bus), they are rejected then. A node in the NMT state `STOPPED` sends no SDO frames: requests
+running or queued when it stops end with `SDO_RESULT_REJECTED`, and new ones are rejected until it leaves `STOPPED`.
+A node's SDO channel is shared with any other client, and late answers can reach a later request; see
+[Shared SDO Channel](#shared-sdo-channel). Requests to this node's own id are served from its own object dictionary,
+without CAN frames. The SDO client is compiled in for the whole firmware once any `canopen` component uses an SDO
+action or has no `node_id`; otherwise a node that only uses it from lambdas needs `sdo_client: true`.
 
 ```cpp
 // value read with a width check: a different width gives SIZE_MISMATCH
@@ -216,6 +340,16 @@ id(my_canopen).read_sdo_data(0x01, 0x1008, 0, name, sizeof(name), [](void *conte
   50 ms are counted from when the CAN controller took the abort, not from when it was on the bus. A node busy in a slow
   object handler can answer the cancelled request even later, hundreds of milliseconds after the abort; a request for
   the same object running then takes that answer as its own (see [Shared SDO Channel](#shared-sdo-channel)).
+
+### NMT State of This Node
+
+```cpp
+// the node's own NMT state: UNKNOWN until the component's first loop pass (also in an on_boot automation that runs
+// right after setup) and without node_id
+id(my_canopen).get_nmt_state() == canopen::NMTState::NMT_STATE_OPERATIONAL;
+// OPERATIONAL, PRE_OPERATIONAL or STOPPED; no NMT master needed (false without node_id)
+id(my_canopen).set_nmt_state(canopen::NMTState::NMT_STATE_OPERATIONAL);
+```
 
 ### Raw Frames
 
