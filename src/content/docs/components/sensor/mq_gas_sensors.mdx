@@ -239,7 +239,9 @@ correction model.
 
 A source that stops updating is not used: the reading is then published without compensation and the sensor reports a
 warning in its status. A source counts as stopped after three of its usual update intervals, and not sooner than
-5 minutes. Until its interval is known, the limit is 30 minutes.
+5 minutes. Until its interval is known, the limit is 30 minutes. Only values that pass the filters of a source count,
+so a source with a `delta:` filter also needs to publish regularly, for example with a `heartbeat:` filter next to it
+in an `or:` filter.
 
 - **temperature** / **humidity** (*Optional*, [ID](/guides/configuration-types/#id)): Ambient sensors whose states are
   used to compensate the RS/R0 ratio for temperature and humidity.
