@@ -1,0 +1,62 @@
+---
+description: "Instructions for setting up CTC decoding with TensorFlow Lite Micro in ESPHome"
+title: "TFLite CTC"
+---
+
+The `tflite_ctc` component decodes the output of a model trained with CTC loss, such as a speech or text
+recognition model, on ESP32 with the ESP-IDF framework. It loads `tflite_micro_runtime` in the background, so
+the kind is the only YAML entry and `model_type` is not used.
+
+It decodes only: computing the input features, such as a spectrogram from audio, is up to the consumer.
+
+```yaml
+tflite_ctc:
+  - id: speech_model
+    decoder_id: speech_decoder
+    model: "models/speech.tflite"
+    labels: [" ", "a", "b", "c"]
+```
+
+## Configuration variables
+
+- **blank_index** (*Optional*, integer): The class that stands for the CTC blank. Defaults to the last class.
+- **labels** (*Optional*, list of strings): One label for each class other than the blank, in class order.
+  Needed to read the result as text.
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The runtime helper for this model. Set it
+  when a lambda or another component references the instance.
+- **decoder_id** (*Optional*, [ID](/guides/configuration-types/#id)): The output decoder. Set it to read
+  the decoded result from a lambda.
+- **on_result** (*Optional*, [Automation](/automations/)): Actions to run after a successful inference,
+  once the decoder holds the result. Read it through `decoder_id`.
+- **model** (**Required**, string or dictionary): The `.tflite` model, resolved by
+  `tflite_model_source`: a local path, a `github://` shorthand, an HTTP(S) URL, or a JSON manifest that names
+  the model.
+- **tensor_arena_size** (*Optional*, bytes): Arena size, as bytes or a suffixed value such as `200KB`. When
+  omitted, the size is estimated from the model and probed on the device.
+- **debug** (*Optional*, boolean): Enable the diagnostics of `tflite_model_debug` for this instance.
+  Defaults to `false`.
+
+## Output
+
+The model needs one `[1, steps, classes]` output of type `float32`, `int8` or `uint8`. The decoder takes the
+best class of each step, collapses repeats and drops the blank (greedy decoding; there is no beam search).
+`ids()` and `id_count()` report the class ids. `text(buffer, size)` joins their labels into your buffer,
+NUL-terminated, stops before the first label that does not fit whole, and returns the length written.
+
+Fill the input with the features the model expects and pass them to the instance:
+
+```cpp
+if (id(speech_model)->run(features, features_size)) {
+  char text[64];
+  id(speech_decoder)->text(text, sizeof(text));
+  ESP_LOGI("speech", "%s", text);
+}
+```
+
+The example reads the result right after `run()`, which suits an instance without `on_result`.
+
+## See Also
+
+- [TFLite Micro Runtime](/components/tflite_micro_runtime/) - the model loader, tensor arena and C++ API
+- [Automation](/automations/)

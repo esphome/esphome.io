@@ -1,0 +1,68 @@
+---
+description: "Instructions for setting up text models with TensorFlow Lite Micro in ESPHome"
+title: "TFLite Text"
+---
+
+The `tflite_text` component runs a token model on ESP32 with the ESP-IDF framework. It loads
+`tflite_micro_runtime` in the background, so the kind is the only YAML entry and `model_type` is not used.
+
+```yaml
+tflite_text:
+  - id: classifier
+    model: "models/text_classifier.tflite"
+    tokenizer:
+      vocabulary: "models/vocab.txt"
+```
+
+## Configuration variables
+
+- **tokenizer** (*Optional*): Tokenize text on the device with the BERT-style WordPiece method. Without it,
+  the consumer passes token ids.
+  - **vocabulary** (**Required**, file): The model's `vocab.txt`, one token per line in id order, with at most
+    65536 tokens including `[PAD]`, `[UNK]`, `[CLS]` and `[SEP]`. It is stored in flash.
+  - **lowercase** (*Optional*, boolean): Lower-case ASCII letters before matching, as uncased models expect.
+    Defaults to `true`.
+- **position_output** (*Optional*, boolean): Decode the `[1, 2]` output as start and end positions. A
+  two-entry output is ambiguous, so by default it is read as two class logits and classified, like any other
+  output. Set it to `true` for a span model. It needs a `[1, 2]` output. Defaults to `false`.
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The runtime helper for this model. Set it
+  when a lambda or another component references the instance.
+- **decoder_id** (*Optional*, [ID](/guides/configuration-types/#id)): The output decoder. Set it to read
+  the decoded result from a lambda.
+- **on_result** (*Optional*, [Automation](/automations/)): Actions to run after a successful inference,
+  once the decoder holds the result. Read it through `decoder_id`.
+- **model** (**Required**, string or dictionary): The `.tflite` model, resolved by
+  `tflite_model_source`: a local path, a `github://` shorthand, an HTTP(S) URL, or a JSON manifest that names
+  the model.
+- **tensor_arena_size** (*Optional*, bytes): Arena size, as bytes or a suffixed value such as `200KB`. When
+  omitted, the size is estimated from the model and probed on the device.
+- **debug** (*Optional*, boolean): Enable the diagnostics of `tflite_model_debug` for this instance.
+  Defaults to `false`.
+
+## Output
+
+The decoder classifies the output logits, or reports start and end positions when `position_output` is
+set. The model takes token ids, an attention mask and a segment mask as int32 tensors; their length comes
+from the model's input tensors. The attention mask is one for each token passed and zero for the padding
+after them.
+
+With a `tokenizer`, pass UTF-8 text to the instance:
+
+```cpp
+const std::string text = "turn on the light";
+id(classifier)->run(reinterpret_cast<const uint8_t *>(text.data()), text.size());
+```
+
+The text is split at ASCII whitespace and punctuation, and cut to fit the model's input. A word the
+vocabulary cannot spell becomes `[UNK]`. Accents are not stripped, only ASCII letters are lower-cased, and
+Unicode punctuation and CJK characters do not split words, so results differ from the reference BERT
+tokenizer for such text. Without a `tokenizer`, pass the `int32` token ids, including the model's start
+and end tokens; the payload must be a whole number of ids.
+
+The model's output must be `float32`, `uint8`, `int8` or `int32`.
+
+## See Also
+
+- [TFLite Micro Runtime](/components/tflite_micro_runtime/) - the model loader, tensor arena and C++ API
+- [Automation](/automations/)

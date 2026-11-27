@@ -1,0 +1,69 @@
+---
+description: "Instructions for setting up camera-fed image inference with TensorFlow Lite Micro in ESPHome"
+title: "TFLite Camera"
+---
+
+The `tflite_camera` component runs an image model on frames from an `esp32_camera`. It decodes the
+camera's JPEG frames with `camera_decoder`, scales them to the model's input with the `tflite_image`
+pipeline, and runs the model through `tflite_micro_runtime`. A frame that arrives before `min_interval`
+has elapsed is dropped.
+
+The camera must publish JPEG frames: set `pixel_format: JPEG` on the `esp32_camera`, or enable conversion
+with a nonzero `jpeg_quality` on a camera that outputs another format. Configure the camera itself as
+described on the [ESP32 Camera](/components/esp32_camera/) page, and reference it by `camera_id`.
+
+> [!NOTE]
+> This component runs one model on the whole frame. It does not crop the frame or run several
+> models, so a meter with several dials still needs a multi-crop consumer such as
+> `meter_reader_tflite`.
+
+```yaml
+tflite_camera:
+  - id: digit_reader
+    camera_id: my_camera
+    model: "models/digit_recognizer.tflite"
+    input_width: 32
+    input_height: 20
+    input_channels: 1
+    min_interval: 1s
+    decoder_id: digit_decoder
+    on_result:
+      - lambda: |-
+          const auto &result = id(digit_decoder)->result();
+          ESP_LOGI("tflite", "class %.0f, confidence %.2f", result.value, result.confidence);
+```
+
+## Configuration variables
+
+- **camera_id** (**Required**, [ID](/guides/configuration-types/#id)): The `esp32_camera` instance whose
+  frames are classified.
+- **min_interval** (*Optional*, [Time](/guides/configuration-types/#time)): Minimum time between two
+  inferences. Frames that arrive sooner are dropped. Defaults to `1ms`.
+- **rotation** (*Optional*, integer): Rotate the decoded frame by `0`, `90`, `180` or `270` degrees.
+  Defaults to `0`. The camera decoder requires both frame dimensions to be multiples of 8 when rotating.
+  The decoded frame size after rotation is what the pipeline scales from, so `frame_width` and
+  `frame_height` are not set here.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The runtime helper for this model.
+- **decoder_id** (*Optional*, [ID](/guides/configuration-types/#id)): The classification decoder; set it to
+  read the result from a lambda.
+- **model** (**Required**, string or dictionary): The `.tflite` model, resolved by `tflite_model_source`.
+- **input_type**, **input_width**, **input_height**, **input_channels**, **input_order**, **normalize**,
+  **invert**: The model's input format, as for [`tflite_image`](/components/tflite_image/).
+- **frame_width**, **frame_height**: Not accepted; the pipeline takes the frame size from the decoded
+  camera frame.
+- **output_processing**, **scale_factor**: How the output tensor becomes a class and a confidence.
+- **tensor_arena_size**, **debug**: The arena size and the runtime diagnostics.
+- **on_result** (*Optional*, [Automation](/automations/)): Actions to run after a successful inference.
+
+## Output
+
+The classification decoder holds the winning class and its confidence; `on_result` fires after every
+successful run, outside the inference lock. The camera and the decoder own their buffers, so a frame is
+decoded and classified without allocating between updates.
+
+## See Also
+
+- [TFLite Image](/components/tflite_image/) - the same model options, fed by a frame you supply
+- [TFLite Micro Runtime](/components/tflite_micro_runtime/) - the model loader, tensor arena and C++ API
+- [ESP32 Camera](/components/esp32_camera/)
+- [Automation](/automations/)
