@@ -238,7 +238,16 @@ on_...:
 ```
 
 The image calibration is not run again: it covers the band the radio started in. After a move to another band, run
-`sx126x.run_image_cal` as well.
+`sx126x.run_image_cal` and then `sx126x.set_mode_rx`, as the calibration leaves the radio in standby:
+
+```yaml
+on_...:
+  - sx126x.set_frequency: 868.1MHz
+  - sx126x.run_image_cal
+  - sx126x.set_mode_rx
+```
+
+A frequency from a lambda outside 137 to 1020&nbsp;MHz is ignored, with a warning in the log.
 
 After a cold sleep the new frequency is kept, and applied when the radio wakes.
 

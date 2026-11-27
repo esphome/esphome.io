@@ -222,7 +222,16 @@ on_...:
 ```
 
 The image calibration is not run again: it covers the band the radio started in. After a move to another band, run
-`sx127x.run_image_cal` as well.
+`sx127x.run_image_cal` and then `sx127x.set_mode_rx`, as the calibration leaves the radio in standby:
+
+```yaml
+on_...:
+  - sx127x.set_frequency: 868.1MHz
+  - sx127x.run_image_cal
+  - sx127x.set_mode_rx
+```
+
+A frequency from a lambda outside 137 to 1020&nbsp;MHz is ignored, with a warning in the log.
 
 #### Configuration Variables
 
