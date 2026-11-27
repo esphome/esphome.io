@@ -23,7 +23,7 @@ To copy a hardware UART to a TCP socket instead, see [UART TCP](/components/uart
 
 > [!NOTE]
 > While the connection is down, or while its 1024-byte send buffer is full, written bytes are dropped and a warning
-> is logged.
+> is logged. With several connections they share that one buffer, and bytes go to the client that has the turn.
 
 ## Client
 
@@ -71,13 +71,12 @@ With `max_connections` above `1`, several clients can connect to the same port. 
 the client that has the turn are read, and everything written goes to that client. The bytes of the other clients
 wait in the network stack and are not lost.
 
-The turn passes to the next client that has sent data when the client that has it closes, or when it has been quiet
-in both directions for `turn_timeout` and the bytes already read from it have been consumed. Bytes written after
-the turn has ended still go to the last client until another client gets the turn; once that client has closed,
-they are dropped. A client that sends without a pause keeps the turn, so this suits clients that send a request and
-wait for the answer. A client may have to wait until each of the other clients has had its turn.
-A component whose reply takes longer than `turn_timeout`, for example a bridge to a slow serial device, needs a
-longer `turn_timeout`.
+The turn passes to the next client that has sent data when the client that has it closes, or when it has been quiet in
+both directions for `turn_timeout` and the bytes already read from it have been consumed. Bytes written after the turn
+has ended still go to the last client until another client gets the turn. If the last client has closed, they are
+dropped. A client that sends without a pause keeps the turn, so this suits clients that send a request and wait for the
+answer. A client may have to wait until each of the other clients has had its turn. A component whose reply takes longer
+than `turn_timeout`, for example a bridge to a slow serial device, needs a longer `turn_timeout`.
 
 When all connections are in use, a new client takes the place of the one that has been quiet the longest, and that
 client is closed. The client that has the turn is never closed this way.
@@ -96,9 +95,10 @@ that a component holds until its reply, so a client whose request waits for its 
   This option cannot be used when `role` is `server`.
 - **port** (**Required**, int): When `role` is `client`, the TCP port to connect to. When `role` is `server`,
   the TCP port to listen on.
-- **max_connections** (*Optional* when `role` is `server`, int): How many clients can be connected at the same
-  time, from `1` to `8`. With `1`, a second client waits until the current connection is closed. Each connection
-  above the first uses about 1.1 kB of RAM. This option cannot be used when `role` is `client`. Defaults to `1`.
+- **max_connections** (*Optional* when `role` is `server`, int): How many clients can be connected at the same time,
+  from `1` to `8`. With `1`, a second client waits until the current connection is closed. Each connection above the
+  first uses about 64 bytes of RAM, plus the socket's own memory while a client is connected. This option cannot be used
+  when `role` is `client`. Defaults to `1`.
 - **turn_timeout** (*Optional* when `max_connections` is above `1`, [Time](/guides/configuration-types/#time)): How
   long the client that has the turn may be quiet before the next client's bytes are read. Defaults to `100ms`.
 - **allowed_ips** (*Optional* when `role` is `server`, list): IPv4 addresses that may connect. A plain
