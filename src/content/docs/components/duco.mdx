@@ -196,6 +196,35 @@ number:
 - The original single-number configuration also accepts `address`, `update_interval`, and other
   [Number](/components/number/) options directly under `platform: duco`.
 
+### Node Setpoints
+
+The CO2 and relative humidity setpoints of nodes that support them can be read and changed. They are configuration
+entities, so Home Assistant lists them under the device's configuration.
+
+```yaml
+number:
+  - platform: duco
+    co2_setpoint:
+      - name: "CO2 Setpoint"
+        address: 3
+    rh_setpoint:
+      - name: "Humidity Setpoint"
+        address: 2
+```
+
+- **duco_id** (*Optional*, [ID](/guides/configuration-types/#id)): The Duco component to use. Only needed with more
+  than one.
+- **co2_setpoint** (*Optional*): A list of CO2 setpoints, from 0 to 2000 ppm in steps of 10 ppm.
+- **rh_setpoint** (*Optional*): A list of relative humidity setpoints, from 0% to 90% in steps of 5%.
+
+  Each entry accepts:
+
+  - **address** (**Required**, int): Node address from `2` to `68`. The box's built-in sensor can be addressed by its
+    virtual node address.
+  - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often the setpoint is read.
+    Defaults to `60s`.
+  - All other options from [Number](/components/number/).
+
 ## Text Sensor
 
 Text sensors can report the serial number, software version, errors, uptime, and node type of the box or a node.
