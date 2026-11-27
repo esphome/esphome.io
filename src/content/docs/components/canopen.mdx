@@ -151,12 +151,18 @@ Nodes listed in `heartbeat_clients` are monitored. Each monitored node reports t
 - `NODE_EVENT_ONLINE`: the first heartbeat, or the first one after a timeout or a boot-up message.
 - `NODE_EVENT_OFFLINE`: no heartbeat within `timeout`. A node that never sent a heartbeat isn't reported offline.
 - `NODE_EVENT_NMT_CHANGED`: the NMT state in the heartbeat changed. It also follows `NODE_EVENT_ONLINE` (unknown →
-  state) and `NODE_EVENT_OFFLINE` (state → unknown).
+  state) and `NODE_EVENT_OFFLINE` (state → unknown), but not `NODE_EVENT_RESET`.
 - `NODE_EVENT_RESET`: the node sent a boot-up message, so it restarted and lost any configuration it got at runtime.
   It counts as online again with its next heartbeat.
 
 Each event is also logged: offline as a warning, the others at info level. Monitoring goes on in every NMT state of
 this node, also while it is `STOPPED` (CiA 301 keeps heartbeat monitoring running there).
+
+A heartbeat timeout or a boot-up message of a monitored node also makes this node send an emergency (EMCY) message
+with error code `0x8130` (heartbeat error) and set bit 4 (communication) of its error register; once all monitored
+nodes send heartbeats again, it sends an EMCY with error code `0x0000` (error reset). An EMCY that comes while this
+node is `STOPPED` is sent once it is pre-operational or operational again. Other nodes see these messages, for example
+in their [`on_emcy`](#on_emcy-trigger) triggers.
 
 ```yaml
 canopen:
