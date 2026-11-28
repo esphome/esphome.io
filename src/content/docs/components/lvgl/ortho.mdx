@@ -1,0 +1,111 @@
+---
+description: "Configure the optional PPA-accelerated orthogonal LVGL renderer for ESP32-P4 in ESPHome."
+title: "LVGL Orthogonal Renderer"
+sidebar:
+  label: "Orthogonal Renderer"
+---
+
+The `lvgl_ortho` component is an optional rendering backend for [LVGL](/components/lvgl/) on ESP32-P4.
+It draws into a framebuffer in the display's native orientation, using the Pixel Processing Accelerator (PPA)
+to rotate tiles when hardware acceleration is available. It can also distribute tile rendering across both CPU cores.
+
+The ordinary LVGL renderer remains the default when this component is not configured.
+
+## Requirements
+
+- An ESP32-P4 with ESP-IDF and [PSRAM](/components/psram/) configured.
+- One LVGL configuration with exactly one display.
+- A display configured for native orientation and little-endian RGB565 pixel data.
+- Sufficient PSRAM for a full-screen render buffer, in addition to the memory used by the display driver and LVGL.
+
+Configure the display and confirm that ordinary LVGL works before enabling the orthogonal renderer. Do not specify a
+software rotation on the display or in the LVGL configuration when using this component. Specify the desired
+rotation in `lvgl_ortho` instead.
+
+## Configuration
+
+Add the following to your existing ESP32-P4 configuration, using the ID of your display. Retain the board-specific
+display, power, backlight and touchscreen settings.
+
+```yaml
+# Example configuration fragment for an existing MIPI DSI display
+display:
+  - platform: mipi_dsi
+    id: panel
+    model: WAVESHARE-ESP32-P4-WIFI6-TOUCH-LCD-7B
+    color_depth: 16
+    auto_clear_enabled: false
+    update_interval: never
+
+psram:
+
+lvgl:
+  displays: [panel]
+  byte_order: little_endian
+  widgets:
+    - label:
+        align: CENTER
+        text: "Hello World!"
+
+lvgl_ortho:
+  display_id: panel
+  rotation: 180
+  ppa: true
+  cores: 2
+```
+
+### Configuration variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation.
+- **display_id** (*Optional*, [ID](/guides/configuration-types/#id)): The display used by LVGL. Defaults to the single
+  display in the LVGL configuration. If specified, it must match that display.
+- **rotation** (*Optional*, int): Clockwise rotation in degrees. One of `0`, `90`, `180` or `270`.
+  Defaults to `0`.
+- **ppa** (*Optional*, boolean): Use the PPA for supported tile rotation operations. Defaults to `true`.
+  Set to `false` to compare against CPU rotation.
+- **cores** (*Optional*, int): Number of CPU cores requested for tile rendering, either `1` or `2`. Defaults to
+  `1`. Two-core rendering requires additional internal RAM; the renderer can fall back to one core if it cannot
+  initialise the second worker.
+- **image_cache** (*Optional*): Maximum memory budget in PSRAM for cached, pre-rotated immutable images.
+  Defaults to `4MB`. Set to `0` to disable this cache.
+- **camera_ram** (*Optional*): Total internal RAM requested for two staging bands used when rotating large images
+  from PSRAM. Defaults to `80KB`. Despite its name, this setting does not enable a camera. Set to `0` to
+  avoid a dedicated staging allocation; the renderer may reuse tile memory instead.
+
+Memory sizes accept a non-negative byte count or a string such as `512KB` or `4MB`. These suffixes use binary
+multipliers (1024 and 1024 × 1024).
+
+## Memory and performance
+
+A full-screen RGB565 render buffer requires approximately two bytes per physical pixel, excluding alignment and
+other allocations. For example, a 1024 × 600 display needs 1,228,800 bytes (about 1.17 MiB) for the render buffer
+alone. A 720 × 1280 display needs 1,843,200 bytes (about 1.76 MiB).
+
+The renderer additionally uses tiles, optional image cache and staging memory. The display driver may allocate
+its own framebuffer. LVGL also has its own allocations. Start with one core if internal memory is limited, and
+compare the same interface with and without PPA acceleration before increasing memory budgets.
+
+The renderer copies updated regions to the display driver. Direct presentation of native panel framebuffers is not
+part of this component's initial integration. No particular refresh rate is guaranteed; performance depends on
+panel timings, the UI, rotation, memory bandwidth and available resources.
+
+## Troubleshooting
+
+- If rotation is incorrect, remove software rotation from the display and LVGL configurations and set it only
+  in `lvgl_ortho`.
+- If colors are incorrect, verify that both LVGL and the display driver use little-endian RGB565.
+- If allocations fail, try `cores: 1`, a smaller `image_cache` or `camera_ram: 0`.
+- If PPA initialisation fails, check the logs. The renderer can use CPU tile rotation when PPA acceleration is
+  unavailable.
+
+> [!NOTE]
+> A rejected hardware submission can fall back to CPU rendering after outstanding transactions finish. If an accepted
+> PPA or GDMA transaction fails to complete, or a dispatched render worker does not finish within its safety timeout,
+> the renderer enters the ESP-IDF panic path to avoid reusing memory that may still be in use. Depending on the panic
+> configuration, the device may restart.
+
+## See also
+
+- [LVGL Graphics](/components/lvgl/)
+- [MIPI DSI Display Driver](/components/display/mipi_dsi/)
+- [PSRAM](/components/psram/)
