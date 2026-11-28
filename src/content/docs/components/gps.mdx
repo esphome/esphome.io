@@ -118,7 +118,7 @@ interval:
 | ----------------------------- | ------------------------------ | -------------------------------------------------- |
 | `latitude_e7`, `longitude_e7` | `latitude()`, `longitude()`    | Degrees times 10^7, north and east positive        |
 | `altitude_e3`                 | `altitude()`                   | Meters above mean sea level times 1000             |
-| `geoid_separation_e3`         | `geoid_separation()`           | Sea level above WGS84 ellipsoid, meters times 1000 |
+| `geoid_separation_e3`         | `geoid_separation()`           | Sea level minus WGS84 ellipsoid, meters times 1000 |
 | `speed_e3`                    | `speed_knots()`, `speed_kmh()` | Knots times 1000                                   |
 | `course_e2`                   | `course()`                     | Degrees from true north times 100                  |
 | `hdop_e2`                     | `hdop()`                       | HDOP times 100                                     |
@@ -127,8 +127,9 @@ interval:
 | `hour`, `minute`, `second`    |                                | UTC time                                           |
 | `millisecond`                 |                                | Milliseconds, 0 if the receiver gives no fraction  |
 
-`geoid_separation_e3` is present only with `geoid_separation: true`, and `millisecond` only with
-`millisecond: true`.
+`geoid_separation_e3` is present when `geoid_separation: true` is set or another component requests it, and
+`millisecond` when `millisecond: true` is set or another component requests it. `geoid_separation_e3` is negative where
+mean sea level is below the WGS84 ellipsoid.
 
 `data.has(field)` is true once a value for that field has been received. The fields are `gps::GPS_FIELD_LOCATION`,
 `gps::GPS_FIELD_SPEED`, `gps::GPS_FIELD_COURSE`, `gps::GPS_FIELD_ALTITUDE`, `gps::GPS_FIELD_SATELLITES`,
