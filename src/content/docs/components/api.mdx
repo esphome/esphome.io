@@ -657,6 +657,15 @@ shorten the texts or use fewer pages, entities or filters.
         - **supported_features** (*Optional*, string or list): One or more supported features, for example
           `weather.WeatherEntityFeature.FORECAST_DAILY`.
 
+### Entity Roles
+
+An entity can have a role, a fixed name of the form `<component>.<name>`. When the entity is on a wizard page, its
+role is sent to Home Assistant with it, so Home Assistant can recognise what the entity is.
+
+A role is not set in the wizard. It comes from the component of the entity, which either gives its entities their
+roles itself or has an option for it, such as `wizard_role` of the
+[template switch](/components/switch/template/). No two entities of a wizard can have the same role.
+
 ### Linked Input Domains
 
 A linked input can only be set to an entity that its `homeassistant` platform can work with. Without a `target`, the
