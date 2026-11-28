@@ -36,11 +36,63 @@ sensor:
 - All options from [Sensor](/components/sensor).
 
 > [!NOTE]
-> The WTS01 sensor is used in Sonoff TH Origin (THR316, THR320) and TH Elite (THR316D, THR320D) devices and connects to the main device using a RJ9 4C4P connector.
+> The WTS01 sensor is used in Sonoff TH Origin (THR316, THR320) and TH Elite (THR316D, THR320D) devices and
+> connects to the main device using a RJ9 4C4P connector.
 > This sensor provides temperature readings with 0.1°C resolution.
+
+## Complete Example Setup
+
+### WTS01 Sensor RJ9 Pinout
+
+RJ9 pins, when the connector is viewed from the contacts side, cables exiting at the bottom, and pin 1 is farthest left.
+
+| Pin | Function               |
+| --- | ---------------------- |
+| 1   | Sensor 3.3V Power      |
+| 2   | Sensor Bus Data Out    |
+| 3   | Not Connected          |
+| 4   | Sensor Ground          |
+
+On a generic board, use the board's regulated `3V3` supply:
+
+- RJ9 pin 1 (power) to `3V3`
+- RJ9 pin 2 (data) to `GPIOXX`, using the UART RX pin selected for your board
+- RJ9 pin 4 (ground) to `GND`
+
+Alternatively, RJ9 pin 1 can use a separate output-capable 3.3V GPIO rated for the sensor's current. Only this wiring
+requires the `switch` block below; use different GPIOs for power and data.
+
+### Example Configuration
+
+The optional `throttle_average` filter averages readings over each 15-second interval to reduce updates sent to
+Home Assistant.
+
+```yaml
+# Sample configuration entry
+uart:
+  - id: uart_bus
+    rx_pin: GPIOXX  # GPIO connected to WTS01 data (RJ9 pin 2)
+    baud_rate: 9600
+
+switch:
+  # This is needed to power the external sensor.
+  # The sensor receives 3.3V from this pin, which is driven HIGH at boot by restore_mode: ALWAYS_ON.
+  - platform: gpio
+    pin: GPIOXX  # A different GPIO connected to WTS01 power (RJ9 pin 1)
+    id: WTS01_sensor_power
+    restore_mode: ALWAYS_ON
+
+sensor:
+  - platform: wts01
+    name: WTS01 Temperature Sensor
+    uart_id: uart_bus
+    filters:
+      - throttle_average: 15s
+```
 
 ## See Also
 
 - [Sensor Filters](/components/sensor/#sensor-filters)
 - [UART Bus](/components/uart/)
+- [Sonoff THR316](https://devices.esphome.io/devices/sonoff-thr316/)
 - <APIRef text="wts01.h" path="wts01/wts01.h" />
