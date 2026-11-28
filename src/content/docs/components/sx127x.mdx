@@ -147,10 +147,10 @@ sx127x:
 ## Actions
 
 > [!NOTE]
-> Mode actions (`sx127x.run_image_cal` and `sx127x.set_mode_*`) are ignored, with a warning in the log, while a packet
-> is being sent, or while a received packet that a send found waiting is held for delivery. If the radio does not
-> enter a requested mode, its configuration is applied again every second until it succeeds, and mode actions are
-> ignored until then. `sx127x.send_packet` logs the reason when a packet cannot be sent.
+> Mode actions (`sx127x.run_image_cal`, `sx127x.set_frequency` and `sx127x.set_mode_*`) are ignored, with a warning in
+> the log, while a packet is being sent, or while a received packet that a send found waiting is held for delivery. If
+> the radio does not enter a requested mode, its configuration is applied again every second until it succeeds, and mode
+> actions are ignored until then. `sx127x.send_packet` logs the reason when a packet cannot be sent.
 
 ### `sx127x.run_image_cal` Action
 
@@ -200,6 +200,43 @@ This [action](/automations/actions/#all-actions) sets the `sx127x` mode to stand
 on_...:
   - sx127x.set_mode_standby
 ```
+
+### `sx127x.set_frequency` Action
+
+This [action](/automations/actions/#all-actions) moves the radio to another frequency without configuring it again,
+then puts it back in RX or sleep, as `rx_start` says. A later configuration, such as after a failed mode change, keeps
+the new frequency. It is much quicker than a full configuration, so it suits frequency hopping or a change of channel
+from an automation.
+
+```yaml
+on_...:
+  - sx127x.set_frequency: 434.5MHz
+```
+
+The frequency can come from a lambda:
+
+```yaml
+on_...:
+  - sx127x.set_frequency:
+      frequency: !lambda return 917000000 + id(channel).state * 400000;
+```
+
+The image calibration is not run again: it covers the band the radio started in. After a move to another band, run
+`sx127x.run_image_cal` and then `sx127x.set_mode_rx`, as the calibration leaves the radio in standby:
+
+```yaml
+on_...:
+  - sx127x.set_frequency: 868.1MHz
+  - sx127x.run_image_cal
+  - sx127x.set_mode_rx
+```
+
+A frequency from a lambda outside 137 to 1020&nbsp;MHz is ignored, with a warning in the log.
+
+#### Configuration Variables
+
+- **frequency** (**Required**, frequency, [templatable](/automations/templates/)): The new frequency, from 137 to
+  1020&nbsp;MHz.
 
 ### `sx127x.send_packet` Action
 
