@@ -11,6 +11,10 @@ import lvglBarImg from './images/lvgl_bar.png';
 import lvglButtonImg from './images/lvgl_button.png';
 import lvglButtonmatrixImg from './images/lvgl_buttonmatrix.png';
 import lvglCanvasImg from './images/lvgl_canvas.png';
+import lvglChartBarImg from './images/lvgl_chart_bar.png';
+import lvglChartLineImg from './images/lvgl_chart_line.png';
+import lvglChartScatterImg from './images/lvgl_chart_scatter.png';
+import lvglChartStackedImg from './images/lvgl_chart_stacked.png';
 import lvglCheckboxImg from './images/lvgl_checkbox.png';
 import lvglColorPickerImg from './images/lvgl_color_picker.png';
 import lvglDropdownImg from './images/lvgl_dropdown.png';
@@ -961,6 +965,227 @@ on_...:
       text: "Hello World"
       max_width: 100
       color: red
+```
+
+### `chart`
+
+The chart widget displays one or more data series as a line, bar, stacked bar or scatter chart. Line and bar series
+place their values at evenly spaced X positions. Scatter series place each point by its X and Y values.
+
+**Configuration variables:**
+
+- **type** (*Optional*, string): Chart type, one of `LINE`, `BAR`, `STACKED` or `SCATTER`. Defaults to `LINE`. A
+  `STACKED` chart draws one bar for each point, with the values of all series stacked on each other. It cannot show
+  values of `0` or less, so those are left out as gaps.
+- **update_mode** (*Optional*, string): How new values are added, one of `SHIFT` or `CIRCULAR`. Defaults to `SHIFT`.
+  With `SHIFT`, the newest value is drawn at the right edge and older values move left. With `CIRCULAR`, values fill
+  the chart from the left, and once it is full each new value replaces the oldest.
+- **point_count** (*Optional*, int): Number of points in each series, from `1` to `4096`. Defaults to `10`.
+- **y_axis**, **secondary_y_axis** (*Optional*, dict): The Y axes:
+  - **min_value**, **max_value** (*Optional*, float): The range of the axis. Give both or neither; if neither is
+    given, the range is `0` to `100`.
+  - **multiplier** (*Optional*, float): Values drawn against this axis, and its range, are multiplied by this number
+    and rounded to whole numbers, which is how LVGL stores them. Use it to keep the decimals of small values: with
+    `multiplier: 10`, `21.5` is stored as `215`. Must be greater than `0`. Defaults to `1`.
+  - **grid_lines** (*Optional*, int): The number of horizontal grid lines, from `0` to `255`. Only on **y_axis**.
+    If not set, LVGL draws `3`.
+- **x_axis**, **secondary_x_axis** (*Optional*, dict): The X axes. Only a `SCATTER` chart places points by their X
+  values, so only it can set an X range, an X **multiplier** or a **secondary_x_axis**. On other charts, **x_axis**
+  can only set **grid_lines**.
+  - **min_value**, **max_value**, **multiplier** (*Optional*): As for the Y axes.
+  - **grid_lines** (*Optional*, int): The number of vertical grid lines, from `0` to `255`. Only on **x_axis**. If not
+    set, LVGL draws `5`.
+
+  After scaling by **multiplier**, **min_value** and **max_value** must not be equal. If either is a lambda and they
+  are equal at run time, **max_value** is raised by one.
+- **series** (*Optional*, list): The data series:
+  - **id** (*Optional*, [ID](/guides/configuration-types/#id)): Series ID, needed to change the series with the
+    actions below.
+  - **color** (*Optional*, [color](/components/lvgl/#lvgl-color)): Series color. If not set, each series takes the
+    next color from blue, red, green, orange, purple and teal, repeating after teal.
+  - **hidden** (*Optional*, boolean): Hide the series. Defaults to `false`.
+  - **y_axis** (*Optional*, string): The Y axis the series is drawn against, `primary` (**y_axis**) or `secondary`
+    (**secondary_y_axis**). Defaults to `primary`.
+  - **x_axis** (*Optional*, string): The X axis the series is drawn against, `primary` (**x_axis**) or `secondary`
+    (**secondary_x_axis**). Only for `SCATTER` charts. Defaults to `primary`.
+  - **values** (*Optional*, list of float): Initial values of a `LINE`, `BAR` or `STACKED` series, oldest first. A
+    value of `nan` leaves a gap.
+  - **points** (*Optional*, list): Initial points of a `SCATTER` series, oldest first. Each point requires **x** and
+    **y** values. A point with `nan` in either value leaves a gap.
+- **items** (*Optional*, dict): Settings for the *items* part, which draws the series lines and bars. Supports
+  [styles](/components/lvgl/#lvgl-styling) such as `line_width`, `line_dash_width`, `line_dash_gap` and `radius`. The
+  series color takes the place of the line and background colors.
+- **indicator** (*Optional*, dict): Settings for the *indicator* part, which draws a marker at each point of a `LINE` or
+  `SCATTER` series. Supports [styles](/components/lvgl/#lvgl-styling) such as `width`, `height` and `radius`. The
+  series color fills the marker. The default theme draws a small circle at each point; set `width` and `height` to `0`
+  to hide the markers. Line charts also omit them when **point_count** is at least the chart's content width in
+  pixels.
+- Style options from [Style properties](/components/lvgl/#lvgl-styling) for the background of the chart. The `line_*`
+  styles set the grid lines.
+
+A series can have no more **values** or **points** than **point_count**. Initial values and points are added in
+order, as if each one had been appended, so with `SHIFT` a series with fewer values than **point_count** starts part
+of the way across the chart.
+
+Axis ranges, **values** and **points**, here and in the actions below, can be set with
+[lambdas](/automations/templates/#config-lambda). A value or point lambda that returns `NAN` leaves a gap. A range
+lambda that returns `NAN` uses `0` for **min_value** or `100` for **max_value**, before scaling by **multiplier**.
+**type**, **update_mode**, **multiplier** and **grid_lines** cannot be lambdas.
+[`lvgl.widget.refresh`](#lvgl-refresh-action) re-evaluates lambdas in the axis ranges. Lambdas in a series' initial
+**values** and **points** are evaluated only when the chart is created; use the actions below to change the data.
+
+**Actions:**
+
+- `lvgl.chart.update` [action](/automations/actions/#actions-action) updates chart properties and common widget
+  styles, states and flags.
+  - **id** (**Required**): The ID or a list of IDs of chart widgets to update.
+  - **update_mode** (*Optional*): As in the chart configuration above. **point_count** can only be set when the chart
+    is created, since changing it reallocates the data of every series.
+  - **x_axis**, **y_axis**, **secondary_x_axis**, **secondary_y_axis** (*Optional*): A new range (**min_value** and
+    **max_value**, both required), new **grid_lines**, or both. The **multiplier** set when the chart was created
+    applies to the new range; it cannot be changed. The chart **type** cannot be changed either.
+- `lvgl.chart.series.append` [action](/automations/actions/#actions-action) adds one value or point to a series. With
+  `SHIFT`, the oldest value is dropped once the series is full.
+  - **id** (**Required**): The series ID.
+  - **value** (*Optional*, float): The value to add to a `LINE`, `BAR` or `STACKED` series.
+  - **point** (*Optional*): The point to add to a `SCATTER` series, with **x** and **y** values.
+
+  Exactly one of **value** or **point** is required, to match the chart type.
+- `lvgl.chart.series.set` [action](/automations/actions/#actions-action) replaces all the data of a series, or one
+  value or point.
+  - **id** (**Required**): The series ID.
+  - **values** (*Optional*, list of float): Replace all the data of a `LINE`, `BAR` or `STACKED` series with these
+    values, oldest first. Points that are not given are left empty.
+  - **points** (*Optional*, list): Replace all the data of a `SCATTER` series with these points, oldest first.
+  - **index** (*Optional*, int): The position of the value or point to set, counted from `0` at the left of the
+    chart. Must be less than **point_count**. Required with **value** and **point**.
+  - **value** (*Optional*, float): The new value at **index** of a `LINE`, `BAR` or `STACKED` series.
+  - **point** (*Optional*): The new point at **index** of a `SCATTER` series, with **x** and **y** values.
+
+  Exactly one of **values**, **points**, **value** or **point** is required, to match the chart type.
+- `lvgl.chart.series.clear` [action](/automations/actions/#actions-action) removes all the data of a series.
+  - **id** (**Required**): The series ID.
+- `lvgl.chart.series.update` [action](/automations/actions/#actions-action) changes how a series is drawn.
+  - **id** (**Required**): The series ID.
+  - **color** (*Optional*, [color](/components/lvgl/#lvgl-color)): The new series color.
+  - **hidden** (*Optional*, boolean): Hide or show the series.
+
+  At least one of **color** or **hidden** is required.
+
+**values** and **points** in these actions must not have more entries than the chart's **point_count**.
+
+**Triggers:**
+
+- [interaction](#triggers) LVGL event triggers.
+
+**Examples:**
+
+A line chart of temperatures with one decimal place, using **multiplier**. The `nan` value leaves a gap:
+
+<Image src={lvglChartLineImg} layout="constrained" alt="Line chart with two series and a gap in the first" />
+
+```yaml
+- chart:
+    id: temperature_chart
+    width: 200
+    height: 120
+    point_count: 8
+    y_axis:
+      min_value: 15
+      max_value: 25
+      multiplier: 10
+    series:
+      - id: indoor_series
+        values: [21.5, 21.8, 22.4, nan, 23.6, 23.1, 22.2, 21.7]
+      - id: outdoor_series
+        values: [16.2, 17.5, 19.8, 22.1, 23.4, 21.9, 19.0, 17.3]
+
+# Add each new reading, and leave a gap when the sensor has no reading
+sensor:
+  - platform: ...
+    on_value:
+      - lvgl.chart.series.append:
+          id: indoor_series
+          value: !lambda return x;
+```
+
+A bar chart with two series:
+
+<Image src={lvglChartBarImg} layout="constrained" alt="Bar chart with two series side by side" />
+
+```yaml
+- chart:
+    width: 200
+    height: 120
+    type: BAR
+    point_count: 5
+    series:
+      - values: [30, 55, 80, 45, 65]
+      - values: [50, 35, 60, 70, 25]
+```
+
+A stacked bar chart with the same layout:
+
+<Image src={lvglChartStackedImg} layout="constrained" alt="Stacked bar chart with two series" />
+
+```yaml
+- chart:
+    width: 200
+    height: 120
+    type: STACKED
+    point_count: 5
+    series:
+      - values: [20, 35, 25, 40, 30]
+      - values: [30, 20, 45, 25, 50]
+```
+
+A scatter chart, with points placed by their X and Y values:
+
+<Image src={lvglChartScatterImg} layout="constrained" alt="Scatter chart with six points joined by lines" />
+
+```yaml
+- chart:
+    width: 200
+    height: 120
+    type: SCATTER
+    point_count: 6
+    x_axis:
+      min_value: 0
+      max_value: 50
+    y_axis:
+      min_value: 0
+      max_value: 100
+    series:
+      - id: scatter_series
+        points:
+          - { x: 5, y: 20 }
+          - { x: 12, y: 45 }
+          - { x: 20, y: 30 }
+          - { x: 28, y: 70 }
+          - { x: 37, y: 55 }
+          - { x: 45, y: 85 }
+```
+
+Changing the data and appearance of a series:
+
+```yaml
+on_...:
+  # Add a point to the scatter chart
+  - lvgl.chart.series.append:
+      id: scatter_series
+      point:
+        x: 50
+        y: 40
+  # Correct the third indoor temperature
+  - lvgl.chart.series.set:
+      id: indoor_series
+      index: 2
+      value: 22.6
+  # Hide the outdoor series, then start it again from empty
+  - lvgl.chart.series.update:
+      id: outdoor_series
+      hidden: true
+  - lvgl.chart.series.clear: outdoor_series
 ```
 
 ### `checkbox`
