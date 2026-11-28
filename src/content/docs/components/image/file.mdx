@@ -69,6 +69,25 @@ image:
   Not applicable to other image formats.
   Images used in displays and LVGL are expected to be in little endian format.
 
+## Color dithering
+
+  When using dithering, it is possible to specify a palette to use for dithering (mostly useful for converting to RGB111). This can be used for e-ink displays that do not have full RGB support.
+  Specifying a palette implies Floyd-Steinberg dithering.
+
+```yaml
+image:
+  - platform: file
+    id: dithered_image
+    file: image.png
+    type: RGB111
+    dither:
+      palette:
+        - 0x000000 # Black
+        - 0xFF0000 # Red
+        - 0xFFFF00 # Yellow
+        - 0xFFFFFF # White
+```
+
 ## Typed Sources
 
 Instead of the string shorthand, the `file` option also accepts a typed `source:` form:
