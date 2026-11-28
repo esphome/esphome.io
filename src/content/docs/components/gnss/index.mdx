@@ -71,6 +71,44 @@ sensor:
   there is more than one.
 - All other options from [Sensor](/components/sensor/).
 
+A sensor has no value (`NaN`) until the receiver has sent it. Each platform describes when values are kept or
+cleared after the fix is lost.
+
+## Using GNSS Data in Lambdas
+
+`id(gnss_receiver).get_data()` returns the latest values of a receiver. Position and the other measurements are
+stored as integers scaled by a power of ten, which keeps the full precision of the receiver; the methods in the table
+convert them to `float` values.
+
+```yaml
+interval:
+  - interval: 10s
+    then:
+      - lambda: |-
+          const auto &data = id(gnss_receiver).get_data();
+          if (data.has(gnss::GNSS_FIELD_LOCATION)) {
+            ESP_LOGI("main", "Position: %.7f, %.7f", data.latitude_e7 * 1e-7, data.longitude_e7 * 1e-7);
+          }
+```
+
+| Field                                            | Method                                             | Value                                       |
+| ------------------------------------------------ | -------------------------------------------------- | ------------------------------------------- |
+| `latitude_e7`, `longitude_e7`                    | `latitude()`, `longitude()`                        | Degrees times 10^7, north and east positive |
+| `altitude_e3`                                    | `altitude()`                                       | Meters above mean sea level times 1000      |
+| `speed_e3`                                       | `speed_knots()`, `speed_kmh()`                     | Knots times 1000                            |
+| `course_e2`                                      | `course()`                                         | Degrees from true north times 100           |
+| `hdop_e2`                                        | `hdop()`                                           | HDOP times 100                              |
+| `horizontal_accuracy_e3`, `vertical_accuracy_e3` | `horizontal_accuracy()`, `vertical_accuracy()`     | Estimated accuracy in meters times 1000     |
+| `satellites`                                     |                                                    | Satellites used in the solution             |
+| `year`, `month`, `day`                           |                                                    | UTC date                                    |
+| `hour`, `minute`, `second`                       |                                                    | UTC time                                    |
+
+`data.has(field)` is true while the receiver has a value for that field, and `data.is_updated(field)` is true when
+the last message set it. The fields are `gnss::GNSS_FIELD_LOCATION`, `gnss::GNSS_FIELD_SPEED`,
+`gnss::GNSS_FIELD_COURSE`, `gnss::GNSS_FIELD_ALTITUDE`, `gnss::GNSS_FIELD_SATELLITES`, `gnss::GNSS_FIELD_HDOP`,
+`gnss::GNSS_FIELD_TIME`, `gnss::GNSS_FIELD_DATE`, `gnss::GNSS_FIELD_HORIZONTAL_ACCURACY` and
+`gnss::GNSS_FIELD_VERTICAL_ACCURACY`. Not every platform sends every field.
+
 ## Moving From `gps`
 
 The `gps` component is deprecated and will be removed in 2027.6.0. It becomes a `gnss` receiver with
@@ -105,6 +143,24 @@ sensor:
 time:
   - platform: gnss
 ```
+
+### Lambdas
+
+`get_tiny_gps()` is gone with the TinyGPS++ library; `get_data()` of the `gnss` receiver gives the same values. A
+lambda that already uses `get_data()` of `gps` only needs the receiver's ID and `gnss::GNSS_FIELD_*` in place of
+`gps::GPS_FIELD_*`.
+
+| `gps` lambda                                      | `gnss` lambda                                                |
+| ------------------------------------------------- | ------------------------------------------------------------ |
+| `get_tiny_gps().location.lat()`                   | `get_data().latitude()`, or `latitude_e7` for full precision |
+| `get_tiny_gps().location.lng()`                   | `get_data().longitude()`, or `longitude_e7`                  |
+| `get_tiny_gps().altitude.meters()`                | `get_data().altitude()`                                      |
+| `get_tiny_gps().speed.kmph()`                     | `get_data().speed_kmh()`                                     |
+| `get_tiny_gps().course.deg()`                     | `get_data().course()`                                        |
+| `get_tiny_gps().satellites.value()`               | `get_data().satellites`                                      |
+| `get_tiny_gps().hdop.hdop()`                      | `get_data().hdop()`                                          |
+| `get_tiny_gps().date.year()`, `.time.hour()`, ... | `get_data().year`, `.hour`, ...                              |
+| `get_tiny_gps().location.isValid()`               | `get_data().has(gnss::GNSS_FIELD_LOCATION)`                  |
 
 ## See Also
 

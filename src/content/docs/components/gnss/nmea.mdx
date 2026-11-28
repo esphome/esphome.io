@@ -10,6 +10,11 @@ import APIRef from '@components/APIRef.astro';
 The `nmea` [GNSS](/components/gnss/) platform reads receivers that send the standard NMEA 0183 sentences, which
 almost every GNSS module does by default.
 
+The platform reads the GGA and RMC sentences from any talker (`GP`, `GN`, `GA`, `GB`, ...). Position, altitude,
+speed, course and time are taken only from sentences with a fix, so until the first fix those sensors have no value
+(`NaN`). When the fix is lost, they keep the values of the last fix. The satellite count and HDOP are reported with
+or without a fix.
+
 <Figure
   src={gpsFullImg}
   alt=""
@@ -46,5 +51,5 @@ sensor:
 ## See Also
 
 - [GNSS Component](/components/gnss/)
-- [TinyGPS++ library](https://github.com/esphome/TinyGPSPlus)
 - <APIRef text="nmea_gnss.h" path="nmea/nmea_gnss.h" />
+- <APIRef text="nmea_parser.h" path="nmea/nmea_parser.h" />
