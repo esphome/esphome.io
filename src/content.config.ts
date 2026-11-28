@@ -11,14 +11,14 @@ export const collections = {
       extend: (context) =>
         blogSchema(context).extend({
           /**
-           * If set, the post is a crosspost and its blog grid card gets a
-           * "shared from <crosspostSource>" badge. See CrosspostBadges.astro.
+           * If set, the post is a crosspost and its blog listing card gets a
+           * "shared from <crosspostSource>" badge. See blog/PostCard.astro.
            */
           crosspostSource: z.string().optional(),
           /**
            * Remote cover image URL for a crosspost card. Rendered as a plain
            * <img> (not Astro's <Image>) so it is never fetched/cached at build
-           * and can be published before the post. See CrosspostBadges.astro.
+           * and can be published before the post. See blog/PostCard.astro.
            */
           crosspostCover: z.string().optional(),
           /**

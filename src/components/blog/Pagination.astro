@@ -1,0 +1,100 @@
+---
+/**
+ * Numbered pagination for the blog listing pages. Every page is a real link, so crawlers can reach
+ * every post through the listing, and page 1 always links to the listing root, never /page/1/.
+ * The previous and next pages are also announced with <link rel="prev|next"> in the page head.
+ *
+ * Two lists are rendered: the wide one (first, last and neighbouring pages) and, for phones, a
+ * short one with only the first, current and last pages. CSS shows one of them.
+ */
+import type { ListingPage, PageItem } from "../../lib/blog";
+
+interface Props {
+  listing: ListingPage;
+}
+
+const { listing } = Astro.props;
+const lists: { items: PageItem[]; variant: string }[] = [
+  { items: listing.pageItems, variant: "wide" },
+  { items: listing.compactPageItems, variant: "compact" },
+];
+---
+
+{listing.totalPages > 1 && (
+  <nav class="blog-pagination" aria-label="Blog pages">
+    {lists.map(({ items, variant }) => (
+      <ol class={variant}>
+        {items.map((item) =>
+          item === null ? (
+            <li class="gap" aria-hidden="true">
+              …
+            </li>
+          ) : (
+            <li>
+              <a href={item.href} aria-current={item.current ? "page" : undefined} aria-label={`Page ${item.number}`}>
+                {item.number}
+              </a>
+            </li>
+          ),
+        )}
+      </ol>
+    ))}
+  </nav>
+)}
+
+<style>
+  .blog-pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 3rem;
+  }
+
+  ol {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* display: none also hides the unused list from screen readers. */
+  .compact {
+    display: none;
+  }
+
+  @media (max-width: 479px) {
+    .wide {
+      display: none;
+    }
+
+    .compact {
+      display: flex;
+    }
+  }
+
+  li a,
+  .gap {
+    display: grid;
+    place-items: center;
+    min-width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.5rem;
+    color: var(--sl-color-gray-2);
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  @media (hover: hover) {
+    li a:hover {
+      background: var(--sl-color-gray-6);
+      color: var(--sl-color-white);
+    }
+  }
+
+  li a[aria-current="page"] {
+    background: var(--sl-color-text-accent);
+    color: var(--sl-color-text-invert);
+  }
+</style>

@@ -166,6 +166,10 @@ export default defineConfig({
         starlightBlog({
           navigation: "none",
           authors,
+          // The blog index, tag and author pages are rendered by src/pages/blog/[...listing].astro,
+          // which paginates under /blog/page/<n>/. Keep the plugin to a single index page so it does
+          // not also generate its own /blog/<n>/ pages.
+          postCount: Infinity,
         }),
       ],
       logo: {
@@ -195,6 +199,7 @@ export default defineConfig({
         Footer: "./src/components/Footer.astro",
         Head: "./src/components/Head.astro",
         Header: "./src/components/Header.astro",
+        MarkdownContent: "./src/components/MarkdownContent.astro",
         PageTitle: "./src/components/PageTitle.astro",
         SiteTitle: "./src/components/SiteTitle.astro",
       },

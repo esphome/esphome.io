@@ -5,10 +5,16 @@
  * The homepage renders its own <h1> inside its custom Hero markup, so Starlight's default
  * page title (the h1#_top normally shown above the content) is suppressed there. The starter
  * kit pages also hide the default title.
+ *
+ * Blog listing pages set `Astro.locals.blogBreadcrumbs`, shown above the title.
  */
 import Default from "@astrojs/starlight/components/PageTitle.astro";
 
+import Breadcrumbs from "./blog/Breadcrumbs.astro";
+
 const hideTitle = Astro.url.pathname.startsWith("/starter-kit") || Astro.url.pathname === "/";
+const breadcrumbs = Astro.locals.blogBreadcrumbs;
 ---
 
+{breadcrumbs && breadcrumbs.length > 0 && <Breadcrumbs crumbs={breadcrumbs} />}
 {!hideTitle ? <Default {...Astro.props} /> : <div class="no-page-title" />}

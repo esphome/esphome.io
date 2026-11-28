@@ -95,6 +95,70 @@
   to = "/"
   status = 301
 
+# Old starlight-blog pagination (/blog/<n>/, five posts per page). The blog listing now paginates
+# under /blog/page/<n>/ with more posts per page, so each old page points at the new page that held
+# its first post when the layout changed. The list is fixed: no new /blog/<n>/ URLs are generated.
+[[redirects]]
+  from = "/blog/2/"
+  to = "/blog/"
+  status = 301
+
+[[redirects]]
+  from = "/blog/3/"
+  to = "/blog/"
+  status = 301
+
+[[redirects]]
+  from = "/blog/4/"
+  to = "/blog/page/2/"
+  status = 301
+
+[[redirects]]
+  from = "/blog/5/"
+  to = "/blog/page/2/"
+  status = 301
+
+[[redirects]]
+  from = "/blog/6/"
+  to = "/blog/page/3/"
+  status = 301
+
+[[redirects]]
+  from = "/blog/7/"
+  to = "/blog/page/3/"
+  status = 301
+
+[[redirects]]
+  from = "/blog/8/"
+  to = "/blog/page/3/"
+  status = 301
+
+# Page 1 of every blog listing lives at the listing root; never serve a second URL for it.
+[[redirects]]
+  from = "/blog/page/1/"
+  to = "/blog/"
+  status = 301
+
+[[redirects]]
+  from = "/blog/tags/:tag/page/1/"
+  to = "/blog/tags/:tag/"
+  status = 301
+
+[[redirects]]
+  from = "/blog/tags/:tag/:year/page/1/"
+  to = "/blog/tags/:tag/:year/"
+  status = 301
+
+[[redirects]]
+  from = "/blog/authors/:author/page/1/"
+  to = "/blog/authors/:author/"
+  status = 301
+
+[[redirects]]
+  from = "/blog/:year/page/1/"
+  to = "/blog/:year/"
+  status = 301
+
 [[redirects]]
 from = "/_images/*"
 to = "/images/:splat"

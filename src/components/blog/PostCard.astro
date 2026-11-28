@@ -1,0 +1,343 @@
+---
+/**
+ * A blog post card for the listing pages. The whole card is clickable through the title link's
+ * ::after overlay, so there is one link per card for screen readers and keyboard users.
+ * `featured` renders the wide layout used for the newest post on page 1 of /blog/.
+ */
+import { Image } from "astro:assets";
+
+import type { BlogPost } from "../../lib/blog";
+
+interface Props {
+  post: BlogPost;
+  featured?: boolean;
+}
+
+const { post, featured = false } = Astro.props;
+
+/** The site's social image, for posts without a cover and covers that fail to load. 1200 × 630. */
+const DEFAULT_IMAGE = "/images/og.webp";
+
+const date = post.date.toLocaleDateString("en-US", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+  timeZone: "UTC",
+});
+const chip = post.tags[0];
+const cover = post.cover ?? { alt: "", image: DEFAULT_IMAGE, light: undefined };
+const sizes = featured
+  ? "(max-width: 75rem) 100vw, 44rem"
+  : "(max-width: 640px) 100vw, (max-width: 1000px) 50vw, 24rem";
+
+// The image sits on top of the placeholder mark. Once it loads, `loaded` on the box hides the mark,
+// so it does not show through transparent images. A cover that fails to load is swapped for the
+// default image once; clearing onerror first stops a loop if that fails too.
+const imageProps = {
+  alt: "",
+  loading: featured ? ("eager" as const) : ("lazy" as const),
+  decoding: "async" as const,
+  onload: "this.parentNode.classList.add('loaded')",
+  onerror: `this.onerror=null;this.src='${DEFAULT_IMAGE}';this.removeAttribute('srcset')`,
+};
+const variants = [
+  { image: cover.image, class: cover.light ? "cover-image light:sl-hidden" : "cover-image", priority: featured },
+  ...(cover.light ? [{ image: cover.light, class: "cover-image dark:sl-hidden", priority: false }] : []),
+];
+const reading = post.source ? `Shared from the ${post.source}` : `${post.readingTime} min read`;
+---
+
+<article class:list={["blog-card", { featured }]}>
+  <div class="cover">
+    <span class="placeholder" aria-hidden="true">
+      <img src="/favicon.svg" alt="" width="48" height="48" />
+    </span>
+    {variants.map((variant) =>
+      typeof variant.image === "string" ? (
+        // Remote covers are the generated OpenGraph card. A plain <img> keeps the build from
+        // fetching every one of them to probe its size; the card is always 1200x630.
+        <img
+          {...imageProps}
+          class={variant.class}
+          src={variant.image}
+          width="1200"
+          height="630"
+          fetchpriority={variant.priority ? "high" : undefined}
+        />
+      ) : (
+        <Image
+          {...imageProps}
+          class={variant.class}
+          src={variant.image}
+          widths={[480, 800, 1200]}
+          sizes={sizes}
+          fetchpriority={variant.priority ? "high" : undefined}
+        />
+      ),
+    )}
+  </div>
+  <div class="body">
+    <p class="meta">
+      {chip && <span class="chip">{chip.label}</span>}
+      <time datetime={post.date.toISOString()}>{date}</time>
+    </p>
+    <h2 class="title">
+      <a href={post.href}>{post.title}</a>
+    </h2>
+    <p class="excerpt">{post.excerpt}</p>
+    {/* Two lines of one line each, so footers are the same height and author rows line up across
+        a row of cards. */}
+    <div class="footer">
+      {post.authors.length > 0 && (
+        <p class="authors">
+          <span class="avatars" aria-hidden="true">
+            {post.authors.map((author) =>
+              author.picture ? (
+                <img src={author.picture} alt="" width="24" height="24" loading="lazy" />
+              ) : (
+                <span class="avatar-placeholder" />
+              ),
+            )}
+          </span>
+          <span class="names">{post.authors.map((author) => author.name).join(", ")}</span>
+        </p>
+      )}
+      <p class="reading">{reading}</p>
+    </div>
+  </div>
+</article>
+
+<style>
+  .blog-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: 0.75rem;
+    background: var(--sl-color-bg-nav);
+    transition: border-color 0.2s ease;
+  }
+
+  @media (hover: hover) {
+    .blog-card:hover {
+      border-color: var(--sl-color-text-accent);
+    }
+
+    .blog-card:hover .title {
+      color: var(--sl-color-text-accent);
+    }
+  }
+
+  .blog-card:focus-within {
+    outline: 2px solid var(--sl-color-text-accent);
+    outline-offset: 2px;
+  }
+
+  /* Every cover box has the 1200 × 630 shape of a social image, whatever the image's own shape, so
+     cards in a row line up. One grid cell the size of the box holds both the placeholder and the
+     image, so a tall image cannot stretch it. */
+  .cover {
+    display: grid;
+    flex: none;
+    grid-template: 100% / 100%;
+    aspect-ratio: 1200 / 630;
+    overflow: hidden;
+    border-bottom: 1px solid var(--sl-color-hairline-light);
+    background: var(--sl-color-accent-low);
+  }
+
+  .cover > * {
+    grid-area: 1 / 1;
+    min-height: 0;
+  }
+
+  /* The image paints over the mark (position: relative puts both in the same paint layer; the
+     image is later in the DOM). max-height: none undoes the 400px cap custom.css puts on images in
+     page content. */
+  .cover :global(.cover-image) {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-height: none;
+    margin: 0;
+    object-fit: cover;
+  }
+
+  .cover.loaded {
+    background: #fff;
+  }
+
+  .cover.loaded .placeholder {
+    visibility: hidden;
+  }
+
+  .placeholder {
+    display: grid;
+    place-items: center;
+    opacity: 0.5;
+  }
+
+  .body {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-width: 0;
+    padding: 1.25rem;
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 0.625rem;
+    color: var(--sl-color-gray-3);
+    font-size: var(--sl-text-xs);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .chip {
+    padding: 0.125rem 0.5rem;
+    border: 1px solid var(--sl-color-text-accent);
+    border-radius: 999px;
+    color: var(--sl-color-text-accent);
+  }
+
+  .title {
+    margin: 0 0 0.625rem;
+    color: var(--sl-color-white);
+    font-size: var(--sl-text-xl);
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  .title a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* Stretch the title link over the whole card. */
+  .title a::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+
+  .title a:focus-visible {
+    outline: none;
+  }
+
+  /* line-clamp ends the cut-off text with an ellipsis character ("…"). */
+  .excerpt {
+    display: -webkit-box;
+    margin: 0;
+    overflow: hidden;
+    color: var(--sl-color-gray-2);
+    font-size: var(--sl-text-sm);
+    line-height: 1.55;
+    -webkit-box-orient: vertical;
+    /* Enough for a full post description (about 160 characters) at the narrowest card width. */
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
+  }
+
+  .footer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: auto;
+    padding-top: 1rem;
+    color: var(--sl-color-gray-3);
+    font-size: var(--sl-text-sm);
+  }
+
+  .footer p {
+    margin: 0;
+  }
+
+  .authors {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+  }
+
+  .names,
+  .reading {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Several authors' avatars overlap; an author without a picture gets a plain grey circle. */
+  .avatars {
+    display: inline-flex;
+    flex-shrink: 0;
+  }
+
+  .avatars > * {
+    display: block;
+    width: 24px;
+    height: 24px;
+    margin: 0;
+    border-radius: 50%;
+    background: var(--sl-color-gray-5);
+    box-shadow: 0 0 0 2px var(--sl-color-bg-nav);
+  }
+
+  .avatars > * + * {
+    margin-left: -8px;
+  }
+
+  /* Featured: the cover keeps its own shape, uncropped, with the text under it. From 1200px wide it
+     sits on the left with the text centred beside it. There the cover's own shape sets the row's
+     minimum height and the cover stretches to fill the row, so when the text column is a little
+     taller the image is cropped by a few pixels instead of leaving bands of card background. */
+  .featured .cover {
+    grid-template: auto / 100%;
+    aspect-ratio: auto;
+  }
+
+  .featured .cover :global(.cover-image) {
+    height: auto;
+  }
+
+  .featured .title {
+    font-size: clamp(1.5rem, 2.6vw, 2.125rem);
+  }
+
+  .featured .excerpt {
+    font-size: var(--sl-text-base);
+    -webkit-line-clamp: 5;
+    line-clamp: 5;
+  }
+
+  @media (min-width: 1200px) {
+    .featured {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    }
+
+    .featured .cover {
+      grid-template: 100% / 100%;
+      border-bottom: 0;
+    }
+
+    .featured .cover :global(.cover-image) {
+      height: 100%;
+    }
+
+    .featured .body {
+      justify-content: center;
+      padding: 2rem 2.5rem;
+    }
+
+    .featured .footer {
+      margin-top: 1rem;
+    }
+  }
+</style>

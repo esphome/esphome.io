@@ -1,0 +1,30 @@
+---
+/**
+ * MarkdownContent override
+ *
+ * starlight-blog overrides MarkdownContent to add the cover, metadata and tags around blog posts,
+ * and decides what is a post with its own URL check. That check does not know the listing URLs
+ * rendered by src/pages/blog/[...listing].astro (/blog/page/<n>/, /blog/<year>/page/<n>/, ...)
+ * and fails on them looking for a post. This override routes posts to the plugin's component and
+ * everything else, listings included, to Starlight's default.
+ *
+ * Because this override exists, starlight-blog logs two warnings at startup asking for exactly
+ * this: an override that renders starlight-blog/components/MarkdownContent.astro for posts.
+ */
+import Default from "@astrojs/starlight/components/MarkdownContent.astro";
+import StarlightBlogMarkdownContent from "starlight-blog/components/MarkdownContent.astro";
+
+import { isBlogPostId } from "../lib/blog-routes";
+
+const { id } = Astro.locals.starlightRoute;
+---
+
+{isBlogPostId(id) ? (
+  <StarlightBlogMarkdownContent>
+    <slot />
+  </StarlightBlogMarkdownContent>
+) : (
+  <Default>
+    <slot />
+  </Default>
+)}

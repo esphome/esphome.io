@@ -1,0 +1,136 @@
+---
+/**
+ * Blog listing pages: /blog/, the tag, author and year listings, each tag's year listings, and
+ * their /page/<n>/ pages. See src/lib/blog.ts for the URL scheme and why these replace the
+ * starlight-blog index, tag and author pages.
+ */
+import type { InferGetStaticPropsType } from "astro";
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+
+import FilterBar from "@components/blog/FilterBar.astro";
+import Pagination from "@components/blog/Pagination.astro";
+import PostCard from "@components/blog/PostCard.astro";
+import { getListingStaticPaths } from "../../lib/blog";
+
+export const prerender = true;
+
+export function getStaticPaths() {
+  return getListingStaticPaths();
+}
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { listing } = Astro.props;
+const { heading, intro, page, totalPages, posts, featured, prevHref, nextHref, breadcrumbs, noindex } = listing;
+
+// StarlightPage has no slot above the <h1>, so the PageTitle override reads the breadcrumbs from
+// here. This frontmatter runs before StarlightPage renders the title.
+Astro.locals.blogBreadcrumbs = breadcrumbs.length > 0 ? [{ name: "Home", href: "/" }, ...breadcrumbs] : undefined;
+
+const site = (Astro.site?.href ?? "https://esphome.io/").replace(/\/$/, "");
+
+// Each page keeps a self-referencing canonical (Starlight adds it from the URL) and gets its own
+// <title> and description, so later pages are not reported as duplicates of page 1.
+const description = page > 1 ? `${listing.description} Page ${page} of ${totalPages}.` : listing.description;
+const breadcrumbList = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { name: "Home", href: "/" },
+    ...breadcrumbs,
+    { name: page > 1 ? `${heading}, page ${page}` : heading, href: Astro.url.pathname },
+  ].map((crumb, index) => ({
+    "@type": "ListItem",
+    position: index + 1,
+    name: crumb.name,
+    item: `${site}${crumb.href}`,
+  })),
+};
+
+const head = [
+  ...(page > 1
+    ? [
+        {
+          tag: "title" as const,
+          content: `${heading}, page ${page} of ${totalPages} - ESPHome - Smart Home Made Simple`,
+        },
+      ]
+    : []),
+  // Tag and year pages are thin and overlap the tag page; keep them out of search results but let
+  // crawlers follow their links. They still work when shared.
+  ...(noindex ? [{ tag: "meta" as const, attrs: { name: "robots", content: "noindex, follow" } }] : []),
+  ...(prevHref ? [{ tag: "link" as const, attrs: { rel: "prev", href: prevHref } }] : []),
+  ...(nextHref ? [{ tag: "link" as const, attrs: { rel: "next", href: nextHref } }] : []),
+  ...(breadcrumbs.length > 0
+    ? [
+        {
+          tag: "script" as const,
+          attrs: { type: "application/ld+json" },
+          content: JSON.stringify(breadcrumbList),
+        },
+      ]
+    : []),
+];
+---
+
+<StarlightPage
+  frontmatter={{
+    title: heading,
+    description,
+    template: "splash",
+    // Listing pages only repeat post titles and descriptions; keep them out of site search.
+    pagefind: false,
+    head,
+  }}
+  hasSidebar={false}
+>
+  <div class="blog-listing not-content">
+    {/* The blog's own intro on /blog/, or a tag's from src/data/blogTagIntros.ts. Other pages have none. */}
+    {intro && <p class="intro">{intro}</p>}
+
+    <FilterBar listing={listing} />
+
+    {featured && <PostCard post={featured} featured />}
+
+    <div class="grid">
+      {posts.map((post) => (
+        <PostCard post={post} />
+      ))}
+    </div>
+
+    <Pagination listing={listing} />
+  </div>
+</StarlightPage>
+
+<style>
+  .blog-listing {
+    min-width: 0;
+    margin-top: 0.5rem;
+  }
+
+  .intro {
+    max-width: 52rem;
+    margin: 0 0 2rem;
+    color: var(--sl-color-gray-2);
+    font-size: var(--sl-text-lg);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  @media (max-width: 64rem) {
+    .grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 40rem) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
