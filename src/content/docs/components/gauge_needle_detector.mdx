@@ -1,0 +1,131 @@
+---
+description: "Instructions for detecting the needle angle of analog gauges in an image in ESPHome."
+title: "Gauge Needle Detector"
+---
+import { Image } from 'astro:assets';
+import APIRef from '@components/APIRef.astro';
+
+The `gauge_needle_detector` component finds the needle angle in a grayscale
+image of an analog dial. It is a developer-facing library component: it has no
+YAML configuration of its own, and a consumer instantiates it and feeds it dial
+crops.
+
+<Image src="/images/gauge_needle_detector.png" width={135} height={124} layout="constrained" alt="A dial crop with the crop box, the ignored centre circle and the detected needle" />
+
+The picture shows the three things the caller controls: the orange box is the
+dial crop the consumer passes in, the cyan circle is `deadzone_diameter` and the
+red line is the needle the detector found.
+
+## How a consumer uses it
+
+The detector keeps its working buffers between frames, so a consumer creates one
+instance, calls `reserve()` once at setup, and then calls `detect()` for each
+crop:
+
+```cpp
+gauge_needle_detector::NeedleDetector detector;
+if (!detector.reserve(crop_width, crop_height)) {  // once, in setup()
+  // not enough memory for the preprocessing buffers
+}
+
+gauge_needle_detector::DetectorConfig config;
+config.id = "dial_1";
+config.algorithm = gauge_needle_detector::ALGORITHM_RADIAL_PROFILE;
+config.needle_type = gauge_needle_detector::NEEDLE_TYPE_DARK;
+
+auto result = detector.detect(grayscale_crop, crop_width, crop_height, config);
+// result.angle: degrees, 0 = East, clockwise
+// result.confidence: 0 to 1
+```
+
+`DetectorConfig` also says whether the needle is dark or light (`needle_type`),
+carries the scan window (`min_scan_radius`, `max_scan_radius`, both fractions of
+the dial radius), the ignored centre circle (`deadzone_diameter`, in pixels) and
+a `debug` flag that makes every compiled-in algorithm run and log its result.
+A `deadzone_diameter` that reaches past `max_scan_radius` leaves no pixels to
+sample: `detect()` then returns a zero-confidence result.
+
+Every crop has to fit the reservation, counted in pixels. The reservation never
+shrinks, so a shared detector can call `reserve()` once per crop size. A crop
+with more pixels, or a call before `reserve()` succeeds, returns a
+zero-confidence result for every algorithm, `legacy` included, so nothing is read
+past the reserved buffers.
+
+An oversize crop, an empty scan window and a missing algorithm are each logged
+once, for the first dial that hits the problem, not once per frame.
+
+The crop is one byte per pixel. The detector does not crop, rotate or scale, and
+it does not publish anything; the consumer owns the entities and the value
+mapping.
+
+## Algorithms
+
+| `algorithm` | Behaviour |
+| --- | --- |
+| `radial_profile` | Traces rays from the centre and keeps the longest bright run. Good default. |
+| `legacy` | Scores each ray of the raw crop by how many needle-coloured pixels it crosses. Smallest and fastest. |
+| `hough_transform` | Votes edge pixels into a radial histogram, weighted by edge magnitude. Best for broken or cluttered needles. |
+| `template_match` | Searches ray angles for the brightest average line. Slowest, useful as a cross-check. |
+| `auto` | Runs the compiled-in filtered algorithms and keeps the most confident result. |
+
+All algorithms except `legacy` work on a preprocessed image (a clipped contrast
+stretch and a top-hat filter sized from the dial radius); `legacy` works on the
+raw crop. The
+detector preprocesses once per `detect()` call and shares the result between the
+filtered algorithms. The top-hat kernel is at least seven pixels across and
+grows with the dial radius, so needles up to six pixels wide survive it. The
+filtered algorithms report `confidence` between 0 and 1 on a comparable scale,
+so `auto` can rank them: it combines how much of the ray the needle covers with
+how clearly it stands out from the rest of the crop.
+
+`legacy` scores the raw brightness, so a bright or busy background counts in its
+favour and its confidence is not comparable with the others. It still weighs the
+best ray against the average one, but `auto` leaves it out when a filtered
+algorithm is built and uses it only when nothing else is.
+
+## Compile-time selection
+
+Each algorithm is a separate translation unit behind its own define, so a build
+only carries the algorithms it uses. A consumer lists the component in
+`AUTO_LOAD`, which adds its sources to the build, and enables the algorithms from
+its `to_code` with the names above:
+
+```python
+from esphome.components import gauge_needle_detector
+from esphome.types import ConfigType
+
+AUTO_LOAD = ["gauge_needle_detector"]
+
+
+async def to_code(config: ConfigType) -> None:
+    gauge_needle_detector.enable_detectors({"radial_profile"})
+```
+
+| Define | Algorithm |
+| --- | --- |
+| `USE_GAUGE_NEEDLE_INTENSITY_SCAN` | `legacy` |
+| `USE_GAUGE_NEEDLE_RADIAL_PROFILE` | `radial_profile` |
+| `USE_GAUGE_NEEDLE_HOUGH_TRANSFORM` | `hough_transform` |
+| `USE_GAUGE_NEEDLE_TEMPLATE_MATCH` | `template_match` |
+
+`enable_detectors()` also sets `USE_GAUGE_NEEDLE_DETECTOR`, which enables the
+component itself, and `USE_GAUGE_NEEDLE_PREPROCESSOR` when any algorithm other
+than `legacy` is enabled. `auto` and debug logging compare the algorithms that
+are compiled in, so enable all of them to compare all four. Selecting an
+algorithm that was not compiled in returns a zero-confidence result.
+
+## Memory
+
+The preprocessing buffers are three bytes per crop pixel, allocated by
+`reserve()` and kept between calls; a crop larger than the reservation is
+rejected, whichever algorithm runs, instead of growing the heap. The detectors
+share one 360-entry score workspace instead of keeping one each, and the sine
+table lives in flash. A build that enables only `legacy` also leaves out the
+preprocessor, with its 1 KB histogram, because nothing reads the filtered image.
+`enable_detectors({"auto"})` compiles in all four algorithms; an unknown name is
+a code-generation error.
+
+## See Also
+
+- [ESP32 Camera](/components/esp32_camera/)
+- <APIRef text="gauge_needle_detector.h" path="gauge_needle_detector/gauge_needle_detector.h" />
