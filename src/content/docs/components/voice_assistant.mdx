@@ -211,6 +211,35 @@ voice_assistant:
 > Both microphone sources must use the same audio format that's required for `microphone` (16 kHz, 16 bits per sample,
 > mono). Home Assistant 2026.6.0 or later is required to make use of the second channel; older versions simply ignore it.
 
+## Microphone Buffer Free Space
+
+While the voice assistant streams audio to Home Assistant, `get_microphone_buffer_free()` returns the free space in
+its microphone buffers, in bytes. With two microphone channels, the value is the smaller of the two buffers. The value
+is `0` when the voice assistant is not streaming.
+
+A component that sends stored audio faster than real time, for example audio from just before the wake word, can
+check this value before each write so that it does not overwrite samples in the buffer.
+
+```yaml
+voice_assistant:
+  id: va
+  microphone: ...
+
+interval:
+  - interval: 1s
+    then:
+      - if:
+          condition: voice_assistant.is_running
+          then:
+            - lambda: |-
+                ESP_LOGD("va", "Microphone buffer free: %u bytes",
+                         static_cast<unsigned>(id(va).get_microphone_buffer_free()));
+```
+
+> [!NOTE]
+> Call it only from the main loop (a lambda or a component's `loop()`). The value is a snapshot: it does not reserve
+> space, and the voice assistant can fill or drain the buffer right after the call.
+
 ## Wake word detection
 
 See our [example YAML files on GitHub](https://github.com/esphome/wake-word-voice-assistants/blob/main/m5stack-atom-echo/m5stack-atom-echo.yaml)
