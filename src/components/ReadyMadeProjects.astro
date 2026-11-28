@@ -72,6 +72,7 @@ function githubUrlsFor(type: ProjectType): (string | undefined)[] {
             class="device-option"
             value={device.id}
             data-manifest-root={device.manifestRoot}
+            data-install-url={device.installUrl}
             checked={isDefaultDevice(type, device)}
           />
           <img src={device.image} alt={device.imageAlt} />
@@ -104,7 +105,12 @@ function githubUrlsFor(type: ProjectType): (string | undefined)[] {
     {type.installPlacement !== "device" && (
       <Fragment>
         <div class="question-prompt">Start the installation:</div>
-        <esp-web-install-button />
+        {type.devices.some((device) => device.installUrl) && (
+          <a class="firmware-link projects-hidden" href={type.devices.find((device) => device.installUrl)?.installUrl}>
+            Connect
+          </a>
+        )}
+        {type.devices.some((device) => !device.installUrl) && <esp-web-install-button />}
       </Fragment>
     )}
 
@@ -186,12 +192,18 @@ function githubUrlsFor(type: ProjectType): (string | undefined)[] {
     radio.addEventListener("change", () => {
       const typeRoot = radio.closest(".project-type");
       if (!typeRoot) return;
-      // A device can override the manifest root its project type declares.
+      const installUrl = radio.dataset.installUrl;
+      const link = typeRoot.querySelector(".firmware-link");
+      if (link) {
+        link.classList.toggle("projects-hidden", !installUrl);
+        if (installUrl) link.href = installUrl;
+      }
       const manifestRoot = radio.dataset.manifestRoot || typeRoot.dataset.manifestRoot;
       // Only the type-level button is driven from here; per-device buttons carry
       // a fixed manifest and live inside a .project-info block.
       const button = typeRoot.querySelector(":scope > esp-web-install-button");
-      if (manifestRoot && button) {
+      if (button) button.classList.toggle("projects-hidden", !!installUrl);
+      if (manifestRoot && button && !installUrl) {
         const variant = typeRoot.querySelector(`[data-device="${radio.value}"] input[name$="-variant"]:checked`);
         const segment = variant ? variant.value : radio.value;
         // esp-web-tools reads `manifest || getAttribute("manifest")` when the
@@ -241,18 +253,37 @@ function githubUrlsFor(type: ProjectType): (string | undefined)[] {
   customElements.whenDefined("esp-web-install-button").then((cls) => {
     if (cls.isSupported) return;
     const unsupported = document.querySelector(".unsupported");
-    if (unsupported) unsupported.classList.remove("projects-hidden");
+    const updateWarning = () => {
+      const selectedType = document.querySelector(".project-type:not(.projects-hidden)");
+      const needsSerial = selectedType?.querySelector(
+        "esp-web-install-button:not(.projects-hidden, .projects-hidden *)",
+      );
+      unsupported?.classList.toggle("projects-hidden", !needsSerial);
+    };
+    document.addEventListener("change", updateWarning);
+    updateWarning();
   });
 </script>
 
 <style is:global>
-  .projects-hidden {
+  .projects-hidden,
+  .firmware-link.projects-hidden,
+  esp-web-install-button.projects-hidden {
     display: none;
   }
   .question-prompt {
     margin-top: 56px;
     margin-bottom: 24px;
     font-style: italic;
+  }
+  .firmware-link {
+    margin-bottom: 24px;
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 4px;
+    background: var(--sl-color-text-accent);
+    color: var(--sl-color-bg);
+    text-decoration: none;
   }
   esp-web-install-button {
     display: inline-block;

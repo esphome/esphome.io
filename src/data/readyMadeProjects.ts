@@ -29,6 +29,8 @@ export interface Device {
   imageAlt: string;
   /** Overrides the project type's `manifestRoot` for this device. */
   manifestRoot?: string;
+  /** Firmware page opened by Connect. */
+  installUrl?: string;
   /**
    * Overrides the project type's `advanced.githubUrl` when this device's YAML
    * lives in a repository of its own.
@@ -78,7 +80,7 @@ export interface ProjectType {
 export const DASHBOARD_ADOPT_URL =
   "https://my.home-assistant.io/redirect/supervisor_addon/?addon=5c53de3b_esphome&repository_url=https%3A%2F%2Fgithub.com%2Fesphome%2Fhome-assistant-addon";
 
-const HOME_ASSISTANT_VOICE_MANIFEST_ROOT = "https://firmware.esphome.io/home-assistant-voice-pe";
+const HOME_ASSISTANT_VOICE_INSTALL_URL = "https://firmware.nabucasa.com/install/voice-pe/";
 
 export const PROJECT_TYPES: ProjectType[] = [
   {
@@ -130,7 +132,7 @@ export const PROJECT_TYPES: ProjectType[] = [
         id: "home-assistant-voice",
         image: "/projects/voice-assistant/home-assistant-voice.png",
         imageAlt: "Home Assistant Voice: Preview Edition",
-        manifestRoot: HOME_ASSISTANT_VOICE_MANIFEST_ROOT,
+        installUrl: HOME_ASSISTANT_VOICE_INSTALL_URL,
         githubUrl: "https://github.com/esphome/home-assistant-voice-pe",
         title: "Home Assistant Voice: Preview Edition",
         body: [
@@ -257,6 +259,17 @@ export const PROJECT_TYPES: ProjectType[] = [
           { label: "TubesZB - Kit with enclosure and USB-C", url: "https://tubeszb.com/product/bt/" },
         ],
       },
+      {
+        id: "home-assistant-connect-aux-2",
+        image: "/projects/media-player/connect-aux-2.png",
+        imageAlt: "Home Assistant Connect AUX-2",
+        installUrl: "https://firmware.nabucasa.com/install/aux-2/",
+        githubUrl: "https://github.com/NabuCasa/aux-2",
+        title: "Home Assistant Connect AUX-2",
+        body: ["Connect Bluetooth devices to Home Assistant over Ethernet."],
+        linksLabel: "Learn more &amp; buy",
+        links: [{ label: "Home Assistant", url: "https://www.home-assistant.io/connect/aux-2/" }],
+      },
     ],
   },
   {
@@ -272,7 +285,7 @@ export const PROJECT_TYPES: ProjectType[] = [
         id: "home-assistant-voice",
         image: "/projects/voice-assistant/home-assistant-voice.png",
         imageAlt: "Home Assistant Voice: Preview Edition",
-        manifestRoot: HOME_ASSISTANT_VOICE_MANIFEST_ROOT,
+        installUrl: HOME_ASSISTANT_VOICE_INSTALL_URL,
         githubUrl: "https://github.com/esphome/home-assistant-voice-pe",
         title: "Home Assistant Voice: Preview Edition",
         body: [
@@ -280,6 +293,17 @@ export const PROJECT_TYPES: ProjectType[] = [
         ],
         linksLabel: "Learn more &amp; buy",
         links: [{ label: "Home Assistant", url: "https://www.home-assistant.io/voice-pe/" }],
+      },
+      {
+        id: "home-assistant-connect-aux-2",
+        image: "/projects/media-player/connect-aux-2.png",
+        imageAlt: "Home Assistant Connect AUX-2",
+        installUrl: "https://firmware.nabucasa.com/install/aux-2/",
+        githubUrl: "https://github.com/NabuCasa/aux-2",
+        title: "Home Assistant Connect AUX-2",
+        body: ["Connect powered speakers to Home Assistant and play music with Sendspin."],
+        linksLabel: "Learn more &amp; buy",
+        links: [{ label: "Home Assistant", url: "https://www.home-assistant.io/connect/aux-2/" }],
       },
     ],
   },
