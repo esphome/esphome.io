@@ -301,7 +301,9 @@ export const PROJECT_TYPES: ProjectType[] = [
         installUrl: "https://firmware.nabucasa.com/install/aux-2/",
         githubUrl: "https://github.com/NabuCasa/aux-2",
         title: "Home Assistant Connect AUX-2",
-        body: ["Connect powered speakers to Home Assistant and play music with Sendspin."],
+        body: [
+          "Play music with Sendspin through powered speakers or a receiver. AUX-2 supports both analog and digital audio output.",
+        ],
         linksLabel: "Learn more &amp; buy",
         links: [{ label: "Home Assistant", url: "https://www.home-assistant.io/connect/aux-2/" }],
       },
