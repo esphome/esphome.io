@@ -11,6 +11,10 @@ import APIRef from '@components/APIRef.astro';
 The `gps` component allows you to connect GPS modules to your ESPHome project.
 Any GPS module that uses the standardized NMEA communication protocol will work.
 
+The component reads the GGA and RMC sentences. Position, altitude, speed, course and time are taken only from
+sentences with a fix, so until the first fix those sensors have no value (`NaN`). When the fix is lost, they keep
+the values of the last fix. The satellite count and HDOP are reported with or without a fix.
+
 <Figure
   src={gpsFullImg}
   alt=""
@@ -79,8 +83,76 @@ See [Gps](/components/time/gps/) for config options for the GPS time source.
 
 - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval of sensor updates. Defaults to `20s`.
 
+- **field_age** (*Optional*, boolean): Record when each field was last received, for `get_age()` in lambdas.
+  Defaults to `false`.
+
+- **millisecond** (*Optional*, boolean): Read the fraction of a second in the time, for `millisecond` in lambdas.
+  Defaults to `false`.
+
+- **geoid_separation** (*Optional*, boolean): Read the geoid separation from GGA sentences, for
+  `geoid_separation_e3` in lambdas. Defaults to `false`.
+
+These three options are also enabled when another component in the configuration needs them.
+
+## Using GPS Data in Lambdas
+
+`id(my_gps).get_data()` returns the values from the most recent sentences. Position and the other measurements are
+stored as integers scaled by a power of ten, which keeps the full precision of the receiver; the methods in the table
+convert them to `float` values.
+
+```yaml
+gps:
+  id: my_gps
+
+interval:
+  - interval: 10s
+    then:
+      - lambda: |-
+          const auto &data = id(my_gps).get_data();
+          if (data.has(gps::GPS_FIELD_LOCATION)) {
+            ESP_LOGI("main", "Position: %.7f, %.7f", data.latitude_e7 * 1e-7, data.longitude_e7 * 1e-7);
+          }
+```
+
+| Field                         | Method                         | Value                                              |
+| ----------------------------- | ------------------------------ | -------------------------------------------------- |
+| `latitude_e7`, `longitude_e7` | `latitude()`, `longitude()`    | Degrees times 10^7, north and east positive        |
+| `altitude_e3`                 | `altitude()`                   | Meters above mean sea level times 1000             |
+| `geoid_separation_e3`         | `geoid_separation()`           | Sea level minus WGS84 ellipsoid, meters times 1000 |
+| `speed_e3`                    | `speed_knots()`, `speed_kmh()` | Knots times 1000                                   |
+| `course_e2`                   | `course()`                     | Degrees from true north times 100                  |
+| `hdop_e2`                     | `hdop()`                       | HDOP times 100                                     |
+| `satellites`                  |                                | Satellites in use, as reported in GGA              |
+| `year`, `month`, `day`        |                                | UTC date                                           |
+| `hour`, `minute`, `second`    |                                | UTC time                                           |
+| `millisecond`                 |                                | Milliseconds, 0 if the receiver gives no fraction  |
+
+`geoid_separation_e3` is present when `geoid_separation: true` is set or another component requests it, and
+`millisecond` when `millisecond: true` is set or another component requests it. `geoid_separation_e3` is negative where
+mean sea level is below the WGS84 ellipsoid.
+
+`data.has(field)` is true once a value for that field has been received. The fields are `gps::GPS_FIELD_LOCATION`,
+`gps::GPS_FIELD_SPEED`, `gps::GPS_FIELD_COURSE`, `gps::GPS_FIELD_ALTITUDE`, `gps::GPS_FIELD_SATELLITES`,
+`gps::GPS_FIELD_HDOP`, `gps::GPS_FIELD_TIME`, `gps::GPS_FIELD_DATE` and `gps::GPS_FIELD_GEOID_SEPARATION`.
+
+With `field_age: true`, `id(my_gps).get_age(field)` gives the milliseconds since a sentence last set that field, or
+`UINT32_MAX` if none has. An age stops growing at 2^31 ms, about 24.8 days. A position is current only while its age
+is small:
+
+```yaml
+gps:
+  id: my_gps
+  field_age: true
+
+interval:
+  - interval: 1s
+    then:
+      - lambda: |-
+          if (id(my_gps).get_age(gps::GPS_FIELD_LOCATION) > 3000)
+            ESP_LOGW("main", "No position for 3 s");
+```
+
 ## See Also
 
 - [Sensor Filters](/components/sensor/#sensor-filters)
-- [TinyGPS++ library](https://github.com/esphome/TinyGPSPlus)
 - <APIRef text="gps.h" path="gps/gps.h" />
