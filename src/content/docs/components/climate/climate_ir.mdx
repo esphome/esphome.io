@@ -300,6 +300,29 @@ button:
 - **economy** (*Optional*): A button that toggles economy mode. All options from
   [Button](/components/button/).
 
+The climate platform itself has one additional option:
+
+- **model** (*Optional*, string): The remote model. `arrah2e`, the default, sends the protocol byte `0x30` and
+  encodes the temperature in whole degrees. `arrew4e` sends `0x31` and encodes it in half degrees, so the climate
+  works in 0.5 °C steps. A unit ignores state frames whose protocol byte does not match its own remote: the unit
+  beeps and does nothing while Home Assistant keeps reporting the mode that was requested. Switching the unit off
+  is unaffected either way, because that is a separate frame that does not carry the byte.
+
+```yaml
+# Example configuration entry
+climate:
+  - platform: fujitsu_general
+    name: "AC"
+```
+
+```yaml
+# For a unit whose remote is an AR-REW4E
+climate:
+  - platform: fujitsu_general
+    name: "AC"
+    model: arrew4e
+```
+
 <span id="gree_ir"></span>
 
 ### `gree`
