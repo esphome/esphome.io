@@ -1,0 +1,22 @@
+---
+description: "Geolocation Time Source"
+title: "Geolocation Time Source"
+---
+
+The `geolocation` time platform sets the clock from a [geolocation receiver](/components/geolocation/), without a
+network connection. It syncs as soon as the receiver reports a date and time, and then once per `update_interval`.
+
+```yaml
+# Example configuration entry
+time:
+  - platform: geolocation
+    id: geolocation_time
+```
+
+## Configuration Variables
+
+- **geolocation_id** (*Optional*, [ID](/guides/configuration-types/#id)): The receiver to read from. Only needed when
+  there is more than one.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often to sync the clock after
+  the first sync. Defaults to `5min`.
+- All other options from [Base Time Configuration](/components/time/#base_time_config).
