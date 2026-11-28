@@ -392,6 +392,50 @@ node).
 
 The `esphome wizard <CONFIG>` command starts the ESPHome configuration creation wizard.
 
+### `rotate-key` Command
+
+The `esphome rotate-key <CONFIG>` command changes the [OTA encryption key](/components/ota/esphome/#encryption) of a
+running device. The device only accepts the key it runs, so the command writes a new key to the configuration, builds
+with it, uploads with the current key, and then confirms the device answers with the new key. The key is rewritten where
+it lives: the `key:` line in the yaml, or the line in `secrets.yaml` that its `!secret` points to. The key being
+replaced is kept as `old_key:` in the `encryption:` block of the `esphome` OTA platform, even when the key itself is
+written under `api:`, since the API encryption settings have no `old_key:`. For a `!secret` key, that block gets
+`old_key: !secret device_name__encryption_key_old` (the secret's name with `_old` appended) and the
+previous value goes into `secrets.yaml` under that name, so no key lands in the device yaml. A key in a local package
+or included file is rewritten in that file. A key that comes from a substitution, or from a remote package or any other
+file outside the configuration directory, is refused. A failure before the upload puts the previous key back; after
+the upload the configuration keeps the new key, since with `old_key:` the next install connects whether the device took
+the new firmware or not. The upload is protected by the current key, so this is for a planned change: if you believe
+the key leaked, flash the new key over serial instead.
+
+```shell
+esphome rotate-key living-room.yaml
+```
+
+When the OTA block uses the API key (the [recommended setup](/components/ota/esphome/#encryption), a bare
+`encryption:`), the API key changes too; the command asks for confirmation and prints the new key at the end for
+Home Assistant. A device whose key Home Assistant provisions is rotated from Home Assistant instead.
+
+Only a key unique to this device is rotated. If another configuration in the directory uses, or may use, the
+`!secret` or the file that would change, or a configuration cannot be checked, the command refuses before changing
+anything; change a shared key by hand, or give the device its own key first.
+
+#### Options
+
+**`--device DEVICE`**
+: The address to upload to, as for [`upload`](#upload-command). Network addresses only; a serial port is refused,
+since over serial you change the key in the configuration and use [`run`](#run-command).
+
+
+**`--prompt-new-key`**
+: Ask for the new key instead of generating one. It is read without echo, or as one line from stdin when that is
+not a terminal; it is never taken from the command line.
+
+
+**`-y`** / **`--yes`**
+: Do not ask for confirmation when the API key changes too.
+
+
 ### `version` Command
 
 The `esphome version` command shows the current ESPHome version and exits.
@@ -422,6 +466,39 @@ working directory. Arguments can be YAML configuration files or directories cont
 
 Storage files (`.json` files and the `storage` directory inside `.esphome`) are preserved so that
 the ESPHome Device Builder continues to function correctly.
+
+### `prune` Command
+
+The `esphome prune` command removes the frameworks and toolchains that this ESPHome version no longer builds with by
+default. They are shared by all configurations and stay on disk when ESPHome moves to a newer version, so they add up
+over time. No configuration file is needed.
+
+- `--dry-run`: list what would be removed without removing anything.
+
+What `prune` keeps and removes:
+
+- **ESP-IDF**: the version that the recommended ESP-IDF and Arduino frameworks build with is kept, with its Python
+  environment and the tools it uses. Every other version is removed.
+- **ESP8266 Arduino**: the recommended core and its toolchain are kept. Every other core and toolchain is removed.
+- **nRF Connect SDK**: the recommended version and its toolchain are kept, along with the newer version that some
+  chips need. Every other version is removed.
+- **PlatformIO**: the ESP32, ESP8266 and nRF52 platforms are removed with their packages, since these now build
+  with their own toolchains. A package that PlatformIO itself or a platform that stays requires is kept. RP2 and
+  LibreTiny still build with PlatformIO: the recommended version of each platform is kept and every other version is
+  removed, along with older copies of LibreTiny packages in a version that a default build does not install. The
+  PlatformIO download cache is cleared.
+
+Unlike [`clean-all`](#clean-all-command), `prune` leaves in place what a build with the default versions needs.
+
+> [!NOTE]
+> Setting a framework version in a configuration does not protect it. Unless it is the default version, it can be
+> removed, and is then downloaded again the next time that configuration is built. The same goes for the PlatformIO
+> toolchain on ESP32, ESP8266 and nRF52, whether it is selected with `toolchain: platformio` in the configuration
+> or with `--toolchain platformio` on the command line.
+
+> [!WARNING]
+> Do not run `prune` while a build is running, including one started by the ESPHome Device Builder. The build can
+> fail when the files it is using are removed.
 
 ### `dashboard` Command
 

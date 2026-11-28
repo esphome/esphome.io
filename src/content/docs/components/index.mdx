@@ -98,6 +98,7 @@ ESPHome-specific components or components supporting ESPHome device provisioning
   ["ESP32 Hosted", "/components/esp32_hosted/", "network-wifi.svg", "dark-invert"],
   ["Modem", "/components/modem/", "modem.svg", "dark-invert"],
   ["Ethernet", "/components/ethernet/", "ethernet.svg", "dark-invert"],
+  ["Ethernet over USB", "/components/usb_ethernet/", "usb.svg", "dark-invert"],
   ["OpenThread", "/components/openthread/", "openthread.png"],
   ["Zigbee", "/components/zigbee/", "badge:ZIGBEE"],
 ]} />
@@ -106,12 +107,14 @@ ESPHome-specific components or components supporting ESPHome device provisioning
 
 <ImgTable items={[
   ["Network Core", "/components/network/", "server-network.svg", "dark-invert"],
+  ["Entity Transport", "/components/entity_transport/", "packet_transport.svg", "dark-invert"],
   ["ESP-NOW", "/components/espnow/", "badge:ESP-NOW"],
   ["EZSP Proxy Tap", "/components/ezsp_proxy_tap/", "badge:ezsp_proxy_tap"],
   ["HTTP Request", "/components/http_request/", "connection.svg", "dark-invert"],
   ["mDNS", "/components/mdns/", "radio-tower.svg", "dark-invert"],
   ["MQTT", "/components/mqtt/", "mqtt.png"],
   ["Native API", "/components/api/", "server-network.svg", "dark-invert"],
+  ["Packet Interface", "/components/packet_interface/", "badge:Packet_Interface"],
   ["Packet Transport", "/components/packet_transport/", "packet_transport.svg", "dark-invert"],
   ["Serial Proxy", "/components/serial_proxy/", "badge:UART"],
   ["StatsD", "/components/statsd/", "connection.svg", "dark-invert"],
@@ -181,6 +184,7 @@ Create update entities simplifying management of OTA updates.
   ["1-Wire", "/components/one_wire/", "badge:1-Wire"],
   ["Bridge", "/components/bridge/", "usb.svg", "dark-invert"],
   ["CAN Bus", "/components/canbus/", "badge:CANBUS"],
+  ["CANopen", "/components/canopen/", "badge:CANopen"],
   ["CDC-ACM UART Bridge", "/components/bridge/cdc_acm_uart/", "usb.svg", "dark-invert"],
   ["FUSB302B", "/components/fusb302b/", "badge:FUSB302B", "USB-C PD sink"],
   ["HDMI-CEC Bus", "/components/hdmi_cec/", "badge:HDMI-CEC"],
@@ -199,6 +203,7 @@ Create update entities simplifying management of OTA updates.
   ["USB CDC-ACM", "/components/usb_cdc_acm/", "usb.svg", "dark-invert"],
   ["USB Host", "/components/usb_host/", "usb.svg", "dark-invert"],
   ["USB UART", "/components/usb_uart/", "usb.svg", "dark-invert"],
+  ["Virtual UART", "/components/virtual_uart/", "badge:VIRTUAL_UART"],
 ]} />
 
 ## I/O Expanders/Multiplexers
@@ -318,6 +323,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
   ["ADC128S102", "/components/sensor/adc128s102/", "adc128s102.png", "8-channel ADC"],
   ["ADS1115", "/components/sensor/ads1115/", "ads1115.jpg", "4-channel ADC"],
   ["ADS1118", "/components/sensor/ads1118/", "ads1118.jpg", "4-channel ADC"],
+  ["ADS131M0x", "/components/sensor/ads131m0x/", "badge:ADS131M0x", "2/4/8-channel 24-bit ADC"],
   ["CD74HC4067", "/components/sensor/cd74hc4067/", "cd74hc4067.jpg", "16-channel analog multiplexer"],
   ["MCP3008", "/components/sensor/mcp3008/", "mcp3008.jpg", "8-channel ADC"],
   ["MCP3204 / MCP3208", "/components/sensor/mcp3204/", "mcp3204.jpg", "4-channel ADC"],
@@ -369,6 +375,8 @@ Sensors are organized into categories; if a given sensor fits into more than one
   ["Ultrasonic Sensor", "/components/sensor/ultrasonic/", "ultrasonic.jpg", "Acoustic distance"],
   ["VL53L0x", "/components/sensor/vl53l0x/", "vl53l0x.jpg", "IR optical distance"],
   ["VL53L1X", "/components/sensor/vl53l1x/", "vl53l1x.jpg", "IR optical distance"],
+  ["VL53L4CX", "/components/sensor/vl53l4cx/", "badge:VL53L4CX", "IR optical multi-target distance"],
+  ["VL6180X", "/components/sensor/vl6180x/", "badge:VL6180X", "IR optical distance"],
   ["Zio Ultrasonic Sensor", "/components/sensor/zio_ultrasonic/", "zio_ultrasonic.jpg", "Acoustic distance"],
 ]} />
 
@@ -560,6 +568,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
   ["Combination", "/components/sensor/combination/", "function.svg", "dark-invert"],
   ["Counter", "/components/sensor/counter/", "counter.svg", "dark-invert"],
   ["CW2017", "/components/sensor/cw2017/", "badge:CW2017", "Battery fuel gauge"],
+  ["Derivative", "/components/sensor/derivative/", "chart-line.svg", "dark-invert"],
   ["Duty Time", "/components/sensor/duty_time/", "timer-play-outline.svg", "dark-invert"],
   ["Exponential Moving Average", "/components/sensor/exponential_moving_average/", "chart-line.svg", "dark-invert"],
   ["EZO sensor circuits", "/components/sensor/ezo/", "ezo-ph-circuit.png", "(pH)"],
@@ -579,7 +588,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
   ["Modbus Sensor", "/components/sensor/modbus_controller/", "modbus.png"],
   ["Nextion", "/components/sensor/nextion/", "nextion.jpg", "Sensors from display"],
   ["Person Sensor (SEN21231)", "/components/sensor/sen21231/", "sen21231.png"],
-  ["Resol VBus", "/components/vbus/", "resol_deltasol_bs_plus.jpg"],
+  ["Resol VBus", "/components/vbus/", "resol_deltasol_bs_plus.jpg", "P1 Telemetry & P2 Datagrams"],
   ["Rotary Encoder", "/components/sensor/rotary_encoder/", "rotary_encoder.jpg"],
   ["Sendspin Sensor", "/components/sensor/sendspin/", "sendspin.svg"],
   ["SMT100", "/components/sensor/smt100/", "smt100.jpg", "Moisture & Temperature"],
@@ -608,6 +617,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
   ["LD2412", "/components/sensor/ld2412/", "ld2412.jpg", "Motion & Presence"],
   ["LD2420", "/components/sensor/ld2420/", "ld2420.jpg", "Motion & Presence"],
   ["LD2450", "/components/sensor/ld2450/", "ld2450.png", "Motion & Presence"],
+  ["LD2451", "/components/sensor/ld2451/", "badge:LD2451", "Motion & Presence"],
   ["LD2460", "/components/sensor/ld2460/", "ld2460.jpg", "Motion & Presence"],
   ["LD6002B", "/components/sensor/ld6002b/", "ld6002b.png", "Motion & Presence"],
   ["LD6004", "/components/sensor/ld6004/", "badge:LD6004", "Motion & Presence"],
@@ -999,6 +1009,7 @@ Used for creating infrared (IR) remote control transmitters and/or receivers.
   ["Light Core", "/components/light/", "folder-open.svg", "dark-invert"],
   ["Beken SPI", "/components/light/beken_spi_led_strip/", "color_lens.svg", "dark-invert"],
   ["Binary Light", "/components/light/binary/", "lightbulb.svg", "dark-invert"],
+  ["BrizLabs LED String", "/components/light/brizlabs_led_string/", "badge:BrizLabs_LED"],
   ["Cold+Warm White Light", "/components/light/cwww/", "brightness-medium.svg", "dark-invert"],
   ["Color Temperature Light", "/components/light/color_temperature/", "brightness-medium.svg", "dark-invert"],
   ["ESP32 RMT", "/components/light/esp32_rmt_led_strip/", "color_lens.svg", "dark-invert"],
@@ -1064,6 +1075,7 @@ Used for creating infrared (IR) remote control transmitters and/or receivers.
 <ImgTable items={[
   ["Microphone Core", "/components/microphone/", "microphone.svg", "dark-invert"],
   ["I2S Microphone", "/components/microphone/i2s_audio/", "badge:I2S_Audio"],
+  ["Microphone HTTP Stream", "/components/microphone_http_stream/", "badge:HTTP_Audio"],
   ["Resampler Microphone", "/components/microphone/resampler/", "waveform.svg", "dark-invert"],
   ["USB Audio Microphone", "/components/microphone/usb_audio/", "usb.svg", "dark-invert"],
 ]} />
@@ -1173,6 +1185,7 @@ Used for creating infrared (IR) remote control transmitters and/or receivers.
   ["Switch Core", "/components/switch/", "folder-open.svg", "dark-invert"],
   ["Template Switch", "/components/switch/template/", "description.svg", "dark-invert"],
   ["BLE Client Switch", "/components/switch/ble_client/", "bluetooth.svg", "dark-invert"],
+  ["Bluetooth Switch", "/components/switch/ble/", "bluetooth.svg", "dark-invert"],
   ["Factory Reset Switch", "/components/switch/factory_reset/", "restart-alert.svg", "dark-invert"],
   ["Generic Output Switch", "/components/switch/output/", "upload.svg", "dark-invert"],
   ["GPIO Switch", "/components/switch/gpio/", "badge:GPIO"],
@@ -1196,6 +1209,7 @@ Used for creating infrared (IR) remote control transmitters and/or receivers.
 <ImgTable items={[
   ["Text Core", "/components/text/", "folder-open.svg", "dark-invert"],
   ["Template Text", "/components/text/template/", "description.svg", "dark-invert"],
+  ["ESPectre", "/components/espectre/#text", "espectre.svg"],
   ["Home Assistant", "/components/text/homeassistant/", "home-assistant.svg", "dark-invert"],
   ["LVGL textarea Text", "/components/text/lvgl/", "lvgl_c_txt.png"],
 ]} />
@@ -1316,6 +1330,7 @@ ESPHome to cellular networks. **Does not encompass Wi-Fi.**
   ["Grow Fingerprint Reader", "/components/fingerprint_grow/", "fingerprint.svg", "dark-invert"],
   ["HLK-FM22x Face Recognition", "/components/hlk_fm22x/", "fingerprint.svg", "dark-invert"],
   ["Key Collector", "/components/key_collector/", "matrix_keypad.jpg"],
+  ["MIPI-CSI Camera", "/components/mipi_csi/", "camera.svg", "dark-invert"],
   ["Modbus Client", "/components/modbus_client/", "modbus.png"],
   ["Modbus Controller", "/components/modbus_controller/", "modbus.png"],
   ["Modbus Monitor", "/components/modbus_monitor/", "modbus.png"],

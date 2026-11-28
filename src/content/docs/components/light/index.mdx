@@ -218,6 +218,31 @@ light:
   counts as the remembered effect. The remembered effect is kept in memory only, so it is lost on reboot. Defaults
   to `false`.
 
+- **write_on_setup** (*Optional*, boolean): Write the start-up state to the output during the light's own setup,
+  instead of once every component is set up. This is for an output that is set up before the light, such as a
+  display backlight that should come on before a slow display setup. An effect still starts only once every
+  component is set up. Defaults to `false`.
+
+- **setup_priority** (*Optional*, float): Change the order in which the light is set up; a higher value is set up
+  earlier. With **write_on_setup**, give the output a higher value than the light, so it is set up first. The
+  example below needs an output with the id `backlight_pwm`, such as an [ESP32 LEDC Output](/components/output/ledc/),
+  with `setup_priority: 1300`. That value is above the power supply priority (1200), so the backlight comes on before
+  any bus or display is set up:
+
+  ```yaml
+  light:
+    - platform: monochromatic
+      output: backlight_pwm
+      name: Backlight
+      initial_state:
+        state: ON
+      write_on_setup: true
+      setup_priority: 1299
+  ```
+
+  On an addressable light the LED strip takes this value, and the light takes the value minus 1, so the strip is set up
+  first.
+
 - **on_turn_on** (*Optional*, [Action](/automations/actions/#all-actions)): An automation to perform when the light is turned on. See
   [`light.on_turn_on` / `light.on_turn_off` Trigger](#light-on_turn_on_off_trigger).
 
@@ -1446,8 +1471,38 @@ The [E1.31 Effect](#e131-light-effect) requires a component hub for the `e131` l
 **Configuration variables:**
 
 - **method** (*Optional*): Listening method, one of `multicast` or `unicast`. Defaults to `multicast`.
+- **arbitrate_sources** (*Optional*, boolean): Select a single source per universe when several E1.31 sources send
+  to it, as described in [Multiple E1.31 Sources](#multiple-e1-31-sources). Defaults to `false`.
 
 ESPHome will listen on UDP port `5568`.
+
+#### Multiple E1.31 Sources
+
+Several E1.31 sources, each identified by its CID, may send data for the same universe.
+
+With `arbitrate_sources: false`, every valid data packet is applied as it arrives, whatever its source: two sources
+sending at once alternate on the light. Packets marked as preview data or as the end of a stream are also applied.
+This mode does not follow the E1.31 rules for receivers.
+
+With `arbitrate_sources: true`, each universe shows the data of one source, chosen by arbitration (sources are never
+merged):
+
+- The source with the highest priority wins.
+- Between sources of equal priority, the one with the lowest CID wins, so the same set of sources always gives the
+  same result.
+- The winning source is dropped when it sends nothing for 2.5 seconds, or sends a stream terminated packet. The
+  best of the remaining sources then takes over: until a source of at least the priority of the best one kept out
+  so far sends, lower priority sources are ignored, for up to 2.5 seconds.
+- A source that is kept out is not tracked by itself, so its stream terminated packet changes nothing: its priority
+  still holds back lower priority sources until 2.5 seconds after it was last heard.
+- Channels that a packet does not send are set to zero.
+- Packets marked as preview data are ignored, and so are out-of-order packets from the winning source.
+
+Any number of sources is handled: only the winning source, and the best priority among the sources it keeps out,
+are remembered for each universe, so there is no "sources exceeded" condition. At the debug log level, a line is
+logged when a different source takes over a universe, and when that source leaves. To keep the log short, a source
+taking over several universes is logged once, so these lines show the source changes but are not a complete record
+of them.
 
 ### Adalight Effect
 
