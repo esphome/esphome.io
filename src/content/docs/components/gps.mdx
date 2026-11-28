@@ -114,25 +114,29 @@ interval:
           }
 ```
 
-| Field                         | Method                         | Value                                                                                    |
-| ----------------------------- | ------------------------------ | ---------------------------------------------------------------------------------------- |
-| `latitude_e7`, `longitude_e7` | `latitude()`, `longitude()`    | Degrees times 10^7, north and east positive                                              |
-| `altitude_e3`                 | `altitude()`                   | Meters above mean sea level times 1000                                                   |
-| `geoid_separation_e3`         | `geoid_separation()`           | Meters from the WGS84 ellipsoid up to mean sea level times 1000; with `geoid_separation` |
-| `speed_e3`                    | `speed_knots()`, `speed_kmh()` | Knots times 1000                                                                         |
-| `course_e2`                   | `course()`                     | Degrees from true north times 100                                                        |
-| `hdop_e2`                     | `hdop()`                       | HDOP times 100                                                                           |
-| `satellites`                  |                                | Satellites in use, as reported in GGA                                                    |
-| `year`, `month`, `day`        |                                | UTC date                                                                                 |
-| `hour`, `minute`, `second`    |                                | UTC time                                                                                 |
-| `millisecond`                 |                                | Milliseconds of the time, 0 when the receiver gives no fraction; with `millisecond`      |
+| Field                         | Method                         | Value                                              |
+| ----------------------------- | ------------------------------ | -------------------------------------------------- |
+| `latitude_e7`, `longitude_e7` | `latitude()`, `longitude()`    | Degrees times 10^7, north and east positive        |
+| `altitude_e3`                 | `altitude()`                   | Meters above mean sea level times 1000             |
+| `geoid_separation_e3`         | `geoid_separation()`           | Sea level above WGS84 ellipsoid, meters times 1000 |
+| `speed_e3`                    | `speed_knots()`, `speed_kmh()` | Knots times 1000                                   |
+| `course_e2`                   | `course()`                     | Degrees from true north times 100                  |
+| `hdop_e2`                     | `hdop()`                       | HDOP times 100                                     |
+| `satellites`                  |                                | Satellites in use, as reported in GGA              |
+| `year`, `month`, `day`        |                                | UTC date                                           |
+| `hour`, `minute`, `second`    |                                | UTC time                                           |
+| `millisecond`                 |                                | Milliseconds, 0 if the receiver gives no fraction  |
+
+`geoid_separation_e3` is present only with `geoid_separation: true`, and `millisecond` only with
+`millisecond: true`.
 
 `data.has(field)` is true once a value for that field has been received. The fields are `gps::GPS_FIELD_LOCATION`,
 `gps::GPS_FIELD_SPEED`, `gps::GPS_FIELD_COURSE`, `gps::GPS_FIELD_ALTITUDE`, `gps::GPS_FIELD_SATELLITES`,
 `gps::GPS_FIELD_HDOP`, `gps::GPS_FIELD_TIME`, `gps::GPS_FIELD_DATE` and `gps::GPS_FIELD_GEOID_SEPARATION`.
 
 With `field_age: true`, `id(my_gps).get_age(field)` gives the milliseconds since a sentence last set that field, or
-`UINT32_MAX` if none has. A position is current only while its age is small:
+`UINT32_MAX` if none has. An age stops growing at 2^31 ms, about 24.8 days. A position is current only while its age
+is small:
 
 ```yaml
 gps:
