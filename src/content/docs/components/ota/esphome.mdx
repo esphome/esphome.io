@@ -62,6 +62,13 @@ ota:
   one install that migrates a device still asking for it. To move an installed device from a password to
   encryption, see [Enabling Encryption on an Existing Device](#enabling-encryption-on-an-existing-device).
 - **allow_partition_access** (*Optional*, boolean): Only on `esp32`. Allow updating more partition types. Used for updating the partition table and the bootloader. Defaults to `false`.
+- **allow_delta** (*Optional*, boolean): Only on `esp32`, with either framework. Accept a patch against the
+  running firmware instead of the whole image, from `esphome upload` or listed in an
+  [update manifest](/components/update/http_request/#delta-patches).
+  See [Delta Updates on ESP32](#delta-updates-on-esp32). Defaults to `false`.
+- **delta_base** (*Optional*, string): Only used with **allow_delta**. The file where `esphome upload` keeps the
+  image it installed last, to make the next patch from. Relative to the configuration folder. Defaults to
+  `last-installed.ota.bin` in the device's build folder.
 
 > [!IMPORTANT]
 > Prefer **encryption** over **password**; it keeps the firmware image confidential in transit, not just authenticated. If you use a password, always use a strong, unique one. See the [Security Best Practices](/guides/security_best_practices/#ota-encryption) guide for more information.
@@ -451,6 +458,49 @@ To upload a custom bootloader binary, run:
 ```
 esphome upload --bootloader --file bootloader.bin name-of-your-config.yaml
 ```
+
+## Delta Updates on ESP32
+
+With `allow_delta: true`, the device accepts an
+[esp_delta_ota](https://components.espressif.com/components/espressif/esp_delta_ota) patch against the firmware it
+runs. It rebuilds the new firmware from the running one and the patch, writes it to the
+update partition, and checks its MD5 before it switches to it. Only the patch is sent, which helps when the firmware
+is large or the network is slow. A patch between two builds of the same configuration is usually a few percent of
+the image.
+
+Writing flash takes as long as with a full image, so a delta update saves the transfer, not install time.
+
+```yaml
+ota:
+  - platform: esphome
+    allow_delta: true
+```
+
+The option has to be in the firmware the device runs, so the first install with it sends the full image. From then
+on, every `esphome upload` or `esphome run` over the network keeps the image it installed in **delta_base**, and the
+next upload sends a patch made from it. The Device Builder and the Home Assistant add-on run the same commands, so
+their installs use patches too.
+
+The upload makes the patch, checks that it rebuilds the new image, and sends it. Making a patch needs the `detools`
+Python package (`pip install detools`); without it, the full image is sent.
+
+The device compares the patch with the SHA-256 of its running firmware before it writes anything. A patch made from
+other firmware is refused, and a patch that fails to apply leaves the running firmware and the boot partition as they
+were. Either way the upload sends the full image in the same run. This happens, for example, when the device was
+last updated from another machine or by an [update entity](/components/update/http_request/).
+
+To make the patch from a particular image instead, pass it with `--delta-from`. A patch asked for this way is not
+replaced by the full image when the device refuses it; the upload fails instead.
+
+```
+esphome upload --delta-from previous.ota.bin name-of-your-config.yaml
+```
+
+`--delta-from` only works for network uploads over this platform. It is refused for serial uploads and the
+[web server](/components/ota/web_server/) platform.
+
+To publish patches for devices that update themselves, see
+[Delta Patches](/components/update/http_request/#delta-patches) on the HTTP Request update page.
 
 ## See Also
 
