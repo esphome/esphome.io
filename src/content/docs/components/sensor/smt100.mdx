@@ -6,19 +6,68 @@ title: "SMT100 Soil Moisture Sensor"
 import { Image } from 'astro:assets';
 import APIRef from '@components/APIRef.astro';
 
-The SMT100 sensor platform allows you to use the SMT100 soil moisture and temperature with ESPHome.
+The SMT100 sensor platform allows you to use the TRUEBNER SMT100 soil moisture and temperature sensor with ESPHome.
 
-<Image src="/images/smt100.jpg" width={300} height={200} layout="constrained" alt="" />
+<Image
+  src="/images/smt100.jpg"
+  width={300}
+  height={200}
+  layout="constrained"
+  alt="TRUEBNER SMT100 soil moisture sensor"
+/>
 
-The communication with this component is done via a [UART](/components/uart) using a simple ASCII protocol. You must
-therefore have a `uart:` entry in your configuration with both the TX and RX pins set to some pins on your
-board and the baud rate set to 9600.
+The communication with this component is done via a [UART](/components/uart/) using the sensor's ASCII protocol. You
+must therefore have a `uart:` entry in your configuration with both the TX and RX pins set to some pins on your board
+and the baud rate set to 9600.
+
+The sensor uses 8 data bits, no parity and 1 stop bit (9600 8N1). These are the defaults of the `uart:` component, so
+only `baud_rate` has to be set. With any other value this component reports a configuration error.
+
+## Supported Sensor Versions
+
+The SMT100 is sold with different interfaces. This component only works with the **SMT100 LV**, which is marked
+`SMT100LV` on the sensor blade:
+
+| Version       | Hardware Interface                                     | Software Protocol               | Supported |
+| ------------- | ------------------------------------------------------ | ------------------------------- | --------- |
+| SMT100 LV     | UART, 3 V levels (3.3 V compatible)                    | ASCII/T-Bus (default) or Modbus | Yes       |
+| SMT100 RS-485 | RS-485                                                 | ASCII/T-Bus or Modbus           | No        |
+| SMT100 SDI-12 | SDI-12                                                 | SDI-12                          | No        |
+| SMT100 analog | Voltage outputs,<br />e.g. 0–1 V, 0–3 V, 0–5 V, 0–10 V | None                            | No        |
+
+An RS-485 version in Modbus mode can be read with the [Modbus Controller](/components/modbus_controller/). The
+outputs of the analog version can be read with the [ADC Sensor](/components/sensor/adc/). A voltage divider is only
+needed if the output range is higher than the input range of your ADC.
+
+> [!CAUTION]
+> Do not connect the green and yellow wires of an RS-485, SDI-12 or analog version directly to your board. On these
+> versions they are not 3 V UART signals.
+
+The SMT100 LV ships with the ASCII protocol enabled. It can be switched to the Modbus protocol with the
+[TRUEBNER Modbus tool](https://www.truebner.de/en/smt100.php). For this the sensor is connected directly to a PC with
+a USB to UART converter that uses 3.3 V levels. This component does not speak Modbus, so a sensor that has been
+switched to Modbus must be switched back.
+
+## Wiring
+
+The SMT100 LV connects directly to the UART pins of your board:
+
+| Wire colour | Function                       | Connect to           |
+| ----------- | ------------------------------ | -------------------- |
+| Brown       | Supply, 3.1 V to 15 V          | 3.3 V or 5 V         |
+| White       | GND                            | GND                  |
+| Green       | UART RX (the sensor receives)  | `tx_pin` of the UART |
+| Yellow      | UART TX (the sensor transmits) | `rx_pin` of the UART |
+
+The sensor runs on 3 V internally, so its UART signals have 3 V levels. The UART lines have 1 kΩ series resistors,
+so the 3.3 V logic of your board is fine. UART is not meant for long cables; for more than 10 m TRUEBNER recommends
+the RS-485 or SDI-12 version.
 
 ```yaml
 # Example configuration entry
 uart:
-  tx_pin: TX
-  rx_pin: RX
+  tx_pin: GPIOXX
+  rx_pin: GPIOXX
   baud_rate: 9600
 
 sensor:
@@ -35,35 +84,40 @@ sensor:
         name: "Voltage"
 ```
 
-## Configuration variables
+## Configuration Variables
 
-- **counts** (*Optional*): Raw measurement data from the sensor electronics (dimensionless quantity). Higher counts mean less moisture. May be used for material specific calibrations.
+- **counts** (*Optional*): Raw measurement data from the sensor electronics (dimensionless quantity). Higher counts mean
+  less moisture. May be used for material specific calibrations.
 
-  - All options from [Sensor](/components/sensor).
+  - All options from [Sensor](/components/sensor/).
 
-- **permittivity** (*Optional*): Dielectric coefficient or permittivity of the material to be measured (dimensionless quantity). Higher permittivity means higher water content. May be used for material specific calibration.
+- **permittivity** (*Optional*): Dielectric coefficient or permittivity of the material to be measured (dimensionless
+  quantity). Higher permittivity means higher water content. May be used for material specific calibration.
 
-  - All options from [Sensor](/components/sensor).
+  - All options from [Sensor](/components/sensor/).
 
-- **temperature** (*Optional*): Soil temperature in degrees Celsius. Please note that the temperature sensor is inside the black sensor enclosure and requires some time to equilibrate with the soil temperature.
+- **temperature** (*Optional*): Soil temperature in degrees Celsius. Please note that the temperature sensor is inside
+  the black sensor enclosure and requires some time to equilibrate with the soil temperature.
 
-  - All options from [Sensor](/components/sensor).
+  - All options from [Sensor](/components/sensor/).
 
 - **moisture** (*Optional*): Soil moisture (volumetric water content in %).
 
-  - All options from [Sensor](/components/sensor).
+  - All options from [Sensor](/components/sensor/).
 
 - **voltage** (*Optional*): Supply voltage of the sensor in Volt.
 
-  - All options from [Sensor](/components/sensor).
+  - All options from [Sensor](/components/sensor/).
 
-- **uart_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the [UART Component](/components/uart) if you want
+- **uart_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the [UART
+  Component](/components/uart/) if you want
   to use multiple UART buses.
 
-- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval to poll the sensor. Defaults is 60s.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval to poll the sensor. Defaults
+  to `60s`.
 
 ## See Also
 
-- [SMT100 Soil Moisture Sensor](/components/sensor/smt100/)
+- [TRUEBNER Application Note AN007: SMT100 LV](https://www.truebner.de/assets/download/AN007.pdf)
 - [Sensor Filters](/components/sensor/#sensor-filters)
 - <APIRef text="smt100.h" path="smt100/smt100.h" />
