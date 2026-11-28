@@ -1,0 +1,213 @@
+---
+description: "Instructions for reading analog gauges from an ESP32 camera in ESPHome."
+title: "Analog Gauge Reader"
+---
+import { Image } from 'astro:assets';
+
+The `analog_gauge_reader` component reads one or more analog dials out of frames from an
+[ESP32 Camera](/components/esp32_camera/). It decodes each frame once through a `camera_decoder`, crops every
+configured dial out of that single decoded image, finds the needle angle of each crop with `gauge_needle_detector`
+and publishes the dial values.
+
+It is a computer-vision alternative to a model-based meter reader: it needs no trained model, runs in a few
+milliseconds per dial, and works on clean, well-cropped dials.
+
+<Image src="/images/gauge_needle_detector.png" width={135} height={124} layout="constrained" alt="A dial crop with the crop box, the ignored centre circle and the detected needle" />
+
+The orange box is the dial crop, the cyan circle is the centre the detection ignores (`deadzone_diameter`), and the
+red line is the detected needle.
+
+A minimal configuration:
+
+```yaml
+camera_decoder:
+  id: gauge_decoder
+  output_type: RGB888
+
+analog_gauge_reader:
+  id: gauge
+  camera_id: my_camera
+  decoder_id: gauge_decoder
+  dials:
+    - id: dial_1
+      crop_x: 0
+      crop_y: 0
+      crop_w: 64
+      crop_h: 64
+      scale: 1.0
+      min_value: 0
+      max_value: 10
+      min_angle: 0
+      max_angle: 360
+
+sensor:
+  - platform: analog_gauge_reader
+    analog_gauge_reader_id: gauge
+    value:
+      name: "Water meter"
+    dials:
+      - dial: dial_1
+        value:
+          name: "Water meter dial"
+        angle:
+          name: "Water meter needle angle"
+        confidence:
+          name: "Water meter confidence"
+```
+
+## Configuration variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The reader ID. Only one reader can be configured;
+  add every dial to it.
+- **camera_id** (**Required**, [ID](/guides/configuration-types/#id)): The `esp32_camera` that produces the frames.
+- **decoder_id** (**Required**, [ID](/guides/configuration-types/#id)): The `camera_decoder` that decodes the frames.
+  It must output `RGB888` or `GRAYSCALE`; dials that read a colour need `RGB888`.
+- **dials** (**Required**, list): The dials to read, see below.
+- **stacked_digits** (*Optional*, boolean): Treat the dials as the digits of one odometer reading, sorted by
+  `scale`, instead of summing their values. Defaults to `false`.
+- **paused** (*Optional*, boolean): Start paused. Defaults to `false`.
+- **debug** (*Optional*, boolean): Log every detection result and the comparison between algorithms.
+  Defaults to `false`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often to request a frame.
+  Defaults to `60s`.
+
+### Dial configuration variables
+
+Each entry of `dials` describes one dial in the frame:
+
+- **id** (**Required**, string): The dial name, used in the logs.
+- **crop_x** (*Optional*, int): Left edge of the dial crop. Defaults to `0`.
+- **crop_y** (*Optional*, int): Top edge of the dial crop. Defaults to `0`.
+- **crop_w** (*Optional*, int): Width of the crop. Defaults to `64`.
+- **crop_h** (*Optional*, int): Height of the crop. Defaults to `64`. The whole crop must fit inside the frame.
+- **scale** (*Optional*, float): How much one unit of this dial is worth in the combined value.
+  Must be greater than `0`. Defaults to `1.0`.
+- **min_angle** (*Optional*, float): Angle of `min_value`, in degrees from `0` to `360`. Defaults to `0`.
+- **max_angle** (*Optional*, float): Angle of `max_value`, in degrees from `0` to `360`. Defaults to `360`.
+  A `min_angle` greater than `max_angle` selects the wrap-around part of the scale. Angles outside the sweep
+  clamp to the nearer end, so a needle resting just before `min_angle`, for example against its stop pin, reads
+  `min_value` rather than wrapping round to `max_value`. A sweep may start or end at North (`0` or `360`) like
+  any other angle, so `0` to `270` and `90` to `360` need no special case.
+- **angle_offset** (*Optional*, float): Rotation of the dial's coordinate system, in degrees, where `0` is north
+  (12 o'clock), `90` east, `180` south and `270` west. The offset is removed before `clockwise` mirrors the
+  angle, so it always names the dial's physical origin. From `0` to `360`. Defaults to `0`.
+- **clockwise** (*Optional*, boolean): Whether the value increases clockwise. Defaults to `true`.
+- **min_value** (*Optional*, float): Value at `min_angle`. Defaults to `0`.
+- **max_value** (*Optional*, float): Value at `max_angle`. Defaults to `10`.
+- **calibration** (*Optional*, list): Points that replace the linear angle-to-value mapping with a piecewise linear
+  one. Takes 1 to 255 points. Each point has a **raw** angle and the **mapped** value at that angle. The map takes
+  precedence over the `min_angle` to `max_angle` range, including a wrap-around range.
+- **needle_type** (*Optional*): `DARK` (default) when the needle is darker than the face, `LIGHT` when it is
+  brighter. Ignored when `target_color` is set, because matching pixels are then always the dark ones.
+- **algorithm** (*Optional*): `radial_profile` (default), `legacy`, `hough_transform`, `template_match` or `auto`.
+  `auto` runs every filtered algorithm and keeps the most confident result. It skips `legacy`, whose raw-image
+  confidence is not comparable, unless `legacy` is the only one built.
+- **min_scan_radius** (*Optional*, float): Inner end of the scan window, as a fraction of the dial radius.
+  Defaults to `0.3`.
+- **max_scan_radius** (*Optional*, float): Outer end of the scan window, as a fraction of the dial radius.
+  It must be larger than `min_scan_radius`, or the window holds no pixel. Defaults to `0.9`.
+- **deadzone_diameter** (*Optional*, float): Diameter of the centre circle that the detection ignores, in pixels.
+  It must be smaller than the crop. Defaults to `0.0`.
+- **auto_contrast** (*Optional*, boolean): Stretch the crop's contrast before detecting. Defaults to `true`.
+- **contrast** (*Optional*, float): Multiplier applied to the crop. Defaults to `1.0`.
+- **process_channel** (*Optional*): `GRAYSCALE` (default), `RED`, `GREEN` or `BLUE`. Use a colour channel when the
+  needle stands out in one channel only. It cannot be combined with `target_color`, which compares all three
+  channels.
+- **target_color** (*Optional*, hex): Read the dial by distance from this colour instead of by brightness, for
+  example a red needle on a dark face.
+- **color_tolerance** (*Optional*, float): Distance from `target_color` that still counts as the needle.
+  From `0` to `442`; `0` spreads the whole colour range linearly. Defaults to `0.0`.
+
+Each dial can also publish its own sensors, and the reader can publish the combined value. See the sensor platform
+below.
+
+## Sensor platform
+
+The `analog_gauge_reader` sensor platform publishes the reader's values. Every sensor is optional. Use a single
+`analog_gauge_reader` sensor entry and list all dials in it; a second entry for the same reader is rejected.
+
+```yaml
+sensor:
+  - platform: analog_gauge_reader
+    analog_gauge_reader_id: gauge
+    value:
+      name: "Water meter"
+    dials:
+      - dial: dial_1
+        value:
+          name: "Water meter dial"
+        confidence:
+          name: "Water meter confidence"
+        angle:
+          name: "Water meter needle angle"
+```
+
+- **analog_gauge_reader_id** (*Optional*, [ID](/guides/configuration-types/#id)): The reader to read from.
+  May be omitted, because only one reader can be configured.
+- **value** (*Optional*, [Sensor](/components/sensor/)): The combined value of all dials.
+- **dials** (*Optional*, list): Sensors for individual dials. Each dial can appear once here; a second entry for the
+  same dial is rejected, because both would try to publish to the same sensors.
+  - **dial** (**Required**, string): The `id` of a dial in the reader's `dials` list.
+  - **value** (*Optional*, [Sensor](/components/sensor/)): The dial value. In `stacked_digits` mode it publishes
+    the dial's digit instead.
+  - **confidence** (*Optional*, [Sensor](/components/sensor/)): How confident the detection is, from 0 to 1.
+  - **angle** (*Optional*, [Sensor](/components/sensor/)): The detected needle angle, in degrees, where 0 is north.
+
+All four sensors default to `state_class: measurement`, so Home Assistant keeps long-term statistics for them. The
+angle sensor is in degrees with one decimal place, and the confidence sensor has two.
+
+## How a dial is read
+
+Every dial starts from the same decoded frame. The reader crops its rectangle, turns the crop into one byte per
+pixel and passes it to the needle detector, which returns the angle. The picture follows one dial through the
+stages:
+
+<Image src="/images/gauge_needle_detector_process.png" width={1250} height={225} layout="constrained" alt="The five stages of one dial: raw RGB crop, colour-distance map, contrast stretch, top-hat filter and the detected needle" />
+
+1. **Raw crop** - the dial rectangle taken from the decoded frame.
+2. **Colour map** - with `target_color` set, each pixel becomes its distance from that colour, so the needle
+   becomes the darkest part of the picture and `color_tolerance` stretches the useful part of the range. Without
+   `target_color`, the reader takes `process_channel` instead. `auto_contrast` and `contrast` then run on either
+   result, before the detection.
+3. **Contrast stretch** - evens out uneven lighting across the crop. The histogram is clipped so a large flat
+   background cannot flatten the needle.
+4. **Top-hat** - removes the slowly changing background and keeps structures about the size of a needle.
+5. **Processed needle** - the detector follows rays from the crop centre between `min_scan_radius` and
+   `max_scan_radius`, ignores the centre circle (`deadzone_diameter`) and keeps the ray with the best score.
+
+Steps 3 and 4 run only for the algorithms that use the filtered image. `legacy` reads step 2 directly, which makes
+it the cheapest option and the one that suffers most from shadows and glare.
+
+## Requirements and behaviour
+
+- The camera must deliver JPEG frames. Use `pixel_format: JPEG`, or set `jpeg_quality` on a camera with another
+  pixel format so the frames are converted to JPEG for the reader.
+- The `camera_decoder` must output `RGB888` or `GRAYSCALE`. Dials that use `target_color` or a colour
+  `process_channel` need `RGB888`.
+- The dial crop must be centred on the dial: the detection measures the angle from the centre of the crop, and
+  `deadzone_diameter` and the scan radii are in crop pixels.
+- All dials share one decoded frame. A frame is decoded once per update and every dial crops out of that buffer, so
+  adding dials does not add decodes.
+- The frame size is taken from the camera's `resolution`, after the decoder's `rotation`. A `camera_window` that
+  makes the frames smaller is supported as long as the crops still fit.
+- Every dial needs a non-zero angle sweep, unless it uses a calibration map or the full `0` to `360` range.
+- Dial ids must be unique; they name the dial in the logs and in the sensor platform.
+- `target_color` cannot be combined with a colour `process_channel`. It can be combined with `auto_contrast` and
+  `contrast`, which run on its result.
+- `stacked_digits` requires dial scales that are consecutive powers of ten (`1`, `10`, `100`, ...).
+- A frame is dropped when a crop does not fit the decoded frame or when a dial has no needle. The sensors keep
+  their previous state instead of publishing a made-up value.
+- The component shows a warning after a dropped or empty frame, or when a requested frame does not arrive within
+  5 seconds. The next good frame clears it.
+- The decoded frame is large, so use a board with PSRAM. The component logs a warning at startup when it finds
+  none.
+- Each update requests a frame, unless an earlier request is still waiting. The camera's `capture_delay` and its
+  `on_capture_start` and `on_capture_end` automations apply to it, so they can switch on a flash or light. They do
+  not run while a camera stream is active.
+- The delay counts towards the 5 second frame timeout, so keep `capture_delay` well below 5 seconds.
+- The reader's frames are not sent to API clients.
+
+## See Also
+
+- [ESP32 Camera](/components/esp32_camera/)
+- [Sensor Filters](/components/sensor/#sensor-filters)
