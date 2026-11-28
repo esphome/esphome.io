@@ -216,8 +216,8 @@ canopen:
               size: 2
 ```
 
-The state of a monitored node is also available in lambdas. A node id that isn't in `heartbeat_clients` (or a
-`register_node()` call) reads like an offline node, so check the id when a node never shows up:
+The state of a monitored node is also available in lambdas. A node id that isn't in `heartbeat_clients` reads like an
+offline node, so check the id when a node never shows up:
 
 ```cpp
 // true while heartbeats arrive in time (false for a node that isn't monitored)
@@ -402,7 +402,8 @@ Configuration variables:
 Sends an NMT command, as an NMT master. A command to this node's own id, or to all nodes, applies to this node too;
 a `reset_node` to all nodes restarts this node once the command is sent, waiting at most about 140 ms for it: if the
 bus is blocked, this device restarts anyway and the other nodes may not get the command. A command that can't be sent
-is logged as a warning (see [NMT Master](#nmt-master) for when).
+is logged as a warning (see [NMT Master](#nmt-master) for when), and the automation goes on: to react to a failure,
+call `send_nmt()` in a lambda and check its return value.
 
 ```yaml
 on_...:
@@ -501,7 +502,8 @@ loop pass (also in an `on_boot` automation that runs right after setup).
 - `true` when the change is accepted. It is applied right away, except when called from an automation the component's
   processing runs (`on_node_event`, `on_nmt_state_change`): there it is applied in the next pass, so `get_nmt_state()`
   still returns the old state just after the call.
-- `false` without `node_id`, and while a previous command for this node isn't applied yet.
+- `false` without `node_id`, and while a previous command for this node isn't applied yet (with a warning in the
+  log).
 
 ```cpp
 id(my_canopen).get_nmt_state() == canopen::NMTState::NMT_STATE_OPERATIONAL;
