@@ -54,7 +54,8 @@ Paths are absolute, start with `/`, and use `/` between names. A method that can
 `filesystem::FsError`, which is `filesystem::FsError::FS_ERROR_NONE` on success.
 
 - `open(path, flags)`: open a file. Returns a `filesystem::File`, which is closed when it goes out of scope.
-  Check it with `if (file)`; when it is not open, `last_error()` says why. `flags` is a combination of:
+  Check it with `if (file)`; when it is not open, `last_error()` says why. A file kept open stops being open
+  when the media is removed or changed, so `if (!file)` also tells when to open it again. `flags` is a combination of:
   - `filesystem::OPEN_READ`, `filesystem::OPEN_WRITE`: open for reading, writing or both. At least one is needed.
   - `filesystem::OPEN_CREATE`: create the file if it does not exist.
   - `filesystem::OPEN_TRUNCATE`: empty the file if it exists.
@@ -71,12 +72,12 @@ Paths are absolute, start with `/`, and use `/` between names. A method that can
   seconds.
 - `is_mounted()`, `mount()`, `unmount()`: check, or change, whether the filesystem is mounted. Calls mount it
   when needed, so `mount()` is only needed to try again after a failed mount; `unmount()` closes all open
-  files, for example before the media is removed.
+  files, for example before the media is removed, and returns the first error from closing them.
 
 A `filesystem::File` has `read(buf, len)`, `write(buf, len)`, `seek(offset)`, `tell()`, `size()`, `sync()`,
 `truncate()` and `close()`. `read`, `write` and `seek` return a byte count or position, or a negative
 `FsError`. Call `sync()` to make sure written data is stored on the media without closing the file. Open files
-are closed when the device restarts.
+are closed when the device restarts. A file can hold at most 2 GiB - 1 bytes.
 
 ```yaml
 interval:
@@ -96,7 +97,9 @@ interval:
 ```
 
 The filesystem is not safe to use from more than one task at a time; use it from the main loop, as lambdas
-and automations do.
+and automations do. A call made from a [logger `on_message`](/components/logger/#logger-on_message) automation while the
+filesystem mounts or formats fails with `filesystem::FsError::FS_ERROR_BUSY`, and the line it would have
+written is lost.
 
 ## Timing
 
