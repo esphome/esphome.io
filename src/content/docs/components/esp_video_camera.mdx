@@ -1,0 +1,135 @@
+---
+title: "ESP-Video Camera"
+description: "Instructions for setting up an ESP-Video (V4L2) camera on the ESP32-P4 in ESPHome."
+---
+
+The `esp_video_camera` [camera](/components/camera/) platform exposes the camera of an **ESP32-P4** to Home Assistant
+as a native camera entity, using Espressif's `esp_video` (V4L2) framework. It works with auto-detected MIPI-CSI
+sensors (SC202CS, OV5647, SC2336) through the hardware JPEG encoder, and with USB-UVC cameras on the USB-OTG port.
+
+Requires an ESP32-P4 with the ESP-IDF framework (version 5.4 or later) and [PSRAM](/components/psram/): a single
+1280x720 capture buffer is already 1.8 MB, well past what internal RAM can hold. A MIPI-CSI sensor is probed over
+[I²C](/components/i2c/), so that bus has to be configured as well; a USB camera is not on any bus and needs none.
+
+## Configuration
+
+```yaml
+esp_video_camera:
+  name: "ESP32-P4 Camera"
+  i2c_id: bus_a
+```
+
+## Configuration Variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID for code generation. At least
+  one of **id** and **name** must be specified.
+- **name** (*Optional*, string): The name of the camera entity. At least one of **id** and **name** must be
+  specified.
+- **i2c_id** (*Optional*, [ID](/guides/configuration-types/#id)): The [I²C](/components/i2c/) bus the MIPI-CSI sensor
+  is probed on (SCCB). Optional only because a USB camera sits on no bus and needs none; every other device has to
+  name one, and there is no fallback to a single configured bus.
+- **device** (*Optional*, string): Frame source. Defaults to `jpeg`.
+  - `jpeg`: the hardware JPEG encoder. Works with every auto-detected MIPI sensor.
+  - `uvc` / `uvc0` … `uvc9`: a USB-UVC camera; see [USB Cameras](#usb-cameras).
+  - `/dev/videoN`: an explicit V4L2 device path. `esp_video` numbers USB-UVC cameras `/dev/video40` upwards, so
+    such a path counts as a USB camera too.
+- **resolution** (*Optional*, string): Capture resolution. Defaults to `auto`, which uses the detected sensor's
+  native format. For a MIPI-CSI sensor any other value needs `sensor_model` beside it; see
+  [Sensors and Resolutions](#sensors-and-resolutions). A USB camera carries its own format list and is resized at
+  runtime, so it takes a resolution on its own.
+- **sensor_model** (*Optional*, string): The MIPI-CSI sensor on the board: `sc202cs` (alias `sc2356`), `ov5647` or
+  `sc2336`. Only needed in order to ask for a specific `resolution`; detection does not use it. Naming `sc202cs`
+  also applies a colour tuning file measured on real boards in place of the sensor's stock one.
+- **jpeg_quality** (*Optional*, int): `1` to `100` for the hardware JPEG encoder, where **higher is better**.
+  Defaults to `80`, the encoder's own default.
+- **max_framerate** (*Optional*, float): Maximum frames per second delivered to Home Assistant, `0.1` to `60`.
+  Defaults to `10`.
+- **xclk_pin** (*Optional*, pin): The pin to generate the sensor clock on. Naming one is what turns the clock on,
+  so leave it out (or give `-1` / `NO_CLOCK`) on a board that already drives the sensor clock itself, which most
+  ESP32-P4 boards do. See [Sensor Clock](#sensor-clock).
+- **xclk_frequency** (*Optional*, frequency): Sensor clock frequency, `1MHz` to `40MHz`. Defaults to `24MHz`. Only used
+  when `xclk_pin` names a pin.
+- **usb_peripheral_map** (*Optional*, int): Which of the ESP32-P4's two USB controllers the board wires its host
+  connector to, as a bit mask from `0` to `0xFF`. Defaults to `0`, the High-Speed one, which is right for most
+  boards. Only used by a USB camera.
+- **icon** (*Optional*, icon): Manually set the icon to use for the camera in the frontend.
+- **internal** (*Optional*, boolean): Mark this component as internal. Internal components will not be exposed to
+  the frontend (like Home Assistant). Only specifying an `id` without a `name` will implicitly set this to true.
+- **disabled_by_default** (*Optional*, boolean): If true, then this entity should not be added to any client's
+  frontend (usually Home Assistant) without the user manually enabling it. Defaults to `false`.
+- **entity_category** (*Optional*, string): The category of the entity. See the
+  [Home Assistant entity docs](https://developers.home-assistant.io/docs/core/entity/#generic-properties) for a list
+  of available options. Set to `""` to remove the default entity category.
+
+> [!IMPORTANT]
+> `jpeg_quality` is not the `1`–`63` scale of the [ESP32 Camera](/components/esp32_camera/) component, where lower
+> is better. Here it is V4L2's `1`–`100`, where higher is better; a value around `10` gives a heavily blocked
+> picture of a few tens of kilobytes.
+
+> [!NOTE]
+> At an ESP-IDF log level of `DEBUG` or `VERBOSE` (`esp32: framework: log_level:`), `esp_video`'s image tuning
+> prints several lines for every frame, which buries the camera's own log lines and slows it down badly. ESPHome
+> warns about this at build time. Keep that level at `ERROR`; the [Logger](/components/logger/) level is a separate
+> setting and can stay at `DEBUG`.
+
+## Sensors and Resolutions
+
+A MIPI-CSI sensor's output format is fixed when the firmware is built, so `resolution` is resolved at compile time
+rather than negotiated on the device. Asking for one therefore means naming the sensor as well, and only the formats
+that sensor really has are accepted:
+
+| `sensor_model` | Resolutions |
+| --- | --- |
+| `sc202cs` (alias `sc2356`) | 1280x720, 1600x900, 1600x1200 |
+| `ov5647` | 800x640, 800x800, 800x1280, 1280x960, 1920x1080 |
+| `sc2336` | 640x480, 800x800, 1024x600, 1280x720, 1920x1080 |
+
+The aliases `VGA` / `480P`, `720P` and `1080P` may be used in place of `WIDTHxHEIGHT` where the sensor has that
+size. `QVGA` is accepted too, but none of these three sensors has a 320x240 format, so it is only of use to a USB
+camera.
+
+```yaml
+esp_video_camera:
+  name: "ESP32-P4 Camera"
+  i2c_id: bus_a
+  sensor_model: sc202cs
+  resolution: 1280x720
+```
+
+Leaving `resolution` at `auto` needs no `sensor_model` and works with whichever of the three sensors is on the board.
+
+## Sensor Clock
+
+Most ESP32-P4 boards drive the sensor clock from an on-board oscillator, so `xclk_pin` is usually left out. When it
+is set, the clock is generated on the top LEDC timer (timer 3) and channel. The [LEDC](/components/output/ledc/)
+output component pairs its channels onto timers, so channels 6 and 7 share that timer: a `ledc` output on one of
+them, or one that would be given one of them automatically, is rejected at validation time. Give such outputs a
+`channel` below 6, or remove `xclk_pin` if the board drives the clock itself.
+
+```yaml
+esp_video_camera:
+  name: "ESP32-P4 Camera"
+  i2c_id: bus_a
+  xclk_pin: GPIOXX
+```
+
+## USB Cameras
+
+A USB-UVC camera needs no I²C bus. Naming one in `device` is the whole of it: the USB host and the UVC driver are
+compiled in for a `uvc` alias or a `/dev/video4N` path, and left out for anything else.
+
+```yaml
+esp_video_camera:
+  name: "USB Camera"
+  device: uvc
+```
+
+> [!WARNING]
+> A USB camera cannot be used in the same configuration as the [USB Host](/components/usb_host/) component, which
+> [USB UART](/components/usb_uart/) also pulls in: both want to own the USB host library, and the result is a boot
+> loop rather than a clear failure. A MIPI-CSI camera does not touch it and is free to sit beside them.
+
+## See Also
+
+- [Camera Component](/components/camera/)
+- [ESP32 Camera Component](/components/esp32_camera/)
