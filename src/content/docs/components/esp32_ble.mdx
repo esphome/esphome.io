@@ -108,6 +108,29 @@ esp32_ble:
 
 - **use_psram** (*Optional*, boolean): Requests that the Bluetooth stack allocate its memory buffers from PSRAM instead of internal RAM, freeing approximately 40 kB for other uses. Defaults to `false`. Requires PSRAM to be configured.
 
+- **classic_bt** (*Optional*, boolean): Enable the Bluetooth Classic controller alongside BLE on the original ESP32
+  with a local controller, using either the ESP-IDF or Arduino framework. Defaults to `false`.
+
+- **classic_max_acl_connections** (*Optional*, integer): Maximum number of simultaneous Bluetooth Classic BR/EDR ACL
+  connections, from `1` to `7`. Defaults to `1`. Requires `classic_bt: true`.
+
+Components use this controller to initiate Bluetooth Classic connections.
+
+In dual mode, Bluedroid shares up to nine slots between BLE and Classic. ESPHome reserves one slot for
+BLE advertising and scanning. Choose limits so that `max_connections + classic_max_acl_connections + 1`
+is at most `9`. For example, three BLE connections and two Classic connections use six slots.
+
+```yaml
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+
+esp32_ble:
+  classic_bt: true
+  classic_max_acl_connections: 2
+```
+
 ## Bluetooth Switch
 
 The [Bluetooth Switch](/components/switch/ble/) exposes the BLE interface as a switch, so it can be turned on and off
@@ -117,6 +140,7 @@ from Home Assistant without writing a template switch around the actions below. 
 ## `ble.disable` Action
 
 This action turns off the BLE interface on demand.
+In dual mode, it also stops Bluetooth Classic and closes active Classic connections.
 
 ```yaml
 on_...:
