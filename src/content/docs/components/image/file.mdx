@@ -57,6 +57,11 @@ image:
 - **transparency** (*Optional*): If set the alpha channel of the input image will be taken into account. The possible
   values are `opaque` (default), `chroma_key` and `alpha_channel`. Binary images do not support `alpha_channel`. See
   the discussion on transparency in the [image component](/components/image/#transparency-options).
+- **background_color** (*Optional*, color): An RGB background color to composite the image onto at compile time,
+  specified as `0xRRGGBB`, `#RRGGBB`, `#RGB`, or a CSS color name. Useful for SVGs and transparent PNGs when using
+  `transparency: opaque` (fills transparent regions instead of leaving them black) or `transparency: chroma_key`
+  (blends semi-transparent anti-aliased edges onto the target background color). Cannot be used with `type: BINARY` or
+  `transparency: alpha_channel`.
 - **invert_alpha** (*Optional*, boolean): Applicable to binary and grayscale only, this will invert the colors, i.e. make black white and vice versa. Useful for e-ink displays. Defaults to `false`.
 
 - **dither** (*Optional*): Specifies which dither method is used to process the image, only used for `BINARY` or `RGB111` type images. Defaults to `NONE`. You can read more about it on the [Pillow documentation](https://pillow.readthedocs.io/en/stable/reference/Image.html?highlight=Dither#PIL.Image.Image.convert) and on [Wikipedia](https://en.wikipedia.org/wiki/Dither).
