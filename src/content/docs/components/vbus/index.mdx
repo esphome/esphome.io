@@ -1,6 +1,6 @@
 ---
 title: "VBus Component"
-description: "Receive telemetry from solar thermal controllers using the VBus protocol."
+description: "Receive telemetry and read or change settings on solar thermal controllers using VBus."
 ---
 
 import { Image } from 'astro:assets';
@@ -8,8 +8,7 @@ import resolVbusAdapterSchematicImg from '../images/resol_vbus_adapter_schematic
 import vbusSerialOptocouplerImg from '../images/vbus_serial_optocoupler.png';
 
 The `vbus` component connects ESPHome to solar thermal controllers made by RESOL and sold under names such as
-Viessmann, Kioto and Wagner. Choose a built-in decoder for the measurements the controller broadcasts, or decode a
-documented custom packet.
+Viessmann, Kioto and Wagner. Use it to receive broadcasts or to send commands with a transmit-capable interface.
 
 <Image
   src="/images/resol_deltasol_bs_plus.jpg"
@@ -24,11 +23,12 @@ documented custom packet.
 | What You Want To Do | Start Here |
 | --- | --- |
 | Receive temperatures, pump states and energy | [Receive only](#receive-only) |
+| Read settings or change them explicitly | [Receive and transmit](#receive-and-transmit) |
 | Find the entities supported by your controller | [Supported models](#supported-models) |
 
 ## Hardware Connection
 
-The device must be connected via a [UART bus](/components/uart/) supporting the receiving line only. The UART bus
+For status reading, connect the device via a [UART bus](/components/uart/) with a receiving line. The UART bus
 must be configured at the same speed of the module which is by default 9600bps. The controller outputs data every
 second.
 
@@ -44,6 +44,14 @@ An electrically isolated version using an opto-coupler:
 
 Another approach, with PCB design ready to be manufactured [can be found
 here](https://github.com/FatBeard/vbus-arduino-library/tree/master/pcb).
+
+Optional transmission requires a VBus transmitter circuit as well as the receiver. A UART TX pin must never be
+connected directly to the bus. The open-source [isolated VBus interface](https://github.com/labodj/resol-vbus-interface)
+provides KiCad sources, fabrication files, a BOM and
+[circuit notes](https://github.com/labodj/resol-vbus-interface/blob/main/docs/circuit.md).
+Its [assembly guide](https://github.com/labodj/resol-vbus-interface/blob/main/docs/assembly.md) covers startup checks
+and the TX signal polarity. See the project's
+[validation notes](https://github.com/labodj/resol-vbus-interface/blob/main/docs/validation.md) for the tested setup.
 
 > [!WARNING]
 > Do not connect the GND pin of your module with the ground of Resol unit as that may damage the output port of it.
@@ -94,6 +102,14 @@ decoder.
 
 Use [custom binary sensors](/components/vbus/receive/#custom-vbus-binary-sensors) to decode documented status bits.
 
+## Receive And Transmit
+
+To request a parameter, connect an [RX/TX interface](#hardware-connection), configure the controller address,
+and call `vbus.send_datagram` from an automation.
+The [transmit guide](/components/vbus/transmit/) shows two buttons reading different settings on the same bus.
+For [P2 value transactions](/components/vbus/transmit/#p2-value-transactions), request a read or a verified write.
+Check the command and parameter IDs for your controller and firmware.
+
 ## Supported Models
 
 Every model below has an RX decoder.
@@ -127,6 +143,7 @@ disable the UART
   connect to the device.
 - **on_datagram** (*Optional*, [Automation](/automations/)): An automation to run when a valid VBus P2 datagram is
   received. See [P2 Datagram Automation](/components/vbus/receive/#p2-datagram-automation) for its arguments.
+- **transmit** (*Optional*, mapping): Enable the [generic transmitter](/components/vbus/transmit/).
 
 > [!NOTE]
 > Functionality of the sensors depends on the type of the device and the scheme arrangement of the hydraulic
