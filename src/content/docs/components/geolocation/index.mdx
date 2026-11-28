@@ -1,56 +1,63 @@
 ---
-description: "Instructions for setting up GNSS receivers (GPS, Galileo, GLONASS, BeiDou) in ESPHome."
-title: "GNSS Component"
+description: "Instructions for reading position, speed and time from GNSS receivers (GPS, Galileo, GLONASS, BeiDou) and other location sources in ESPHome."
+title: "Geolocation Component"
 ---
 
 import APIRef from '@components/APIRef.astro';
 
-The `gnss` hub component reads position, speed and time from GNSS receivers (GPS, Galileo, GLONASS, BeiDou and
-others). Each receiver is set up as a `gnss` platform for the protocol it speaks, and its values are read with
-`gnss` sensors and the [GNSS time source](/components/time/gnss/).
+The `geolocation` hub component reads position, speed and time from a location source, today a GNSS receiver (GPS,
+Galileo, GLONASS, BeiDou and others). Each source is set up as a `geolocation` platform for the protocol it speaks,
+and its values are read with `geolocation` sensors and the
+[geolocation time source](/components/time/geolocation/).
 
 ```yaml
 # Example configuration entry
-gnss:
+geolocation:
   - platform: nmea
     id: gnss_receiver
 
 sensor:
-  - platform: gnss
+  - platform: geolocation
     type: latitude
     name: "Latitude"
-  - platform: gnss
+  - platform: geolocation
     type: longitude
     name: "Longitude"
-  - platform: gnss
+  - platform: geolocation
     type: altitude
     name: "Altitude"
 
 time:
-  - platform: gnss
+  - platform: geolocation
 ```
 
 ## Platforms
 
-- [NMEA](/components/gnss/nmea/): any receiver that sends standard NMEA 0183 sentences.
+- [NMEA](/components/geolocation/nmea/): any GNSS receiver that sends standard NMEA 0183 sentences.
 
 ## Configuration Variables
 
 ### Base Configuration
 
-These options are shared by all `gnss` platforms.
+These options are shared by all `geolocation` platforms.
 
 - **id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of this receiver, used by the sensors and
   the time source when there is more than one receiver.
 - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often the sensors publish the
   latest values. Defaults to `20s`.
+- **field_age** (*Optional*, boolean): Compile in `get_age()` for [lambdas](#using-geolocation-data-in-lambdas),
+  which costs 4 bytes of RAM per field. Defaults to `false`.
+- **millisecond** (*Optional*, boolean): Compile in the `millisecond` of the time for lambdas. Defaults to `false`.
+- **geoid_separation** (*Optional*, boolean): Compile in the geoid separation for lambdas. Defaults to `false`.
+
+Components that need one of these turn it on themselves.
 
 ## Sensor
 
 ```yaml
 # Example configuration entry
 sensor:
-  - platform: gnss
+  - platform: geolocation
     type: speed
     name: "Speed"
 ```
@@ -67,14 +74,14 @@ sensor:
   - `satellites`: Number of satellites used in the solution.
   - `hdop`: Horizontal dilution of precision.
 
-- **gnss_id** (*Optional*, [ID](/guides/configuration-types/#id)): The receiver to read from. Only needed when
+- **geolocation_id** (*Optional*, [ID](/guides/configuration-types/#id)): The receiver to read from. Only needed when
   there is more than one.
 - All other options from [Sensor](/components/sensor/).
 
 A sensor has no value (`NaN`) until the receiver has sent it. Each platform describes when values are kept or
 cleared after the fix is lost.
 
-## Using GNSS Data in Lambdas
+## Using Geolocation Data in Lambdas
 
 `id(gnss_receiver).get_data()` returns the latest values of a receiver. Position and the other measurements are
 stored as integers scaled by a power of ten, which keeps the full precision of the receiver; the methods in the table
@@ -86,7 +93,7 @@ interval:
     then:
       - lambda: |-
           const auto &data = id(gnss_receiver).get_data();
-          if (data.has(gnss::GNSS_FIELD_LOCATION)) {
+          if (data.has(geolocation::GEOLOCATION_FIELD_LOCATION)) {
             ESP_LOGI("main", "Position: %.7f, %.7f", data.latitude_e7 * 1e-7, data.longitude_e7 * 1e-7);
           }
 ```
@@ -102,18 +109,25 @@ interval:
 | `satellites`                                     |                                                    | Satellites used in the solution             |
 | `year`, `month`, `day`                           |                                                    | UTC date                                    |
 | `hour`, `minute`, `second`                       |                                                    | UTC time                                    |
+| `millisecond`                                    |                                                    | Milliseconds of the UTC time                |
+| `geoid_separation_e3`                            | `geoid_separation()`                               | Ellipsoid to sea level, meters times 1000   |
 
 `data.has(field)` is true while the receiver has a value for that field, and `data.is_updated(field)` is true when
-the last message set it. The fields are `gnss::GNSS_FIELD_LOCATION`, `gnss::GNSS_FIELD_SPEED`,
-`gnss::GNSS_FIELD_COURSE`, `gnss::GNSS_FIELD_ALTITUDE`, `gnss::GNSS_FIELD_SATELLITES`, `gnss::GNSS_FIELD_HDOP`,
-`gnss::GNSS_FIELD_TIME`, `gnss::GNSS_FIELD_DATE`, `gnss::GNSS_FIELD_HORIZONTAL_ACCURACY` and
-`gnss::GNSS_FIELD_VERTICAL_ACCURACY`. Not every platform sends every field.
+the last message set it. The fields are `LOCATION`, `SPEED`, `COURSE`, `ALTITUDE`, `SATELLITES`, `HDOP`, `TIME`,
+`DATE`, `HORIZONTAL_ACCURACY`, `VERTICAL_ACCURACY` and `GEOID_SEPARATION`, each with the
+`geolocation::GEOLOCATION_FIELD_` prefix, for example `geolocation::GEOLOCATION_FIELD_LOCATION`. Not every platform
+sends every field, and `millisecond` and the geoid separation are there only with `millisecond: true` and
+`geoid_separation: true`.
+
+With `field_age: true`, `id(gnss_receiver).get_age(field)` gives the milliseconds since a message last set the
+field, or `UINT32_MAX` if none has.
 
 ## Moving From `gps`
 
-The `gps` component is deprecated and will be removed in 2027.6.0. It becomes a `gnss` receiver with
-`platform: nmea`, each of its sensors becomes a `gnss` sensor with a `type`, and the time source becomes
-`platform: gnss`. The values do not change.
+The `gps` component is deprecated and will be removed in 2027.6.0. It becomes a `geolocation` receiver with
+`platform: nmea`, each of its sensors becomes a `geolocation` sensor with a `type`, and the time source becomes
+`platform: geolocation`. The values do not change, and `field_age`, `millisecond` and `geoid_separation` move to
+the receiver.
 
 ```yaml
 # Before
@@ -129,28 +143,28 @@ time:
 
 ```yaml
 # After
-gnss:
+geolocation:
   - platform: nmea
 
 sensor:
-  - platform: gnss
+  - platform: geolocation
     type: latitude
     name: "Latitude"
-  - platform: gnss
+  - platform: geolocation
     type: longitude
     name: "Longitude"
 
 time:
-  - platform: gnss
+  - platform: geolocation
 ```
 
 ### Lambdas
 
-`get_tiny_gps()` is gone with the TinyGPS++ library; `get_data()` of the `gnss` receiver gives the same values. A
-lambda that already uses `get_data()` of `gps` only needs the receiver's ID and `gnss::GNSS_FIELD_*` in place of
-`gps::GPS_FIELD_*`.
+`get_tiny_gps()` is gone with the TinyGPS++ library; `get_data()` of the `geolocation` receiver gives the same
+values. A lambda that already uses `get_data()` or `get_age()` of `gps` only needs the receiver's ID and
+`geolocation::GEOLOCATION_FIELD_*` in place of `gps::GPS_FIELD_*`.
 
-| `gps` lambda                                      | `gnss` lambda                                                |
+| `gps` lambda                                      | `geolocation` lambda                                         |
 | ------------------------------------------------- | ------------------------------------------------------------ |
 | `get_tiny_gps().location.lat()`                   | `get_data().latitude()`, or `latitude_e7` for full precision |
 | `get_tiny_gps().location.lng()`                   | `get_data().longitude()`, or `longitude_e7`                  |
@@ -160,11 +174,11 @@ lambda that already uses `get_data()` of `gps` only needs the receiver's ID and 
 | `get_tiny_gps().satellites.value()`               | `get_data().satellites`                                      |
 | `get_tiny_gps().hdop.hdop()`                      | `get_data().hdop()`                                          |
 | `get_tiny_gps().date.year()`, `.time.hour()`, ... | `get_data().year`, `.hour`, ...                              |
-| `get_tiny_gps().location.isValid()`               | `get_data().has(gnss::GNSS_FIELD_LOCATION)`                  |
+| `get_tiny_gps().location.isValid()`               | `get_data().has(geolocation::GEOLOCATION_FIELD_LOCATION)`                  |
 
 ## See Also
 
 - [Sensor Filters](/components/sensor/#sensor-filters)
-- [NMEA GNSS platform](/components/gnss/nmea/)
-- [GNSS Time Source](/components/time/gnss/)
-- <APIRef text="gnss.h" path="gnss/gnss.h" />
+- [NMEA platform](/components/geolocation/nmea/)
+- [Geolocation Time Source](/components/time/geolocation/)
+- <APIRef text="geolocation.h" path="geolocation/geolocation.h" />

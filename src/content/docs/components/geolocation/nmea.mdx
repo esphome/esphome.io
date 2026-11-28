@@ -1,5 +1,5 @@
 ---
-description: "Instructions for setting up NMEA GNSS receivers in ESPHome."
+description: "Instructions for setting up NMEA GNSS receivers as a geolocation source in ESPHome."
 title: "NMEA GNSS Receiver"
 ---
 
@@ -7,8 +7,8 @@ import Figure from '@components/Figure.astro';
 import gpsFullImg from '../images/gps-full.jpg';
 import APIRef from '@components/APIRef.astro';
 
-The `nmea` [GNSS](/components/gnss/) platform reads receivers that send the standard NMEA 0183 sentences, which
-almost every GNSS module does by default.
+The `nmea` [geolocation](/components/geolocation/) platform reads GNSS receivers that send the standard NMEA 0183
+sentences, which almost every GNSS module does by default.
 
 The platform reads the GGA and RMC sentences from any talker (`GP`, `GN`, `GA`, `GB`, ...). Position, altitude,
 speed, course and time are taken only from sentences with a fix, so until the first fix those sensors have no value
@@ -30,14 +30,14 @@ uart:
   rx_pin: GPIOXX
   baud_rate: 9600
 
-gnss:
+geolocation:
   - platform: nmea
 
 sensor:
-  - platform: gnss
+  - platform: geolocation
     type: latitude
     name: "Latitude"
-  - platform: gnss
+  - platform: geolocation
     type: longitude
     name: "Longitude"
 ```
@@ -46,10 +46,10 @@ sensor:
 
 - **uart_id** (*Optional*, [ID](/guides/configuration-types/#id)): The UART bus of the receiver. Only needed when
   there is more than one.
-- All options from the [GNSS base configuration](/components/gnss/#base-configuration).
+- All options from the [geolocation base configuration](/components/geolocation/#base-configuration).
 
 ## See Also
 
-- [GNSS Component](/components/gnss/)
+- [Geolocation Component](/components/geolocation/)
 - <APIRef text="nmea_gnss.h" path="nmea/nmea_gnss.h" />
 - <APIRef text="nmea_parser.h" path="nmea/nmea_parser.h" />
