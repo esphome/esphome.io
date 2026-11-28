@@ -1,0 +1,117 @@
+---
+description: "Instructions for setting up a filesystem on a storage device in ESPHome."
+title: "Filesystem Component"
+sidebar:
+  label: "Filesystem Component"
+---
+import APIRef from '@components/APIRef.astro';
+
+The `filesystem` component keeps files and directories on a [storage](/components/storage/) device. Each
+filesystem type is a platform of the `filesystem` component.
+
+```yaml
+storage:
+  - platform: ...
+    id: my_storage
+
+filesystem:
+  - platform: ...
+    id: my_files
+    storage_id: my_storage
+```
+
+The filesystem is mounted at boot when the storage device has media, and otherwise the first time it is used
+after media is inserted. When the media is changed, the filesystem mounts the new media the next time it is
+used. If the media holds no filesystem it can read, the failure is logged once and mounting is not tried again
+until the media is changed, or `mount()` or `format()` is called from a lambda.
+
+## Configuration variables
+
+These options are common to all filesystem platforms:
+
+- **storage_id** (*Optional*, [ID](/guides/configuration-types#id)): The storage device that holds the
+  filesystem. Only needed with more than one storage device.
+- **max_open_files** (*Optional*, int): The number of files that lambdas can have open at the same time, from 0
+  to 32. Defaults to `2`. Components that keep files open add the files they need to this, so it only needs to
+  cover your own lambdas.
+- **max_open_dirs** (*Optional*, int): The number of directories that lambdas can have open at the same time,
+  from 0 to 8. Defaults to `1`.
+- **format_if_mount_failed** (*Optional*, boolean): Create a new, empty filesystem when the media holds no
+  filesystem of this type. Defaults to `false`.
+
+  > [!WARNING]
+  > Formatting erases everything on the media, and on a large card blocks the device for several seconds.
+  > With this option set, a card that holds a different filesystem, or one that is damaged, is erased when it
+  > is inserted.
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+
+Each open file and directory takes some RAM, set aside at boot; keep the limits as low as your use allows.
+
+## Use in lambdas
+
+Paths are absolute, start with `/`, and use `/` between names. A method that can fail returns a
+`filesystem::FsError`, which is `filesystem::FsError::FS_ERROR_NONE` on success.
+
+- `open(path, flags)`: open a file. Returns a `filesystem::File`, which is closed when it goes out of scope.
+  Check it with `if (file)`; when it is not open, `last_error()` says why. `flags` is a combination of:
+  - `filesystem::OPEN_READ`, `filesystem::OPEN_WRITE`: open for reading, writing or both. At least one is needed.
+  - `filesystem::OPEN_CREATE`: create the file if it does not exist.
+  - `filesystem::OPEN_TRUNCATE`: empty the file if it exists.
+  - `filesystem::OPEN_APPEND`: start at the end of the file.
+  - `filesystem::OPEN_EXCLUSIVE`: with `OPEN_CREATE`, fail if the file already exists.
+- `open_dir(path)`: open a directory. Returns a `filesystem::Dir`, read with `read_next(info, name, name_size)`.
+- `stat(path, info)`: fill a `filesystem::FileInfo` with the `size`, modification time `mtime` (seconds since
+  1970) and `is_dir` of a file or directory.
+- `mkdir(path)`, `remove(path)`, `rename(from, to)`: create a directory, remove a file or empty directory, or
+  rename a file or directory.
+- `space(total, free)`: the size and free space of the filesystem in bytes. Counting the free space can take
+  several seconds on a large SD card.
+- `format()`: erase the media and create a new, empty filesystem. On a large SD card this takes several
+  seconds.
+- `is_mounted()`, `mount()`, `unmount()`: check, or change, whether the filesystem is mounted. Calls mount it
+  when needed, so `mount()` is only needed to try again after a failed mount; `unmount()` closes all open
+  files, for example before the media is removed.
+
+A `filesystem::File` has `read(buf, len)`, `write(buf, len)`, `seek(offset)`, `tell()`, `size()`, `sync()`,
+`truncate()` and `close()`. `read`, `write` and `seek` return a byte count or position, or a negative
+`FsError`. Call `sync()` to make sure written data is stored on the media without closing the file. Open files
+are closed when the device restarts.
+
+```yaml
+interval:
+  - interval: 60s
+    then:
+      - lambda: |-
+          auto file = id(my_files).open("/log.txt", filesystem::OPEN_WRITE | filesystem::OPEN_CREATE |
+                                                     filesystem::OPEN_APPEND);
+          if (!file) {
+            ESP_LOGW("log", "Open failed: %s",
+                     LOG_STR_ARG(filesystem::fs_error_to_string(id(my_files).last_error())));
+            return;
+          }
+          char line[32];
+          int len = snprintf(line, sizeof(line), "%.1f\n", id(temperature).state);
+          file.write(line, len);
+```
+
+The filesystem is not safe to use from more than one task at a time; use it from the main loop, as lambdas
+and automations do.
+
+## Timing
+
+Every filesystem call runs to the end before it returns, and other components wait while it does. Most calls
+on an SD card take a few milliseconds, but a card can pause for hundreds of milliseconds while it tidies its
+memory, so an occasional write takes up to about half a second. The device watchdog is kept fed meanwhile.
+To keep the device responsive:
+
+- Read and write in pieces of a few kilobytes, spread over several loop passes or interval runs, rather than
+  a whole large file in one lambda.
+- Avoid calling `space()` and `format()` often, and avoid seeking far into a large file repeatedly.
+- Keep a file open between writes and call `sync()` now and then, rather than opening and closing it for every
+  write. Each open looks up the path and each close updates the directory.
+
+## See Also
+
+- [Storage Component](/components/storage/)
+- <APIRef text="filesystem.h" path="filesystem/filesystem.h" />
