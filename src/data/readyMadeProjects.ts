@@ -29,7 +29,7 @@ export interface Device {
   imageAlt: string;
   /** Overrides the project type's `manifestRoot` for this device. */
   manifestRoot?: string;
-  /** Firmware page opened by Connect. */
+  /** Firmware page for this device. */
   installUrl?: string;
   /**
    * Overrides the project type's `advanced.githubUrl` when this device's YAML

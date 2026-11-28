@@ -104,10 +104,12 @@ function githubUrlsFor(type: ProjectType): (string | undefined)[] {
 
     {type.installPlacement !== "device" && (
       <Fragment>
-        <div class="question-prompt">Start the installation:</div>
+        <div class="question-prompt" data-install-prompt>
+          Start the installation:
+        </div>
         {type.devices.some((device) => device.installUrl) && (
           <a class="firmware-link projects-hidden" href={type.devices.find((device) => device.installUrl)?.installUrl}>
-            Connect
+            Visit firmware page
           </a>
         )}
         {type.devices.some((device) => !device.installUrl) && <esp-web-install-button />}
@@ -197,6 +199,9 @@ function githubUrlsFor(type: ProjectType): (string | undefined)[] {
       if (link) {
         link.classList.toggle("projects-hidden", !installUrl);
         if (installUrl) link.href = installUrl;
+        typeRoot.querySelector("[data-install-prompt]").textContent = installUrl
+          ? "Install from the Home Assistant firmware page:"
+          : "Start the installation:";
       }
       const manifestRoot = radio.dataset.manifestRoot || typeRoot.dataset.manifestRoot;
       // Only the type-level button is driven from here; per-device buttons carry
