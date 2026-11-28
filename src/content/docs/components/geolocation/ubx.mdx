@@ -1,0 +1,71 @@
+---
+description: "Instructions for setting up u-blox GNSS receivers with the UBX protocol as a geolocation source in ESPHome."
+title: "UBX GNSS Receiver"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `ubx` [geolocation](/components/geolocation/) platform reads u-blox receivers (u-blox 6, 7, M8, M9 and M10, for
+example the NEO-6M) in their binary UBX protocol instead of NMEA. Compared with the
+[NMEA](/components/geolocation/nmea/) platform it adds:
+
+- the receiver's own estimate of its horizontal and vertical accuracy in meters,
+- time that is used only once the receiver knows the current GPS leap seconds, so the clock is never set a few
+  seconds off right after a cold start,
+- setting the measurement rate and the dynamic model of the receiver.
+
+The receiver is configured on every start, so it needs no saved settings. The platform sets the output of the port it
+is connected to to UBX only (NMEA is switched off), keeping that port's baud rate and framing, turns on the navigation
+messages it reads, and sets the rate and model. It reads the
+receiver's firmware and protocol version first: from protocol 14.00 (u-blox 7 and later) it uses `NAV-PVT`, before
+that (u-blox 6) the older `NAV-POSLLH`, `NAV-VELNED` and `NAV-SOL`. If the receiver stops sending data, for example
+after a power cycle without a backup battery, the platform reports the values as unknown and configures it again.
+While the receiver has no fix, position, altitude, speed, course and accuracy have no value (`NaN`).
+
+A [UART bus](/components/uart/) with both RX and TX is required, since the configuration is sent to the receiver. Set
+`baud_rate` to the rate the receiver uses: 9600 for u-blox 6 and 7, 38400 for u-blox M10.
+
+```yaml
+# Example configuration entry
+uart:
+  rx_pin: GPIOXX
+  tx_pin: GPIOXX
+  baud_rate: 9600
+
+geolocation:
+  - platform: ubx
+    rate: 1Hz
+    dynamic_model: automotive
+
+sensor:
+  - platform: geolocation
+    type: latitude
+    name: "Latitude"
+  - platform: geolocation
+    type: longitude
+    name: "Longitude"
+  - platform: geolocation
+    type: horizontal_accuracy
+    name: "Horizontal Accuracy"
+```
+
+## Configuration Variables
+
+- **rate** (*Optional*, frequency): How often the receiver computes a solution, between `0.1Hz` and `25Hz`. u-blox 6
+  receivers reach up to 5 Hz, later ones 10 Hz or more; a receiver that cannot use the rate rejects it and keeps its
+  own. The UART has to carry the messages of every solution, so validation rejects a rate it cannot: up to 4 Hz at
+  9600 baud, 19 Hz at 38400. Defaults to `1Hz`.
+- **dynamic_model** (*Optional*): The motion the receiver should expect, which filters its position and speed. One of
+  `portable` (the receiver's default), `stationary`, `pedestrian`, `automotive`, `sea`, `airborne_1g`,
+  `airborne_2g` or `airborne_4g`. Not set by default, so the receiver keeps its own.
+- **uart_id** (*Optional*, [ID](/guides/configuration-types/#id)): The UART bus of the receiver. Only needed when
+  there is more than one.
+- All options from the [geolocation base configuration](/components/geolocation/#base-configuration).
+
+The firmware, hardware and protocol version of the receiver are logged when ESPHome prints its configuration.
+
+## See Also
+
+- [Geolocation Component](/components/geolocation/)
+- [u-blox receiver protocol descriptions](https://www.u-blox.com/en/product-resources)
+- <APIRef text="ubx_gnss.h" path="ubx/ubx_gnss.h" />
