@@ -1,0 +1,248 @@
+---
+title: "VBus Transmit Reference"
+description: "Send a P2 datagram from an ESPHome automation on a RESOL VBus."
+---
+
+## Optional Transmission
+
+To send a command, connect a [transmit-capable VBus interface](/components/vbus/#hardware-connection) and
+configure the controller address under `transmit`. Each automation chooses the command and parameter to send.
+ESPHome waits for that controller to grant access, sends the datagram on the same bus, and handles release.
+Receiving broadcasts requires only the [receive configuration](/components/vbus/#receive-only).
+
+These two buttons read the system scheme and temperature unit on a DeltaSol CS Plus running firmware 1.11.
+Use the address and parameter IDs documented for your own controller and firmware.
+
+```yaml
+vbus:
+  id: solar_bus
+  uart_id: resol_uart
+  transmit:
+    destination: 0x2211
+
+button:
+  - platform: template
+    name: "Read System Scheme"
+    on_press:
+      - vbus.send_datagram:
+          id: solar_bus
+          command: 0x0300
+          value_id: 1
+  - platform: template
+    name: "Read Temperature Unit"
+    on_press:
+      - vbus.send_datagram:
+          id: solar_bus
+          command: 0x0300
+          value_id: 10
+```
+
+Each hub holds one request at a time. If you press the second button while the first request is waiting or in flight,
+ESPHome rejects the second request with a warning and keeps the first. Press the second button again after the exchange
+finishes. The echo of its release can arrive while the next request is waiting.
+Use the [`on_datagram` trigger](/components/vbus/receive/#p2-datagram-automation) to handle controller replies.
+
+Set both `rx_pin` and `tx_pin` on the [serial UART](/components/uart/) used by the VBus hub. Use 9600 baud,
+8 data bits, no parity, and 1 stop bit. TCP and USB serial bridges can buffer traffic long enough for a grant to expire.
+On ESP32, VBus defaults the UART’s `rx_full_threshold` to `1` so the first byte of another
+transmission becomes visible promptly. If you set it explicitly, use `1`. The default ESPHome loop interval works
+with VBus. If you customize `esphome.loop_interval`, keep it at or below `50ms` when transmitting.
+
+### Transmit Configuration
+
+- **destination** (**Required**, integer): VBus address of the controller offering the grant.
+- **source** (*Optional*, integer): Client address. Defaults to `0x0020`. Choose an unused address distinct from
+  `destination`. Addresses must be nonzero with the high bit of each byte clear.
+- **lease_duration** (*Optional*, Time): Maximum time from receipt of a grant, including the 100 ms contention
+  period. Defaults to `500ms`; accepts `200ms` to `1000ms`. Choose a value shorter than your controller’s bus timeout.
+
+### `vbus.send_datagram` Action
+
+The action accepts these fields and evaluates templated values when the automation calls it.
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): VBus hub for this request.
+- **command** (**Required**, integer, templatable): P2 command with the high bit of each byte clear.
+  ESPHome manages the grant (`0x0500`) and release (`0x0600`) commands internally.
+- **value_id** (*Optional*, integer, templatable): 16-bit parameter identifier. Defaults to `0`.
+- **value** (*Optional*, integer, templatable): 32-bit raw data field. Defaults to `0`.
+- **expect_reply** (*Optional*, boolean, templatable): Wait for a reply before releasing the bus. Defaults to `true`.
+  Standard requests (`0x0200`, `0x0300`, `0x0400`) require `true`. Use `false` for documented one-way commands.
+
+The action returns immediately. The hub waits up to 10 seconds for a fresh grant. It checks for a quiet line and space
+for a full frame before sending. For standard requests it then waits for a valid `0x0100` reply from the controller
+to its own address with the matching parameter ID. For other commands with `expect_reply` enabled it waits for a
+valid P2 reply from the controller to its own address. A local echo does not qualify. A raw write needs a separate
+readback if you want to verify that the controller applied the value.
+
+Use one transmitting client on the bus and dedicate the UART to VBus. If the lease expires or the controller
+resumes transmission, the hub abandons the exchange. If an accepted action loses bus access before it sends,
+ESPHome logs a warning. After the UART reports a disconnection, transmission requires a fresh grant.
+
+## P2 Value Transactions
+
+Use `vbus.read_value` to read a raw parameter, or `vbus.write_value` to write a parameter and check its value by
+reading it back. Enable `transactions` under `transmit`. Both actions acquire and release the bus automatically.
+This example reads the system scheme on a DeltaSol CS Plus with firmware 1.11:
+
+```yaml
+vbus:
+  id: solar_bus
+  uart_id: resol_uart
+  transmit:
+    destination: 0x2211
+    transactions:
+      on_result:
+        - lambda: |-
+            if (status == vbus::TransactionStatus::TRANSACTION_STATUS_SUCCESS) {
+              ESP_LOGI("vbus", "Parameter %u returned %" PRIu32, value_id, value);
+            }
+
+button:
+  - platform: template
+    name: "Read System Scheme"
+    on_press:
+      - vbus.read_value:
+          id: solar_bus
+          value_id: 1
+```
+
+Only one request can be pending per hub. A second action invoked while the first waits for the bus or its result is
+rejected and receives no result. An accepted action stores its arguments when invoked and returns immediately.
+The component then waits for a fresh grant and sends the stored request on that hub.
+
+### Transaction Configuration
+
+- **response_timeout** (*Optional*, Time): Maximum wait per reply or verification-send phase. Defaults to `100ms`;
+  accepts `20ms` to `1000ms`. The remaining lease can limit how long an exchange takes.
+- **on_result** (*Optional*, [Automation](/automations/)): Runs on completion of an accepted operation, except at
+  shutdown. It provides the request `command` and `value_id` (both `uint16_t`), returned `value` (`uint32_t`),
+  `status` (`vbus::TransactionStatus`), and the numeric lease identifier `grant_id` (`uint32_t`, zero before
+  acquisition). Read `status` before using `value` as a measurement.
+
+| Status | Meaning |
+|---|---|
+| `TRANSACTION_STATUS_SUCCESS` | Valid read reply, or write ACK and matching readback. |
+| `TRANSACTION_STATUS_TIMEOUT` | A reply or verification send exceeded its timeout. |
+| `TRANSACTION_STATUS_BUS_LOST` | A usable grant could not be acquired or ended before completion. |
+| `TRANSACTION_STATUS_VERIFY_MISMATCH` | The verified read returned a different value, reported in `value`. |
+
+### Read And Write Actions
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): VBus hub with transactions enabled.
+- **value_id** (**Required**, integer, templatable): Raw 16-bit parameter identifier.
+- **value** (**Required** for writes, integer, templatable): Raw 32-bit value to set.
+- **command** (*Optional*, integer, templatable, writes only): `0x0200` (default) or `0x0400`, according to the
+  controller documentation.
+
+A read sends `0x0300`. Its matching reply comes from the controller to this client, with command `0x0100` and the
+requested parameter ID. A write sends the selected command once, waits for its ACK, and then reads the same ID.
+A matching readback confirms the value on the controller at that moment.
+
+If a write was sent but verification timed out or the bus was lost, the setting may already have changed. Read the
+value before deciding whether to try again. The transaction manager does not automatically repeat the write.
+
+## Periodic Polling And Queued Writes
+
+Add `polling` under `transmit.transactions` to request bus grants automatically and read a configured list of P2
+values. The existing RX sensors continue to receive broadcast telemetry. Use controller-specific value IDs;
+this scheduler does not discover IDs, create Home Assistant entities or validate controller-specific settings.
+
+```yaml
+vbus:
+  id: solar_bus
+  transmit:
+    destination: 0x2211
+    transactions:
+      polling:
+        value_ids: [1, 2, 3]
+        rx_value_ids: [3]
+        on_value:
+          - lambda: |-
+              ESP_LOGI("solar", "Value %u changed to %u", value_id, value);
+```
+
+The example IDs are placeholders. In this example, ID `3` is already covered by RX telemetry, so polling reads only
+IDs `1` and `2`. P1 broadcast fields do not have a universal mapping to P2 value IDs: specify `rx_value_ids` from the
+controller's documentation instead of assuming that matching numbers represent the same measurement. These exclusions
+also apply to explicitly queued reads. Writes to an excluded ID still require a P2 verification read, but do not
+produce a second `on_value` publication.
+
+### Polling Configuration
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): ID of the polling component.
+- **value_ids** (**Required**, list of integers): Unique 16-bit value IDs managed by the scheduler. At least one is
+  required.
+- **rx_value_ids** (*Optional*, list of integers): IDs from `value_ids` already supplied by RX telemetry. Defaults to
+  empty.
+- **batch_size** (*Optional*, integer): Maximum polling reads per bus grant, from `1` to `16`. Defaults to `16`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): Refresh interval, at least `500ms`.
+  Defaults to `60s`.
+  An initial refresh runs at boot, including when the interval is `never`. Use `never` for subsequent manual refreshes.
+- **on_value** (*Optional*, [Automation](/automations/)): Runs on the first successful value and subsequent changes.
+  Arguments are `uint16_t value_id` and `uint32_t value`. Values remain raw, without scaling or signed conversion.
+- **on_result** (*Optional*, [Automation](/automations/)): Runs for each completed queued transaction, expired
+  unsent write and read that times out waiting for a bus grant. Arguments and statuses match [transaction
+  results](#transaction-configuration). `grant_id` is `0` for an
+  unsent request that expired; its value is `0` and must not be used as a measurement.
+
+A refresh schedules each eligible ID once. Further refreshes and `queue_read` calls coalesce pending or active reads
+of the same ID. Successful write verification also satisfies a pending read of that ID. The read cursor continues
+across groups so that periodic refreshes do not always restart at the beginning.
+
+Writes take priority after the current transaction finishes. They remain in FIFO order, with capacity for 16 unsent
+writes plus the active transaction. The scheduler never preempts an active read or write. Continuous writes can delay
+polling. Unsent writes expire after 10 seconds instead of executing unexpectedly after a long outage. Sent writes
+are never automatically retried, including when their acknowledgement or verification is missing.
+
+A group may contain fewer than `batch_size` reads: every transaction must fit inside the remaining lease, including
+its response timeout and the release margin. Remaining work waits for a fresh grant. To accommodate a complete write
+and verification, `lease_duration` must be greater than `140ms + 3 * response_timeout`; the defaults satisfy this.
+No grant within 10 seconds cancels pending reads and reports a timeout for each ID through `polling.on_result`.
+These results use `grant_id: 0` and command `0x0300`. The next refresh may schedule the reads again.
+
+Failed reads retain the last value without publishing `0` or an unavailable state. Unchanged successful reads update
+the cache without calling `on_value`. Use this callback to publish measurements, and `on_result` for operation status.
+The existing `on_datagram` and `transactions.on_result` callbacks keep reporting their respective raw traffic and
+transaction completions.
+
+Polling owns the transmitter on this hub. Use the queue actions below for additional work. Validation rejects
+`vbus.send_datagram`, `vbus.read_value` and `vbus.write_value` on a hub with polling enabled.
+Other hubs remain independent.
+
+### Queue Actions
+
+`vbus.queue_read` adds a refresh of a configured ID that is not listed in `rx_value_ids`:
+
+```yaml
+on_press:
+  - vbus.queue_read:
+      id: solar_bus
+      value_id: 1
+```
+
+`vbus.queue_write` queues a raw write and verifies it through the transaction manager:
+
+```yaml
+on_press:
+  - vbus.queue_write:
+      id: solar_bus
+      value_id: 2
+      value: 123
+```
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): VBus hub with polling enabled.
+- **value_id** (**Required**, [templatable](/automations/templates/), integer): 16-bit value ID.
+  Queued reads require an ID in `value_ids`; writes can use any controller-supported ID.
+- **value** (**Required** for writes, [templatable](/automations/templates/), integer): Raw 32-bit unsigned value.
+- **command** (*Optional*, [templatable](/automations/templates/), integer): Write command `0x0200` or `0x0400`.
+  Defaults to `0x0200`.
+
+In a lambda, `id(solar_bus).queue_read(value_id)` and
+`id(solar_bus).queue_write(value_id, value, command)` return `false` when rejected. A rejected request has no result
+callback. Acceptance means queued, not applied: check `on_result` for confirmed completion. Distinct writes are never
+silently replaced. Only queue values supported by the controller and safe for the connected installation.
+
+## See Also
+
+- [VBus Component](/components/vbus/)
+- [Receive Guide](/components/vbus/receive/)
