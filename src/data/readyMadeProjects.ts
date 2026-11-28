@@ -266,7 +266,7 @@ export const PROJECT_TYPES: ProjectType[] = [
         installUrl: "https://firmware.nabucasa.com/install/aux-2/",
         githubUrl: "https://github.com/NabuCasa/aux-2",
         title: "Home Assistant Connect AUX-2",
-        body: ["Connect Bluetooth devices to Home Assistant over Ethernet."],
+        body: ["Connect Bluetooth devices to Home Assistant over Ethernet or Wi-Fi."],
         linksLabel: "Learn more &amp; buy",
         links: [{ label: "Home Assistant", url: "https://www.home-assistant.io/connect/aux-2/" }],
       },
