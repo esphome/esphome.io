@@ -63,7 +63,9 @@ sensor:
 
 ## Configuration variables
 
-- **mac_address** (**Required**, MAC Address): The MAC address of the ThermoPro device.
+- **type** (*Optional*, string): `advertisement` (default) or `gatt`. Existing configurations continue to use advertisements.
+
+- **mac_address** (**Required** for advertisement mode, MAC Address): The MAC address of the ThermoPro device.
 
 - **temperature** (*Optional*): The information for the temperature sensor.
 
@@ -122,3 +124,66 @@ entry like in the configuration example at the top.
 - [ESP32 Bluetooth Low Energy Tracker Hub](/components/esp32_ble_tracker/)
 - [Sensor Component](/components/sensor/)
 - <APIRef text="thermopro_ble.h" path="thermopro_ble/thermopro_ble.h" />
+
+
+## TP970 Connected GATT Mode
+
+For the single-probe TempSpike Plus TP970 (`TP970R`), `type: gatt` maintains a BLE
+connection to the booster and subscribes to temperature notifications. This uses the
+same temperature and battery decoding as the advertisement mode. It does not depend on
+receiving temperature-bearing advertising packets after the connection is established.
+Messages arrived approximately every three seconds on the tested TP970; the actual rate
+is controlled by the device.
+
+Configure a [BLE Client](/components/ble_client/) named `tempspike_client` with the
+booster's MAC address, then add:
+
+```yaml
+sensor:
+  - platform: thermopro_ble
+    type: gatt
+    id: tempspike
+    ble_client_id: tempspike_client
+    temperature:
+      name: Food
+    external_temperature:
+      name: Ambient
+    battery_level:
+      name: Probe Battery
+    notification_count:
+      name: Temperature Messages
+
+# Optional freshness indicator
+binary_sensor:
+  - platform: thermopro_ble
+    thermopro_ble_id: tempspike
+    temperature_stream:
+      name: Temperature Stream
+```
+
+In GATT mode, `temperature` is the food/internal temperature and
+`external_temperature` is ambient temperature. A `mac_address` is not configured on
+the sensor: the referenced BLE client supplies the booster address.
+
+Additional GATT options:
+
+- **ble_client_id** (**Required**, ID): The BLE client connected to the booster.
+- **timeout** (*Optional*, Time): Clear readings after this long without a recognized
+  temperature notification. Defaults to `15s`, checked once per second.
+- **notification_count** (*Optional*): Diagnostic sensor counting recognized temperature
+  messages, including messages whose temperature values have not changed.
+- **id** (*Optional*, ID): Sensor group ID, used by the optional binary sensor.
+
+The optional `binary_sensor` platform accepts **thermopro_ble_id** (the GATT sensor
+ID) and **temperature_stream** (a connectivity binary sensor). It is on while recognized
+temperature messages are fresh. It does not establish whether the probe is docked.
+
+Invalid `0xFFFF` fields are cleared independently. Disconnect, GATT close and the
+notification timeout clear the temperature and battery readings. Missing messages can
+mean docking, range loss or power loss; no docking status is inferred.
+
+GATT mode requires an ESP32 and one available BLE client connection. Humidity and signal
+strength options belong to advertisement mode. This component runs directly on the ESPHome
+node, not through an advertisement-only Shelly receiver or a Bluetooth proxy. A connected
+phone app may compete for the booster connection. Other ThermoPro models are supported by
+advertisement mode; connected mode is currently limited to TP970/TP970R.
