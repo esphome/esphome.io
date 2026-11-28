@@ -1,0 +1,54 @@
+---
+description: "Instructions for setting up storage devices in ESPHome."
+title: "Storage Components"
+sidebar:
+  label: "Storage Components"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `storage` domain contains the common options of devices that store data in fixed size blocks, such as an SD card
+or a buffer in RAM. A storage device holds raw blocks; a filesystem on the device organizes the blocks into files.
+
+## Base Storage Configuration
+
+```yaml
+storage:
+  - platform: ...
+    id: my_storage
+```
+
+### Configuration Variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the storage device, used to refer to the device
+  from other components.
+
+### Sizes
+
+Storage options give sizes in bytes, either as a plain number or with a suffix: `K`, `M` or `G`, which may be followed
+by `B` or `iB`. Sizes count in powers of two, so `64KB` is 65536 bytes and `1MB` is 1048576 bytes.
+
+## `storage.has_media` Condition
+
+This [Condition](/automations/actions/#all-conditions) checks whether the storage device has media, for example
+whether an SD card is inserted.
+
+```yaml
+on_...:
+  - if:
+      condition:
+        storage.has_media: my_storage
+      then:
+        - logger.log: Storage is ready
+```
+
+The lambda equivalent for this is `id(my_storage).has_media()`.
+
+## Platforms
+
+- [RAM Disk](/components/storage/ram_disk/)
+
+## See Also
+
+- [Filesystem Component](/components/filesystem/)
+- <APIRef text="block_device.h" path="storage/block_device.h" />

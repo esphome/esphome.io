@@ -1,0 +1,33 @@
+---
+description: "Instructions for setting up a RAM disk storage device in ESPHome."
+title: "RAM Disk"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `ram_disk` storage platform provides a [storage device](/components/storage/) in RAM. It uses PSRAM when the
+device has it, and internal RAM otherwise. The contents are lost on every reboot, so a RAM disk is useful for temporary
+files, and for trying out a filesystem without other hardware.
+
+The memory is allocated at boot and starts filled with zeros. If not enough memory is free, the component is marked as
+failed.
+
+```yaml
+# Example configuration entry
+storage:
+  - platform: ram_disk
+    id: my_ram_disk
+    size: 64KB
+```
+
+## Configuration Variables
+
+- **size** (**Required**, [size](/components/storage/#sizes)): The size of the disk, at most `64MB`. It must be a
+  multiple of `block_size`.
+- **block_size** (*Optional*, [size](/components/storage/#sizes)): The size of one block, a power of two from `128` to
+  `64KB`. Defaults to `512`.
+- All other options from [Storage](/components/storage/#base-storage-configuration).
+
+## See Also
+
+- <APIRef text="ram_disk.h" path="ram_disk/ram_disk.h" />
