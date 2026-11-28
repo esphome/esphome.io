@@ -41,7 +41,9 @@ The component needs an [ESP32 Camera](/components/esp32_camera/) that delivers J
 supported. The `resolution` may be at most 2040 pixels per side. The configuration is rejected
 otherwise. A client whose connection makes no progress for half a second drops its current frame
 and takes no new one until the connection drains again, so it cannot slow the camera down for the
-other consumers.
+other consumers. The camera captures nothing while a client is still sending a frame, so a client
+that is still sending one 200 ms after another client has finished it drops it too, and skips frames
+rather than slowing the others down to its pace. A single client always gets whole frames.
 
 ## Watching the Stream
 
