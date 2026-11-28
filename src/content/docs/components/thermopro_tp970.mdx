@@ -56,37 +56,19 @@ Add a `sensor` platform entry with `platform: thermopro_tp970`:
 
 Each sensor accepts all options from [Sensor](/components/sensor/).
 
-### Binary Sensor
-
-Add a `binary_sensor` platform entry with `platform: thermopro_tp970`:
-
-- **thermopro_tp970_id** (*Optional*, [ID](/guides/configuration-types/#id)): The component to use. Required
-  when there is more than one instance.
-- **temperature_stream** (*Optional*): On while recognized probe temperature messages are arriving and have
-  not timed out. This reports message freshness, rather than just the Bluetooth connection state.
-  Accepts all options from [Binary Sensor](/components/binary_sensor/).
-
-```yaml
-binary_sensor:
-  - platform: thermopro_tp970
-    thermopro_tp970_id: tempspike
-    temperature_stream:
-      name: "Probe Temperature Stream"
-```
-
 ## Updates And Missing Readings
 
 Temperature notifications normally arrive about every three seconds, with occasional additional messages.
 ESPHome publishes each recognized message without a polling interval. Home Assistant can suppress unchanged
-temperature states; use `notification_count` and `temperature_stream` to check reception.
+temperature states; use `notification_count` to check reception.
 
 The device's `0xFFFF` invalid value is converted to `NaN` separately for each temperature and battery field.
 Disconnection or a notification timeout clears all three readings. Home Assistant can display these missing
 numeric values as unknown. A connection resumes automatically when the booster is advertising and the BLE
 client has `auto_connect` enabled, which is its default.
 
-Docking can stop the stream, but so can loss of Bluetooth range or power. The component therefore does not
-expose a docked sensor.
+Docking can stop notifications, but so can loss of Bluetooth range or power. The component therefore does
+not infer a docked state.
 
 ## See Also
 
